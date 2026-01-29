@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>scheduler</title>
+  <style>
+    body{font-family:Segoe UI, Roboto, Arial, sans-serif; padding:24px; max-width:900px; margin:0 auto}
+    pre { background:#f6f8fa; padding:12px; overflow:auto }
+    code { background:#f6f8fa; padding:2px 4px }
+  </style>
+</head>
+<body>
+<h1 id="architectscheduler"><code>architect.scheduler</code> 模块</h1>
+<p>任务调度器，实现延迟任务、定时任务及任务队列管理。</p>
+<p>源文件： <code>architect/scheduler.py</code></p>
+<p>主要类型与说明：</p>
+<ul>
+<li><code>Task</code> — 基本任务封装，包含 <code>fn</code>, <code>id</code>, <code>finished</code></li>
+<li>
+<p><code>SuspendableTask</code> — 支持生成器（协程式）任务，通过 <code>callOnce()</code> 恢复执行直到完成</p>
+</li>
+<li>
+<p><code>Scheduler</code> — 任务调度核心</p>
+<ul>
+<li><code>addTask(scheduleName, fn)</code> / <code>addSuspendableTask(scheduleName, generator)</code> — 注册任务</li>
+<li><code>execute(scheduleName)</code> / <code>executeSequence()</code> — 执行单个队列或预定义顺序（<code>BeforeUpdate</code>, <code>Update</code>, <code>AfterUpdate</code>）</li>
+<li><code>runTimer(fn, ticks=1, interval=False)</code> — 按 ticks 延迟执行/定时执行</li>
+<li><code>executeAsync</code> / <code>executeSequenceAsync</code> — 异步执行（封装为 <code>Future</code>）</li>
+</ul>
+</li>
+<li>
+<p><code>Future</code> — 简单的线程封装，用于异步执行并等待结果（<code>runAsync</code> 返回 <code>Future</code>）</p>
+</li>
+</ul>
+<p>使用建议：<code>Scheduler</code> 适合将独立任务分发到不同执行阶段，或将长耗时任务放入 <code>Future</code> / <code>SuspendableTask</code> 避免阻塞主循环。</p>
+</body>
+</html>

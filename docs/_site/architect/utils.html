@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>utils</title>
+  <style>
+    body{font-family:Segoe UI, Roboto, Arial, sans-serif; padding:24px; max-width:900px; margin:0 auto}
+    pre { background:#f6f8fa; padding:12px; overflow:auto }
+    code { background:#f6f8fa; padding:2px 4px }
+  </style>
+</head>
+<body>
+<h1 id="architectutils"><code>architect.utils</code> 模块</h1>
+<p>通用工具集合，包含 server 工具、molang 支持、扩展集合（如 list）以及 persona 相关逻辑。</p>
+<p>子模块：</p>
+<ul>
+<li><code>utils/server.py</code></li>
+<li><code>utils/enhance/list.py</code></li>
+<li><code>utils/molang/*</code></li>
+<li><code>utils/persona/*</code></li>
+</ul>
+<p>源文件： <code>architect/utils</code> 目录下的多个文件</p>
+<p>子模块详细说明：</p>
+<p><code>utils/server.py</code>:
+- <code>runCommand(cmd, entityId)</code> — 在服务端执行命令（通过 <code>LevelServer.command</code>）
+- <code>motion(entityId, mot)</code> — 根据实体类型设置运动（玩家/普通实体）
+- <code>sound(entityId, sound)</code> — 播放声音（封装为 command）
+- <code>particle(particle, pos)</code> — 在指定位置生成粒子（通过 command）</p>
+<p><code>utils/enhance/list.py</code>:
+- <code>remove(list, item)</code> — 从列表中移除元素并返回成功标志
+- <code>chunk(list, size)</code> — 将列表切分为块
+- <code>flatten(list)</code> — 扁平化嵌套列表
+- <code>compact(list)</code> — 过滤掉 falsy 值
+- <code>fill(list, item, start=0, end=None)</code> — 在区间内用同一值填充
+- <code>without(list, item)</code> — 返回不包含指定元素的新列表</p>
+<p><code>utils/molang</code>:
+- <code>types.py</code> — <code>MolangReadable</code>, <code>MolangMutable</code> 接口定义
+- <code>common.py</code> — <code>NamedVariable</code>, <code>NamedVariable.getValue/setValue</code>：访问 Molang 变量的通用实现
+- <code>client.py</code> — <code>QueryVariable</code>, <code>ReactiveQueryVariable</code>, <code>MolangClient</code>（带 <code>onRender</code> 更新），<code>MolangQuery</code> 装饰器，用于声明反应式查询变量
+- <code>server.py</code> — <code>NamedProperty</code>, <code>MolangServer</code>（负责在服务端广播/转发 molang 查询）</p>
+<p><code>utils/persona</code>:
+- <code>client.py</code> — <code>PersonaRendererComponent</code>（<code>ClientComponent</code> 的实现），<code>PersonaEventsSubsystem</code>（处理来自服务端的 persona 变更事件）
+- <code>server.py</code> — <code>PersonaServer</code>（服务端接口，用于向客户端广播 persona 更改、重置等）</p>
+<p>使用建议：<code>molang</code> 子模块提供可在客户端/服务端注册、广播和反应式更新的 Molang 查询变量接口；<code>persona</code> 子模块封装实体渲染配置与同步。</p>
+</body>
+</html>
