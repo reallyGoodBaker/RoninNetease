@@ -53,7 +53,7 @@ class QueryClient:
         return compClient.CreateActorMotion(id)
 
 
-from ..component import getComponent
+from ..component import getComponent, getComponentWithQuery
 
 class _Query:
     def __init__(self, entityId, comps):
@@ -85,13 +85,13 @@ def callQueries(entityId, frameUpdate=False):
         if frameUpdate == anyFrame:
             q(entityId)
 
-
 def Query(*compCls, required=[], excluded=[]):
     def decorator(fn):
         def wrapper(entityId):
-            comps = getComponent(entityId, compCls)
+            comps = getComponentWithQuery(entityId, compCls, required, excluded)
             if comps:
                 return fn(entityId, *comps)
+
         queries.append(wrapper)
         return wrapper
     return decorator
@@ -100,7 +100,7 @@ def Query(*compCls, required=[], excluded=[]):
 def QueryAnyFrame(*compCls, required=[], excluded=[]):
     def decorator(fn):
         def wrapper(entityId):
-            comps = getComponent(entityId, compCls)
+            comps = getComponentWithQuery(entityId, compCls, required, excluded)
             if comps:
                 return fn(entityId, *comps)
         queries.append(wrapper)

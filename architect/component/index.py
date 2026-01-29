@@ -82,12 +82,22 @@ def getComponent(entityId, clsList, filter=None):
         key = (entityId, c.__name__)
         if key in components:
             comp = components[key]
-            if filter is None or filter(comp, key):
+            if filter is None or filter(comp, c.__name__):
                 result.append(components[key])
         else:
             return None
     return result
 
+def getComponentWithQuery(entityId, targets, required=[], excluded=[]):
+    if len(required) + len(excluded) > 0:
+        def _matcher(_, compName):
+            inTargets = compName in map(lambda cls: cls.__name, targets)
+            inRequired = compName in map(lambda cls: cls.__name, required)
+            notExcluded = compName not in map(lambda cls: cls.__name, excluded)
+            return inTargets and inRequired and notExcluded
+        return getComponent(entityId, targets, _matcher)
+    else:
+        return getComponent(entityId, targets)
 
 def getEntities():
     entities = entitiesServer if isServer() else entitiesClient

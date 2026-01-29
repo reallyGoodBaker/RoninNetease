@@ -57,7 +57,7 @@ class QueryServer:
 
 
 
-from ..component import getComponent
+from ..component import getComponent, getComponentWithQuery
 
 class _Query:
     def __init__(self, entityId, comps):
@@ -90,7 +90,7 @@ def callQueries(entityId):
 def Query(*compCls):
     def decorator(fn):
         def wrapper(entityId):
-            comps = getComponent(entityId, compCls)
+            comps = getComponentWithQuery(entityId, compCls)
             if comps:
                 return fn(entityId, *comps)
         queries.append(wrapper)

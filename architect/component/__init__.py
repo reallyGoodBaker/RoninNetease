@@ -1,4 +1,4 @@
-from .index import Component, registerComponents, getComponent, getComponentAnnotation, getEntities, isPersistComponent, createComponent, destroyComponent, getOneComponent
+from .index import Component, registerComponents, getComponent, getComponentAnnotation, getEntities, isPersistComponent, createComponent, destroyComponent, getOneComponent, getComponentWithQuery
 from ..basic import getComponentCls, serverApi, clientApi
 
 class ClientComponent(clientApi.GetComponentCls()):
