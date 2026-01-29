@@ -86,7 +86,7 @@ def callQueries(entityId, frameUpdate=False):
             q(entityId)
 
 
-def Query(*compCls):
+def Query(*compCls, required=[], excluded=[]):
     def decorator(fn):
         def wrapper(entityId):
             comps = getComponent(entityId, compCls)
@@ -97,7 +97,7 @@ def Query(*compCls):
     return decorator
 
 
-def QueryAnyFrame(*compCls):
+def QueryAnyFrame(*compCls, required=[], excluded=[]):
     def decorator(fn):
         def wrapper(entityId):
             comps = getComponent(entityId, compCls)

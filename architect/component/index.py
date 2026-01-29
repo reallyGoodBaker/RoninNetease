@@ -29,6 +29,7 @@ def registerComponents(isServer):
         result = api.RegisterComponent(COMPONENT_NAMESPACE, cls.__name__, cls.__module__ + '.' + cls.__name__)
         print('[INFO] Register component', cls.__name__, 'result:', result)
 
+
 def getComponentAnnotation(cls):
     return AnnotationHelper.getAnnotation(cls, '_component')
 
@@ -44,7 +45,7 @@ def createComponent(entityId, cls):
     # print('create component', entityId, cls)
     api = serverApi if isServer() else clientApi
     comp = api.CreateComponent(entityId, COMPONENT_NAMESPACE, cls.__name__)
-    components[(entityId, cls)] = comp
+    components[(entityId, cls.__name__)] = comp
     if isPersistComponent(cls) and hasattr(comp, 'loadData'):
         comp.loadData(entityId)
 
@@ -75,13 +76,13 @@ def getOneComponent(entityId, cls):
         return comps[0]
 
 def getComponent(entityId, clsList, filter=None):
-    # print(components)
+    # type: (str, list[type], function) -> list
     result = []
     for c in iter(clsList):
-        key = (entityId, c)
+        key = (entityId, c.__name__)
         if key in components:
             comp = components[key]
-            if filter is None or filter(comp):
+            if filter is None or filter(comp, key):
                 result.append(components[key])
         else:
             return None

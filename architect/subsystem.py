@@ -469,7 +469,9 @@ ServerSystem = serverApi.GetServerSystemCls()
 ClientSystem = clientApi.GetClientSystemCls()
 
 class _ShadowSystemServer(ServerSystem):
-    pass
+    def getSysManager(self):
+        return SubsystemManager.getInst()
 
 class _ShadowSystemClient(ClientSystem):
-    pass
+    def getSysManager(self):
+        return SubsystemManager.getInst()
