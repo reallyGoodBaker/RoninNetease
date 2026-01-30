@@ -99,7 +99,9 @@ def Query(*compCls, **kwargs):
     return decorator
 
 
-def QueryAnyFrame(*compCls, required=[], excluded=[]):
+def QueryAnyFrame(*compCls, **kwargs):
+    required = kwargs['required'] or []
+    excluded = kwargs['excluded'] or []
     def decorator(fn):
         def wrapper(entityId):
             comps = getComponentWithQuery(entityId, compCls, required, excluded)
