@@ -3,7 +3,7 @@ from ...component import ClientComponent, Component, createComponent, getOneComp
 from ...basic import compClient, clientApi
 from ...event.client import EventListener
 from mod.common.minecraftEnum import EntityType
-import time
+from ..molang.client import QueryVariable
 
 PlayerDefaultClientDef = {
     "materials": {
@@ -19,11 +19,6 @@ PlayerDefaultClientDef = {
     "geometry": {
         "default": "geometry.humanoid.custom",
         "cape": "geometry.cape"
-    },
-    "scripts": {
-        "animate": [
-            "root"
-        ]
     },
     "animations": {
         "root": "controller.animation.player.root",
@@ -104,22 +99,13 @@ PlayerDefaultClientDef = {
             "controller.render.player.map": "variable.map_face_icon"
         }
     ],
+    "scripts": {
+        "animate": [
+            "root"
+        ]
+    },
 }
 
-class PlayerResPreload:
-
-    def __init__(self, id, geometry={}, animations={}, textures={}, materials={}):
-        self.preloadObject = {
-            "geometry": geometry,
-            "animations": animations,
-            "textures": textures,
-            "materials": materials,
-        }
-        self.id = id
-
-    @staticmethod
-    def key(id):
-        return id.replace(':', '.')
 
 @Component()
 class PersonaRendererComponent(ClientComponent):
@@ -130,7 +116,9 @@ class PersonaRendererComponent(ClientComponent):
         self.playerPreloads = set()
         self.modified = False
         self.molang = compClient.CreateQueryVariable(entityId)
-        self.molang.Register('query.mod.player_preload', -1)
+        self.shadowRoot = None
+        if compClient.CreateEngineType(entityId) == "minecraft:player":
+            self._applyPlayerRenderConfToSelf()
 
     def broadcastRenderConf(self, subSys, jsonObj={}):
         subSys.sendServer('PersonaChangeClient', { 'id': self.entityId, 'data': jsonObj })
@@ -138,7 +126,7 @@ class PersonaRendererComponent(ClientComponent):
     def broadcastResetConf(self, subSys):
         subSys.sendServer('PersonaResetClient', { 'id': self.entityId })
 
-    def changeActorRenderConf(self, jsonObject, actor=None):
+    def addActorRenderConf(self, jsonObject, actor=None):
         # type: (dict, str) -> None
 
         actorId = actor or self.entityId
@@ -198,17 +186,69 @@ class PersonaRendererComponent(ClientComponent):
                         self.actorRenderer.AddScriptAnimateToOneActor(actorId, animate)
 
         self.actorRenderer.RebuildRenderForOneActor()
-        self.modified = True
 
-    def changePlayerRenderConf(self, jsonObject={}):
-        # type: (dict) -> None
+    @staticmethod
+    def addActorTypeRenderConf(actorType, jsonObject):
+        # type: (str, dict) -> None
+        actorRenderer = compClient.CreateActorRender(clientApi.GetLevelId())
 
-        overrideObj = {
-            'geo': [],
-            'animController': [],
-            'renderController': [],
-        }
+        # 材质
+        materials = jsonObject.get("materials")
+        if materials:
+            for name, material in materials.items():
+                actorRenderer.AddActorRenderMaterial(actorType, name, material)
 
+        # 模型
+        geometries = jsonObject.get("geometry")
+        if geometries:
+            for name, geometry in geometries.items():
+                actorRenderer.AddActorGeometry(actorType, name, geometry)
+
+        # 贴图
+        textures = jsonObject.get("textures")
+        if textures:
+            for name, texture in textures.items():
+                actorRenderer.AddActorTexture(actorType, name, texture)
+
+        # 动画/动画控制器
+        animations = jsonObject.get("animations")
+        if animations:
+            for name, animation in animations.items():
+                if animation.startswith('controller.'):
+                    actorRenderer.AddActorAnimationController(actorType, name, animation)
+                else:
+                    actorRenderer.AddActorAnimation(actorType, name, animation)
+
+        # 粒子
+        particles = jsonObject.get("particle_effects")
+        if particles:
+            for name, particle in particles.items():
+                actorRenderer.AddActorParticleEffect(actorType, name, particle)
+
+        # 渲染控制器
+        renderControllers = jsonObject.get("render_controllers")
+        if renderControllers:
+            for renderControllerDef in renderControllers:
+                if isinstance(renderControllerDef, dict):
+                    name, cond = renderControllerDef.items()[0]
+                    actorRenderer.AddActorRenderController(actorType, name, cond)
+                else:
+                    actorRenderer.AddActorRenderController(actorType, renderControllerDef)
+
+        # scripts
+        scripts = jsonObject.get("scripts")
+        if scripts:
+            animates = scripts.get('animate')
+            if animates:
+                for animate in animates:
+                    if isinstance(animate, dict):
+                        name, cond = animate.items()[0]
+                        actorRenderer.AddActorScriptAnimate(actorType, name, cond)
+                    else:
+                        actorRenderer.AddActorScriptAnimate(actorType, animate)
+        actorRenderer.RebuildActorRender(actorType)
+
+    def addPlayerRenderConf(self, jsonObject):
         # 材质
         materials = jsonObject.get("materials")
         if materials:
@@ -219,7 +259,6 @@ class PersonaRendererComponent(ClientComponent):
         geometries = jsonObject.get("geometry")
         if geometries:
             for name, geometry in geometries.items():
-                overrideObj['geo'].append(name)
                 self.actorRenderer.AddPlayerGeometry(name, geometry)
 
         # 贴图
@@ -233,7 +272,6 @@ class PersonaRendererComponent(ClientComponent):
         if animations:
             for name, animation in animations.items():
                 if animation.startswith('controller.'):
-                    overrideObj['animController'].append(name)
                     self.actorRenderer.AddPlayerAnimationController(name, animation)
                 else:
                     self.actorRenderer.AddPlayerAnimation(name, animation)
@@ -243,6 +281,160 @@ class PersonaRendererComponent(ClientComponent):
         if particles:
             for name, particle in particles.items():
                 self.actorRenderer.AddPlayerParticleEffect(name, particle)
+
+        # 渲染控制器
+        renderControllers = jsonObject.get("render_controllers")
+        if renderControllers:
+            for renderControllerDef in renderControllers:
+                if isinstance(renderControllerDef, dict):
+                    name, cond = renderControllerDef.items()[0]
+                    self.actorRenderer.AddPlayerRenderController(name, cond)
+                else:
+                    self.actorRenderer.AddPlayerRenderController(renderControllerDef)
+
+        # scripts
+        scripts = jsonObject.get("scripts")
+        if scripts:
+            animates = scripts.get('animate')
+            if animates:
+                for animate in animates:
+                    if isinstance(animate, dict):
+                        name, cond = animate.items()[0]
+                        self.actorRenderer.AddPlayerScriptAnimate(name, cond)
+                    else:
+                        self.actorRenderer.AddPlayerScriptAnimate(animate)
+
+        self.actorRenderer.RebuildPlayerRender()
+
+    _PlayerPrefabs = []
+
+    @staticmethod
+    def addPlayerTypeRenderConf(jsonObject):
+        PersonaRendererComponent._PlayerPrefabs.append(jsonObject)
+
+    def _applyPlayerRenderConfToSelf(self):
+        for playerPrefab in PersonaRendererComponent._PlayerPrefabs:
+            self.addPlayerRenderConf(playerPrefab)
+
+    def changeActorRenderConf(self, jsonObject, actor=None, full=False):
+        # type: (dict, str, bool) -> None
+        """
+        当full为False时，此方法不会修改 geometry, texture 和 particle_effects 的配置
+        """
+
+        actorId = actor or self.entityId
+        # 材质
+        materials = jsonObject.get("materials")
+        if materials:
+            for name, material in materials.items():
+                self.actorRenderer.AddRenderMaterialToOneActor(actorId, name, material)
+
+        if full:
+            # 模型
+            geometries = jsonObject.get("geometry")
+            if geometries:
+                print('[WARN] Geometries should be preloaded before use.')
+                for name, geometry in geometries.items():
+                    self.actorRenderer.AddGeometryToOneActor(actorId, name, geometry)
+
+            # 贴图
+            textures = jsonObject.get("textures")
+            if textures:
+                print('[WARN] Textures should be preloaded before use.')
+                for name, texture in textures.items():
+                    self.actorRenderer.AddTextureToOneActor(actorId, name, texture)
+
+            # 粒子
+            particles = jsonObject.get("particle_effects")
+            if particles:
+                print('[WARN] Particle Effects should be preloaded before use.')
+                for name, particle in particles.items():
+                    self.actorRenderer.AddParticleEffectToOneActor(actorId, name, particle)
+
+        # 动画/动画控制器
+        animations = jsonObject.get("animations")
+        if animations:
+            for name, animation in animations.items():
+                if animation.startswith('controller.'):
+                    self.actorRenderer.AddAnimationControllerToOneActor(actorId, name, animation)
+                else:
+                    self.actorRenderer.AddAnimationToOneActor(actorId, name, animation)
+
+        # 渲染控制器
+        renderControllers = jsonObject.get("render_controllers")
+        if renderControllers:
+            for renderControllerDef in renderControllers:
+                if isinstance(renderControllerDef, dict):
+                    name, cond = renderControllerDef.items()[0]
+                    self.actorRenderer.AddRenderControllerToOneActor(actorId, name, cond)
+                else:
+                    self.actorRenderer.AddRenderControllerToOneActor(actorId, renderControllerDef)
+
+        # scripts
+        scripts = jsonObject.get("scripts")
+        if scripts:
+            animates = scripts.get('animate')
+            if animates:
+                for animate in animates:
+                    if isinstance(animate, dict):
+                        name, cond = animate.items()[0]
+                        self.actorRenderer.AddScriptAnimateToOneActor(actorId, name, cond)
+                    else:
+                        self.actorRenderer.AddScriptAnimateToOneActor(actorId, animate)
+
+        self.actorRenderer.RebuildRenderForOneActor()
+        self.modified = True
+
+    def changePlayerRenderConf(self, jsonObject={}, full=False):
+        # type: (dict, bool) -> None
+        """
+        当full为False时，此方法不会修改 geometry, texture 和 particle_effects 的配置
+        """
+
+        overrideObj = {
+            'geo': [],
+            'animController': [],
+            'renderController': [],
+        }
+
+        # 材质
+        materials = jsonObject.get("materials")
+        if materials:
+            for name, material in materials.items():
+                self.actorRenderer.AddPlayerRenderMaterial(name, material)
+
+        if full:
+            # 模型
+            geometries = jsonObject.get("geometry")
+            if geometries:
+                print('[WARN] Geometries should be preloaded before use.')
+                for name, geometry in geometries.items():
+                    overrideObj['geo'].append(name)
+                    self.actorRenderer.AddPlayerGeometry(name, geometry)
+
+            # 贴图
+            textures = jsonObject.get("textures")
+            if textures:
+                print('[WARN] Textures should be preloaded before use.')
+                for name, texture in textures.items():
+                    self.actorRenderer.AddPlayerTexture(name, texture)
+
+            # 粒子
+            particles = jsonObject.get("particle_effects")
+            if particles:
+                print('[WARN] Particle Effects should be preloaded before use.')
+                for name, particle in particles.items():
+                    self.actorRenderer.AddPlayerParticleEffect(name, particle)
+
+        # 动画/动画控制器
+        animations = jsonObject.get("animations")
+        if animations:
+            for name, animation in animations.items():
+                if animation.startswith('controller.'):
+                    overrideObj['animController'].append(name)
+                    self.actorRenderer.AddPlayerAnimationController(name, animation)
+                else:
+                    self.actorRenderer.AddPlayerAnimation(name, animation)
 
         # 渲染控制器
         renderControllers = jsonObject.get("render_controllers")
@@ -317,59 +509,22 @@ class PersonaRendererComponent(ClientComponent):
         else:
             self.resetActorRenderConf()
 
-    def addPlayerPreload(self, preload, partVisibility=[{ '*': True }]):
-        # type: (PlayerResPreload, list[dict[str, bool]]) -> None
-        self.playerPreloads.add(preload)
-        jsonObject = preload.preloadObject
-        preloadIndex = str(preload.index)
-        key = "controller.render.preload.{}".format(preload.id)
-        # 模型
-        geometries = jsonObject.get("geometry")
-        if geometries:
-            for name, geometry in geometries.items():
-                self.actorRenderer.AddPlayerGeometry(name + '_' + preloadIndex, geometry)
+    def shadowPlayerRootAnim(self, anim=None):
+        # type: (str) -> None
+        """
+        使用一个动画遮蔽玩家根动画，可以为空
+        """
+        self.actorRenderer.AddPlayerScriptAnimate('root', '0')
+        if anim:
+            self.actorRenderer.AddPlayerScriptAnimate(anim, '1')
+            self.shadowRoot = anim
 
-        # 贴图
-        textures = jsonObject.get("textures")
-        if textures:
-            for name, texture in textures.items():
-                self.actorRenderer.AddPlayerTexture(name + '_' + preloadIndex, texture)
-
-        # 动画/动画控制器
-        animations = jsonObject.get("animations")
-        if animations:
-            for name, animation in animations.items():
-                if animation.startswith('controller.'):
-                    self.actorRenderer.AddPlayerAnimationController(name + '_' + preloadIndex, animation)
-                else:
-                    self.actorRenderer.AddPlayerAnimation(name + '_' + preloadIndex, animation)
-
-    def removePlayerPreload(self, preload):
-        # type: (PlayerResPreload) -> None
-        self.playerPreloads.remove(preload)
-        self.resetPlayerRenderConf()
-        self.actorRenderer.RemovePlayerRenderController(
-            "controller.render.preload.{}".format(preload.id)
-        )
-
-    def changePlayerPreload(self, id):
-        # type: (PlayerResPreload) -> None
-        for preload in self.playerPreloads:
-            if preload.id == id:
-                self.molang.Set('query.mod.player_preload', preload.index)
-                return
-
-    def addPlayerPreloadMapping(self, mapping, partVisibility=[{ '*': True }]):
-        renderCon = {}
-        for k, v in mapping.items():
-            geo = v.get('geometry', {})
-            anim = v.get('animations', {})
-            tex = v.get('textures', {})
-            mat = v.get('materials', {})
-            preload = PlayerResPreload(k.replace(':', '.'), geo, anim, tex, mat)
-            self.addPlayerPreload(preload, partVisibility)
-        return renderCon
-
+    def restorePlayerRootAnim(self):
+        shadowRoot = self.shadowRoot
+        if shadowRoot:
+            self.actorRenderer.AddPlayerScriptAnimate('root', '1')
+            self.actorRenderer.AddPlayerScriptAnimate(shadowRoot, '0')
+            self.shadowRoot = None
 
 def createPersona(id):
     return createComponent(id, PersonaRendererComponent)
@@ -377,6 +532,39 @@ def createPersona(id):
 def getPersona(id):
     return getOneComponent(id, PersonaRendererComponent)
 
+RenderConfKeys = (
+    'geometry',
+    'textures',
+    'materials'
+    'particle_effects',
+    'animations',
+    'render_controllers',
+    'scripts',
+)
+
+PlayerActorTypes = (
+    'minecraft:player',
+    'player',
+)
+
+def _assembleRenderConf(cls):
+    _renderConf = {}
+    for name, value in vars(cls).items():
+        if name in RenderConfKeys:
+            _renderConf[name] = value
+    return _renderConf
+
+def PersonaPrefab(actorType):
+    if actorType in PlayerActorTypes:
+        def wrapper(cls):
+            PersonaRendererComponent.addPlayerTypeRenderConf(_assembleRenderConf(cls))
+            return cls
+        return wrapper
+    else:
+        def wrapper(cls):
+            PersonaRendererComponent.addActorTypeRenderConf(_assembleRenderConf(cls))
+            return cls
+        return wrapper
 
 @SubsystemClient
 class PersonaEventsSubsystem(ClientSubsystem):

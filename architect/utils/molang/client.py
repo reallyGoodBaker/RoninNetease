@@ -14,7 +14,8 @@ def _recordQueryVariableUsage(name, actorId):
 class QueryVariable(MolangMutable, Unreliable):
     def __init__(self, name, defaultValue=0):
         Unreliable.__init__(self)
-        self.name = name
+        self.name = 'query.mod.' + name
+        self.rawName = name
         self.defaultValue = defaultValue
         self.OnValueChanged = EventSignal()
 
