@@ -85,7 +85,9 @@ def callQueries(entityId, frameUpdate=False):
         if frameUpdate == anyFrame:
             q(entityId)
 
-def Query(*compCls, required=[], excluded=[]):
+def Query(*compCls, **kwargs):
+    required = kwargs['required'] or []
+    excluded = kwargs['excluded'] or []
     def decorator(fn):
         def wrapper(entityId):
             comps = getComponentWithQuery(entityId, compCls, required, excluded)

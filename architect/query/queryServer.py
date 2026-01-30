@@ -87,10 +87,12 @@ def callQueries(entityId):
     for q in queries:
         q(entityId)
 
-def Query(*compCls):
+def Query(*compCls, **kwargs):
+    required = kwargs['required'] or []
+    excluded = kwargs['excluded'] or []
     def decorator(fn):
         def wrapper(entityId):
-            comps = getComponentWithQuery(entityId, compCls)
+            comps = getComponentWithQuery(entityId, compCls, required, excluded)
             if comps:
                 return fn(entityId, *comps)
         queries.append(wrapper)
