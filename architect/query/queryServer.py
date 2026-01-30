@@ -94,5 +94,5 @@ def Query(*compCls):
             if comps:
                 return fn(entityId, *comps)
         queries.append(wrapper)
-        return wrapper
+        return fn
     return decorator

@@ -93,7 +93,7 @@ def Query(*compCls, required=[], excluded=[]):
                 return fn(entityId, *comps)
 
         queries.append(wrapper)
-        return wrapper
+        return fn
     return decorator
 
 
