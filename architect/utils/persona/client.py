@@ -3,7 +3,6 @@ from ...component import ClientComponent, Component, createComponent, getOneComp
 from ...basic import compClient, clientApi
 from ...event.client import EventListener
 from mod.common.minecraftEnum import EntityType
-from ..molang.client import QueryVariable
 
 PlayerDefaultClientDef = {
     "materials": {

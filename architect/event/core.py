@@ -53,6 +53,7 @@ class EventTarget:
         if event in self.__events:
             self.__events[event].emit(*args)
 
+
 class ChainedEvent:
     def __init__(self, eventType, interruptRef, data={}):
         self.eventType = eventType

@@ -5,23 +5,23 @@ import mod.server.extraServerApi as api
 engine = api.GetEngineNamespace()
 sysName = api.GetEngineSystemName()
 
-class MinecraftServerEvents:
+class ServerEvents:
     globalEvents = {}
 
     @staticmethod
     def getOrCreateChain(eventType, isCustomEvent=False):
         # type: (str, bool) -> EventChain
-        if eventType in MinecraftServerEvents.globalEvents:
-            return MinecraftServerEvents.globalEvents[eventType]
+        if eventType in ServerEvents.globalEvents:
+            return ServerEvents.globalEvents[eventType]
         else:
             chain = EventChain()
-            MinecraftServerEvents.globalEvents[eventType] = chain
+            ServerEvents.globalEvents[eventType] = chain
             from ..subsystem import SubsystemManager
             SubsystemManager.getInst().addListener(eventType, lambda ev: chain.dispatch(eventType, ev), isCustomEvent)
             return chain
 
 def event(eventType, isCustomEvent=False):
-    return MinecraftServerEvents.getOrCreateChain(eventType, isCustomEvent)
+    return ServerEvents.getOrCreateChain(eventType, isCustomEvent)
 
 def EventListener(eventType, isCustomEvent=False):
     def decorator(fn):
