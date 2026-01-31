@@ -119,11 +119,11 @@ class PersonaRendererComponent(ClientComponent):
         if compClient.CreateEngineType(entityId).GetEngineTypeStr() == "minecraft:player":
             self._applyPlayerRenderConfToSelf()
 
-    def broadcastRenderConf(self, subSys, jsonObj={}):
-        subSys.sendServer('PersonaChangeClient', { 'id': self.entityId, 'data': jsonObj })
+    def broadcastRenderConf(self, jsonObj={}):
+        PersonaEventsSubsystem.getInstance().sendServer('PersonaChangeClient', { 'id': self.entityId, 'data': jsonObj })
 
-    def broadcastResetConf(self, subSys):
-        subSys.sendServer('PersonaResetClient', { 'id': self.entityId })
+    def broadcastResetConf(self):
+        PersonaEventsSubsystem.getInstance().sendServer('PersonaResetClient', { 'id': self.entityId })
 
     def addActorRenderConf(self, jsonObject, actor=None):
         # type: (dict, str) -> None
@@ -340,9 +340,12 @@ class PersonaRendererComponent(ClientComponent):
         """
 
         actorId = actor or self.entityId
+        actorOverride = {}
+
         # 材质
         materials = jsonObject.get("materials")
         if materials:
+            actorOverride["materials"] = materials
             for name, material in materials.items():
                 self.actorRenderer.AddRenderMaterialToOneActor(actorId, name, material)
 
@@ -350,6 +353,7 @@ class PersonaRendererComponent(ClientComponent):
             # 模型
             geometries = jsonObject.get("geometry")
             if geometries:
+                actorOverride["geometry"] = geometries
                 print('[WARN] Geometries should be preloaded before use.')
                 for name, geometry in geometries.items():
                     self.actorRenderer.AddGeometryToOneActor(actorId, name, geometry)
@@ -357,6 +361,7 @@ class PersonaRendererComponent(ClientComponent):
             # 贴图
             textures = jsonObject.get("textures")
             if textures:
+                actorOverride["textures"] = textures
                 print('[WARN] Textures should be preloaded before use.')
                 for name, texture in textures.items():
                     self.actorRenderer.AddTextureToOneActor(actorId, name, texture)
@@ -364,6 +369,7 @@ class PersonaRendererComponent(ClientComponent):
             # 粒子
             particles = jsonObject.get("particle_effects")
             if particles:
+                actorOverride["particle_effects"] = particles
                 print('[WARN] Particle Effects should be preloaded before use.')
                 for name, particle in particles.items():
                     self.actorRenderer.AddParticleEffectToOneActor(actorId, name, particle)
@@ -378,6 +384,7 @@ class PersonaRendererComponent(ClientComponent):
             # 渲染控制器
             renderControllers = jsonObject.get("render_controllers")
             if renderControllers:
+                actorOverride["render_controllers"] = renderControllers
                 for renderControllerDef in renderControllers:
                     if isinstance(renderControllerDef, dict):
                         name, cond = renderControllerDef.items()[0]
@@ -389,6 +396,7 @@ class PersonaRendererComponent(ClientComponent):
         # 动画/动画控制器
         animations = jsonObject.get("animations")
         if animations:
+            actorOverride["animations"] = animations
             for name, animation in animations.items():
                 if animation.startswith('controller.'):
                     self.actorRenderer.AddAnimationControllerToOneActor(actorId, name, animation)
@@ -398,6 +406,7 @@ class PersonaRendererComponent(ClientComponent):
         # scripts
         scripts = jsonObject.get("scripts")
         if scripts:
+            actorOverride["scripts"] = scripts
             animates = scripts.get('animate')
             if animates:
                 for animate in animates:
@@ -409,6 +418,7 @@ class PersonaRendererComponent(ClientComponent):
 
         self.actorRenderer.RebuildRenderForOneActor()
         self.modified = True
+        self.broadcastRenderConf(actorOverride)
 
     def changePlayerRenderConf(self, jsonObject={}, full=False):
         # type: (dict, bool) -> None
@@ -421,9 +431,12 @@ class PersonaRendererComponent(ClientComponent):
             'renderController': [],
         }
 
+        overrideSnapshot = {}
+
         # 材质
         materials = jsonObject.get("materials")
         if materials:
+            overrideSnapshot["materials"] = materials
             for name, material in materials.items():
                 self.actorRenderer.AddPlayerRenderMaterial(name, material)
 
@@ -431,6 +444,7 @@ class PersonaRendererComponent(ClientComponent):
             # 模型
             geometries = jsonObject.get("geometry")
             if geometries:
+                overrideSnapshot["geometry"] = geometries
                 print('[WARN] Geometries should be preloaded before use.')
                 for name, geometry in geometries.items():
                     self.actorRenderer.AddPlayerGeometry(name, geometry)
@@ -438,6 +452,7 @@ class PersonaRendererComponent(ClientComponent):
             # 贴图
             textures = jsonObject.get("textures")
             if textures:
+                overrideSnapshot["textures"] = textures
                 print('[WARN] Textures should be preloaded before use.')
                 for name, texture in textures.items():
                     self.actorRenderer.AddPlayerTexture(name, texture)
@@ -445,6 +460,7 @@ class PersonaRendererComponent(ClientComponent):
             # 粒子
             particles = jsonObject.get("particle_effects")
             if particles:
+                overrideSnapshot["particle_effects"] = particles
                 print('[WARN] Particle Effects should be preloaded before use.')
                 for name, particle in particles.items():
                     self.actorRenderer.AddPlayerParticleEffect(name, particle)
@@ -459,6 +475,7 @@ class PersonaRendererComponent(ClientComponent):
             # 渲染控制器
             renderControllers = jsonObject.get("render_controllers")
             if renderControllers:
+                overrideSnapshot["render_controllers"] = renderControllers
                 for renderControllerDef in renderControllers:
                     if isinstance(renderControllerDef, dict):
                         name, cond = renderControllerDef.items()[0]
@@ -471,6 +488,7 @@ class PersonaRendererComponent(ClientComponent):
         # 动画/动画控制器
         animations = jsonObject.get("animations")
         if animations:
+            overrideSnapshot["animations"] = animations
             for name, animation in animations.items():
                 if animation.startswith('controller.'):
                     overrideObj['animController'].append(name)
@@ -481,6 +499,7 @@ class PersonaRendererComponent(ClientComponent):
         # scripts
         scripts = jsonObject.get("scripts")
         if scripts:
+            overrideSnapshot["scripts"] = scripts
             animates = scripts.get('animate')
             if animates:
                 for animate in animates:
@@ -493,6 +512,7 @@ class PersonaRendererComponent(ClientComponent):
         self.actorRenderer.RebuildPlayerRender()
         self.modified = True
         self.override = overrideObj
+        self.broadcastRenderConf(overrideSnapshot)
 
     def showHand(self, visible=True, mode=0):
         self.actorRenderer.SetPlayerItemInHandVisible(visible, mode)
@@ -534,6 +554,7 @@ class PersonaRendererComponent(ClientComponent):
             self.resetPlayerRenderConf()
         else:
             self.resetActorRenderConf()
+        self.broadcastResetConf()
 
     def shadowPlayerRootAnim(self, anim=None):
         # type: (str) -> None
