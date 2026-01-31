@@ -17,8 +17,11 @@ class PersonaServer(ServerSubsystem):
             'id': id,
         })
 
+    _PersonaChanged = {}
+
     @EventListener('BroadcastPersonaChange', isCustomEvent=True)
     def onPersonaChangeClient(self, ev):
+        PersonaServer._PersonaChanged[ev.id] = ev.data
         players = serverApi.GetPlayerList()
         remove(players, ev.__id__)
         self.sendClient(players, 'PersonaChangeClientAuthed', {
@@ -28,8 +31,18 @@ class PersonaServer(ServerSubsystem):
 
     @EventListener('BroadcastPersonaReset', isCustomEvent=True)
     def onPersonaResetClient(self, ev):
+        del PersonaServer._PersonaChanged[ev.id]
         players = serverApi.GetPlayerList()
         remove(players, ev.__id__)
         self.sendClient(players, 'PersonaResetClientAuthed', {
             'id': ev.id,
         })
+
+    @EventListener('PersonaChangeClientInit', isCustomEvent=True)
+    def onPersonaChangeClientInit(self, ev):
+        instigator = ev.__id__
+        for id, data in PersonaServer._PersonaChanged.items():
+            self.sendClient(instigator, 'PersonaChangeClientAuthed', {
+                'id': id,
+                'data': data,
+            })

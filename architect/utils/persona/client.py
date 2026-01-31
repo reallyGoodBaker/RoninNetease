@@ -627,13 +627,13 @@ class PersonaEventsSubsystem(ClientSubsystem):
             return
         personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
         if personaRenderer:
-            personaRenderer.changeRenderConf(event.data)
+            personaRenderer.changeRenderConf(event.data, False)
 
     @EventListener('PersonaResetServer', isCustomEvent=True)
     def onPersonaResetServer(self, event):
         personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
         if personaRenderer:
-            personaRenderer.resetRenderConf()
+            personaRenderer.resetRenderConf(False)
 
     @EventListener('PersonaChangeClientAuthed', isCustomEvent=True)
     def onPersonaChangeServerAuth(self, event):
@@ -644,7 +644,12 @@ class PersonaEventsSubsystem(ClientSubsystem):
             personaRenderer.changeRenderConf(event.data, False)
 
     @EventListener('PersonaResetClientAuthed', isCustomEvent=True)
-    def onPersonaResetServer(self, event):
+    def onPersonaResetServerAuth(self, event):
         personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
         if personaRenderer:
             personaRenderer.resetRenderConf(False)
+
+    @EventListener('OnLocalPlayerStopLoading')
+    def onLocalPlayerStopLoading(self, _):
+        createPersona(clientApi.GetLocalPlayerId())
+        self.sendServer('PersonaChangeClientInit', {})
