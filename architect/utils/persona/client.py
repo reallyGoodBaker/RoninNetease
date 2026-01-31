@@ -116,7 +116,7 @@ class PersonaRendererComponent(ClientComponent):
         self.modified = False
         self.molang = compClient.CreateQueryVariable(entityId)
         self.shadowRoot = None
-        if compClient.CreateEngineType(entityId) == "minecraft:player":
+        if compClient.CreateEngineType(entityId).GetEngineTypeStr() == "minecraft:player":
             self._applyPlayerRenderConfToSelf()
 
     def broadcastRenderConf(self, subSys, jsonObj={}):
@@ -350,6 +350,17 @@ class PersonaRendererComponent(ClientComponent):
                 for name, particle in particles.items():
                     self.actorRenderer.AddParticleEffectToOneActor(actorId, name, particle)
 
+            # 渲染控制器
+            renderControllers = jsonObject.get("render_controllers")
+            if renderControllers:
+                for renderControllerDef in renderControllers:
+                    if isinstance(renderControllerDef, dict):
+                        name, cond = renderControllerDef.items()[0]
+                        self.actorRenderer.AddRenderControllerToOneActor(actorId, name, cond)
+                    else:
+                        self.actorRenderer.AddRenderControllerToOneActor(actorId, renderControllerDef)
+
+
         # 动画/动画控制器
         animations = jsonObject.get("animations")
         if animations:
@@ -358,16 +369,6 @@ class PersonaRendererComponent(ClientComponent):
                     self.actorRenderer.AddAnimationControllerToOneActor(actorId, name, animation)
                 else:
                     self.actorRenderer.AddAnimationToOneActor(actorId, name, animation)
-
-        # 渲染控制器
-        renderControllers = jsonObject.get("render_controllers")
-        if renderControllers:
-            for renderControllerDef in renderControllers:
-                if isinstance(renderControllerDef, dict):
-                    name, cond = renderControllerDef.items()[0]
-                    self.actorRenderer.AddRenderControllerToOneActor(actorId, name, cond)
-                else:
-                    self.actorRenderer.AddRenderControllerToOneActor(actorId, renderControllerDef)
 
         # scripts
         scripts = jsonObject.get("scripts")
@@ -423,6 +424,18 @@ class PersonaRendererComponent(ClientComponent):
                 for name, particle in particles.items():
                     self.actorRenderer.AddPlayerParticleEffect(name, particle)
 
+            # 渲染控制器
+            renderControllers = jsonObject.get("render_controllers")
+            if renderControllers:
+                for renderControllerDef in renderControllers:
+                    if isinstance(renderControllerDef, dict):
+                        name, cond = renderControllerDef.items()[0]
+                        overrideObj['renderController'].append(name)
+                        self.actorRenderer.AddPlayerRenderController(name, cond)
+                    else:
+                        overrideObj['renderController'].append(renderControllerDef)
+                        self.actorRenderer.AddPlayerRenderController(renderControllerDef)
+
         # 动画/动画控制器
         animations = jsonObject.get("animations")
         if animations:
@@ -432,18 +445,6 @@ class PersonaRendererComponent(ClientComponent):
                     self.actorRenderer.AddPlayerAnimationController(name, animation)
                 else:
                     self.actorRenderer.AddPlayerAnimation(name, animation)
-
-        # 渲染控制器
-        renderControllers = jsonObject.get("render_controllers")
-        if renderControllers:
-            for renderControllerDef in renderControllers:
-                if isinstance(renderControllerDef, dict):
-                    name, cond = renderControllerDef.items()[0]
-                    overrideObj['renderController'].append(name)
-                    self.actorRenderer.AddPlayerRenderController(name, cond)
-                else:
-                    overrideObj['renderController'].append(renderControllerDef)
-                    self.actorRenderer.AddPlayerRenderController(renderControllerDef)
 
         # scripts
         scripts = jsonObject.get("scripts")
