@@ -120,10 +120,10 @@ class PersonaRendererComponent(ClientComponent):
             self._applyPlayerRenderConfToSelf()
 
     def broadcastRenderConf(self, jsonObj={}):
-        PersonaEventsSubsystem.getInstance().sendServer('PersonaChangeClient', { 'id': self.entityId, 'data': jsonObj })
+        PersonaEventsSubsystem.getInstance().sendServer('BroadcastPersonaChange', { 'id': self.entityId, 'data': jsonObj })
 
     def broadcastResetConf(self):
-        PersonaEventsSubsystem.getInstance().sendServer('PersonaResetClient', { 'id': self.entityId })
+        PersonaEventsSubsystem.getInstance().sendServer('BroadcastPersonaReset', { 'id': self.entityId })
 
     def addActorRenderConf(self, jsonObject, actor=None):
         # type: (dict, str) -> None
@@ -629,15 +629,3 @@ class PersonaEventsSubsystem(ClientSubsystem):
         personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
         if personaRenderer:
             personaRenderer.resetRenderConf()
-
-    @EventListener('PlayerPreloadMappingAddServer', isCustomEvent=True)
-    def onPersonaPreloadAddServer(self, event):
-        personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
-        if personaRenderer:
-            personaRenderer.addPlayerPreloadMapping(event.mapping)
-
-    @EventListener('PlayerPreloadSetServer', isCustomEvent=True)
-    def onPersonaPreloadSetServer(self, event):
-        personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
-        if personaRenderer:
-            personaRenderer.changePlayerPreload(event.preloadId)

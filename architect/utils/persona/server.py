@@ -1,6 +1,7 @@
 from ...subsystem import ServerSubsystem, SubsystemServer
 from ...event.server import EventListener
 from ...basic import serverApi
+from ..enhance.list import remove
 
 @SubsystemServer
 class PersonaServer(ServerSubsystem):
@@ -11,37 +12,28 @@ class PersonaServer(ServerSubsystem):
             'data': renderConf
         })
 
-    def broadcastPersona(self, id, renderConf):
-        allPlayers = serverApi.GetPlayerList()
-        if id in allPlayers:
-            allPlayers.remove(id)
-
-        self.sendClient(allPlayers, 'PersonaChangeServer', {
-            'id': id,
-            'data': renderConf
-        })
-
     def resetPersona(self, id):
         self.sendAllClients('PersonaResetServer', {
-            'id': id
-        })
-
-    def addPlayerPreloadMapping(self, mapping):
-        self.sendAllClients('PlayerAddPreloadMappingServer', {
             'id': id,
-            'mapping': mapping,
         })
 
-    def changePlayerPreload(self, id, preloadId):
-        self.sendAllClients('PlayerChangePreloadServer', {
-            'id': id,
-            'preloadId': preloadId,
-        })
-
-    @EventListener('PersonaChangeClient', isCustomEvent=True)
+    @EventListener('BroadcastPersonaChange', isCustomEvent=True)
     def onPersonaChangeClient(self, ev):
-        self.changePersona(ev.id, ev.data)
+        players = serverApi.GetPlayerList()
+        remove(players, ev.__id__)
+        remove(players, ev.id)
+        self.sendClient(players, 'PersonaChangeClientAuthed', {
+            'id': ev.id,
+            'data': ev.data,
+            'instigator': ev.__id__,
+        })
 
-    @EventListener('PersonaResetClient', isCustomEvent=True)
+    @EventListener('BroadcastPersonaReset', isCustomEvent=True)
     def onPersonaResetClient(self, ev):
-        self.resetPersona(ev.id)
+        players = serverApi.GetPlayerList()
+        remove(players, ev.__id__)
+        remove(players, ev.id)
+        self.sendClient(players, 'PersonaChangeClientAuthed', {
+            'id': ev.id,
+            'instigator': ev.__id__,
+        })
