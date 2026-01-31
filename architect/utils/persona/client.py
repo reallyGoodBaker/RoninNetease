@@ -333,8 +333,8 @@ class PersonaRendererComponent(ClientComponent):
         for playerPrefab in PersonaRendererComponent._PlayerPrefabs:
             self.addPlayerRenderConf(playerPrefab)
 
-    def changeActorRenderConf(self, jsonObject, actor=None, full=False):
-        # type: (dict, str, bool) -> None
+    def changeActorRenderConf(self, jsonObject, actor=None, full=False, broadcast=True):
+        # type: (dict, str, bool, bool) -> None
         """
         当full为False时，此方法不会修改 geometry, texture 和 particle_effects 的配置
         """
@@ -418,10 +418,11 @@ class PersonaRendererComponent(ClientComponent):
 
         self.actorRenderer.RebuildRenderForOneActor()
         self.modified = True
-        self.broadcastRenderConf(actorOverride)
+        if broadcast:
+            self.broadcastRenderConf(actorOverride)
 
-    def changePlayerRenderConf(self, jsonObject={}, full=False):
-        # type: (dict, bool) -> None
+    def changePlayerRenderConf(self, jsonObject={}, full=False, broadcast=True):
+        # type: (dict, bool, bool) -> None
         """
         当full为False时，此方法不会修改 geometry, texture 和 particle_effects 的配置
         """
@@ -512,25 +513,28 @@ class PersonaRendererComponent(ClientComponent):
         self.actorRenderer.RebuildPlayerRender()
         self.modified = True
         self.override = overrideObj
-        self.broadcastRenderConf(overrideSnapshot)
+        if broadcast:
+            self.broadcastRenderConf(overrideSnapshot)
 
     def showHand(self, visible=True, mode=0):
         self.actorRenderer.SetPlayerItemInHandVisible(visible, mode)
 
-    def changeRenderConf(self, jsonObject):
+    def changeRenderConf(self, jsonObject, broadcast=True):
         if compClient.CreateEngineType(self.entityId).GetEngineType() == EntityType.Player:
-            self.changePlayerRenderConf(jsonObject)
+            self.changePlayerRenderConf(jsonObject, broadcast=broadcast)
         else:
-            self.changeActorRenderConf(jsonObject) 
+            self.changeActorRenderConf(jsonObject, broadcast=broadcast) 
 
-    def resetActorRenderConf(self):
+    def resetActorRenderConf(self, broadcast=True):
         if not self.modified:
             return
 
         self.actorRenderer.ResetRenderForOneActor()
         self.modified = False
+        if broadcast:
+            self.broadcastResetConf()
 
-    def resetPlayerRenderConf(self):
+    def resetPlayerRenderConf(self, broadcast=True):
         if not self.modified:
             return
 
@@ -548,13 +552,14 @@ class PersonaRendererComponent(ClientComponent):
         renderer.RebuildPlayerRender()
         self.modified = False
         self.override = None
+        if broadcast:
+            self.broadcastResetConf()
 
-    def resetRenderConf(self):
+    def resetRenderConf(self, broadcast=True):
         if compClient.CreateEngineType(self.entityId).GetEngineType() == EntityType.Player:
-            self.resetPlayerRenderConf()
+            self.resetPlayerRenderConf(broadcast)
         else:
-            self.resetActorRenderConf()
-        self.broadcastResetConf()
+            self.resetActorRenderConf(broadcast)
 
     def shadowPlayerRootAnim(self, anim=None):
         # type: (str) -> None
@@ -629,3 +634,17 @@ class PersonaEventsSubsystem(ClientSubsystem):
         personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
         if personaRenderer:
             personaRenderer.resetRenderConf()
+
+    @EventListener('PersonaChangeClientAuthed', isCustomEvent=True)
+    def onPersonaChangeServerAuth(self, event):
+        if not event.id:
+            return
+        personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
+        if personaRenderer:
+            personaRenderer.changeRenderConf(event.data, False)
+
+    @EventListener('BroadcastPersonaReset', isCustomEvent=True)
+    def onPersonaResetServer(self, event):
+        personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
+        if personaRenderer:
+            personaRenderer.resetRenderConf(False)

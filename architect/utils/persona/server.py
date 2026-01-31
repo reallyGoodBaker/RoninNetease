@@ -21,19 +21,15 @@ class PersonaServer(ServerSubsystem):
     def onPersonaChangeClient(self, ev):
         players = serverApi.GetPlayerList()
         remove(players, ev.__id__)
-        remove(players, ev.id)
         self.sendClient(players, 'PersonaChangeClientAuthed', {
             'id': ev.id,
             'data': ev.data,
-            'instigator': ev.__id__,
         })
 
     @EventListener('BroadcastPersonaReset', isCustomEvent=True)
     def onPersonaResetClient(self, ev):
         players = serverApi.GetPlayerList()
         remove(players, ev.__id__)
-        remove(players, ev.id)
-        self.sendClient(players, 'PersonaChangeClientAuthed', {
+        self.sendClient(players, 'PersonaResetClientAuthed', {
             'id': ev.id,
-            'instigator': ev.__id__,
         })
