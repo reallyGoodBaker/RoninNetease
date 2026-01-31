@@ -391,7 +391,6 @@ class PersonaRendererComponent(ClientComponent):
         """
 
         overrideObj = {
-            'geo': [],
             'animController': [],
             'renderController': [],
         }
@@ -408,7 +407,6 @@ class PersonaRendererComponent(ClientComponent):
             if geometries:
                 print('[WARN] Geometries should be preloaded before use.')
                 for name, geometry in geometries.items():
-                    overrideObj['geo'].append(name)
                     self.actorRenderer.AddPlayerGeometry(name, geometry)
 
             # 贴图
@@ -485,14 +483,10 @@ class PersonaRendererComponent(ClientComponent):
 
         renderer = self.actorRenderer
         if self.override:
-            geos = self.override['geo']
             animControllers = self.override['animController']
             renderControllers = self.override['renderController']
             for anim in animControllers:
                 renderer.RemovePlayerAnimationController(anim)
-
-            for geo in geos:
-                renderer.RemovePlayerGeometry(geo)
 
             for renderController in renderControllers:
                 renderer.RemovePlayerRenderController(renderController)
