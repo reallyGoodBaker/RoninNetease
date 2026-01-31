@@ -332,6 +332,7 @@ class PersonaRendererComponent(ClientComponent):
     def _applyPlayerRenderConfToSelf(self):
         for playerPrefab in PersonaRendererComponent._PlayerPrefabs:
             self.addPlayerRenderConf(playerPrefab)
+        self.restorePlayerRootAnim()
 
     def changeActorRenderConf(self, jsonObject, actor=None, full=False, broadcast=True):
         # type: (dict, str, bool, bool) -> None
@@ -570,13 +571,16 @@ class PersonaRendererComponent(ClientComponent):
         if anim:
             self.actorRenderer.AddPlayerScriptAnimate(anim, '1')
             self.shadowRoot = anim
+        self.actorRenderer.RebuildPlayerRender()
 
     def restorePlayerRootAnim(self):
         shadowRoot = self.shadowRoot
+        self.actorRenderer.AddPlayerAnimationController('root', 'controller.animation.player.root')
+        self.actorRenderer.AddPlayerScriptAnimate('root', '1')
         if shadowRoot:
-            self.actorRenderer.AddPlayerScriptAnimate('root', '1')
             self.actorRenderer.AddPlayerScriptAnimate(shadowRoot, '0')
             self.shadowRoot = None
+        self.actorRenderer.RebuildPlayerRender()
 
 def createPersona(id):
     return createComponent(id, PersonaRendererComponent)
