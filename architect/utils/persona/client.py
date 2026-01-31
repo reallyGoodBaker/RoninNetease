@@ -162,6 +162,12 @@ class PersonaRendererComponent(ClientComponent):
             for name, particle in particles.items():
                 self.actorRenderer.AddParticleEffectToOneActor(actorId, name, particle)
 
+        #音效
+        sounds = jsonObject.get('sound_effects')
+        if sounds:
+            for name, sound in sounds.items():
+                self.actorRenderer.AddSoundEffectToOneActor(actorId, name, sound)
+
         # 渲染控制器
         renderControllers = jsonObject.get("render_controllers")
         if renderControllers:
@@ -224,6 +230,12 @@ class PersonaRendererComponent(ClientComponent):
             for name, particle in particles.items():
                 actorRenderer.AddActorParticleEffect(actorType, name, particle)
 
+        #音效
+        sounds = jsonObject.get('sound_effects')
+        if sounds:
+            for name, sound in sounds.items():
+                actorRenderer.AddActorSoundEffect(actorType, name, sound)
+
         # 渲染控制器
         renderControllers = jsonObject.get("render_controllers")
         if renderControllers:
@@ -280,6 +292,12 @@ class PersonaRendererComponent(ClientComponent):
         if particles:
             for name, particle in particles.items():
                 self.actorRenderer.AddPlayerParticleEffect(name, particle)
+
+        #音效
+        sounds = jsonObject.get('sound_effects')
+        if sounds:
+            for name, sound in sounds.items():
+                self.actorRenderer.AddPlayerSoundEffect(name, sound)
 
         # 渲染控制器
         renderControllers = jsonObject.get("render_controllers")
@@ -349,6 +367,13 @@ class PersonaRendererComponent(ClientComponent):
                 print('[WARN] Particle Effects should be preloaded before use.')
                 for name, particle in particles.items():
                     self.actorRenderer.AddParticleEffectToOneActor(actorId, name, particle)
+
+            #音效
+            sounds = jsonObject.get('sound_effects')
+            if sounds:
+                print('[WARN] Sound Effects should be preloaded before use.')
+                for name, sound in sounds.items():
+                    self.actorRenderer.AddSoundEffectToOneActor(actorId, name, sound)
 
             # 渲染控制器
             renderControllers = jsonObject.get("render_controllers")
@@ -423,6 +448,13 @@ class PersonaRendererComponent(ClientComponent):
                 print('[WARN] Particle Effects should be preloaded before use.')
                 for name, particle in particles.items():
                     self.actorRenderer.AddPlayerParticleEffect(name, particle)
+
+            #音效
+            sounds = jsonObject.get('sound_effects')
+            if sounds:
+                print('[WARN] Sound Effects should be preloaded before use.')
+                for name, sound in sounds.items():
+                    self.actorRenderer.AddPlayerSoundEffect(name, sound)
 
             # 渲染控制器
             renderControllers = jsonObject.get("render_controllers")
