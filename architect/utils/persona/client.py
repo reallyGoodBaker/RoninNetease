@@ -643,7 +643,7 @@ class PersonaEventsSubsystem(ClientSubsystem):
         if personaRenderer:
             personaRenderer.changeRenderConf(event.data, False)
 
-    @EventListener('BroadcastPersonaReset', isCustomEvent=True)
+    @EventListener('PersonaResetClientAuthed', isCustomEvent=True)
     def onPersonaResetServer(self, event):
         personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
         if personaRenderer:
