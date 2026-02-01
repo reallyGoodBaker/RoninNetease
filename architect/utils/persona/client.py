@@ -576,7 +576,7 @@ class PersonaRendererComponent(ClientComponent):
     def restorePlayerRootAnim(self):
         shadowRoot = self.shadowRoot
         self.actorRenderer.AddPlayerAnimationController('root', 'controller.animation.player.root')
-        self.actorRenderer.AddPlayerScriptAnimate('root', '1')
+        self.actorRenderer.AddPlayerScriptAnimate('root', '1', True)
         if shadowRoot:
             self.actorRenderer.AddPlayerScriptAnimate(shadowRoot, '0')
             self.shadowRoot = None
@@ -657,3 +657,8 @@ class PersonaEventsSubsystem(ClientSubsystem):
     def onLocalPlayerStopLoading(self, _):
         createPersona(clientApi.GetLocalPlayerId())
         self.sendServer('PersonaChangeClientInit', {})
+
+    @EventListener('AddPlayerCreatedClientEvent')
+    def onAddPlayerCreatedClientEvent(self, event):
+        if event.playerId != clientApi.GetLocalPlayerId():
+            createPersona(event.playerId)
