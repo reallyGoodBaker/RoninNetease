@@ -477,3 +477,10 @@ class _ShadowSystemServer(ServerSystem):
 class _ShadowSystemClient(ClientSystem):
     def getManager(self):
         return SubsystemManager.getInst()
+
+
+def createServer(engine, sysName):
+    return SubsystemManager.createServer(engine, sysName)
+
+def createClient(engine, sysName):
+    return SubsystemManager.createClient(engine, sysName)
