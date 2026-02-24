@@ -429,10 +429,10 @@ class PersonaRendererComponent(ClientComponent):
         """
 
         overrideObj = {
-            'animController': [],
+            'geometry': [],
             'renderController': [],
+            'animController': [],
         }
-
         overrideSnapshot = {}
 
         # 材质
@@ -449,6 +449,7 @@ class PersonaRendererComponent(ClientComponent):
                 overrideSnapshot["geometry"] = geometries
                 print('[WARN] Geometries should be preloaded before use.')
                 for name, geometry in geometries.items():
+                    overrideObj['geometry'].append(name)
                     self.actorRenderer.AddPlayerGeometry(name, geometry)
 
             # 贴图
@@ -520,11 +521,11 @@ class PersonaRendererComponent(ClientComponent):
     def showHand(self, visible=True, mode=0):
         self.actorRenderer.SetPlayerItemInHandVisible(visible, mode)
 
-    def changeRenderConf(self, jsonObject, broadcast=True):
+    def changeRenderConf(self, jsonObject, broadcast=True, full=False):
         if compClient.CreateEngineType(self.entityId).GetEngineType() == EntityType.Player:
-            self.changePlayerRenderConf(jsonObject, broadcast=broadcast)
+            self.changePlayerRenderConf(jsonObject, broadcast=broadcast, full=full)
         else:
-            self.changeActorRenderConf(jsonObject, broadcast=broadcast) 
+            self.changeActorRenderConf(jsonObject, broadcast=broadcast, full=full) 
 
     def resetActorRenderConf(self, broadcast=True):
         if not self.modified:
@@ -543,6 +544,11 @@ class PersonaRendererComponent(ClientComponent):
         if self.override:
             animControllers = self.override['animController']
             renderControllers = self.override['renderController']
+            geometry = self.override['geometry']
+
+            for geo in geometry:
+                renderer.RemovePlayerGeometry(geo)
+
             for anim in animControllers:
                 renderer.RemovePlayerAnimationController(anim)
 
@@ -645,7 +651,7 @@ class PersonaEventsSubsystem(ClientSubsystem):
             return
         personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
         if personaRenderer:
-            personaRenderer.changeRenderConf(event.data, False)
+            personaRenderer.changeRenderConf(event.data, False, True)
 
     @EventListener('PersonaResetClientAuthed', isCustomEvent=True)
     def onPersonaResetServerAuth(self, event):

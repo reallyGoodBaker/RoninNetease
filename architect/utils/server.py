@@ -1,5 +1,6 @@
 from ..level.server import LevelServer, compServer
 from mod.common.minecraftEnum import EntityType
+from ..subsystem import ServerSubsystem, SubsystemServer
 
 def runCommand(cmd, entityId):
     return LevelServer.command.SetCommand(cmd, entityId)
@@ -16,3 +17,20 @@ def sound(entityId, sound):
 def particle(particle, pos):
     x, y, z = pos
     return LevelServer.command.SetCommand('particle {} {} {} {}'.format(particle, x, y, z))
+
+
+
+@SubsystemServer
+class ServerUtilsSubsys(ServerSubsystem):
+
+    def playSound(self, entityId, sound):
+        self.sendAllClients('PlayCustomAudio', {
+            'entityId': entityId,
+            'sound': sound
+        })
+
+    def stopSound(self, entityId, sound):
+        self.sendAllClients('StopCustomAudio', {
+            'entityId': entityId,
+            'sound': sound
+        })

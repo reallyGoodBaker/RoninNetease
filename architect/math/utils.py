@@ -82,9 +82,12 @@ def pointInBox(point, box):
     half_z = size[2] / 2
     return -half_x <= point[0] <= half_x and -half_y <= point[1] <= half_y and -half_z <= point[2] <= half_z
 
+def pointInAabb(point, min, max):
+    # type: (tuple[float, float, float], tuple[float, float, float], tuple[float, float, float]) -> bool
+    return min[0] <= point[0] <= max[0] and min[1] <= point[1] <= max[1] and min[2] <= point[2] <= max[2]
 
-def boxOverlap3dClient(pos, rot, size):
-    # type: (tuple[float, float, float], tuple[float, float, float], tuple[float, float, float]) -> list[str]
+def boxOverlap3dClient(pos, rot, size, debug=False):
+    # type: (tuple[float, float, float], tuple[float, float, float], tuple[float, float, float], bool) -> list[str]
     radius = math.ceil(math.sqrt(size[0] ** 2 + size[2] ** 2))
     x, y, z = pos
     xozProjStart = (
@@ -130,3 +133,19 @@ def boxOverlap3dForward(entityId, size):
 def forward(entityId):
     x, _, z = clientApi.GetDirFromRot(compClient.CreateRot(entityId).GetRot())
     return vec((x, 0, z)).Normalized()
+
+
+def facing(entityId):
+    dir = clientApi.GetDirFromRot(compClient.CreateRot(entityId).GetRot())
+    return vec(dir)
+
+def entityAabbDef(entityId):
+    molang = compClient.CreateQueryVariable(entityId)
+    molang.EvalMolangExpression("t.aabb = q.bone_aabb('head'); t.min = t.aabb.min; t.max = t.aabb.max;")
+    mx = molang.EvalMolangExpression("t.min.x")['value'] / 16
+    my = molang.EvalMolangExpression("t.min.y")['value'] / 16
+    mz = molang.EvalMolangExpression("t.min.z")['value'] / 16
+    px = molang.EvalMolangExpression("t.max.x")['value'] / 16
+    py = molang.EvalMolangExpression("t.max.y")['value'] / 16
+    pz = molang.EvalMolangExpression("t.max.z")['value'] / 16
+    return (mx, my, mz), (px, py, pz)

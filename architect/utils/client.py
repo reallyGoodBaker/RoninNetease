@@ -1,0 +1,20 @@
+from ..subsystem import ClientSubsystem, SubsystemClient
+from ..event.client import EventListener
+from ..level.client import LevelClient, compClient
+
+
+@SubsystemClient
+class ClientUtilsSubsys(ClientSubsystem):
+
+    def onInit(self):
+        self.level = LevelClient.getInst()
+
+    @EventListener('PlayCustomAudio', isCustomEvent=True)
+    def playSound(self, ev):
+        entityId = ev.entityId
+        entityPos = compClient.CreatePos(entityId).GetPos()
+        self.level.customAudio.PlayCustomMusic(ev.sound, entityPos, entityId)
+
+    @EventListener('StopCustomAudio', isCustomEvent=True)
+    def stopSound(self, ev):
+        self.level.customAudio.StopCustomMusicById(ev.sound)
