@@ -103,7 +103,10 @@ class SubsystemManager:
         SubsystemManager.unregisterSubsystems()
         self.startTicking(isServer)
         registerComponents(isServer)
+        self._callReady()
 
+
+    def _callReady(self):
         for v in self.getSubsystems().values():
             if hasattr(v, 'onReady'):
                 v.onReady()
@@ -126,7 +129,6 @@ class SubsystemManager:
                 self,
                 self.tickClient
             )
-
             self.system.ListenForEvent(
                 self.rawEngine,
                 self.rawSysName,
@@ -469,9 +471,9 @@ ServerSystem = serverApi.GetServerSystemCls()
 ClientSystem = clientApi.GetClientSystemCls()
 
 class _ShadowSystemServer(ServerSystem):
-    def getSysManager(self):
+    def getManager(self):
         return SubsystemManager.getInst()
 
 class _ShadowSystemClient(ClientSystem):
-    def getSysManager(self):
+    def getManager(self):
         return SubsystemManager.getInst()
