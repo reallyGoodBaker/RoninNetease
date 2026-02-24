@@ -60,7 +60,7 @@ class SubsystemManager:
 
     @classmethod
     def createClient(cls, engine, sysName):
-        manager = SubsystemManager(
+        manager = clientApi.GetSystem(engine, sysName) or SubsystemManager(
             clientApi.RegisterSystem(engine, sysName, cls.__module__ + '.' + '_ShadowSystemClient'),
             engine, sysName
         )
@@ -71,7 +71,7 @@ class SubsystemManager:
 
     @classmethod
     def createServer(cls, engine, sysName):
-        manager = SubsystemManager(
+        manager = serverApi.GetSystem(engine, sysName) or SubsystemManager(
             serverApi.RegisterSystem(engine, sysName, cls.__module__ + '.' + '_ShadowSystemServer'),
             engine, sysName
         )
