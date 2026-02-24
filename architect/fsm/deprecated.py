@@ -103,7 +103,6 @@ class Fsm(Unreliable):
         if state.canEnter():
             if self._callExit(self.currentState):
                 self.currentState = state
-                # print(self.currentStateName, name)
                 self.currentStateName = name
                 return self._callEnter(self.currentState)
         return False

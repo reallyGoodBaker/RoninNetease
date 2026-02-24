@@ -4,6 +4,7 @@ import threading
 import mod.client.extraClientApi as clientApi
 import mod.server.extraServerApi as serverApi
 
+from .basic import isServer
 from .level.server import LevelServer
 from .component import registerComponents, getEntities
 from .query.queryClient import callQueries as callClientQueries
@@ -11,9 +12,6 @@ from .query.queryServer import callQueries as callServerQueries
 from .event.client import event as eventClient
 from .event.server import event as eventServer
 from .annotation import AnnotationHelper
-
-def isServer():
-    return clientApi.GetLocalPlayerId() == '-1'
 
 class EventListener:
     def __init__(self, evType, fn):
@@ -38,6 +36,9 @@ class SubsystemManager:
     
     @staticmethod
     def createClientSystem(engine, sysName, clsPath):
+        """
+        @deprecated
+        """
         manager = SubsystemManager(
             clientApi.RegisterSystem(engine, sysName, clsPath),
             engine, sysName
@@ -49,6 +50,9 @@ class SubsystemManager:
 
     @staticmethod
     def createServerSystem(engine, sysName, clsPath):
+        """
+        @deprecated
+        """
         manager = SubsystemManager(
             serverApi.RegisterSystem(engine, sysName, clsPath),
             engine, sysName
