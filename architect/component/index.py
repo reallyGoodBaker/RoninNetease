@@ -5,22 +5,28 @@ from ..conf import COMPONENT_NAMESPACE, COMPONENT_TAG
 
 clientCompCls = []
 serverCompCls = []
-
 components = {}
 
-def Component(persist=False):
+
+def singletonId():
+    return serverApi.GetLevelId() if isServer() else clientApi.GetLevelId()
+
+
+def Component(persist=False, singleton=False):
     def decorator(cls):
         _isServer = isServer()
         clsList = serverCompCls if _isServer else clientCompCls
         # 标记类为组件
         AnnotationHelper.addAnnotation(cls, COMPONENT_TAG, {
-            'persist': persist
+            'persist': persist,
+            'singleton': singleton
         })
 
         clsList.append(cls)
         return cls
 
     return decorator
+
 
 def registerComponents(isServer):
     clsList = serverCompCls if isServer else clientCompCls
@@ -38,8 +44,21 @@ def isPersistComponent(cls):
     ann = getComponentAnnotation(cls)
     return ann is not None and ann.get('persist', False)
 
+
 entitiesServer = {}
 entitiesClient = {}
+
+
+def createSingletonComponent(cls):
+    # type: (type) -> object
+    """
+    创建单例组件
+    若你的组件没有标记为单例，调用此方法不会报错，并且可以通过 `getOneSingletonComponent` 等方法获得组件。
+    但请注意，未标记 singleton=True 的组件无法被 @Query 注解查询。
+    """
+    entityId = singletonId()
+    return createComponent(entityId, cls)
+
 
 def createComponent(entityId, cls):
     # print('create component', entityId, cls)
@@ -58,15 +77,20 @@ def createComponent(entityId, cls):
     entities[entityId] += 1
     return comp
 
+
 def createComponents(entityId, *clsList):
     result = []
     for cls in clsList:
         result.append(createComponent(entityId, cls))
     return result if len(result) > 1 else result
 
+
 def destroyComponent(entityId, cls):
     api = serverApi if isServer() else clientApi
-    api.DestroyComponent(entityId, COMPONENT_NAMESPACE, cls.__name__)
+    try:
+        api.DestroyComponent(entityId, COMPONENT_NAMESPACE, cls.__name__)
+    except:
+        pass
     key = (entityId, cls)
     entities = entitiesServer if isServer() else entitiesClient
     if key in components:
@@ -76,11 +100,18 @@ def destroyComponent(entityId, cls):
         if entities[entityId] <= 0:
             del entities[entityId]
 
+
 def getOneComponent(entityId, cls):
     comps = getComponent(entityId, [cls])
     if comps and len(comps) > 0:
         return comps[0]
-    
+
+
+def getOneSingletonComponent(cls):
+    entityId = singletonId()
+    return getOneComponent(entityId, cls)
+
+
 def _findNamedComp(entityId, name):
     # type: (str, str) -> object
     if name.startswith('#'):
@@ -96,13 +127,16 @@ def getComponent(entityId, clsList, filter=None):
     # type: (str, list[type|str], function) -> list
     result = []
     for c in iter(clsList):
-        compKey = c if type(c) == str else c.__name__
-        comp = _findNamedComp(entityId, compKey)
-        if filter is None or filter(comp, compKey):
+        notStr = type(c) != str
+        compKey = c.__name__ if notStr else c
+        _entityId = singletonId() if notStr and getComponentAnnotation(c)['singleton'] else entityId
+        comp = _findNamedComp(_entityId, compKey)
+        if comp and (filter is None or filter(comp, compKey)):
             result.append(comp)
         else:
             return None
     return result
+
 
 def getComponentWithQuery(entityId, targets, required=[], excluded=[]):
     if len(required) + len(excluded) > 0:
@@ -116,6 +150,27 @@ def getComponentWithQuery(entityId, targets, required=[], excluded=[]):
         return getComponent(entityId, targets, _matcher)
     else:
         return getComponent(entityId, targets)
+
+
+def getOrCreateComponent(entityId, cls):
+    comp = getOneComponent(entityId, cls)
+    if comp is None:
+        comp = createComponent(entityId, cls)
+    return comp
+
+
+def getOrCreateSingletonComponent(cls):
+    """
+    获取或创建单例组件
+    若你的组件没有标记为单例，调用此方法不会报错，并且可以正常获得组件。
+    但请注意，未标记 singleton=True 的组件无法被 @Query 注解查询。
+    """
+    entityId = singletonId()
+    comp = getOneComponent(entityId, cls)
+    if comp is None:
+        comp = createComponent(entityId, cls)
+    return comp
+
 
 def getEntities():
     entities = entitiesServer if isServer() else entitiesClient

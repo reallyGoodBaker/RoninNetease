@@ -1,4 +1,4 @@
-from .index import Component, registerComponents, getComponent, getComponentAnnotation, getEntities, isPersistComponent, createComponent, destroyComponent, getOneComponent, getComponentWithQuery, BaseCompClient, BaseCompServer
+from .index import Component, registerComponents, getComponent, getComponentAnnotation, getEntities, isPersistComponent, createComponent, createSingletonComponent, destroyComponent, getOneComponent, getComponentWithQuery, getOrCreateComponent, getOrCreateSingletonComponent, getOneSingletonComponent, BaseCompClient, BaseCompServer
 from ..basic import getComponentCls, serverApi, clientApi
 from .common import NeC, NeS
 
