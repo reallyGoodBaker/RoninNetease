@@ -1,5 +1,6 @@
 from ..level.server import compServer
 from .cache import QueryCache
+from .common import query, Query
 
 class QueryServer:
     _caches = {}
@@ -54,47 +55,3 @@ class QueryServer:
     @staticmethod
     def definations(id):
         return compServer.CreateEntityDefinitions(id)
-
-
-
-from ..component import getComponent, getComponentWithQuery
-
-class _Query:
-    def __init__(self, entityId, comps):
-        # type: (str, list) -> None
-        self.entityId = entityId
-        self.comps = comps
-
-    def iter(self):
-        return getComponent(self.entityId, self.comps) or []
-    
-    def __enter__(self):
-        result = getComponent(self.entityId, self.comps)
-        if result is None:
-            raise Exception()
-        return result
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        return True
-
-def query(entityId, comps):
-    # type: (int, list) -> _Query
-    return _Query(entityId, comps)
-
-queries = []
-
-def callQueries(entityId):
-    for q in queries:
-        q(entityId)
-
-def Query(*compCls, **kwargs):
-    required = kwargs['required'] or []
-    excluded = kwargs['excluded'] or []
-    def decorator(fn):
-        def wrapper(entityId):
-            comps = getComponentWithQuery(entityId, compCls, required, excluded)
-            if comps:
-                return fn(entityId, *comps)
-        queries.append(wrapper)
-        return fn
-    return decorator

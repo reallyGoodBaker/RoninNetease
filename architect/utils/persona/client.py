@@ -186,9 +186,9 @@ class PersonaRendererComponent(ClientComponent):
                 for animate in animates:
                     if isinstance(animate, dict):
                         name, cond = animate.items()[0]
-                        self.actorRenderer.AddScriptAnimateToOneActor(actorId, name, cond)
+                        self.actorRenderer.AddScriptAnimateToOneActor(actorId, name, cond, True)
                     else:
-                        self.actorRenderer.AddScriptAnimateToOneActor(actorId, animate)
+                        self.actorRenderer.AddScriptAnimateToOneActor(actorId, animate, True)
 
         self.actorRenderer.RebuildRenderForOneActor()
 
@@ -259,7 +259,10 @@ class PersonaRendererComponent(ClientComponent):
                         actorRenderer.AddActorScriptAnimate(actorType, animate)
         actorRenderer.RebuildActorRender(actorType)
 
-    def addPlayerRenderConf(self, jsonObject):
+    def hasRenderController(self, name):
+        return name in (self.actorRenderer.GetActorRenderParams(self.entityId, 'render_controllers') or [])
+
+    def addPlayerRenderConf(self, jsonObject, rebuild=True):
         # 材质
         materials = jsonObject.get("materials")
         if materials:
@@ -305,8 +308,12 @@ class PersonaRendererComponent(ClientComponent):
             for renderControllerDef in renderControllers:
                 if isinstance(renderControllerDef, dict):
                     name, cond = renderControllerDef.items()[0]
+                    if self.hasRenderController(name):
+                        self.actorRenderer.RemovePlayerRenderController(name)
                     self.actorRenderer.AddPlayerRenderController(name, cond)
                 else:
+                    if self.hasRenderController(renderControllerDef):
+                        self.actorRenderer.RemovePlayerRenderController(renderControllerDef)
                     self.actorRenderer.AddPlayerRenderController(renderControllerDef)
 
         # scripts
@@ -317,11 +324,12 @@ class PersonaRendererComponent(ClientComponent):
                 for animate in animates:
                     if isinstance(animate, dict):
                         name, cond = animate.items()[0]
-                        self.actorRenderer.AddPlayerScriptAnimate(name, cond)
+                        self.actorRenderer.AddPlayerScriptAnimate(name, cond, True)
                     else:
-                        self.actorRenderer.AddPlayerScriptAnimate(animate)
+                        self.actorRenderer.AddPlayerScriptAnimate(animate, True)
 
-        self.actorRenderer.RebuildPlayerRender()
+        if rebuild:
+            self.actorRenderer.RebuildPlayerRender()
 
     _PlayerPrefabs = []
 
@@ -331,8 +339,14 @@ class PersonaRendererComponent(ClientComponent):
 
     def _applyPlayerRenderConfToSelf(self):
         for playerPrefab in PersonaRendererComponent._PlayerPrefabs:
-            self.addPlayerRenderConf(playerPrefab)
-        self.restorePlayerRootAnim()
+            self.addPlayerRenderConf(playerPrefab, False)
+        self.actorRenderer.RebuildPlayerRender()
+
+    def rebuildRender(self):
+        if compClient.CreateEngineType(self.entityId).GetEngineType() == EntityType.Player:
+            self.actorRenderer.RebuildPlayerRender()
+        else:
+            self.actorRenderer.RebuildRenderForOneActor()
 
     def changeActorRenderConf(self, jsonObject, actor=None, full=False, broadcast=True):
         # type: (dict, str, bool, bool) -> None
@@ -389,8 +403,12 @@ class PersonaRendererComponent(ClientComponent):
                 for renderControllerDef in renderControllers:
                     if isinstance(renderControllerDef, dict):
                         name, cond = renderControllerDef.items()[0]
+                        if self.hasRenderController(name):
+                            self.actorRenderer.RemoveRenderControllerForOneActor(name)
                         self.actorRenderer.AddRenderControllerToOneActor(actorId, name, cond)
                     else:
+                        if self.hasRenderController(renderControllerDef):
+                            self.actorRenderer.RemoveRenderControllerForOneActor(renderControllerDef)
                         self.actorRenderer.AddRenderControllerToOneActor(actorId, renderControllerDef)
 
 
@@ -483,9 +501,13 @@ class PersonaRendererComponent(ClientComponent):
                     if isinstance(renderControllerDef, dict):
                         name, cond = renderControllerDef.items()[0]
                         overrideObj['renderController'].append(name)
+                        if self.hasRenderController(name):
+                            self.actorRenderer.RemovePlayerRenderController(name)
                         self.actorRenderer.AddPlayerRenderController(name, cond)
                     else:
                         overrideObj['renderController'].append(renderControllerDef)
+                        if self.hasRenderController(renderControllerDef):
+                            self.actorRenderer.RemovePlayerRenderController(renderControllerDef)
                         self.actorRenderer.AddPlayerRenderController(renderControllerDef)
 
         # 动画/动画控制器
@@ -536,7 +558,7 @@ class PersonaRendererComponent(ClientComponent):
         if broadcast:
             self.broadcastResetConf()
 
-    def resetPlayerRenderConf(self, broadcast=True):
+    def resetPlayerRenderConf(self, broadcast=True, rebuild=True):
         if not self.modified:
             return
 
@@ -556,15 +578,16 @@ class PersonaRendererComponent(ClientComponent):
                 renderer.RemovePlayerRenderController(renderController)
 
         renderer.AddPlayerAnimationController('root', 'controller.animation.player.root')
-        renderer.RebuildPlayerRender()
+        if rebuild:
+            renderer.RebuildPlayerRender()
         self.modified = False
         self.override = None
         if broadcast:
             self.broadcastResetConf()
 
-    def resetRenderConf(self, broadcast=True):
+    def resetRenderConf(self, broadcast=True, rebuild=True):
         if compClient.CreateEngineType(self.entityId).GetEngineType() == EntityType.Player:
-            self.resetPlayerRenderConf(broadcast)
+            self.resetPlayerRenderConf(broadcast, rebuild)
         else:
             self.resetActorRenderConf(broadcast)
 
@@ -609,24 +632,6 @@ PlayerActorTypes = (
     'player',
 )
 
-def _assembleRenderConf(cls):
-    _renderConf = {}
-    for name, value in vars(cls).items():
-        if name in RenderConfKeys:
-            _renderConf[name] = value
-    return _renderConf
-
-def PersonaPrefab(actorType):
-    if actorType in PlayerActorTypes:
-        def wrapper(cls):
-            PersonaRendererComponent.addPlayerTypeRenderConf(_assembleRenderConf(cls))
-            return cls
-        return wrapper
-    else:
-        def wrapper(cls):
-            PersonaRendererComponent.addActorTypeRenderConf(_assembleRenderConf(cls))
-            return cls
-        return wrapper
 
 @SubsystemClient
 class PersonaEventsSubsystem(ClientSubsystem):

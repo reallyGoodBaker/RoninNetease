@@ -1,7 +1,7 @@
 from ..annotation import AnnotationHelper
 from ..basic import isServer, clientApi, serverApi
-
-COMPONENT_NAMESPACE = 'xxx_roninComponent_xxx'
+from .common import _nativeCompGet
+from ..conf import COMPONENT_NAMESPACE, COMPONENT_TAG
 
 clientCompCls = []
 serverCompCls = []
@@ -13,7 +13,7 @@ def Component(persist=False):
         _isServer = isServer()
         clsList = serverCompCls if _isServer else clientCompCls
         # 标记类为组件
-        AnnotationHelper.addAnnotation(cls, '_component', {
+        AnnotationHelper.addAnnotation(cls, COMPONENT_TAG, {
             'persist': persist
         })
 
@@ -31,7 +31,7 @@ def registerComponents(isServer):
 
 
 def getComponentAnnotation(cls):
-    return AnnotationHelper.getAnnotation(cls, '_component')
+    return AnnotationHelper.getAnnotation(cls, COMPONENT_TAG)
 
 
 def isPersistComponent(cls):
@@ -58,6 +58,12 @@ def createComponent(entityId, cls):
     entities[entityId] += 1
     return comp
 
+def createComponents(entityId, *clsList):
+    result = []
+    for cls in clsList:
+        result.append(createComponent(entityId, cls))
+    return result if len(result) > 1 else result
+
 def destroyComponent(entityId, cls):
     api = serverApi if isServer() else clientApi
     api.DestroyComponent(entityId, COMPONENT_NAMESPACE, cls.__name__)
@@ -74,26 +80,38 @@ def getOneComponent(entityId, cls):
     comps = getComponent(entityId, [cls])
     if comps and len(comps) > 0:
         return comps[0]
+    
+def _findNamedComp(entityId, name):
+    # type: (str, str) -> object
+    if name.startswith('#'):
+        return _nativeCompGet(entityId, name)
+    else:
+        key = (entityId, name)
+        if key in components:
+            return components[key]
+        else:
+            return None
 
 def getComponent(entityId, clsList, filter=None):
-    # type: (str, list[type], function) -> list
+    # type: (str, list[type|str], function) -> list
     result = []
     for c in iter(clsList):
-        key = (entityId, c.__name__)
-        if key in components:
-            comp = components[key]
-            if filter is None or filter(comp, c.__name__):
-                result.append(components[key])
+        compKey = c if type(c) == str else c.__name__
+        comp = _findNamedComp(entityId, compKey)
+        if filter is None or filter(comp, compKey):
+            result.append(comp)
         else:
             return None
     return result
 
 def getComponentWithQuery(entityId, targets, required=[], excluded=[]):
     if len(required) + len(excluded) > 0:
+        def mapStr(obj):
+            return obj if type(obj) == str else obj.__name__
         def _matcher(_, compName):
-            inTargets = compName in map(lambda cls: cls.__name, targets)
-            inRequired = compName in map(lambda cls: cls.__name, required)
-            notExcluded = compName not in map(lambda cls: cls.__name, excluded)
+            inTargets = compName in map(mapStr, targets)
+            inRequired = compName in map(mapStr, required)
+            notExcluded = compName not in map(mapStr, excluded)
             return inTargets and inRequired and notExcluded
         return getComponent(entityId, targets, _matcher)
     else:
@@ -105,14 +123,14 @@ def getEntities():
 
 
 class BaseCompServer(serverApi.GetComponentCls()):
-    def onCreate(self):
+    def onCreate(self, entityId):
         pass
 
     def loadData(self, entityId):
         pass
 
 class BaseCompClient(clientApi.GetComponentCls()):
-    def onCreate(self):
+    def onCreate(self, entityId):
         pass
 
     def loadData(self, entityId):

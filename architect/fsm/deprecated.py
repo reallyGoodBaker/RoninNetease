@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
 """
-TODO: 临时设计的经典 FSM 框架，不要在ECS中尝试嵌入
+TODO: 临时设计的经典 FSM 框架，不推荐在ECS中嵌入
 """
 
 from ..unreliable import Unreliable
 from ..basic import compClient, compServer, isServer
-from ..event.core import Delegate
 from mod.common.minecraftEnum import AttrType, EntityType
-from threading import Timer
 from ..level.server import LevelServer
 
 class State:

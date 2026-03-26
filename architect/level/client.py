@@ -35,6 +35,7 @@ class LevelClient:
         self.textBoard = compClient.CreateTextBoard(levelId)
         self.textNotify = compClient.CreateTextNotifyClient(levelId)
         self.virtualWorld = compClient.CreateVirtualWorld(levelId)
+        self.item = compClient.CreateItem(levelId)
 
     @staticmethod
     def getInst():

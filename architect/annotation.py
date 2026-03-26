@@ -1,23 +1,37 @@
+from .conf import ANNOTATION
+
+def _getAnnotation(target):
+    if hasattr(target, ANNOTATION):
+        return getattr(target, ANNOTATION)
+    return None
+
+def _getOrCreateAnnotation(target):
+    if hasattr(target, ANNOTATION):
+        return getattr(target, ANNOTATION)
+    anno = {}
+    setattr(target, ANNOTATION, anno)
+    return anno
+
 class AnnotationHelper:
     @staticmethod
     def addAnnotation(target, key, value):
-        if not hasattr(target, '_annotations'):
-            target._annotations = {}
-        target._annotations[key] = value
+        annotation = _getOrCreateAnnotation(target)
+        annotation[key] = value
 
     @staticmethod
     def getAnnotation(target, key):
-        if hasattr(target, '_annotations'):
-            return target._annotations.get(key)
-        return None
+        anno = _getAnnotation(target)
+        if not anno:
+            return None
+        return anno.get(key)
     
     @staticmethod
     def findAnnotatedMethods(target, key):
         methods = []
         for attr_name in dir(target):
             attr = getattr(target, attr_name)
-            if callable(attr) and hasattr(attr, '_annotations'):
-                if key in attr._annotations:
+            if callable(attr) and hasattr(attr, ANNOTATION):
+                if key in getattr(attr, ANNOTATION):
                     methods.append(attr)
         return methods
     
@@ -26,8 +40,8 @@ class AnnotationHelper:
         classes = []
         for attr_name in dir(target):
             attr = getattr(target, attr_name)
-            if isinstance(attr, type) and hasattr(attr, '_annotations'):
-                if key in attr._annotations:
+            if isinstance(attr, type) and hasattr(attr, ANNOTATION):
+                if key in getattr(attr, ANNOTATION):
                     classes.append(attr)
         return classes
     
@@ -36,7 +50,7 @@ class AnnotationHelper:
         attributes = []
         for attr_name in dir(target):
             attr = getattr(target, attr_name)
-            if not callable(attr) and hasattr(attr, '_annotations'):
-                if key in attr._annotations:
+            if not callable(attr) and hasattr(attr, ANNOTATION):
+                if key in getattr(attr, ANNOTATION):
                     attributes.append(attr)
         return attributes

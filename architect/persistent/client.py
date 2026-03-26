@@ -1,9 +1,8 @@
 from ..subsystem import ClientSubsystem, SubsystemClient
 from ..level.client import LevelClient
 from .common import DBSource
+from ..conf import DB_GLOBAL_NAME, DB_NAME
 
-dbName = 'clientKVDb'
-dbGlobalName = 'clientKVGlobal'
 
 @SubsystemClient
 class ClientKVDatabase(ClientSubsystem, DBSource):
@@ -11,13 +10,13 @@ class ClientKVDatabase(ClientSubsystem, DBSource):
     def __init__(self, system, engine, sysName):
         ClientSubsystem.__init__(self, system, engine, sysName)
         self.conf = LevelClient.getInst().configClient
-        self.data = self.conf.GetConfigData(dbName)
+        self.data = self.conf.GetConfigData(DB_NAME)
 
     def getData(self, key):
         return self.data.get(key)
     
     def _save(self):
-        self.conf.SetConfigData(dbName, self.data)
+        self.conf.SetConfigData(DB_NAME, self.data)
     
     def setData(self, key, value):
         self.data[key] = value
@@ -38,13 +37,13 @@ class ClientKVDatabaseGlobal(ClientSubsystem, DBSource):
     def __init__(self, system, engine, sysName):
         ClientSubsystem.__init__(self, system, engine, sysName)
         self.conf = LevelClient.getInst().configClient
-        self.data = self.conf.GetConfigData(dbGlobalName, True)
+        self.data = self.conf.GetConfigData(DB_GLOBAL_NAME, True)
 
     def getData(self, key):
         return self.data.get(key)
     
     def _save(self):
-        self.conf.SetConfigData(dbGlobalName, self.data, True)
+        self.conf.SetConfigData(DB_GLOBAL_NAME, self.data, True)
     
     def setData(self, key, value):
         self.data[key] = value

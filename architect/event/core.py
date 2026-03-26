@@ -68,6 +68,7 @@ class ChainedEvent:
         """阻止默认事件 (cancel 设置为 True)"""
         if 'cancel' in self._data:
             self._data['cancel'] = True
+            self._data['ret'] = True
 
     def dict(self):
         return self._data
@@ -110,4 +111,4 @@ class EventChain(Unreliable):
                 return
 
             if shouldBreak.value:
-                break
+                return

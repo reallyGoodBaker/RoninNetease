@@ -1,7 +1,7 @@
 from mod.common.utils.mcmath import Vector3
 import math
 
-def vec(tup):
+def vec(tup=(0,0,0)):
     return Vector3(tup)
 
 def add(a, b):
@@ -56,6 +56,7 @@ def clamp(v, min, max):
         return v * (max / math.sqrt(lenSqrt))
     elif lenSqrt < min * min:
         return v * (min / math.sqrt(lenSqrt))
+    return v
 
 def lerp(a, b, t):
     # type: (Vector3, Vector3, float) -> Vector3

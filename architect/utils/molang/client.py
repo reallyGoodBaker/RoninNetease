@@ -26,12 +26,10 @@ class QueryVariable(MolangMutable, Unreliable):
 
     def getValue(self, actorId):
         molang = self._molangComp(actorId)
-        molang.Register(self.name, self.defaultValue)
         return molang.Get(self.name)
 
     def setValue(self, actorId, value):
         molang = self._molangComp(actorId)
-        molang.Register(self.name)
         result = molang.Set(self.name, value)
         self.OnValueChanged.emit(actorId, value)
         _recordQueryVariableUsage(self.name, actorId)

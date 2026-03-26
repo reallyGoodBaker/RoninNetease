@@ -1,6 +1,11 @@
 import mod.client.extraClientApi as clientApi
 import mod.server.extraServerApi as serverApi
 
+class Location:
+    def __init__(self, pos, dim):
+        self.pos = pos
+        self.dim = dim
+
 def isServer():
     return clientApi.GetLocalPlayerId() == '-1'
 

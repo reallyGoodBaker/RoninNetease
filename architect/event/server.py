@@ -1,9 +1,7 @@
 from .core import EventChain
 from ..annotation import AnnotationHelper
+from ..conf import EVENT_LISTENER, CUSTOM_EVENT
 
-import mod.server.extraServerApi as api
-engine = api.GetEngineNamespace()
-sysName = api.GetEngineSystemName()
 
 class ServerEvents:
     globalEvents = {}
@@ -26,8 +24,8 @@ def event(eventType, isCustomEvent=False):
 def EventListener(eventType, isCustomEvent=False):
     def decorator(fn):
         # 标记方法为事件监听器
-        AnnotationHelper.addAnnotation(fn, '_event_listener', eventType)
+        AnnotationHelper.addAnnotation(fn, EVENT_LISTENER, eventType)
         if isCustomEvent:
-            AnnotationHelper.addAnnotation(fn, '_custom_event', True)
+            AnnotationHelper.addAnnotation(fn, CUSTOM_EVENT, True)
         return fn
     return decorator

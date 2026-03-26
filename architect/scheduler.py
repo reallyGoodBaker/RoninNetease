@@ -1,7 +1,9 @@
 # coding=utf-8
-from threading import Thread, Timer
+from .basic import compClient, compServer, isServer, clientApi, serverApi
 from time import time
 from types import *
+from .annotation import AnnotationHelper
+from .conf import TIMER_TASK, SCHED_UPDATE, SCHED_BEFORE_UPDATE, SCHED_AFTER_UPDATE, SYSTEM_SCHED_ANNO
 
 
 class Task:
@@ -41,9 +43,9 @@ class Scheduler:
         self._scheduleQueues = {}  # type: dict[str, list[Task]]
         self._executingThreads = []  # type: list[Task]
         self.scheduleSequence = (
-            'BeforeUpdate',
-            'Update',
-            'AfterUpdate',
+            SCHED_BEFORE_UPDATE,
+            SCHED_UPDATE,
+            SCHED_AFTER_UPDATE,
         )
         self._shouldRemoveTaskFns = []
 
@@ -70,20 +72,13 @@ class Scheduler:
 
         for t in self._executingThreads:
             if isinstance(t, Task):
-                thread = Thread(target=t.fn)
-                thread.start()
-                thread.join()
+                t.fn()
                 self._executingThreads.remove(t)
 
             elif isinstance(t, SuspendableTask):
                 t.callOnce()
                 if t.finished:
                     self._executingThreads.remove(t)
-
-
-    def executeAsync(self, scheduleName):
-        # type: (str) -> Future
-        return Future.runAsync(lambda: self.execute(scheduleName))
 
 
     def addTask(self, scheduleName, fn):
@@ -126,7 +121,7 @@ class Scheduler:
             return 0.0, self._skippedUpdates
 
         self._sequenceExecuting = True
-        self.execute('SchedulerTask')
+        self.execute(TIMER_TASK)
         for scheduleName in self.scheduleSequence:
             self.execute(scheduleName)
 
@@ -135,11 +130,6 @@ class Scheduler:
         self._sequenceExecuting = False
 
         return dt, self._skippedUpdates
-
-
-    def executeSequenceAsync(self):
-        # type: () -> Future[tuple[float, int], Exception]
-        return Future.runAsync(lambda: self.executeSequence())
 
 
     def _timeoutWrapper(self, fn, ticks, once=False):
@@ -154,49 +144,78 @@ class Scheduler:
         return wrapper
 
 
-    def runTimer(self, fn, ticks=1, interval=False):
+    def addPeriodicTask(self, fn, ticks=1, interval=False):
         return self.addTask(
-            'SchedulerTask',
+            TIMER_TASK,
             self._timeoutWrapper(fn, max(1, ticks), not interval),
         )
 
+    def runTimeout(self, fn, ticks=1):
+        return self.addPeriodicTask(fn, ticks, False)
+    
+    def runInterval(self, fn, ticks=1):
+        return self.addPeriodicTask(fn, ticks, True)
 
     def run(self, fn):
-        return self.runTimer(fn)
+        return self.addPeriodicTask(fn)
+    
+    def clearTimeout(self, taskId):
+        self.removeTask(TIMER_TASK, taskId)
 
 
+GameServer = compServer.CreateGame(serverApi.GetLevelId())
+GameClient = compClient.CreateGame(clientApi.GetLevelId())
 
-class Future:
-    def _wrapper(self, fn):
-        def wrapper():
-            try:
-                self._value = fn()
-            except Exception as e:
-                self._error = e
+def addTimer(period, fn):
+    game = GameServer if isServer() else GameClient
+    return game.AddTimer(period, fn)
 
-        return wrapper
+def cancelTimer(timer):
+    game = GameServer if isServer() else GameClient
+    game.CancelTimer(timer)
 
-    def __init__(self, executor):
-        # type: (FunctionType) -> None
-        self._executor = Thread(target=self._wrapper(executor))
-        self._value = None
-        self._error = None
+class TimerAdapter:
+    def __init__(self, period, fn):
+        self.period = period
+        self.fn = fn
+        self.timer = None
+    
+    def start(self):
+        self.timer = addTimer(self.period, self.fn)
+
+    def cancel(self):
+        if self.timer:
+            cancelTimer(self.timer)
+            self.timer = None
+
+
+class SchedulerPoller:
+    def __init__(self, scheduler, period=1):
+        # type: (Scheduler, float) -> None
+        self.period = period
+        self.timer = TimerAdapter(self.period, lambda: scheduler.executeSequence())
 
     def start(self):
-        self._executor.start()
+        self.timer.start()
 
-    def wait(self):
-        # type: () -> tuple[object, Exception]
-        self._executor.join()
-        return self._value, self._error
+    def cancel(self):
+        self.timer.cancel()
 
-    def result(self, onReturn, onError):
-        # type: (FunctionType, FunctionType) -> type
-        (result, error) = self.wait()
-        return onReturn(result) if error is None else onError(error)
+
+class Sched:
+    TYPE_TICK = 1
+    TYPE_RENDER = 2
 
     @staticmethod
-    def runAsync(fn):
-        ftr = Future(fn)
-        ftr.start()
-        return ftr
+    def Tick(scheduleName=SCHED_UPDATE):
+        def wrapper(fn):
+            AnnotationHelper.addAnnotation(fn, SYSTEM_SCHED_ANNO, [Sched.TYPE_TICK, scheduleName])
+            return fn
+        return wrapper
+
+    @staticmethod
+    def Render(scheduleName=SCHED_UPDATE):
+        def wrapper(fn):
+            AnnotationHelper.addAnnotation(fn, SYSTEM_SCHED_ANNO, [Sched.TYPE_RENDER, scheduleName])
+            return fn
+        return wrapper

@@ -13,8 +13,8 @@ class ClientUtilsSubsys(ClientSubsystem):
     def playSound(self, ev):
         entityId = ev.entityId
         entityPos = compClient.CreatePos(entityId).GetPos()
-        self.level.customAudio.PlayCustomMusic(ev.sound, entityPos, entityId)
+        self.level.customAudio.PlayCustomMusic(ev.sound, entityPos)
 
     @EventListener('StopCustomAudio', isCustomEvent=True)
     def stopSound(self, ev):
-        self.level.customAudio.StopCustomMusicById(ev.sound)
+        self.level.customAudio.StopCustomMusic(ev.sound, 0.1)
