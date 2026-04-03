@@ -68,3 +68,7 @@ def nlerp(a, b, t):
     a和b应为单位向量，否则插值不经过起点和终点
     """
     return normalize(lerp(a, b, t))
+
+def tup(a):
+    # type: (Vector3) -> tuple
+    return a.ToTuple()

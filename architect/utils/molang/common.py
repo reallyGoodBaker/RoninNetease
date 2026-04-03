@@ -14,12 +14,12 @@ class NamedVariable(Unreliable, MolangMutable):
         else:
             return compClient.CreateQueryVariable(actorId)
 
-    def getValue(self, actorId):
+    def getValue(self, actorId, defaultValue=0):
         molang = self._molangComp(actorId)
         result = molang.EvalMolangExpression('v.' + self.name)
-        if result['error']:
+        if result.get('error'):
             self._handleError(result['error'])
-            return None
+            return defaultValue
         return result['value']
     
     def setValue(self, actorId, value):

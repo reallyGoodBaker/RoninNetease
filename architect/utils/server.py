@@ -5,8 +5,12 @@ from ..subsystem import ServerSubsystem, SubsystemServer
 def runCommand(cmd, entityId):
     return LevelServer.command.SetCommand(cmd, entityId)
 
-def motion(entityId, mot):
-    if compServer.CreateEngineType(entityId).GetEngineType() == EntityType.Player:
+def motion(entityId, mot, ignoreTypes=[]):
+    typeComp = compServer.CreateEngineType(entityId)
+    typeStr = typeComp.GetEngineTypeStr()
+    if typeStr in ignoreTypes:
+        return
+    if typeComp.GetEngineType() == EntityType.Player:
         return compServer.CreateActorMotion(entityId).SetPlayerMotion(mot)
     else:
         return compServer.CreateActorMotion(entityId).SetMotion(mot)

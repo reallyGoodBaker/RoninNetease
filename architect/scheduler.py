@@ -163,14 +163,15 @@ class Scheduler:
         self.removeTask(TIMER_TASK, taskId)
 
 
-GameServer = compServer.CreateGame(serverApi.GetLevelId())
-GameClient = compClient.CreateGame(clientApi.GetLevelId())
-
 def addTimer(period, fn):
+    GameServer = compServer.CreateGame(serverApi.GetLevelId())
+    GameClient = compClient.CreateGame(clientApi.GetLevelId())
     game = GameServer if isServer() else GameClient
-    return game.AddTimer(period, fn)
+    return game.AddRepeatedTimer(period, fn)
 
 def cancelTimer(timer):
+    GameServer = compServer.CreateGame(serverApi.GetLevelId())
+    GameClient = compClient.CreateGame(clientApi.GetLevelId())
     game = GameServer if isServer() else GameClient
     game.CancelTimer(timer)
 
@@ -193,6 +194,7 @@ class SchedulerPoller:
     def __init__(self, scheduler, period=1):
         # type: (Scheduler, float) -> None
         self.period = period
+        self.scheduler = scheduler
         self.timer = TimerAdapter(self.period, lambda: scheduler.executeSequence())
 
     def start(self):
@@ -202,9 +204,15 @@ class SchedulerPoller:
         self.timer.cancel()
 
 
+class SimpleFixedScheduler(SchedulerPoller):
+    def __init__(self, period=1):
+        SchedulerPoller.__init__(self, Scheduler(), period)
+
+
 class Sched:
     TYPE_TICK = 1
     TYPE_RENDER = 2
+    TYPE_FIXED = 3
 
     @staticmethod
     def Tick(scheduleName=SCHED_UPDATE):
@@ -217,5 +225,13 @@ class Sched:
     def Render(scheduleName=SCHED_UPDATE):
         def wrapper(fn):
             AnnotationHelper.addAnnotation(fn, SYSTEM_SCHED_ANNO, [Sched.TYPE_RENDER, scheduleName])
+            return fn
+        return wrapper
+    
+    @staticmethod
+    def Fixed(schedulerName):
+        # type: (str) -> FunctionType
+        def wrapper(fn):
+            AnnotationHelper.addAnnotation(fn, SYSTEM_SCHED_ANNO, [Sched.TYPE_FIXED, schedulerName])
             return fn
         return wrapper

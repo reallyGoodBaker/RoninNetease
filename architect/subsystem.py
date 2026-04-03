@@ -10,8 +10,8 @@ from .component import registerComponents
 from .event.client import event as eventClient
 from .event.server import event as eventServer
 from .annotation import AnnotationHelper
-from .scheduler import Scheduler, Sched
-from .conf import UI_NAMESPACE, EVENT_LISTENER, CUSTOM_EVENT, SYSTEM_SCHED_ANNO
+from .scheduler import Scheduler, Sched, SimpleFixedScheduler
+from .conf import UI_NAMESPACE, EVENT_LISTENER, CUSTOM_EVENT, SYSTEM_SCHED_ANNO, TIMER_TASK
 
 SYSTEM_CLIENT_NAME = '_ShadowSystemClient'
 SYSTEM_SERVER_NAME = '_ShadowSystemServer'
@@ -98,27 +98,29 @@ class SubsystemManager:
         self.system = system
 
         if isServer():
-            LevelServer.game.AddTimer(0.1, lambda: self.appendAllSubsystems(True))
+            LevelServer.game.AddTimer(0, lambda: self.appendAllSubsystems(True))
         else:
-            threading.Timer(0.1, lambda: self.appendAllSubsystems(False)).start()
+            from .level.client import LevelClient
+            LevelClient.getInst().game.AddTimer(0, lambda: self.appendAllSubsystems(False))
 
 
     def getSubsystems(self):
         return self.clientSubs if isServer() else self.serverSubs
 
 
-    def appendAllSubsystems(self, isServer):
+    def appendAllSubsystems(self, isHost):
         for subsystemCls in SubsystemManager.registeredSubsystems:
             self.addSubsystem(subsystemCls)
 
         SubsystemManager.unregisterSubsystems()
-        self.startTicking(isServer)
-        registerComponents(isServer)
-        self._callReady()
+        registerComponents(isHost)
+        self._callReady(isHost)
+        self.startTicking(isHost)
 
 
-    def _callReady(self):
-        for v in self.getSubsystems().values():
+    def _callReady(self, isServer):
+        subs = self.clientSubs if isServer else self.serverSubs
+        for v in subs.values():
             if hasattr(v, 'onReady'):
                 v.onReady()
 
@@ -269,9 +271,20 @@ class SubsystemManager:
 
 class subsystem:
 
+    _firstSubsysClient = None
+    _firstSubsysServer = None
+
     @staticmethod
     def _findFirstSubsystem():
-        return list(SubsystemManager.getInst().getSubsystems().values())[0]
+        # type: () -> ClientSubsystem | ServerSubsystem
+        if isServer():
+            if not subsystem._firstSubsysServer:
+                subsystem._firstSubsysServer = SubsystemManager.getInst().getSubsystems().values()[0]
+            return subsystem._firstSubsysServer
+        else:
+            if not subsystem._firstSubsysClient:
+                subsystem._firstSubsysClient = SubsystemManager.getInst().getSubsystems().values()[0]
+            return subsystem._firstSubsysClient
 
     @staticmethod
     def sendServer(event, data):
@@ -287,6 +300,23 @@ class subsystem:
     def sendAllClients(event, data):
         server = subsystem._findFirstSubsystem() # type: ServerSubsystem
         server.sendAllClients(event, data)
+
+    @staticmethod
+    def spawnServerEntity(template, location, rot, isNpc=False, isGlobal=False):
+        # type: (str, Location, tuple[float, float], bool, bool) -> 'None'
+        serverSubsys = subsystem._findFirstSubsystem() # type: ServerSubsystem
+        return serverSubsys.spawnEntity(template, location, rot, isNpc, isGlobal)
+
+    @staticmethod
+    def spawnClientEntity(template, pos, rot):
+        # type: (str|dict, tuple[float, float, float], tuple[float, float]) -> 'None'
+        clientSubsys = subsystem._findFirstSubsystem() # type: ClientSubsystem
+        return clientSubsys.spawnEntity(template, pos, rot)
+
+    @staticmethod
+    def spawnItem(itemCls, *args, **kwargs):
+        serverSubsys = subsystem._findFirstSubsystem()
+        return serverSubsys.spawnItem(itemCls, *args, **kwargs)
 
 
 def SubsystemClient(subsystemCls):
@@ -414,12 +444,41 @@ class Subsystem:
             elif schedType == Sched.TYPE_TICK:
                 sched = SubsystemManager.serverTickSched if _isServer else SubsystemManager.clientTickSched
                 sched.addTask(schedName, instMethod)
+            elif schedType == Sched.TYPE_FIXED:
+                sched = self._addFixedSched(schedName, instMethod)
 
     def _init(self):
+        self._fixedSchedsToAdd = {} # type: dict[str, function]
+        self.fixedSchedulers = {} # type: dict[str, SimpleFixedScheduler]
         self._addListeners()
         self._addSchedMethods()
         self.onInit()
         self.initialized = True
+
+    def _addFixedSched(self, schedName, method):
+        schedList = self._fixedSchedsToAdd.get(schedName, [])
+        schedList.append(method)
+        self._fixedSchedsToAdd[schedName] = schedList
+    
+    def scheduleFixed(self, schedName, period=1):
+        """
+        添加一个固定频率的调度器
+        不要在使用注解注册的 Subsystem.onInit 调用, 此时游戏还未初始化
+        """
+        sched = SimpleFixedScheduler(period)
+        self.fixedSchedulers[schedName] = sched
+        schedTasks = self._fixedSchedsToAdd.pop(schedName, [])
+        for task in schedTasks:
+            sched.scheduler.addTask(TIMER_TASK, task)
+        sched.start()
+        return sched
+
+    def stopFixed(self, schedName):
+        sched = self.fixedSchedulers.pop(schedName, None)
+        if sched:
+            sched.cancel()
+            return True
+        return False
 
 
 class ServerSubsystem(Subsystem):

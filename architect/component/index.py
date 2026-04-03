@@ -28,9 +28,9 @@ def Component(persist=False, singleton=False):
     return decorator
 
 
-def registerComponents(isServer):
-    clsList = serverCompCls if isServer else clientCompCls
-    api = serverApi if isServer else clientApi
+def registerComponents(isHost):
+    clsList = serverCompCls if isHost else clientCompCls
+    api = serverApi if isHost else clientApi
     for cls in clsList:
         result = api.RegisterComponent(COMPONENT_NAMESPACE, cls.__name__, cls.__module__ + '.' + cls.__name__)
         print('[INFO] Register component', cls.__name__, 'result:', result)
@@ -87,18 +87,23 @@ def createComponents(entityId, *clsList):
 
 def destroyComponent(entityId, cls):
     api = serverApi if isServer() else clientApi
-    try:
-        api.DestroyComponent(entityId, COMPONENT_NAMESPACE, cls.__name__)
-    except:
-        pass
-    key = (entityId, cls)
+    compKey = cls if type(cls) == str else cls.__name__
+    key = (entityId, compKey)
     entities = entitiesServer if isServer() else entitiesClient
+    done = False
     if key in components:
+        components[key].onDestroy(entityId)
+        try:
+            api.DestroyComponent(entityId, COMPONENT_NAMESPACE, compKey)
+        except:
+            pass
         del components[key]
+        done = True
     if entityId in entities:
         entities[entityId] -= 1
         if entities[entityId] <= 0:
             del entities[entityId]
+    return done
 
 
 def getOneComponent(entityId, cls):
@@ -177,8 +182,28 @@ def getEntities():
     return list(entities.keys())
 
 
+def hasComponent(entityId, *desc):
+    # type: (str, list[str|type]) -> bool
+    for key in desc:
+        if type(key) == str:
+            if (entityId, key) not in components:
+                return False
+        else:
+            if (entityId, key.__name__) not in components:
+                return False
+    return True
+
+
+def removeComponents(entityId, *clsList):
+    for cls in clsList:
+        destroyComponent(entityId, cls)
+
+
 class BaseCompServer(serverApi.GetComponentCls()):
     def onCreate(self, entityId):
+        pass
+
+    def onDestroy(self, entityId):
         pass
 
     def loadData(self, entityId):
@@ -186,6 +211,9 @@ class BaseCompServer(serverApi.GetComponentCls()):
 
 class BaseCompClient(clientApi.GetComponentCls()):
     def onCreate(self, entityId):
+        pass
+
+    def onDestroy(self, entityId):
         pass
 
     def loadData(self, entityId):
