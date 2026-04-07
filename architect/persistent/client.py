@@ -9,7 +9,7 @@ class ClientKVDatabase(ClientSubsystem, DBSource):
 
     def __init__(self, system, engine, sysName):
         ClientSubsystem.__init__(self, system, engine, sysName)
-        self.conf = LevelClient.getInst().configClient
+        self.conf = LevelClient.getInstance().configClient
         self.data = self.conf.GetConfigData(DB_NAME)
 
     def getData(self, key):
@@ -36,7 +36,7 @@ class ClientKVDatabaseGlobal(ClientSubsystem, DBSource):
 
     def __init__(self, system, engine, sysName):
         ClientSubsystem.__init__(self, system, engine, sysName)
-        self.conf = LevelClient.getInst().configClient
+        self.conf = LevelClient.getInstance().configClient
         self.data = self.conf.GetConfigData(DB_GLOBAL_NAME, True)
 
     def getData(self, key):

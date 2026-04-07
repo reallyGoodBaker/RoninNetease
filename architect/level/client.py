@@ -38,7 +38,7 @@ class LevelClient:
         self.item = compClient.CreateItem(levelId)
 
     @staticmethod
-    def getInst():
+    def getInstance():
         if not hasattr(LevelClient, '_inst'):
             LevelClient._inst = LevelClient()
         return LevelClient._inst

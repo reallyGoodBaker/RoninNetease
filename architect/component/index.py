@@ -132,6 +132,9 @@ def getComponent(entityId, clsList, filter=None):
     # type: (str, list[type|str], function) -> list
     result = []
     for c in iter(clsList):
+        if c is None:
+            result.append(None)
+            continue
         notStr = type(c) != str
         compKey = c.__name__ if notStr else c
         _entityId = singletonId() if notStr and getComponentAnnotation(c)['singleton'] else entityId

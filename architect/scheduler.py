@@ -3,7 +3,7 @@ from .basic import compClient, compServer, isServer, clientApi, serverApi
 from time import time
 from types import *
 from .annotation import AnnotationHelper
-from .conf import TIMER_TASK, SCHED_UPDATE, SCHED_BEFORE_UPDATE, SCHED_AFTER_UPDATE, SYSTEM_SCHED_ANNO
+from .conf import TIMER_TASK, SYSTEM_SCHED_ANNO, SchedEventFlags, SchedUpdateFlags
 
 
 class Task:
@@ -43,25 +43,25 @@ class Scheduler:
         self._scheduleQueues = {}  # type: dict[str, list[Task]]
         self._executingThreads = []  # type: list[Task]
         self.scheduleSequence = (
-            SCHED_BEFORE_UPDATE,
-            SCHED_UPDATE,
-            SCHED_AFTER_UPDATE,
+            SchedUpdateFlags.BeforeUpdate,
+            SchedUpdateFlags.Update,
+            SchedUpdateFlags.AfterUpdate,
         )
         self._shouldRemoveTaskFns = []
 
 
-    def _getTaskQueue(self, scheduleName):
+    def _getTaskQueue(self, scheduleFlag):
         # type: (str) -> list[Task]
-        queue = self._scheduleQueues.get(scheduleName)
+        queue = self._scheduleQueues.get(scheduleFlag)
         if queue is None:
             queue = []
-            self._scheduleQueues[scheduleName] = queue
+            self._scheduleQueues[scheduleFlag] = queue
 
         return queue
 
 
-    def execute(self, scheduleName):
-        queue = self._getTaskQueue(scheduleName)
+    def execute(self, scheduleFlag, args=[]):
+        queue = self._getTaskQueue(scheduleFlag)
         for t in queue:
             if t.fn in self._shouldRemoveTaskFns:
                 queue.remove(t)
@@ -72,7 +72,7 @@ class Scheduler:
 
         for t in self._executingThreads:
             if isinstance(t, Task):
-                t.fn()
+                t.fn(*args)
                 self._executingThreads.remove(t)
 
             elif isinstance(t, SuspendableTask):
@@ -81,26 +81,26 @@ class Scheduler:
                     self._executingThreads.remove(t)
 
 
-    def addTask(self, scheduleName, fn):
+    def addTask(self, scheduleFlag, fn):
         # type: (str, FunctionType) -> int
-        queue = self._getTaskQueue(scheduleName)
+        queue = self._getTaskQueue(scheduleFlag)
         task = Task(fn)
         queue.append(task)
         return task.id
 
 
-    def addSuspendableTask(self, scheduleName, generator):
+    def addSuspendableTask(self, scheduleFlag, generator):
         # type: (str, GeneratorType) -> int
-        queue = self._getTaskQueue(scheduleName)
+        queue = self._getTaskQueue(scheduleFlag)
         task = SuspendableTask(generator)
         queue.append(task)
         return task.id
 
 
-    # 注意, 如果 taskId=-1, 则移除该 scheduleName 下的所有任务
-    def removeTask(self, scheduleName, taskId=-1):
+    # 注意, 如果 taskId=-1, 则移除该 scheduleFlag 下的所有任务
+    def removeTask(self, scheduleFlag, taskId=-1):
         # type: (str, int) -> None
-        queue = self._getTaskQueue(scheduleName)
+        queue = self._getTaskQueue(scheduleFlag)
         if taskId != -1:
             for task in queue:
                 if task.id == taskId:
@@ -110,7 +110,7 @@ class Scheduler:
             queue.clear()
 
 
-    def executeSequence(self):
+    def executeSequence(self, *args):
         """
         :rtype: tuple[float, int]
         :return: (deltaTime, skippedUpdates)
@@ -121,9 +121,9 @@ class Scheduler:
             return 0.0, self._skippedUpdates
 
         self._sequenceExecuting = True
-        self.execute(TIMER_TASK)
-        for scheduleName in self.scheduleSequence:
-            self.execute(scheduleName)
+        self.execute(TIMER_TASK, args)
+        for scheduleFlag in self.scheduleSequence:
+            self.execute(scheduleFlag, args)
 
         dt = time() - self._lastExecutedTime
         self._lastExecutedTime = time()
@@ -213,25 +213,41 @@ class Sched:
     TYPE_TICK = 1
     TYPE_RENDER = 2
     TYPE_FIXED = 3
+    TYPE_EVENT = 4
 
     @staticmethod
-    def Tick(scheduleName=SCHED_UPDATE):
+    def Tick(scheduleFlag=SchedUpdateFlags.Update):
+        # type: (str) -> FunctionType
         def wrapper(fn):
-            AnnotationHelper.addAnnotation(fn, SYSTEM_SCHED_ANNO, [Sched.TYPE_TICK, scheduleName])
+            AnnotationHelper.addAnnotation(fn, SYSTEM_SCHED_ANNO, [Sched.TYPE_TICK, scheduleFlag, None])
             return fn
         return wrapper
 
     @staticmethod
-    def Render(scheduleName=SCHED_UPDATE):
+    def Render(scheduleFlag=SchedUpdateFlags.Update):
+        # type: (str) -> FunctionType
         def wrapper(fn):
-            AnnotationHelper.addAnnotation(fn, SYSTEM_SCHED_ANNO, [Sched.TYPE_RENDER, scheduleName])
+            AnnotationHelper.addAnnotation(fn, SYSTEM_SCHED_ANNO, [Sched.TYPE_RENDER, scheduleFlag, None])
             return fn
         return wrapper
     
     @staticmethod
-    def Fixed(schedulerName):
-        # type: (str) -> FunctionType
+    def Fixed(schedulerName, scheduleFlag=TIMER_TASK):
+        # type: (str, str) -> FunctionType
         def wrapper(fn):
-            AnnotationHelper.addAnnotation(fn, SYSTEM_SCHED_ANNO, [Sched.TYPE_FIXED, schedulerName])
+            AnnotationHelper.addAnnotation(fn, SYSTEM_SCHED_ANNO, [Sched.TYPE_FIXED, scheduleFlag, {
+                'schedulerName': schedulerName
+            }])
+            return fn
+        return wrapper
+    
+    @staticmethod
+    def Event(eventType, isCustom=False, scheduleFlag=SchedEventFlags.Event):
+        # type: (str, bool, str) -> FunctionType
+        def wrapper(fn):
+            AnnotationHelper.addAnnotation(fn, SYSTEM_SCHED_ANNO, [Sched.TYPE_EVENT, scheduleFlag, {
+                'isCustom': isCustom,
+                'eventType': eventType
+            }])
             return fn
         return wrapper

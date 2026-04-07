@@ -1,5 +1,5 @@
 
-class Unreliable:
+class Unreliable(object):
     @staticmethod
     def _defaultErrorHandler(err):
         # type: (Exception) -> None

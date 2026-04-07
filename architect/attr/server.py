@@ -1,5 +1,5 @@
 from ..subsystem import ServerSubsystem, SubsystemServer
-from ..event.server import EventListener
+from ..event import EventListener
 from .common import ServerAttrEvents, ReactiveBase, ReactiveDepEvents
 
 class ClientSyncMode:

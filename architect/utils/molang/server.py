@@ -2,7 +2,7 @@ from .common import MolangMutable
 from ...basic import compServer
 from ...unreliable import Unreliable
 from ...subsystem import ServerSubsystem, SubsystemServer
-from ...event.server import EventListener
+from ...event import EventListener
 
 class NamedProperty(MolangMutable, Unreliable):
     def __init__(self, name):

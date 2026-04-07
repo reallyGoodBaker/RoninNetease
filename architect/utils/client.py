@@ -1,5 +1,5 @@
 from ..subsystem import ClientSubsystem, SubsystemClient
-from ..event.client import EventListener
+from ..event import EventListener
 from ..level.client import LevelClient, compClient
 
 
@@ -7,7 +7,7 @@ from ..level.client import LevelClient, compClient
 class ClientUtilsSubsys(ClientSubsystem):
 
     def onInit(self):
-        self.level = LevelClient.getInst()
+        self.level = LevelClient.getInstance()
 
     @EventListener('PlayCustomAudio', isCustomEvent=True)
     def playSound(self, ev):

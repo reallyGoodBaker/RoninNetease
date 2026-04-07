@@ -1,5 +1,5 @@
 from ..subsystem import ClientSubsystem, SubsystemClient
-from ..event.client import EventListener
+from ..event import EventListener
 from .common import ClientAttrEvents, ReactiveBase, ReactiveDepEvents
 
 class ReactiveAttrClient(ReactiveBase):

@@ -6,12 +6,12 @@ import mod.server.extraServerApi as serverApi
 
 from .basic import isServer, Location
 from .level.server import LevelServer
-from .component import registerComponents
+from .component import registerComponents, getOrCreateSingletonComponent, Component, BaseCompClient, BaseCompServer
 from .event.client import event as eventClient
 from .event.server import event as eventServer
 from .annotation import AnnotationHelper
 from .scheduler import Scheduler, Sched, SimpleFixedScheduler
-from .conf import UI_NAMESPACE, EVENT_LISTENER, CUSTOM_EVENT, SYSTEM_SCHED_ANNO, TIMER_TASK
+from .conf import EVENT_LISTENER, CUSTOM_EVENT, SYSTEM_SCHED_ANNO, SCHED_EVENT
 
 SYSTEM_CLIENT_NAME = '_ShadowSystemClient'
 SYSTEM_SERVER_NAME = '_ShadowSystemServer'
@@ -38,7 +38,7 @@ class SubsystemManager:
     serverTickSched = Scheduler()
 
     @staticmethod
-    def getInst():
+    def getInstance():
         return SubsystemManager.server if isServer() else SubsystemManager.client
     
     @staticmethod
@@ -101,11 +101,18 @@ class SubsystemManager:
             LevelServer.game.AddTimer(0, lambda: self.appendAllSubsystems(True))
         else:
             from .level.client import LevelClient
-            LevelClient.getInst().game.AddTimer(0, lambda: self.appendAllSubsystems(False))
+            LevelClient.getInstance().game.AddTimer(0, lambda: self.appendAllSubsystems(False))
 
 
     def getSubsystems(self):
         return self.clientSubs if isServer() else self.serverSubs
+    
+
+    def _record(self, inst):
+        self.getSubsystems()[inst.__class__.__name__] = inst
+    
+    def _removeRecord(self, inst):
+        self.getSubsystems().pop(inst.__class__.__name__, None)
 
 
     def appendAllSubsystems(self, isHost):
@@ -121,8 +128,7 @@ class SubsystemManager:
     def _callReady(self, isServer):
         subs = self.clientSubs if isServer else self.serverSubs
         for v in subs.values():
-            if hasattr(v, 'onReady'):
-                v.onReady()
+            v.onReady()
 
 
     def startTicking(self, isServer):
@@ -158,7 +164,6 @@ class SubsystemManager:
 
 
     def addSubsystemInst(self, subsystem):
-        self.getSubsystems()[subsystem.__class__.__name__] = subsystem
         subsystem._init()
 
 
@@ -175,14 +180,12 @@ class SubsystemManager:
     def removeSubsystem(self, subsystemCls):
         subSystems = self.getSubsystems()
         subSys = subSystems[subsystemCls.__name__]
-        if hasattr(subSys, 'onDestroy'):
-            subSys.onDestroy()
-        del subSystems[subsystemCls.__name__]
+        subSys._destroy()
 
 
     @staticmethod
     def registerSubsystem(subsystem):
-        inst = SubsystemManager.getInst()
+        inst = SubsystemManager.getInstance()
         if not inst:
             SubsystemManager.registeredSubsystems.append(subsystem)
         else:
@@ -279,11 +282,11 @@ class subsystem:
         # type: () -> ClientSubsystem | ServerSubsystem
         if isServer():
             if not subsystem._firstSubsysServer:
-                subsystem._firstSubsysServer = SubsystemManager.getInst().getSubsystems().values()[0]
+                subsystem._firstSubsysServer = SubsystemManager.getInstance().getSubsystems().values()[0]
             return subsystem._firstSubsysServer
         else:
             if not subsystem._firstSubsysClient:
-                subsystem._firstSubsysClient = SubsystemManager.getInst().getSubsystems().values()[0]
+                subsystem._firstSubsysClient = SubsystemManager.getInstance().getSubsystems().values()[0]
             return subsystem._firstSubsysClient
 
     @staticmethod
@@ -317,6 +320,16 @@ class subsystem:
     def spawnItem(itemCls, *args, **kwargs):
         serverSubsys = subsystem._findFirstSubsystem()
         return serverSubsys.spawnItem(itemCls, *args, **kwargs)
+    
+    @staticmethod
+    def addListener(event, fn, isCustomEvent=False):
+        # type: (str, function, bool) -> str
+        return subsystem._findFirstSubsystem()._addListener(event, fn, isCustomEvent)
+
+    @staticmethod
+    def removeListener(event, fn, isCustomEvent=False):
+        # type: (str, function, bool) -> str
+        return subsystem._findFirstSubsystem()._removeListener(event, fn, isCustomEvent)
 
 
 def SubsystemClient(subsystemCls):
@@ -341,7 +354,8 @@ def getSubsystemCls():
     return ServerSubsystem if isServer() else ClientSubsystem
 
 
-class Subsystem:
+
+class Subsystem(object):
     def __init__(self, system, engine, sysName):
         # type: (object, str, str) -> 'None'
         self.system = system
@@ -381,7 +395,7 @@ class Subsystem:
     @classmethod
     def getInstance(cls):
         # type: () -> Subsystem
-        return SubsystemManager.getInst().getSubsystem(cls)
+        return SubsystemManager.getInstance().getSubsystem(cls)
 
     def getHost(self):
         # type: () -> _ShadowSystemServer | _ShadowSystemClient
@@ -423,6 +437,14 @@ class Subsystem:
         event = eventServer if isServer() else eventClient
         event(eventType, isCustom).removeListener(fn)
 
+    def _removeListeners(self):
+        methods = AnnotationHelper.findAnnotatedMethods(self, EVENT_LISTENER)
+        for method in methods:
+            eventType = AnnotationHelper.getAnnotation(method, EVENT_LISTENER)
+            isCustomEvent = AnnotationHelper.getAnnotation(method, CUSTOM_EVENT) or False
+            instMethod = method.__get__(self)
+            self._removeListener(eventType, instMethod, isCustomEvent)
+
     def _addListeners(self):
         methods = AnnotationHelper.findAnnotatedMethods(self, EVENT_LISTENER)
         for method in methods:
@@ -434,31 +456,84 @@ class Subsystem:
     def _addSchedMethods(self):
         methods = AnnotationHelper.findAnnotatedMethods(self, SYSTEM_SCHED_ANNO)
         for method in methods:
-            schedType, schedName = AnnotationHelper.getAnnotation(method, SYSTEM_SCHED_ANNO)
+            schedType, schedFlag, opt = AnnotationHelper.getAnnotation(method, SYSTEM_SCHED_ANNO)
             instMethod = method.__get__(self)
             _isServer = isServer()
             if schedType == Sched.TYPE_RENDER:
                 if _isServer:
                     continue
-                SubsystemManager.renderTickSched.addTask(schedName, instMethod)
+                SubsystemManager.renderTickSched.addTask(schedFlag, instMethod)
             elif schedType == Sched.TYPE_TICK:
                 sched = SubsystemManager.serverTickSched if _isServer else SubsystemManager.clientTickSched
-                sched.addTask(schedName, instMethod)
+                sched.addTask(schedFlag, instMethod)
             elif schedType == Sched.TYPE_FIXED:
-                sched = self._addFixedSched(schedName, instMethod)
+                schedulerName = opt['schedulerName']
+                sched = self._addFixedSched(schedulerName, schedFlag, instMethod)
+            elif schedType == Sched.TYPE_EVENT:
+                isCustom = opt.get('isCustom')
+                eventType = opt.get('eventType')
+                self._handleSchedEvents(eventType, instMethod, isCustom, schedFlag)
+
+    def _handleSchedEvents(self, eventType, instMethod, isCustom, schedFlag):
+        schedKey = (eventType, isCustom)
+        reader = getOrCreateSingletonComponent('EventReader')
+        if schedKey not in self._schedEvents:
+            self._schedEvents[schedKey] = ([], [])
+            def handler(event):
+                reader.ev = event
+                for stage in self._schedEvents[schedKey]:
+                    for fn in stage:
+                        fn(self)
+                reader.ev = None
+            self.on(eventType, handler, isCustom)
+        schedListeners = self._schedEvents[schedKey]
+        targetList = schedListeners[0] if schedFlag == SCHED_EVENT else schedListeners[1]
+        targetList.append(instMethod)
+
+    def _removeSchedEvents(self):
+        for schedKey, schedList in self._schedEvents.items():
+            eventType, isCustom = schedKey
+            for fn in schedList:
+                self.off(eventType, fn, isCustom)
+
+    def _removeSchedMethods(self):
+        methods = AnnotationHelper.findAnnotatedMethods(self, SYSTEM_SCHED_ANNO)
+        for method in methods:
+            schedType, schedName = AnnotationHelper.getAnnotation(method, SYSTEM_SCHED_ANNO)
+            if schedType == Sched.TYPE_RENDER:
+                SubsystemManager.renderTickSched.removeTask(schedName)
+            elif schedType == Sched.TYPE_TICK:
+                sched = SubsystemManager.serverTickSched if isServer() else SubsystemManager.clientTickSched
+                sched.removeTask(schedName)
+            elif schedType == Sched.TYPE_FIXED:
+                self.stopFixed(schedName)
+            elif schedType == Sched.TYPE_EVENT:
+                self._removeSchedEvents()
 
     def _init(self):
+        SubsystemManager.getInstance()._record(self)
         self._fixedSchedsToAdd = {} # type: dict[str, function]
+        self._schedEvents = {} # type: dict[str, tuple[list[function], list[function]]]
         self.fixedSchedulers = {} # type: dict[str, SimpleFixedScheduler]
         self._addListeners()
         self._addSchedMethods()
         self.onInit()
         self.initialized = True
 
-    def _addFixedSched(self, schedName, method):
-        schedList = self._fixedSchedsToAdd.get(schedName, [])
-        schedList.append(method)
-        self._fixedSchedsToAdd[schedName] = schedList
+    def _destroy(self):
+        self.initialized = False
+        self.onDestroy()
+        self._removeSchedMethods()
+        self._removeListeners()
+        SubsystemManager.getInstance()._removeRecord(self)
+
+    def _addFixedSched(self, schedulerName, schedFlag, method):
+        schedList = self._fixedSchedsToAdd.get(schedulerName, [])
+        schedList.append({
+            'flag': schedFlag,
+            'method': method
+        })
+        self._fixedSchedsToAdd[schedulerName] = schedList
     
     def scheduleFixed(self, schedName, period=1):
         """
@@ -468,8 +543,10 @@ class Subsystem:
         sched = SimpleFixedScheduler(period)
         self.fixedSchedulers[schedName] = sched
         schedTasks = self._fixedSchedsToAdd.pop(schedName, [])
-        for task in schedTasks:
-            sched.scheduler.addTask(TIMER_TASK, task)
+        for config in schedTasks:
+            task = config['method']
+            schedFlag = config['flag']
+            sched.scheduler.addTask(schedFlag, task)
         sched.start()
         return sched
 
@@ -539,57 +616,16 @@ class ClientSubsystem(Subsystem):
         return self.system.DestroyEntity(entityId)
 
 
-ScreenNode = clientApi.GetScreenNodeCls()
-class UiSubsystem(ScreenNode, ClientSubsystem):
-    def __init__(self, engine, system, params):
-        manager = SubsystemManager.getInst()
-        ScreenNode.__init__(self, engine, system, params)
-        ClientSubsystem.__init__(self, manager.system, manager.engine, manager.sysName)
-        manager.addSubsystemInst(self)
-
-    ns = UI_NAMESPACE
-    inst = None
-
-    @classmethod
-    def defineUi(cls, uiDef):
-        return clientApi.RegisterUI(
-            cls.ns,
-            cls.__name__,
-            cls.__module__ + '.' + cls.__name__,
-            uiDef
-        )
-    
-    @classmethod
-    def getOrCreate(cls, **params):
-        if cls.inst:
-            return cls.inst
-
-        ui = clientApi.CreateUI(cls.ns, cls.__name__, params)
-        cls.inst = ui
-        return ui
-    
-    @classmethod
-    def create(cls, **params):
-        ui = clientApi.CreateUI(cls.ns, cls.__name__, params)
-        return ui
-    
-    @classmethod
-    def pushScreen(cls, **params):
-        ui = clientApi.PushScreen(cls.ns, cls.__name__, **params)
-        cls.inst = ui
-        return ui
-
-
 ServerSystem = serverApi.GetServerSystemCls()
 ClientSystem = clientApi.GetClientSystemCls()
 
 class _ShadowSystemServer(ServerSystem):
     def getManager(self):
-        return SubsystemManager.getInst()
+        return SubsystemManager.getInstance()
 
 class _ShadowSystemClient(ClientSystem):
     def getManager(self):
-        return SubsystemManager.getInst()
+        return SubsystemManager.getInstance()
 
 
 def createServer(engine, sysName):

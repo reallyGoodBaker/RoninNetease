@@ -1,7 +1,7 @@
 from ...subsystem import ClientSubsystem, SubsystemClient
 from ...component import ClientComponent, Component, createComponent, getOneComponent
 from ...basic import compClient, clientApi
-from ...event.client import EventListener
+from ...event import EventListener
 from mod.common.minecraftEnum import EntityType
 
 PlayerDefaultClientDef = {

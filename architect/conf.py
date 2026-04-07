@@ -11,10 +11,22 @@ EVENT_LISTENER = '_event_listener'              # 事件监听器标记
 CUSTOM_EVENT = '_custom_event'                  # 自定义事件标记
 SYSTEM_SCHED_ANNO = '_system_sched'             # 系统调度器标记
 UI_DEF = '_ui_def'                              # UI定义标记
-UI_AUTO_CREATE = '_ui_auto_create'              # UI定义标记
+UI_AUTO_CREATE = '_ui_auto_create'              # UI自动创建标记
+UI_SINK = '_ui_binder'                        # UI绑定标记
 
 # 调度器调度名称（不推荐修改）
 TIMER_TASK = 'TimerTask'                        # 定时任务
 SCHED_BEFORE_UPDATE = 'BeforeUpdate'            # 更新前调度
 SCHED_AFTER_UPDATE = 'AfterUpdate'              # 更新后调度
 SCHED_UPDATE = 'Update'                         # 更新调度
+SCHED_EVENT = 'Event'                           # 事件时调度
+SCHED_AFTER_EVENT = 'AfterEvent'                # 事件后调度
+
+class SchedUpdateFlags:
+    BeforeUpdate = SCHED_BEFORE_UPDATE
+    AfterUpdate = SCHED_AFTER_UPDATE
+    Update = SCHED_UPDATE
+
+class SchedEventFlags:
+    Event = SCHED_EVENT
+    AfterEvent = SCHED_AFTER_EVENT

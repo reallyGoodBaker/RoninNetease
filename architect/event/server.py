@@ -1,4 +1,11 @@
-from .core import EventChain, EventListener, CustomEvent
+from .core import EventChain
+from ..component import Component, BaseCompServer
+
+
+@Component(singleton=True)
+class EventReader(BaseCompServer):
+    def onCreate(self, _):
+        self.ev = None
 
 
 class ServerEvents:
@@ -13,8 +20,9 @@ class ServerEvents:
             chain = EventChain()
             ServerEvents.globalEvents[eventType] = chain
             from ..subsystem import SubsystemManager
-            SubsystemManager.getInst().addListener(eventType, lambda ev: chain.dispatch(eventType, ev), isCustomEvent)
+            SubsystemManager.getInstance().addListener(eventType, lambda ev: chain.dispatch(eventType, ev), isCustomEvent)
             return chain
+
 
 def event(eventType, isCustomEvent=False):
     return ServerEvents.getOrCreateChain(eventType, isCustomEvent)

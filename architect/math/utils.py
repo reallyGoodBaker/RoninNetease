@@ -4,7 +4,7 @@ from ..level.client import LevelClient, clientApi
 
 import math
 
-level = LevelClient.getInst()
+level = LevelClient.getInstance()
 screenWidth, screenHeight = level.game.GetScreenSize()
 
 def localViewMatrix():
@@ -70,7 +70,7 @@ from ..basic import compClient, compServer
 from ..level.client import LevelClient
 from ..level.server import LevelServer
 
-level = LevelClient.getInst()
+level = LevelClient.getInstance()
 
 def pointInBox(point, box):
     # type: (tuple[float, float, float], tuple[float, float, float]) -> bool

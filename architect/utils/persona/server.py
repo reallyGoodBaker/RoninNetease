@@ -1,5 +1,5 @@
 from ...subsystem import ServerSubsystem, SubsystemServer
-from ...event.server import EventListener
+from ...event import EventListener
 from ...basic import serverApi
 from ..enhance.list import remove
 

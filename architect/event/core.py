@@ -13,7 +13,7 @@ class Delegate(Unreliable):
         self.__fn = fn
 
     def call(self, *args):
-        if self.__fn is not None:
+        if callable(self.__fn):
             self.__fn(*args)
 
     def unbind(self):
@@ -39,7 +39,7 @@ class EventSignal(Unreliable):
             self.tryCall(fn, *args)
 
 
-class EventTarget:
+class EventTarget(object):
     def __init__(self):
         self.__events = {}
 
@@ -57,8 +57,8 @@ class EventTarget:
             self.__events[event].emit(*args)
 
 
-class ChainedEvent:
-    def __init__(self, eventType, interruptRef, data={}):
+class ChainedEvent(object):
+    def __init__(self, eventType, data={}, interruptRef=Ref(None)):
         self.eventType = eventType
         self._interruptRef = interruptRef
         self._data = data
@@ -82,6 +82,10 @@ class ChainedEvent:
     def __getattr__(self, name):
         if name in self._data:
             return self._data[name]
+        
+    def clone(self):
+        return ChainedEvent(self.eventType, self.dict(), self._interruptRef)
+
 
 class EventChain(Unreliable):
     def __init__(self):
@@ -106,7 +110,7 @@ class EventChain(Unreliable):
 
     def dispatch(self, evType, _ev):
         shouldBreak = Ref(False)
-        ev = ChainedEvent(evType, shouldBreak, _ev)
+        ev = ChainedEvent(evType, _ev, shouldBreak)
         handlers = self.__handlers if self.useCapture else reversed(self.__handlers)
         for fn in handlers:
             _, err = self.tryCall(fn, ev)
@@ -115,6 +119,7 @@ class EventChain(Unreliable):
 
             if shouldBreak.value:
                 return
+
 
 def EventListener(eventType, isCustomEvent=False):
     def decorator(fn):

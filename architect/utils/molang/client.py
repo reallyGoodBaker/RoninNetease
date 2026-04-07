@@ -3,7 +3,7 @@ from ...basic import compClient, clientApi
 from .common import MolangMutable
 from ...subsystem import ClientSubsystem, SubsystemClient
 from ...event.core import EventSignal
-from ...event.client import EventListener
+from ...event import EventListener
 
 _queryVariableUsed = {}
 LevelQuery = compClient.CreateQueryVariable(clientApi.GetLevelId())
