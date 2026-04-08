@@ -63,11 +63,25 @@ def _getQueryArgs(entityId, compCls, required, excluded, args, kwargs):
 
 def Query(*compCls, **options):
     """
-    使用 Query 查询时，`self` 为类实例
-    :param *compCls: 组件类或组件类名
-    :param required: 必须包含的组件, 不会包含在查询结果中
-    :param excluded: 必须排除的组件, 不会包含在查询结果中
-    请一定要搭配 Sched.Tick() 或 Sched.Render() 使用
+    Args:
+        compCls (list[type[BaseCompServer|BaseCompClient]]): 组件类或组件类名
+        required (list[type[BaseCompServer|BaseCompClient]]): 必须包含的组件, 不会包含在查询结果中
+        excluded (list[type[BaseCompServer|BaseCompClient]]): 必须排除的组件, 不会包含在查询结果中
+
+    使用 Query 查询时，`self` 为 ~entityId字符串~ 类实例,
+    请一定要搭配 Sched.Tick() , Sched.Render() 等调度装饰器使用，否则不会执行。
+    （不再使用 entityId 的理由是，这样做更符合直觉，且组件可以自行缓存 entityId）
+
+    可以使用伪组件 ``EntityId``、``ExtraArguments``、``ExtraArgDict``
+    来分别获取 *组件绑定的实体ID* ，*传入方法的参数列表* ，
+    以及 *传入方法的参数字典* ，其中伪组件的位置没有要求。
+
+    被这个装饰器装饰后，函数不会正常接收参数，而是在查询过程中动态注入参数，
+    请不要尝试在子系统类中使用 self.xxx 调用被这个装饰器装饰的方法，
+    除非你非常了解动态参数注入是如何实现的。
+
+    **注意**：无法支持此版本之前的代码，请重构代码以使用此版本，重构方法为导入伪组件 `EntityId`,
+    在参数列表的 self 后面加入 `id, ` 将之前代码中使用的self替换成id
     """
     required = options.get('required', [])
     excluded = options.get('excluded', [])

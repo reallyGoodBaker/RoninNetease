@@ -2,7 +2,7 @@ from mod.common.utils.mcmath import Vector3
 import math
 
 def vec(tup=(0,0,0)):
-    return Vector3(tup)
+    return Vector3(tup) if tup else vec()
 
 def add(a, b):
     # type: (Vector3, Vector3) -> Vector3

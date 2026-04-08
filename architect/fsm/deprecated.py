@@ -27,9 +27,6 @@ class State:
     def onUpdate(self):
         pass
 
-    def canEnter(self):
-        return True
-
     def getFsm(self):
         return self.fsm
 
@@ -80,6 +77,7 @@ class Fsm(Unreliable):
         self.currentState = defaultState # type: State
         self.currentStateName = name # type: str
         self.defaultStateName = name # type: str
+        self.context = {}
 
     def onCreated(self):
         pass
@@ -95,10 +93,11 @@ class Fsm(Unreliable):
         return self.states[name]
 
     def transitionTo(self, name):
-        if name == self.currentStateName:
-            return False
         state = self.states[name]
-        if state.canEnter():
+        hasCanEnter = hasattr(state, 'canEnter')
+        if not hasCanEnter and name == self.currentStateName:
+            return False
+        if not hasCanEnter or state.canEnter():
             if self._callExit(self.currentState):
                 self.currentState = state
                 self.currentStateName = name

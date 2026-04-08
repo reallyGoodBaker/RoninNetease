@@ -36,6 +36,7 @@ class LevelClient:
         self.textNotify = compClient.CreateTextNotifyClient(levelId)
         self.virtualWorld = compClient.CreateVirtualWorld(levelId)
         self.item = compClient.CreateItem(levelId)
+        self.neteaseWindow = compClient.CreateNeteaseWindow(levelId)
 
     @staticmethod
     def getInstance():
