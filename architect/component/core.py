@@ -12,28 +12,31 @@ def singletonId():
     return serverApi.GetLevelId() if isServer() else clientApi.GetLevelId()
 
 
+def _registerComponent(isServer, cls, persist=False, singleton=False):
+    clsList = serverCompCls if isServer else clientCompCls
+    if cls in clsList:
+        return
+    # 标记类为组件
+    AnnotationHelper.addAnnotation(cls, COMPONENT_TAG, {
+        'persist': persist,
+        'singleton': singleton
+    })
+    clsList.append(cls)
+
+
 def Component(persist=False, singleton=False):
     def decorator(cls):
-        _isServer = isServer()
-        clsList = serverCompCls if _isServer else clientCompCls
-        # 标记类为组件
-        AnnotationHelper.addAnnotation(cls, COMPONENT_TAG, {
-            'persist': persist,
-            'singleton': singleton
-        })
-
-        clsList.append(cls)
+        _registerComponent(isServer(), cls, persist, singleton)
         return cls
-
     return decorator
 
 
-def registerComponents(isHost):
+def _registerCompsIntoGame(isHost):
     clsList = serverCompCls if isHost else clientCompCls
     api = serverApi if isHost else clientApi
     for cls in clsList:
         result = api.RegisterComponent(COMPONENT_NAMESPACE, cls.__name__, cls.__module__ + '.' + cls.__name__)
-        print('[INFO] Register component', cls.__name__, 'result:', result)
+        print('[INFO] Register {} component'.format('server' if isHost else 'client'), cls.__name__, 'result:', result)
 
 
 def getComponentAnnotation(cls):
@@ -61,10 +64,11 @@ def createSingletonComponent(cls):
 
 
 def createComponent(entityId, cls):
-    # print('create component', entityId, cls)
+    # type: (str, type|str) -> object
     api = serverApi if isServer() else clientApi
-    comp = api.CreateComponent(entityId, COMPONENT_NAMESPACE, cls.__name__)
-    components[(entityId, cls.__name__)] = comp
+    compKey = cls if type(cls) == str else cls.__name__
+    comp = api.CreateComponent(entityId, COMPONENT_NAMESPACE, compKey)
+    components[(entityId, compKey)] = comp
     if isPersistComponent(cls) and hasattr(comp, 'loadData'):
         comp.loadData(entityId)
 
@@ -128,8 +132,8 @@ def _findNamedComp(entityId, name):
         else:
             return None
 
-def getComponent(entityId, clsList, filter=None):
-    # type: (str, list[type|str], function) -> list
+def getComponent(entityId, clsList):
+    # type: (str, list[type|str]) -> list
     result = []
     for c in iter(clsList):
         if c is None:
@@ -139,7 +143,7 @@ def getComponent(entityId, clsList, filter=None):
         compKey = c.__name__ if notStr else c
         _entityId = singletonId() if notStr and getComponentAnnotation(c)['singleton'] else entityId
         comp = _findNamedComp(_entityId, compKey)
-        if comp and (filter is None or filter(comp, compKey)):
+        if comp:
             result.append(comp)
         else:
             return None
@@ -148,14 +152,13 @@ def getComponent(entityId, clsList, filter=None):
 
 def getComponentWithQuery(entityId, targets, required=[], excluded=[]):
     if len(required) + len(excluded) > 0:
-        def mapStr(obj):
-            return obj if type(obj) == str else obj.__name__
-        def _matcher(_, compName):
-            inTargets = compName in map(mapStr, targets)
-            inRequired = compName in map(mapStr, required)
-            notExcluded = compName not in map(mapStr, excluded)
-            return inTargets and inRequired and notExcluded
-        return getComponent(entityId, targets, _matcher)
+        for shouldExclude in excluded:
+            if hasComponent(entityId, shouldExclude):
+                return None
+        for shouldRequire in required:
+            if not hasComponent(entityId, shouldRequire):
+                return None
+        return getComponent(entityId, targets)
     else:
         return getComponent(entityId, targets)
 

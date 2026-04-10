@@ -1,12 +1,10 @@
 import time
-import threading
 
 import mod.client.extraClientApi as clientApi
 import mod.server.extraServerApi as serverApi
 
 from .basic import isServer, Location
-from .level.server import LevelServer
-from .component import registerComponents, getOrCreateSingletonComponent, Component, BaseCompClient, BaseCompServer
+from .component.core import _registerCompsIntoGame, getOrCreateSingletonComponent
 from .event.client import event as eventClient
 from .event.server import event as eventServer
 from .annotation import AnnotationHelper
@@ -16,11 +14,16 @@ from .conf import EVENT_LISTENER, CUSTOM_EVENT, SYSTEM_SCHED_ANNO, SCHED_EVENT
 SYSTEM_CLIENT_NAME = '_ShadowSystemClient'
 SYSTEM_SERVER_NAME = '_ShadowSystemServer'
 
+
 class EventListener:
     def __init__(self, evType, fn):
         self.evType = evType
         self.fn = fn
         setattr(self, '<lambda>', self.fn)
+
+
+__filename__ = EventListener.__module__[:EventListener.__module__.rfind('.')]
+__dirname__ = __filename__[:__filename__.rfind('.')]
 
 
 class SubsystemManager:
@@ -37,58 +40,45 @@ class SubsystemManager:
     clientTickSched = Scheduler()
     serverTickSched = Scheduler()
 
+
+    @staticmethod
+    def _relative(path):
+        # type: (str) -> str
+        return __dirname__ + '.' + path
+
+
     @staticmethod
     def getInstance():
         return SubsystemManager.server if isServer() else SubsystemManager.client
-    
-    @staticmethod
-    def createClientSystem(engine, sysName, clsPath):
-        """
-        @deprecated
-        """
-        manager = SubsystemManager(
-            clientApi.RegisterSystem(engine, sysName, clsPath),
-            engine, sysName
-        )
-        manager.rawEngine = clientApi.GetEngineNamespace()
-        manager.rawSysName = clientApi.GetEngineSystemName()
-        SubsystemManager.client = manager
-        return manager
 
-    @staticmethod
-    def createServerSystem(engine, sysName, clsPath):
-        """
-        @deprecated
-        """
-        manager = SubsystemManager(
-            serverApi.RegisterSystem(engine, sysName, clsPath),
-            engine, sysName
-        )
-        manager.rawEngine = serverApi.GetEngineNamespace()
-        manager.rawSysName = serverApi.GetEngineSystemName()
-        SubsystemManager.server = manager
-        return manager
 
     @classmethod
-    def createClient(cls, engine, sysName):
+    def createClient(cls, engine, sysName, clientDir=None):
         manager = clientApi.GetSystem(engine, sysName) or SubsystemManager(
             clientApi.RegisterSystem(engine, sysName, cls.__module__ + '.' + SYSTEM_CLIENT_NAME),
             engine, sysName
         )
+        if clientDir:
+            clientApi.ImportModule(cls._relative(clientDir))
         manager.rawEngine = clientApi.GetEngineNamespace()
         manager.rawSysName = clientApi.GetEngineSystemName()
         SubsystemManager.client = manager
+        manager._initManager(False)
         return manager
 
+
     @classmethod
-    def createServer(cls, engine, sysName):
+    def createServer(cls, engine, sysName, serverDir=None):
         manager = serverApi.GetSystem(engine, sysName) or SubsystemManager(
             serverApi.RegisterSystem(engine, sysName, cls.__module__ + '.' + SYSTEM_SERVER_NAME),
             engine, sysName
         )
+        if serverDir:
+            serverApi.ImportModule(cls._relative(serverDir))
         manager.rawEngine = serverApi.GetEngineNamespace()
         manager.rawSysName = serverApi.GetEngineSystemName()
         SubsystemManager.server = manager
+        manager._initManager(True)
         return manager
 
 
@@ -97,12 +87,6 @@ class SubsystemManager:
         self.sysName = sysName
         self.system = system
 
-        if isServer():
-            LevelServer.game.AddTimer(0, lambda: self.appendAllSubsystems(True))
-        else:
-            from .level.client import LevelClient
-            LevelClient.getInstance().game.AddTimer(0, lambda: self.appendAllSubsystems(False))
-
 
     def getSubsystems(self):
         return self.clientSubs if isServer() else self.serverSubs
@@ -110,17 +94,21 @@ class SubsystemManager:
 
     def _record(self, inst):
         self.getSubsystems()[inst.__class__.__name__] = inst
-    
+
+
     def _removeRecord(self, inst):
         self.getSubsystems().pop(inst.__class__.__name__, None)
 
 
-    def appendAllSubsystems(self, isHost):
+    def _addAnnotatedSubsystems(self):
         for subsystemCls in SubsystemManager.registeredSubsystems:
             self.addSubsystem(subsystemCls)
-
         SubsystemManager.unregisterSubsystems()
-        registerComponents(isHost)
+
+
+    def _initManager(self, isHost):
+        _registerCompsIntoGame(isHost)
+        self._addAnnotatedSubsystems()
         self._callReady(isHost)
         self.startTicking(isHost)
 
@@ -483,7 +471,7 @@ class Subsystem(object):
                 reader.ev = event
                 for stage in self._schedEvents[schedKey]:
                     for fn in stage:
-                        fn(self)
+                        fn()
                 reader.ev = None
             self.on(eventType, handler, isCustom)
         schedListeners = self._schedEvents[schedKey]
@@ -628,8 +616,8 @@ class _ShadowSystemClient(ClientSystem):
         return SubsystemManager.getInstance()
 
 
-def createServer(engine, sysName):
-    return SubsystemManager.createServer(engine, sysName)
+def createServer(engine, sysName, serverDir=None):
+    return SubsystemManager.createServer(engine, sysName, serverDir)
 
-def createClient(engine, sysName):
-    return SubsystemManager.createClient(engine, sysName)
+def createClient(engine, sysName, clientDir=None):
+    return SubsystemManager.createClient(engine, sysName, clientDir)

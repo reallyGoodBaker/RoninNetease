@@ -71,6 +71,6 @@ def facing(entityId):
     return vec(dir)
 
 
-def forward(entityId):
+def forward(entityId, dist=1):
     x, _, z = serverApi.GetDirFromRot(compServer.CreateRot(entityId).GetRot())
-    return normalize(vec((x, 0, z)))
+    return normalize(vec((x, 0, z))) * dist

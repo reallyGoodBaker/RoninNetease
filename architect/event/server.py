@@ -1,11 +1,15 @@
-from .core import EventChain
-from ..component import Component, BaseCompServer
+from .core import EventChain, ChainedEvent
+from ..component.core import _registerComponent, BaseCompServer
 
 
-@Component(singleton=True)
 class EventReader(BaseCompServer):
     def onCreate(self, _):
         self.ev = None
+
+    def event(self):
+        # type: () -> ChainedEvent
+        return self.ev
+_registerComponent(True, EventReader, False, True)
 
 
 class ServerEvents:

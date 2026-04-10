@@ -79,6 +79,11 @@ class ChainedEvent(object):
     def setEvent(self, p, v):
         self._data[p] = v
 
+    def updateEvent(self, updates):
+        # type: (dict) -> None
+        for k, v in updates.items():
+            self._data[k] = v
+
     def __getattr__(self, name):
         if name in self._data:
             return self._data[name]

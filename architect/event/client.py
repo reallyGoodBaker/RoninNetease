@@ -1,11 +1,14 @@
-from .core import EventChain
-from ..component import Component, BaseCompClient
+from .core import EventChain, ChainedEvent
+from ..component.core import _registerComponent, BaseCompClient
 
-
-@Component(singleton=True)
 class EventReader(BaseCompClient):
     def onCreate(self, _):
         self.ev = None
+
+    def event(self):
+        # type: () -> ChainedEvent
+        return self.ev
+_registerComponent(False, EventReader, False, True)
 
 
 class ClientEvents:
