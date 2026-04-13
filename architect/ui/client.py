@@ -1,9 +1,12 @@
 from ..annotation import AnnotationHelper
-from ..conf import UI_DEF, UI_AUTO_CREATE, UI_SINK, UI_NAMESPACE
-from ..event import EventSignal
+from ..conf import UI_DEF, UI_SINK, UI_NAMESPACE, UI_SCREEN, UI_HUD, UI_GESTURE
+from ..event import EventSignal, EventTarget
 from ..ref import Ref
 from ..basic import clientApi
-from ..subsystem import ClientSubsystem, SubsystemManager
+from ..level.client import LevelClient
+from ..subsystem import ClientSubsystem, SubsystemManager, subsystem
+
+from .gesture import GestureBinder
 
 class SinkContext(object):
     contextStack = [] # type: list[SinkContext]
@@ -44,7 +47,17 @@ def UiDef(uiDef):
 
 
 def AutoCreate(cls):
-    AnnotationHelper.addAnnotation(cls, UI_AUTO_CREATE, True)
+    cls._handleAutoCreate()
+    return cls
+
+
+def Screen(cls):
+    AnnotationHelper.addAnnotation(cls, UI_SCREEN, True)
+    return cls
+
+
+def Hud(cls):
+    AnnotationHelper.addAnnotation(cls, UI_HUD, True)
     return cls
 
 
@@ -92,19 +105,49 @@ def reactive(obj):
 
 
 ScreenNode = clientApi.GetScreenNodeCls()
-class UiSubsystem(ScreenNode, ClientSubsystem):
+class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
     def __init__(self, engine, system, params):
         manager = SubsystemManager.getInstance()
         ScreenNode.__init__(self, engine, system, params)
         ClientSubsystem.__init__(self, manager.system, manager.engine, manager.sysName)
+        EventTarget.__init__(self)
         manager.addSubsystemInst(self)
         self.params = params
         self.rootControl = None
         self._foundControls = {}
         self._sinks = {} # type: dict[function, SinkContext]
 
+    @classmethod
+    def _handleAutoCreate(cls):
+        def createAsync():
+            isScreen = AnnotationHelper.getAnnotation(cls, UI_SCREEN)
+            isHud = AnnotationHelper.getAnnotation(cls, UI_HUD)
+            cls.defineUi(AnnotationHelper.getAnnotation(cls, UI_DEF))
+            if isScreen:
+                subsystem.addListener(
+                    'UiInitFinished',
+                    lambda: cls.pushScreen()
+                )
+            elif isHud:
+                subsystem.addListener(
+                    'UiInitFinished',
+                    lambda: cls.getOrCreate(isHud=True)
+                )
+            else:
+                subsystem.addListener(
+                    'UiInitFinished',
+                    lambda: cls.create(isHud=False)
+                )
+        LevelClient.getInstance().game.AddTimer(0, createAsync)
+
     ns = UI_NAMESPACE
     inst = None
+
+    def _initGesture(self):
+        for method in AnnotationHelper.findAnnotatedMethods(self, UI_GESTURE):
+            type, controlPath = AnnotationHelper.getAnnotation(method, UI_GESTURE)
+            control = self.find(controlPath)
+            GestureBinder[type](control, method.__get__(self))
 
     @classmethod
     def defineUi(cls, uiDef):
@@ -114,7 +157,7 @@ class UiSubsystem(ScreenNode, ClientSubsystem):
             cls.__module__ + '.' + cls.__name__,
             uiDef
         )
-    
+
     @classmethod
     def getOrCreate(cls, **params):
         if cls.inst:
@@ -123,12 +166,12 @@ class UiSubsystem(ScreenNode, ClientSubsystem):
         ui = clientApi.CreateUI(cls.ns, cls.__name__, params)
         cls.inst = ui
         return ui
-    
+
     @classmethod
     def create(cls, **params):
         ui = clientApi.CreateUI(cls.ns, cls.__name__, params)
         return ui
-    
+
     @classmethod
     def pushScreen(cls, **params):
         params['pushScreen'] = True
@@ -143,10 +186,10 @@ class UiSubsystem(ScreenNode, ClientSubsystem):
             ctrl = self.GetBaseUIControl(path)
             self._foundControls[path] = ctrl
             return ctrl
-    
+
     def findByName(self, name):
         return self.rootControl.GetChildByName(name)
-    
+
     def _handleGamepadBack(self, ev):
         if not self.GetIsHud() and ev.key == 2 and ev.isDown:
             self._performBackPressed()

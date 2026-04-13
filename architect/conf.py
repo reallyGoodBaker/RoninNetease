@@ -11,8 +11,10 @@ EVENT_LISTENER = '_event_listener'              # 事件监听器标记
 CUSTOM_EVENT = '_custom_event'                  # 自定义事件标记
 SYSTEM_SCHED_ANNO = '_system_sched'             # 系统调度器标记
 UI_DEF = '_ui_def'                              # UI定义标记
-UI_AUTO_CREATE = '_ui_auto_create'              # UI自动创建标记
-UI_SINK = '_ui_binder'                        # UI绑定标记
+UI_SINK = '_ui_binder'                          # UI绑定标记
+UI_SCREEN = '_ui_screen'                        # UI屏幕标记
+UI_HUD = '_ui_hud'                              # UI HUD标记
+UI_GESTURE = '_ui_gesture'                      # UI手势类型标记
 
 # 调度器调度名称（不推荐修改）
 TIMER_TASK = 'TimerTask'                        # 定时任务

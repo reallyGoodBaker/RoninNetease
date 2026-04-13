@@ -21,8 +21,8 @@ class Unreliable(object):
             print(err)
             return (None, err)
 
-    def tryCall(self, fn, *args):
+    def tryCall(self, fn, *args, **kwargs):
         try:
-            return fn(*args), None
+            return fn(*args, **kwargs), None
         except Exception as err:
             return self._handleError(err)
