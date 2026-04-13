@@ -1,0 +1,120 @@
+# 服务端属性 (Attr Server) API
+
+`architect.attr.server` 模块提供了在服务端管理实体属性的机制，包括响应式属性、数据同步到客户端和持久化。
+
+## `ClientSyncMode` 类
+
+定义了客户端同步模式的枚举值。
+
+### 静态属性
+
+- **`Disabled`**: (整数) 禁用客户端同步。值为 `0`。
+- **`Target`**: (整数) 仅同步到目标实体（通常是玩家）的客户端。值为 `1`。
+- **`All`**: (整数) 同步到所有客户端。值为 `2`。
+
+## `ReactiveAttrServer` 类
+
+`ReactiveAttrServer` 是一个服务端属性的实现，它支持值变更的广播、与客户端同步以及服务器端持久化。
+
+### 构造函数
+
+#### `ReactiveAttrServer(entityId, name, defaultValue=None, broadcast=True, clientSync=ClientSyncMode.Target, persistent=False)`
+
+- **`entityId`**: (字符串) 属性所属的实体 ID。
+- **`name`**: (字符串) 属性的名称。
+- **`defaultValue`**: (任意类型, 默认值 `None`) 属性的默认值。
+- **`broadcast`**: (布尔值, 默认值 `True`) 属性值改变时是否广播 `ServerAttrEvents.AttrChange` 事件。
+- **`clientSync`**: (整数 `ClientSyncMode`, 默认值 `ClientSyncMode.Target`) 属性值改变时是否同步到客户端。
+- **`persistent`**: (布尔值, 默认值 `False`) 属性是否进行服务器端持久化存储。
+
+### 属性 (继承自 `ReactiveBase`)
+
+- **`value`**: 属性的当前值。
+
+### 内部方法 (不推荐直接调用)
+
+以下方法主要用于内部实现，但了解它们有助于理解 `ReactiveAttrServer` 的行为：
+
+- `_init()`: 初始化属性，包括加载、广播和同步。
+- `_loadAttr()`: 如果 `persistent` 为 `True`，从服务器数据库加载属性值。
+- `_saveAttr()`: 如果 `persistent` 为 `True`，将属性值保存到服务器数据库。
+- `onDepEvent(evType)`: 依赖事件触发时的回调，处理属性的保存、广播和同步。
+- `_sendClients()`: 根据 `clientSync` 模式向客户端发送属性同步事件。
+- `_sync(value)`: 内部方法，用于从客户端同步属性值。
+- `_broadcastAttr()`: 内部方法，用于广播属性变更事件。
+
+## `attr` 类 (静态辅助类)
+
+`attr` 类提供了一系列静态方法，用于创建不同配置的 `ReactiveAttrServer` 实例。
+
+### 静态方法
+
+#### `attr.mut(name, entity, defaultValue=None)`
+
+创建一个可变属性。该属性不会同步到客户端，也不会进行持久化存储，但会广播事件。
+
+- **`name`**: (字符串) 属性名称。
+- **`entity`**: (字符串) 实体 ID。
+- **`defaultValue`**: (任意类型, 默认值 `None`) 默认值。
+- **返回值**: (`ReactiveAttrServer` 实例)
+
+#### `attr.store(name, entity, defaultValue=None)`
+
+创建一个可存储属性。该属性不会同步到客户端，也不会广播事件，但会进行服务器端持久化存储。
+
+- **`name`**: (字符串) 属性名称。
+- **`entity`**: (字符串) 实体 ID。
+- **`defaultValue`**: (任意类型, 默认值 `None`) 默认值。
+- **返回值**: (`ReactiveAttrServer` 实例)
+
+#### `attr.remote(name, entity, defaultValue=None, persistent=False)`
+
+创建一个远程属性。该属性不会广播事件，但会同步到指定客户端，并可选择是否持久化存储。
+
+- **`name`**: (字符串) 属性名称。
+- **`entity`**: (字符串) 实体 ID。
+- **`defaultValue`**: (任意类型, 默认值 `None`) 默认值。
+- **`persistent`**: (布尔值, 默认值 `False`) 是否进行服务器端持久化存储。
+- **返回值**: (`ReactiveAttrServer` 实例)
+
+#### `attr.shared(name, entity, defaultValue=None, persistent=False)`
+
+创建一个共享属性。该属性会广播事件，同步到所有客户端，并可选择是否持久化存储。
+
+- **`name`**: (字符串) 属性名称。
+- **`entity`**: (字符串) 实体 ID。
+- **`defaultValue`**: (任意类型, 默认值 `None`) 默认值。
+- **`persistent`**: (布尔值, 默认值 `False`) 是否进行服务器端持久化存储。
+- **返回值**: (`ReactiveAttrServer` 实例)
+
+#### `attr.create(name, entity, defaultValue=None, broadcast=True, clientSync=ClientSyncMode.Target, persistent=False)`
+
+通用属性创建方法。如果属性已存在，则返回现有实例。
+
+- **`name`**: (字符串) 属性名称。
+- **`entity`**: (字符串) 实体 ID。
+- **`defaultValue`**: (任意类型, 默认值 `None`) 默认值。
+- **`broadcast`**: (布尔值, 默认值 `True`) 是否广播事件。
+- **`clientSync`**: (整数 `ClientSyncMode`, 默认值 `ClientSyncMode.Target`) 是否同步到客户端。
+- **`persistent`**: (布尔值, 默认值 `False`) 是否进行服务器端持久化存储。
+- **返回值**: (`ReactiveAttrServer` 实例)
+
+## `ModAttrServer` 类
+
+`ModAttrServer` 是一个服务端子系统，负责接收来自客户端的属性同步事件，并更新本地 `ReactiveAttrServer` 实例。
+
+### 静态属性
+
+- **`attrs`**: (字典 `dict`) 存储所有 `(entityId, attrName)` 到 `ReactiveAttrServer` 实例的映射。
+
+### 装饰器 (自动注册为服务端子系统)
+
+`@SubsystemServer`
+
+### 事件监听
+
+#### `onClientSync(self, ev)`
+
+监听 `ServerAttrEvents.ClientSync` 自定义事件，用于接收客户端发送的属性同步数据。
+
+- **`ev`**: (字典 `dict`) 包含 `id` (实体 ID), `name` (属性名称) 和 `value` (属性值)。
