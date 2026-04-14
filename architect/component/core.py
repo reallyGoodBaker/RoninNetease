@@ -47,9 +47,34 @@ def isPersistComponent(cls):
     ann = getComponentAnnotation(cls)
     return ann is not None and ann.get('persist', False)
 
+class Marker:
+    def __init__(self):
+        self.marked = {}
+    
+    def mark(self, entityId):
+        cur = self.marked.get(entityId, 0)
+        self.marked[entityId] = cur + 1
 
-entitiesServer = {}
-entitiesClient = {}
+    def unmark(self, entityId):
+        cur = self.marked.get(entityId, 0) - 1
+        if cur <= 0:
+            self.marked.pop(entityId, None)
+            return
+        else:
+            self.marked[entityId] = cur
+
+    def getMarkedEntities(self):
+        return self.marked.keys()
+    
+    def hasMarked(self, entityId):
+        return entityId in self.marked
+
+
+entitiesServer = Marker()
+entitiesClient = Marker()
+
+def _getEntityMarker():
+    return entitiesServer if isServer() else entitiesClient
 
 
 def createSingletonComponent(cls):
@@ -75,10 +100,7 @@ def createComponent(entityId, cls):
     if hasattr(comp, 'onCreate'):
         comp.onCreate(entityId)
 
-    entities = entitiesServer if isServer() else entitiesClient
-    if entityId not in entities:
-        entities[entityId] = 0
-    entities[entityId] += 1
+    _getEntityMarker().mark(entityId)
     return comp
 
 
@@ -93,7 +115,6 @@ def destroyComponent(entityId, cls):
     api = serverApi if isServer() else clientApi
     compKey = cls if type(cls) == str else cls.__name__
     key = (entityId, compKey)
-    entities = entitiesServer if isServer() else entitiesClient
     done = False
     if key in components:
         components[key].onDestroy(entityId)
@@ -103,10 +124,7 @@ def destroyComponent(entityId, cls):
             pass
         del components[key]
         done = True
-    if entityId in entities:
-        entities[entityId] -= 1
-        if entities[entityId] <= 0:
-            del entities[entityId]
+    _getEntityMarker().unmark(entityId)
     return done
 
 
@@ -184,8 +202,7 @@ def getOrCreateSingletonComponent(cls):
 
 
 def getEntities():
-    entities = entitiesServer if isServer() else entitiesClient
-    return list(entities.keys())
+    return _getEntityMarker().getMarkedEntities()
 
 
 def hasComponent(entityId, *desc):

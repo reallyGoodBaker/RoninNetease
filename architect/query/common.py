@@ -1,4 +1,6 @@
 from ..component import getComponent, getComponentWithQuery, getEntities
+from ..component.core import components, _findNamedComp
+from ..basic import serverApi, clientApi, isServer
 
 
 class _Query:
@@ -88,9 +90,10 @@ def Query(*compCls, **options):
     def decorator(fn):
         def wrapper(inst, *args, **kwargs):
             instMethod = fn.__get__(inst)
+            _compList = list(compCls)
             for entityId in getEntities():
-                comps = _getQueryArgs(entityId, list(compCls), required, excluded, args, kwargs)
+                comps = _getQueryArgs(str(entityId), _compList[:], required, excluded, args, kwargs)
                 if comps:
-                    return instMethod(*comps)
+                    instMethod(*comps)
         return wrapper
     return decorator

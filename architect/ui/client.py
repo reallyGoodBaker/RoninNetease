@@ -6,7 +6,7 @@ from ..basic import clientApi
 from ..level.client import LevelClient
 from ..subsystem import ClientSubsystem, SubsystemManager, subsystem
 
-from .gesture import GestureBinder
+from .gesture import GestureBinder, TouchEvents
 
 class SinkContext(object):
     contextStack = [] # type: list[SinkContext]
@@ -147,6 +147,8 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
         for method in AnnotationHelper.findAnnotatedMethods(self, UI_GESTURE):
             type, controlPath = AnnotationHelper.getAnnotation(method, UI_GESTURE)
             control = self.find(controlPath)
+            if type in TouchEvents:
+                control.asButton().AddTouchEventParams()
             GestureBinder[type](control, method.__get__(self))
 
     @classmethod
@@ -217,6 +219,7 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
         self.listen('OnGamepadKeyPressClientEvent', self._handleGamepadBack)
         self.listen('OnKeyPressInGame', self._handleKeyboardBack)
         self._initSinks()
+        self._initGesture()
 
     def Destroy(self):
         self._removeSinks()

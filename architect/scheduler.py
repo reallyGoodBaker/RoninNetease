@@ -2,6 +2,7 @@
 from .basic import compClient, compServer, isServer, clientApi, serverApi
 from time import time
 from types import *
+from .unreliable import Unreliable
 from .annotation import AnnotationHelper
 from .conf import TIMER_TASK, SYSTEM_SCHED_ANNO, SchedEventFlags, SchedUpdateFlags
 
@@ -175,7 +176,8 @@ def cancelTimer(timer):
     game = GameServer if isServer() else GameClient
     game.CancelTimer(timer)
 
-class TimerAdapter:
+
+class TimerAdapter(object):
     def __init__(self, period, fn):
         self.period = period
         self.fn = fn
@@ -190,12 +192,13 @@ class TimerAdapter:
             self.timer = None
 
 
-class SchedulerPoller:
+class SchedulerPoller(Unreliable):
     def __init__(self, scheduler, period=1):
         # type: (Scheduler, float) -> None
+        Unreliable.__init__(self)
         self.period = period
         self.scheduler = scheduler
-        self.timer = TimerAdapter(self.period, lambda: scheduler.executeSequence())
+        self.timer = TimerAdapter(self.period, lambda: self.tryCall(scheduler.executeSequence))
 
     def start(self):
         self.timer.start()
