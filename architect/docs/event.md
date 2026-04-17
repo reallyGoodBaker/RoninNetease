@@ -43,3 +43,15 @@ def onDestroy(self):
 
 - **广播事件**: `self.broadcast('EventName', {'data': 1})`
 - **发送至客户端/服务端**: 参考 [Subsystem 模块](subsystem.md)。
+
+## Tick
+`Subsystem` 提供了 `onUpdate` 生命周期，每刻调用一次，若你需要使用 `Tick`, 请优先考虑使用 `onUpdate`。
+
+```python
+def onInit(self):
+    # 设置 canTick 为 True，表示允许 onUpdate 被调用, 否则 onUpdate 不会被调用
+    self.canTick = True
+
+def onUpdate(self, dt):
+    pass
+```
