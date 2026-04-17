@@ -6,7 +6,6 @@
 
 - `...subsystem.ClientSubsystem` - 客户端子系统
 - `...subsystem.SubsystemClient` - 客户端子系统装饰器
-- `...component.ClientComponent` - 客户端组件
 - `...component.Component` - 组件装饰器
 - `...component.createComponent` - 创建组件
 - `...component.getOneComponent` - 获取组件
@@ -58,7 +57,7 @@
 
 ### `PersonaRendererComponent`
 
-角色渲染器组件，继承自 `ClientComponent`，提供实体渲染配置管理。
+角色渲染器组件，继承自 `BaseCompClient`，提供实体渲染配置管理。
 
 #### 类属性
 

@@ -157,7 +157,7 @@ class SubsystemManager:
 
     def getSubsystem(self, subsystemCls):
         # type: (object) -> 'Subsystem'
-        return self.getSubsystems().get(subsystemCls.__name__)
+        return self.getSubsystems().get(subsystemCls if type(subsystemCls) is str else subsystemCls.__name__)
     
 
     def getSubsystemByName(self, name):

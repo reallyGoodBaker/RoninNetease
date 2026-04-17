@@ -254,3 +254,56 @@ class Sched:
             }])
             return fn
         return wrapper
+
+
+class Future(Unreliable):
+
+    PENDING = 0
+    FULFILLED = 1
+    REJECTED = 2
+
+    def __init__(self, executor):
+        Unreliable.__init__(self)
+        self.executor = executor
+        self.result = None
+        self.status = Future.PENDING
+        self._done = []
+        self._expected = []
+        self.tryCall(self.executor, self._resolve, self._reject)
+
+    def _resolve(self, *value):
+        self.result = value
+        self.status = Future.FULFILLED
+        for callback in self._done:
+            self.tryCall(callback, *value)
+
+    def _reject(self, *value):
+        self.result = value
+        self.status = Future.REJECTED
+        for callback in self._expected:
+            self.tryCall(callback, *value)
+
+    def done(self, callback):
+        if self.status == Future.FULFILLED:
+            self.tryCall(callback, *self.result)
+        elif self.status == Future.PENDING:
+            self._done.append(callback)
+        return self
+
+    def expected(self, callback):
+        if self.status == Future.REJECTED:
+            self.tryCall(callback, *self.result)
+        elif self.status == Future.PENDING:
+            self._expected.append(callback)
+        return self
+    
+    @staticmethod
+    def resolvers():
+        _resolvers = []
+        def _executor(r, j):
+            _resolvers.append(r)
+            _resolvers.append(j)
+        ftr = Future(_executor)
+        res = _resolvers[0]
+        rej = _resolvers[1]
+        return ftr, res, rej

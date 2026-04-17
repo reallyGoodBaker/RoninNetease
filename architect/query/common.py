@@ -1,6 +1,8 @@
 from ..component import getComponent, getComponentWithQuery, getEntities
-from ..component.core import components, _findNamedComp
+from ..component.core import components, _findNamedComp, singletonId
 from ..basic import serverApi, clientApi, isServer
+from ..annotation import AnnotationHelper
+from ..conf import COMPONENT_TAG
 
 
 class _Query:
@@ -36,9 +38,11 @@ class ExtraArguments:
 class ExtraArgDict:
     pass
 
+FakeComponents = [EntityId, ExtraArguments, ExtraArgDict]
 
-def _getQueryArgs(entityId, compCls, required, excluded, args, kwargs):
+def _getQueryArgs(entityId, compClsSrc, required, excluded, args, kwargs):
     # type: (str, list, list, list, list, dict) -> list
+    compCls = compClsSrc[:]
     entityIdIndex = -1
     extraArgsIndex = -1
     extraArgDict = -1
@@ -61,6 +65,20 @@ def _getQueryArgs(entityId, compCls, required, excluded, args, kwargs):
     if extraArgDict >= 0:
         result[extraArgDict] = kwargs
     return result
+
+
+def _isCompAllSingleton(compCls):
+    # type: (list) -> bool
+    singletonCount = 0
+    compSize = len(compCls)
+    for comp in compCls:
+        if type(comp) == str:
+            return False
+        if comp == EntityId:
+            return False
+        if AnnotationHelper.getAnnotation(comp, COMPONENT_TAG).get('singleton'):
+            singletonCount += 1
+    return singletonCount == compSize
 
 
 def Query(*compCls, **options):
@@ -88,12 +106,15 @@ def Query(*compCls, **options):
     required = options.get('required', [])
     excluded = options.get('excluded', [])
     def decorator(fn):
+        isAllSingleton = _isCompAllSingleton(compCls)
         def wrapper(inst, *args, **kwargs):
-            instMethod = fn.__get__(inst)
             _compList = list(compCls)
-            for entityId in getEntities():
-                comps = _getQueryArgs(str(entityId), _compList[:], required, excluded, args, kwargs)
-                if comps:
-                    instMethod(*comps)
+            if isAllSingleton:
+                fn(inst, *_getQueryArgs(None, _compList, required, excluded, args, kwargs))
+            else:
+                for entityId in getEntities():
+                    comps = _getQueryArgs(str(entityId), _compList, required, excluded, args, kwargs)
+                    if comps:
+                        fn(inst, *comps)
         return wrapper
     return decorator

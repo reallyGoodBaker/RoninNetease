@@ -1,13 +1,22 @@
 import mod.client.extraClientApi as clientApi
 import mod.server.extraServerApi as serverApi
+import threading
 
 class Location:
     def __init__(self, pos, dim):
         self.pos = pos
         self.dim = dim
 
+__threads = {}
+
 def isServer():
-    return clientApi.GetLocalPlayerId() == '-1'
+    curId = threading.current_thread().ident
+    if curId in __threads:
+        return __threads[curId]
+    else:
+        _isServer = clientApi.GetLocalPlayerId() == '-1'
+        __threads[threading.current_thread().ident] = _isServer
+        return _isServer
 
 def getComponentCls():
     if isServer():

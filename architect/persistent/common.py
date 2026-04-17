@@ -1,21 +1,36 @@
 class DBSource:
     def getData(self, key):
+        # type: (str) -> object
         pass
     
     def setData(self, key, value):
+        # type: (str, object) -> None
         pass
 
     def removeData(self, key):
+        # type: (str) -> None
         pass
 
     def clearData(self):
+        # type: () -> None
         pass
 
     def createView(self, key):
+        # type: (str) -> DatabaseView
         return DatabaseView(self, key)
  
     def createArrayView(self, key):
+        # type: (str) -> DatabaseArrayView
         return DatabaseArrayView(self, key)
+
+    _inst = None
+
+    @classmethod
+    def getInstance(cls):
+        if cls._inst is None:
+            cls._inst = cls()
+        return cls._inst
+
 
 class DatabaseView:
     def __init__(self, db, key):
@@ -42,6 +57,7 @@ class DatabaseView:
         cache = self.cache
         for k, v in self.cache.items():
             updater(v, k, cache)
+
 
 class DatabaseArrayView:
     def __init__(self, db, key):

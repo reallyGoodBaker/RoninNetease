@@ -1,13 +1,8 @@
-from ..subsystem import ServerSubsystem, SubsystemServer
 from ..level.server import LevelServer
 from .common import DBSource
 
-@SubsystemServer
-class ServerKVDatabase(ServerSubsystem, DBSource):
+class ServerKVDatabase(DBSource):
     data = LevelServer.extraData
-
-    def __init__(self, system, engine, sysName):
-        ServerSubsystem.__init__(self, system, engine, sysName)
 
     def getData(self, key):
         return self.data.GetExtraData(key)

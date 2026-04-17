@@ -1,5 +1,5 @@
 from ...subsystem import ClientSubsystem, SubsystemClient
-from ...component import ClientComponent, Component, createComponent, getOneComponent
+from ...component import BaseCompClient, Component, createComponent, getOneComponent
 from ...basic import compClient, clientApi
 from ...event import EventListener
 from mod.common.minecraftEnum import EntityType
@@ -107,7 +107,7 @@ PlayerDefaultClientDef = {
 
 
 @Component()
-class PersonaRendererComponent(ClientComponent):
+class PersonaRendererComponent(BaseCompClient):
     def onCreate(self, entityId):
         self.entityId = entityId
         self.actorRenderer = compClient.CreateActorRender(entityId)

@@ -1,7 +1,10 @@
 from ..subsystem import ClientSubsystem, SubsystemClient
 from ..event import EventListener
 from ..level.client import LevelClient, compClient
+from mod.common.minecraftEnum import EntityType
 
+def isPlayer(entityId):
+    return compClient.CreateEngineType(entityId).GetEngineType() == EntityType.Player
 
 @SubsystemClient
 class ClientUtilsSubsys(ClientSubsystem):

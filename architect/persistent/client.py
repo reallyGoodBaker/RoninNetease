@@ -1,14 +1,11 @@
-from ..subsystem import ClientSubsystem, SubsystemClient
+from ..conf import DB_GLOBAL_NAME, DB_NAME
 from ..level.client import LevelClient
 from .common import DBSource
-from ..conf import DB_GLOBAL_NAME, DB_NAME
 
 
-@SubsystemClient
-class ClientKVDatabase(ClientSubsystem, DBSource):
+class ClientKVDatabase(DBSource):
 
-    def __init__(self, system, engine, sysName):
-        ClientSubsystem.__init__(self, system, engine, sysName)
+    def __init__(self):
         self.conf = LevelClient.getInstance().configClient
         self.data = self.conf.GetConfigData(DB_NAME)
 
@@ -31,11 +28,9 @@ class ClientKVDatabase(ClientSubsystem, DBSource):
         self._save()
 
 
-@SubsystemClient
-class ClientKVDatabaseGlobal(ClientSubsystem, DBSource):
+class ClientKVDatabaseGlobal(DBSource):
 
-    def __init__(self, system, engine, sysName):
-        ClientSubsystem.__init__(self, system, engine, sysName)
+    def __init__(self):
         self.conf = LevelClient.getInstance().configClient
         self.data = self.conf.GetConfigData(DB_GLOBAL_NAME, True)
 

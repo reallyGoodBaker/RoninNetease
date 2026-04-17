@@ -1,15 +1,20 @@
+from ..conf import COMPONENT_NAMESPACE, COMPONENT_TAG, PERSIST_INFO
 from ..annotation import AnnotationHelper
 from ..basic import isServer, clientApi, serverApi
+from ..persistent.common import DBSource
+from ..persistent.client import ClientKVDatabase, ClientKVDatabaseGlobal
+from ..persistent.server import ServerKVDatabase
 from .common import _nativeCompGet
-from ..conf import COMPONENT_NAMESPACE, COMPONENT_TAG
 
 clientCompCls = []
 serverCompCls = []
 components = {}
+singletonServer = serverApi.GetLevelId()
+singletonClient = clientApi.GetLevelId()
 
 
 def singletonId():
-    return serverApi.GetLevelId() if isServer() else clientApi.GetLevelId()
+    return singletonServer if isServer() else singletonClient
 
 
 def _registerComponent(isServer, cls, persist=False, singleton=False):
@@ -27,6 +32,16 @@ def _registerComponent(isServer, cls, persist=False, singleton=False):
 def Component(persist=False, singleton=False):
     def decorator(cls):
         _registerComponent(isServer(), cls, persist, singleton)
+        return cls
+    return decorator
+
+
+def PersistKeys(*keys, **kwargs):
+    def decorator(cls):
+        AnnotationHelper.addAnnotation(cls, PERSIST_INFO, {
+            'keys': keys,
+            'global': kwargs.get('isGlobal', False)
+        })
         return cls
     return decorator
 
@@ -88,14 +103,32 @@ def createSingletonComponent(cls):
     return createComponent(entityId, cls)
 
 
+def _handlePersistKeys(comp, entityId):
+    cls = comp.__class__
+    persistInfo = AnnotationHelper.getAnnotation(cls, PERSIST_INFO)
+    if persistInfo is None:
+        return
+    keys = persistInfo.get('keys', [])
+    isGlobal = persistInfo.get('global', False)
+    db = ServerKVDatabase.getInstance() if isServer() else (ClientKVDatabaseGlobal.getInstance() if isGlobal else ClientKVDatabase.getInstance())
+    for k in keys:
+        dataKey = cls.__name__ + entityId + k
+        setattr(cls, k, property(
+            lambda _, key=dataKey: db.getData(key),
+            lambda _, v, key=dataKey: db.setData(key, v))
+        )
+
+
 def createComponent(entityId, cls):
     # type: (str, type|str) -> object
     api = serverApi if isServer() else clientApi
     compKey = cls if type(cls) == str else cls.__name__
     comp = api.CreateComponent(entityId, COMPONENT_NAMESPACE, compKey)
     components[(entityId, compKey)] = comp
-    if isPersistComponent(cls) and hasattr(comp, 'loadData'):
-        comp.loadData(entityId)
+    if isPersistComponent(cls):
+        _handlePersistKeys(comp, entityId)
+        if hasattr(comp, 'loadData'):
+            comp.loadData(entityId)
 
     if hasattr(comp, 'onCreate'):
         comp.onCreate(entityId)
@@ -222,7 +255,7 @@ def removeComponents(entityId, *clsList):
         destroyComponent(entityId, cls)
 
 
-class BaseCompServer(serverApi.GetComponentCls()):
+class BaseCompServer(serverApi.GetComponentCls(), object):
     def onCreate(self, entityId):
         pass
 
@@ -232,7 +265,7 @@ class BaseCompServer(serverApi.GetComponentCls()):
     def loadData(self, entityId):
         pass
 
-class BaseCompClient(clientApi.GetComponentCls()):
+class BaseCompClient(clientApi.GetComponentCls(), object):
     def onCreate(self, entityId):
         pass
 

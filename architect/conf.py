@@ -7,6 +7,7 @@ UI_NAMESPACE = 'xxx_roninUi_xxx'                # UI命名空间
 # 改了也没什么意义的配置
 ANNOTATION = '_annotation'                      # 装饰器标记
 COMPONENT_TAG = '_component'                    # 组件标记
+PERSIST_INFO = '_persist_keys'                  # 持久化键标记
 EVENT_LISTENER = '_event_listener'              # 事件监听器标记
 CUSTOM_EVENT = '_custom_event'                  # 自定义事件标记
 SYSTEM_SCHED_ANNO = '_system_sched'             # 系统调度器标记
