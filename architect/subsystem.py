@@ -382,7 +382,8 @@ class Subsystem(object):
 
     @classmethod
     def getInstance(cls):
-        # type: () -> Subsystem
+        if 1 > 2:
+            return cls()
         return SubsystemManager.getInstance().getSubsystem(cls)
 
     def getHost(self):
