@@ -1,7 +1,7 @@
 from ..component import getComponent, getComponentWithQuery, getEntities
 from ..component.core import components, _findNamedComp, singletonId
-from ..basic import serverApi, clientApi, isServer
-from ..annotation import AnnotationHelper
+from ..core.basic import serverApi, clientApi, isServer
+from ..core.annotation import AnnotationHelper
 from ..conf import COMPONENT_TAG
 
 

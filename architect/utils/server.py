@@ -1,6 +1,6 @@
 from ..level.server import LevelServer, compServer
 from mod.common.minecraftEnum import EntityType
-from ..subsystem import ServerSubsystem, SubsystemServer
+from ..core.subsystem import ServerSubsystem, SubsystemServer
 
 def isPlayer(entityId):
     return compServer.CreateEngineType(entityId).GetEngineType() == EntityType.Player

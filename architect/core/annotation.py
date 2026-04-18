@@ -1,4 +1,4 @@
-from .conf import ANNOTATION
+from ..conf import ANNOTATION
 
 def _getAnnotation(target):
     if hasattr(target, ANNOTATION):

@@ -1,3 +1,3 @@
 from .core import PersistKeys, Component, _registerCompsIntoGame, getComponent, getComponentAnnotation, getEntities, isPersistComponent, createComponent, createSingletonComponent, destroyComponent, getOneComponent, getComponentWithQuery, getOrCreateComponent, getOrCreateSingletonComponent, getOneSingletonComponent, hasComponent, removeComponents, BaseCompClient, BaseCompServer
-from ..basic import getComponentCls, serverApi, clientApi
+from ..core.basic import getComponentCls, serverApi, clientApi
 from .common import NeC, NeS

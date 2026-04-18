@@ -1,9 +1,9 @@
 from ..conf import COMPONENT_NAMESPACE, COMPONENT_TAG, PERSIST_INFO
-from ..annotation import AnnotationHelper
-from ..basic import isServer, clientApi, serverApi
-from ..persistent.common import DBSource
+from ..core.annotation import AnnotationHelper
+from ..core.basic import isServer, clientApi, serverApi
 from ..persistent.client import ClientKVDatabase, ClientKVDatabaseGlobal
 from ..persistent.server import ServerKVDatabase
+from ..core.loader import _notifyRegisterComponent
 from .common import _nativeCompGet
 
 clientCompCls = []
@@ -49,6 +49,7 @@ def PersistKeys(*keys, **kwargs):
 def _registerCompsIntoGame(isHost):
     clsList = serverCompCls if isHost else clientCompCls
     api = serverApi if isHost else clientApi
+    _notifyRegisterComponent(clsList)
     for cls in clsList:
         result = api.RegisterComponent(COMPONENT_NAMESPACE, cls.__name__, cls.__module__ + '.' + cls.__name__)
         print('[INFO] Register {} component'.format('server' if isHost else 'client'), cls.__name__, 'result:', result)

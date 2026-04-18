@@ -1,6 +1,6 @@
 from ...component import BaseCompClient
 from .common import StateTree
-from ...subsystem import SubsystemClient, ClientSubsystem
+from ...core.subsystem import SubsystemClient, ClientSubsystem
 
 class StateTreeCompClient(BaseCompClient, StateTree):
     def onCreate(self, entityId):

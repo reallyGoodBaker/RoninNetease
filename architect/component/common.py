@@ -1,4 +1,4 @@
-from ..basic import isServer, compClient, compServer
+from ..core.basic import isServer, compClient, compServer
 
 def _nativeCompGet(entityId, name):
     # type: (str, str) -> object

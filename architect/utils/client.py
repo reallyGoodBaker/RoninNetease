@@ -1,4 +1,4 @@
-from ..subsystem import ClientSubsystem, SubsystemClient
+from ..core.subsystem import ClientSubsystem, SubsystemClient
 from ..event import EventListener
 from ..level.client import LevelClient, compClient
 from mod.common.minecraftEnum import EntityType

@@ -4,7 +4,7 @@ from time import time
 from types import *
 from .unreliable import Unreliable
 from .annotation import AnnotationHelper
-from .conf import TIMER_TASK, SYSTEM_SCHED_ANNO, SchedEventFlags, SchedUpdateFlags
+from ..conf import TIMER_TASK, SYSTEM_SCHED_ANNO, SchedEventFlags, SchedUpdateFlags
 
 
 class Task:

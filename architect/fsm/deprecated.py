@@ -4,8 +4,8 @@
 TODO: 临时设计的经典 FSM 框架，不推荐在ECS中嵌入
 """
 
-from ..unreliable import Unreliable
-from ..basic import compClient, compServer, isServer
+from ..core.unreliable import Unreliable
+from ..core.basic import compClient, compServer, isServer
 from mod.common.minecraftEnum import AttrType, EntityType
 from ..level.server import LevelServer
 

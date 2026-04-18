@@ -1,28 +1,18 @@
-from .core import EventChain, ChainedEvent
-from ..component.core import _registerComponent, BaseCompClient
-
-class EventReader(BaseCompClient):
-    def onCreate(self, _):
-        self.ev = None
-
-    def event(self):
-        # type: () -> ChainedEvent
-        return self.ev
-_registerComponent(False, EventReader, False, True)
+from .core import EventChain
 
 
 class ClientEvents:
-    globalEvents = {}
+    globalEvents = {} # type: dict[tuple[str, bool], EventChain]
 
     @staticmethod
     def getOrCreateChain(eventType, isCustomEvent=False):
         # type: (str, bool) -> EventChain
-        if eventType in ClientEvents.globalEvents:
-            return ClientEvents.globalEvents[eventType]
+        if (eventType, isCustomEvent) in ClientEvents.globalEvents:
+            return ClientEvents.globalEvents[(eventType, isCustomEvent)]
         else:
             chain = EventChain()
-            ClientEvents.globalEvents[eventType] = chain
-            from ..subsystem import SubsystemManager
+            ClientEvents.globalEvents[(eventType, isCustomEvent)] = chain
+            from ..core.subsystem import SubsystemManager
             SubsystemManager.getInstance().addListener(eventType, lambda ev: chain.dispatch(eventType, ev), isCustomEvent)
             return chain
 

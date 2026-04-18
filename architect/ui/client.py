@@ -1,10 +1,10 @@
-from ..annotation import AnnotationHelper
+from ..core.annotation import AnnotationHelper
 from ..conf import UI_DEF, UI_SINK, UI_NAMESPACE, UI_SCREEN, UI_HUD, UI_GESTURE
 from ..event import EventSignal, EventTarget
-from ..ref import Ref
-from ..basic import clientApi
+from ..core.ref import Ref
+from ..core.basic import clientApi
 from ..level.client import LevelClient
-from ..subsystem import ClientSubsystem, SubsystemManager, subsystem
+from ..core.subsystem import ClientSubsystem, SubsystemManager, subsystem
 
 from .gesture import GestureBinder, TouchEvents
 

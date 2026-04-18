@@ -1,7 +1,7 @@
 from .mat4 import identity, inverse, transformPoint, transform
 from ..math.vec3 import vec, add, div, normalize
 from ..level.server import LevelServer
-from ..basic import compServer, serverApi, defaultFilters
+from ..core.basic import compServer, serverApi, defaultFilters
 from mod.common.minecraftEnum import EntityType
 
 import math

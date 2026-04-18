@@ -1,4 +1,4 @@
-from ...basic import clientApi, compClient
+from ...core.basic import clientApi, compClient
 
 class deviceClient:
 

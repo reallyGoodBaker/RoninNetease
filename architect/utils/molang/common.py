@@ -1,5 +1,5 @@
-from ...basic import isServer, compClient, compServer
-from ...unreliable import Unreliable
+from ...core.basic import isServer, compClient, compServer
+from ...core.unreliable import Unreliable
 from .types import MolangReadable, MolangMutable
 
 

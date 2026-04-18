@@ -1,9 +1,9 @@
-from ..basic import Location, compServer, serverApi
-from ..scheduler import Future
+from ..core.basic import Location, compServer, serverApi
+from ..core.scheduler import Future
 from ..level.server import LevelServer
 from ..math.vec3 import vec, tup
 from ..utils.client import isPlayer
-from ..subsystem import subsystem
+from ..core.subsystem import subsystem
 
 def requireChunk(location, radius=16):
     def _executor(res, rej):

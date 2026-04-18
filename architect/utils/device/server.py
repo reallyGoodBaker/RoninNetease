@@ -1,4 +1,4 @@
-from ...basic import serverApi
+from ...core.basic import serverApi
 
 class deviceServer:
     @staticmethod

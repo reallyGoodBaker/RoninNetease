@@ -1,4 +1,4 @@
-from ..annotation import AnnotationHelper
+from ..core.annotation import AnnotationHelper
 from ..conf import UI_GESTURE
 
 def _btnDecoratorBuilder(type):
