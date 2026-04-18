@@ -66,7 +66,7 @@ defaultFilters = {
     ]
 }
 
-from ..basic import compClient, compServer
+from ..core.basic import compClient, compServer
 from ..level.client import LevelClient
 from ..level.server import LevelServer
 

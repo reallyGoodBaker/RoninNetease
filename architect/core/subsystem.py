@@ -8,6 +8,7 @@ from .scheduler import Scheduler, Sched, SimpleFixedScheduler
 from .basic import isServer, Location
 from .loader import __dirname__, _loadPlugins, _notifyAddSubsystem, _notifyRemoveSubsystem
 
+from ..level.server import LevelServer
 from ..component.core import _registerCompsIntoGame, getOrCreateSingletonComponent
 from ..event.client import event as eventClient
 from ..event.server import event as eventServer
@@ -22,7 +23,7 @@ class EventListener:
     def __init__(self, evType, fn):
         self.evType = evType
         self.fn = fn
-        setattr(self, '<lambda>', self.fn)
+        setattr(self, fn.__name__, self.fn)
 
 
 class SubsystemManager:
@@ -53,7 +54,8 @@ class SubsystemManager:
 
     @classmethod
     def createClient(cls, engine, sysName, clientDir=None):
-        manager = clientApi.GetSystem(engine, sysName) or SubsystemManager(
+        existed = clientApi.GetSystem(engine, sysName)
+        manager = existed.getManager() if existed else SubsystemManager(
             clientApi.RegisterSystem(engine, sysName, cls.__module__ + '.' + SYSTEM_CLIENT_NAME),
             engine, sysName
         )
@@ -70,7 +72,8 @@ class SubsystemManager:
 
     @classmethod
     def createServer(cls, engine, sysName, serverDir=None):
-        manager = serverApi.GetSystem(engine, sysName) or SubsystemManager(
+        existed = serverApi.GetSystem(engine, sysName)
+        manager = existed.getManager() if existed else SubsystemManager(
             serverApi.RegisterSystem(engine, sysName, cls.__module__ + '.' + SYSTEM_SERVER_NAME),
             engine, sysName
         )
@@ -79,9 +82,18 @@ class SubsystemManager:
         manager.rawEngine = serverApi.GetEngineNamespace()
         manager.rawSysName = serverApi.GetEngineSystemName()
         SubsystemManager.server = manager
-        # 在manager之前初始化，否则无法监听组件注册和子系统变更
-        _loadPlugins(manager)
-        manager._initManager(True)
+        def _initLater(_):
+            # 在manager之前初始化，否则无法监听组件注册和子系统变更
+            _loadPlugins(manager)
+            manager._initManager(True)
+        listener = EventListener('LoadServerAddonScriptsAfter', _initLater)
+        manager.system.ListenForEvent(
+            manager.rawEngine,
+            manager.rawSysName,
+            'LoadServerAddonScriptsAfter',
+            listener,
+            listener.fn
+        )
         return manager
 
 
@@ -388,7 +400,7 @@ class Subsystem(object):
     @classmethod
     def getInstance(cls):
         if 1 > 2:
-            return cls()
+            return cls(None, None, None)
         return SubsystemManager.getInstance().getSubsystem(cls)
 
     def getHost(self):

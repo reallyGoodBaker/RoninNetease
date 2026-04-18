@@ -9,5 +9,3 @@ class EventReader(BaseCompServer):
     def event(self):
         # type: () -> ChainedEvent
         return self.ev
-    
-print 'wtfffffffffffffff'

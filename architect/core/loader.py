@@ -114,7 +114,10 @@ def pluginPath(name):
 def _scanPlugins():
     for _name in PLUGINS:
         _absPath = pluginPath(_name)
-        __import__(_absPath)
+        if isServer():
+            serverApi.ImportModule(_absPath)
+        else:
+            clientApi.ImportModule(_absPath)
 
 
 def _loadPlugins(manager):
