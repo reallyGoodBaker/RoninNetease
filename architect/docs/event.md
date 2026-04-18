@@ -2,7 +2,7 @@
 
 `architect` 提供了便捷的事件监听方式，通过装饰器和统一的 API 管理引擎事件及自定义事件。
 
-## @EventListener 装饰器
+## @EventListener / @CustomEvent 装饰器
 
 在子系统的方法上使用 `@EventListener` 装饰器，可以自动完成事件监听的注册与注销。
 
@@ -11,8 +11,7 @@
 ```python
 @EventListener('PlayerJoinEvent')
 def onPlayerJoin(self, ev):
-    # ev 为事件参数字典
-    print(ev['playerId'])
+    print(ev.playerId)
 ```
 
 ### 监听自定义事件
@@ -22,6 +21,9 @@ def onPlayerJoin(self, ev):
 def onMyEvent(self, ev):
     pass
 ```
+
+@CustomEvent 是 @EventListener 的别名，可以用于监听自定义事件。
+与 @EventListener 不同的是，@CustomEvent 自带了 `isCustomEvent=True` 所以不需要手动设置。
 
 ## 编程式监听
 
