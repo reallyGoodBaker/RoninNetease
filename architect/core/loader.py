@@ -24,20 +24,21 @@ class PluginBase(object):
         # type: (SubsystemManager) -> None
         pass
 
-    def onRegisterComponent(self, manager, compCls):
-        # type: (SubsystemManager, list[type]) -> None
+    def onRegisterComponent(self, compCls):
+        # type: (list[type]) -> None
         pass
 
-    def onAddSubsystem(self, manager, subsystem):
-        # type: (SubsystemManager, Subsystem) -> None
+    def onAddSubsystem(self, subsystem):
+        # type: (Subsystem) -> None
         pass
 
-    def onRemoveSubsystem(self, manager, subsystem):
-        # type: (SubsystemManager, Subsystem) -> None
+    def onRemoveSubsystem(self, subsystem):
+        # type: (Subsystem) -> None
         pass
 
 
-_REGISTERED_PLUGINS = {} # type: dict[str, _PluginHost]
+_REGISTERED_SER_PLUGINS = {} # type: dict[str, _PluginHost]
+_REGISTERED_CLI_PLUGINS = {} # type: dict[str, _PluginHost]
 _LOADED_SERVER_PLUGINS = {} # type: dict[str, PluginBase]
 _LOADED_CLIENT_PLUGINS = {} # type: dict[str, PluginBase]
 
@@ -80,7 +81,8 @@ class _PluginHost(object):
 
     def load(self, manager):
         # type: (SubsystemManager) -> None
-        if self.name not in _REGISTERED_PLUGINS:
+        registerList = _REGISTERED_SER_PLUGINS if isServer() else _REGISTERED_CLI_PLUGINS
+        if self.name not in registerList:
             raise Exception('Plugin {} not registered'.format(self.name))
         _LOADED_PLUGINS = _plugins()
         if self.name in _LOADED_PLUGINS:
@@ -95,8 +97,9 @@ class _PluginHost(object):
 def Plugin(name, ver=[0, 0, 1], author='Unknown', desc='Unknown'):
     def _decorator(cls):
         # type: (type) -> type
-        if cls not in _REGISTERED_PLUGINS:
-            _REGISTERED_PLUGINS[name] = _PluginHost(name, ver, author, desc, cls)
+        registerList = _REGISTERED_SER_PLUGINS if isServer() else _REGISTERED_CLI_PLUGINS
+        if cls not in registerList:
+            registerList[name] = _PluginHost(name, ver, author, desc, cls)
         return cls
     return _decorator
 
@@ -117,7 +120,8 @@ def pluginPath(name):
 
 
 def _scanPlugins():
-    for _name in PLUGINS:
+    getConf = modConf()
+    for _name in getConf('PLUGINS'):
         _absPath = pluginPath(_name)
         if isServer():
             serverApi.ImportModule(_absPath)
@@ -128,13 +132,14 @@ def _scanPlugins():
 def _loadPlugins(manager):
     # type: (SubsystemManager) -> None
     _scanPlugins()
-    for _name, _host in _REGISTERED_PLUGINS.items():
+    registerList = _REGISTERED_SER_PLUGINS if isServer() else _REGISTERED_CLI_PLUGINS
+    for _name, _host in registerList.items():
         try:
             _host.load(manager)
             print('[INFO] Loaded plugin: ' + _host.name)
         except Exception as e:
             print('[ERROR] Failed to load plugin ' + _name)
-    for _host in _LOADED_SERVER_PLUGINS.values():
+    for _host in _plugins().values():
         try:
             _host.onReady(manager)
         except Exception as e:
@@ -150,6 +155,7 @@ MOD_CONST_NAMES = [
 MOD_ARRAYS = [
     'MOD_SERVER_MODULES',
     'MOD_CLIENT_MODULES',
+    'PLUGINS',
 ]
 
 def modConf():

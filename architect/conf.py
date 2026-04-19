@@ -13,12 +13,8 @@ MOD_NAME = __modname__
 MOD_VERSION = '1.0.0'
 MOD_ENGINE_NAME = MOD_NAME
 MOD_SYSTEM_NAME = 'ModSubsystem'
-MOD_SERVER_MODULES = [
-    'server',
-]
-MOD_CLIENT_MODULES = [
-    'client',
-]
+MOD_SERVER_MODULES = []
+MOD_CLIENT_MODULES = []
 
 # 插件列表
 """
