@@ -33,7 +33,7 @@ def serverTick():
 compServer = serverApi.GetEngineCompFactory()
 compClient = clientApi.GetEngineCompFactory()
 
-localPlayer = clientApi.GetLocalPlayerId() # 不要在服务器端使用
+localPlayer = lambda: clientApi.GetLocalPlayerId() # 不要在服务器端使用
 
 defaultFilters = {
     "any_of": [

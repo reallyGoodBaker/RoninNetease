@@ -6,7 +6,7 @@ import mod.server.extraServerApi as serverApi
 from .annotation import AnnotationHelper
 from .scheduler import Scheduler, Sched, SimpleFixedScheduler
 from .basic import isServer, Location
-from .loader import __dirname__, _loadPlugins, _notifyAddSubsystem, _notifyRemoveSubsystem
+from .loader import __modname__, _loadPlugins, _notifyAddSubsystem, _notifyRemoveSubsystem, modConf
 
 from ..level.server import LevelServer
 from ..component.core import _registerCompsIntoGame, getOrCreateSingletonComponent
@@ -44,7 +44,7 @@ class SubsystemManager:
     @staticmethod
     def _relative(path):
         # type: (str) -> str
-        return __dirname__ + '.' + path
+        return __modname__ + '.' + path
 
 
     @staticmethod
@@ -53,14 +53,18 @@ class SubsystemManager:
 
 
     @classmethod
-    def createClient(cls, engine, sysName, clientDir=None):
+    def createClient(cls):
+        getConf = modConf()
+        engine = getConf('MOD_ENGINE_NAME')
+        sysName = getConf('MOD_SYSTEM_NAME')
+        modules = getConf('MOD_CLIENT_MODULES')
         existed = clientApi.GetSystem(engine, sysName)
         manager = existed.getManager() if existed else SubsystemManager(
             clientApi.RegisterSystem(engine, sysName, cls.__module__ + '.' + SYSTEM_CLIENT_NAME),
             engine, sysName
         )
-        if clientDir:
-            clientApi.ImportModule(cls._relative(clientDir))
+        for clientModule in modules:
+            clientApi.ImportModule(cls._relative(clientModule))
         manager.rawEngine = clientApi.GetEngineNamespace()
         manager.rawSysName = clientApi.GetEngineSystemName()
         SubsystemManager.client = manager
@@ -71,19 +75,26 @@ class SubsystemManager:
 
 
     @classmethod
-    def createServer(cls, engine, sysName, serverDir=None):
+    def createServer(cls):
+        try:
+            from ...conf import MOD_ENGINE_NAME, MOD_SYSTEM_NAME
+        except ImportError:
+            raise ImportError('请在 {} 文件夹中创建 conf.py 文件，并定义 MOD_ENGINE_NAME 和 MOD_SYSTEM_NAME'.format(__modname__))
+        engine = MOD_ENGINE_NAME
+        sysName = MOD_SYSTEM_NAME
         existed = serverApi.GetSystem(engine, sysName)
         manager = existed.getManager() if existed else SubsystemManager(
             serverApi.RegisterSystem(engine, sysName, cls.__module__ + '.' + SYSTEM_SERVER_NAME),
             engine, sysName
         )
-        if serverDir:
-            serverApi.ImportModule(cls._relative(serverDir))
         manager.rawEngine = serverApi.GetEngineNamespace()
         manager.rawSysName = serverApi.GetEngineSystemName()
         SubsystemManager.server = manager
         def _initLater(_):
             # 在manager之前初始化，否则无法监听组件注册和子系统变更
+            getConf = modConf()
+            for serverModule in getConf('MOD_SERVER_MODULES'):
+                serverApi.ImportModule(cls._relative(serverModule))
             _loadPlugins(manager)
             manager._initManager(True)
         listener = EventListener('LoadServerAddonScriptsAfter', _initLater)
@@ -101,6 +112,7 @@ class SubsystemManager:
         self.engine = engine
         self.sysName = sysName
         self.system = system
+        setattr(system, 'getManager', lambda val=self: val)
 
 
     def getSubsystems(self):
@@ -363,12 +375,12 @@ def getSubsystemCls():
 class Subsystem(object):
     def __init__(self, system, engine, sysName):
         # type: (object, str, str) -> 'None'
-        self.system = system
-        self.engine = engine
-        self.sysName = sysName
-        self.ticks = 0
-        self.canTick = False
-        self.initialized = False
+        self.system = system        # type: _ShadowSystemServer | _ShadowSystemClient
+        self.engine = engine        # type: str
+        self.sysName = sysName      # type: str
+        self.ticks = 0              # type: int
+        self.canTick = False        # type: bool
+        self.initialized = False    # type: bool
 
     def onUpdate(self, dt):
         """
@@ -483,6 +495,8 @@ class Subsystem(object):
     def _handleSchedEvents(self, eventType, instMethod, isCustom, schedFlag):
         schedKey = (eventType, isCustom)
         reader = getOrCreateSingletonComponent('EventReader')
+        if not reader:
+            return
         if schedKey not in self._schedEvents:
             self._schedEvents[schedKey] = ([], [])
             def handler(event):
@@ -634,8 +648,8 @@ class _ShadowSystemClient(ClientSystem):
         return SubsystemManager.getInstance()
 
 
-def createServer(engine, sysName, serverDir=None):
-    return SubsystemManager.createServer(engine, sysName, serverDir)
+def createServer():
+    return SubsystemManager.createServer()
 
-def createClient(engine, sysName, clientDir=None):
-    return SubsystemManager.createClient(engine, sysName, clientDir)
+def createClient():
+    return SubsystemManager.createClient()

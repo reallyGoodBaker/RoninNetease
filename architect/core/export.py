@@ -4,4 +4,4 @@ from .profiler import *
 from .ref import *
 from .scheduler import Sched, Future
 from .subsystem import *
-from .loader import getPlugin, Plugin, PluginBase
+from .loader import getPlugin, Plugin, PluginBase, hasPlugin

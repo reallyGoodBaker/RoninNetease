@@ -49,6 +49,10 @@ def getPlugin(name):
     # type: (str) -> PluginBase
     return _LOADED_SERVER_PLUGINS[name] if isServer() else _LOADED_CLIENT_PLUGINS[name]
 
+def hasPlugin(name):
+    # type: (str) -> bool
+    return name in _plugins()
+
 def _notifyAddSubsystem(subsystem):
     # type: (Subsystem) -> None
     for _host in _plugins().values():
@@ -66,8 +70,9 @@ def _notifyRegisterComponent(compCls):
 
 
 class _PluginHost(object):
-    def __init__(self, name, author, desc, compCls):
+    def __init__(self, name, ver, author, desc, compCls):
         self.name = name
+        self.ver = ver
         self.author = author
         self.desc = desc
         self.compCls = compCls # type: type[PluginBase]
@@ -87,11 +92,11 @@ class _PluginHost(object):
         self._inst = _inst
 
 
-def Plugin(name, author='Unknown', desc='Unknown'):
+def Plugin(name, ver=[0, 0, 1], author='Unknown', desc='Unknown'):
     def _decorator(cls):
         # type: (type) -> type
         if cls not in _REGISTERED_PLUGINS:
-            _REGISTERED_PLUGINS[name] = _PluginHost(name, author, desc, cls)
+            _REGISTERED_PLUGINS[name] = _PluginHost(name, ver, author, desc, cls)
         return cls
     return _decorator
 
@@ -134,3 +139,35 @@ def _loadPlugins(manager):
             _host.onReady(manager)
         except Exception as e:
             print('[ERROR] Failed to ready plugin ' + _host.name)
+
+
+MOD_CONST_NAMES = [
+    'MOD_NAME',
+    'MOD_VERSION',
+    'MOD_ENGINE_NAME',
+    'MOD_SYSTEM_NAME',
+]
+MOD_ARRAYS = [
+    'MOD_SERVER_MODULES',
+    'MOD_CLIENT_MODULES',
+]
+
+def modConf():
+    from .. import conf
+    _confModule = serverApi.ImportModule(__modname__ + '.conf') if isServer() else clientApi.ImportModule(__modname__ + '.conf')
+    engineConf = conf.__dict__
+    userConf = _confModule.__dict__
+    def getter(key):
+        if key in MOD_CONST_NAMES:
+            _user = userConf.get(key)
+            if _user is None:
+                return engineConf.get(key)
+            return _user
+        elif key in MOD_ARRAYS:
+            _user = userConf.get(key)
+            if _user is None:
+                return getattr(conf, key)
+            return set(engineConf.get(key) + _user)
+        else:
+            return None
+    return getter
