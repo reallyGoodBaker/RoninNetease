@@ -66,6 +66,15 @@ class SchedEventFlags:
     Event = SCHED_EVENT
     AfterEvent = SCHED_AFTER_EVENT
 
+ASPECT = '_Aspect'
+
+class Aspects:
+    Before = '_asp_before'
+    After = '_asp_after'
+    AfterReturning = '_asp_afterReturning'
+    AfterThrowing = '_asp_afterThrowing'
+    Replace = '_asp_replace'
+
 
 try:
     from .. import conf as userConf

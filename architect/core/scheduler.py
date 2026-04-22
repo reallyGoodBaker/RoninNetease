@@ -2,6 +2,7 @@
 from .basic import compClient, compServer, isServer, clientApi, serverApi
 from time import time
 from types import *
+from functools import wraps
 from .unreliable import Unreliable
 from .annotation import AnnotationHelper
 from ..conf import TIMER_TASK, SYSTEM_SCHED_ANNO, SchedEventFlags, SchedUpdateFlags
@@ -307,3 +308,49 @@ class Future(Unreliable):
         res = _resolvers[0]
         rej = _resolvers[1]
         return ftr, res, rej
+    
+
+def Async(func):
+    """
+    装饰器：将生成器函数转换为返回 Future 的异步函数。
+    调用时自动启动协程，yield 出的 Future 会被等待，
+    协程的最终返回值作为 Future 的 resolve 值。
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        gen = func(*args, **kwargs)
+        ftr, resolve, reject = Future.resolvers()
+
+        def advance(value=None, exc=None):
+            """驱动生成器执行一步"""
+            try:
+                if exc is not None:
+                    yielded = gen.throw(exc)
+                else:
+                    if value is None:
+                        yielded = gen.next()
+                    else:
+                        yielded = gen.send(value)
+            except StopIteration as e:
+                # 生成器正常结束，e.value 在 Python 2.7 中需要特殊处理
+                # StopIteration 没有 value 属性，需要从 args 中获取
+                result = e.args[0] if e.args else None
+                resolve(result)
+                return
+            except Exception as e:
+                reject(e)
+                return
+
+            # 等待 yield 出来的 Future
+            if isinstance(yielded, Future):
+                # 注册成功回调
+                yielded.done(lambda *res: advance(res[0] if res else None, None))
+                # 注册失败回调
+                yielded.expected(lambda *err: advance(None, err[0] if err else Exception("Future rejected")))
+            else:
+                reject(TypeError("Yielded object is not a Future: %s" % type(yielded)))
+
+        # 启动协程
+        advance()
+        return ftr
+    return wrapper

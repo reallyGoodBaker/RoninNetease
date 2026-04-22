@@ -15,11 +15,13 @@ def _getOrCreateAnnotation(target):
 class AnnotationHelper:
     @staticmethod
     def addAnnotation(target, key, value):
+        # type: (type, object, object) -> None
         annotation = _getOrCreateAnnotation(target)
         annotation[key] = value
 
     @staticmethod
     def getAnnotation(target, key):
+        # type: (type, object) -> object
         anno = _getAnnotation(target)
         if not anno:
             return None
@@ -27,6 +29,7 @@ class AnnotationHelper:
     
     @staticmethod
     def findAnnotatedMethods(target, key):
+        # type: (type, object) -> list
         methods = []
         for attr_name in dir(target):
             attr = getattr(target, attr_name)
@@ -37,6 +40,7 @@ class AnnotationHelper:
     
     @staticmethod
     def findAnnotatedClasses(target, key):
+        # type: (type, object) -> list
         classes = []
         for attr_name in dir(target):
             attr = getattr(target, attr_name)
@@ -47,6 +51,7 @@ class AnnotationHelper:
     
     @staticmethod
     def findAnnotatedAttributes(target, key):
+        # type: (type, object) -> list
         attributes = []
         for attr_name in dir(target):
             attr = getattr(target, attr_name)

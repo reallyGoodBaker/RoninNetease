@@ -289,66 +289,6 @@ class SubsystemManager:
                 listeners.remove(listener)
 
 
-class subsystem:
-
-    _firstSubsysClient = None
-    _firstSubsysServer = None
-
-    @staticmethod
-    def _findFirstSubsystem():
-        # type: () -> ClientSubsystem | ServerSubsystem
-        if isServer():
-            if not subsystem._firstSubsysServer:
-                subsystem._firstSubsysServer = SubsystemManager.getInstance().getSubsystems().values()[0]
-            return subsystem._firstSubsysServer
-        else:
-            if not subsystem._firstSubsysClient:
-                subsystem._firstSubsysClient = SubsystemManager.getInstance().getSubsystems().values()[0]
-            return subsystem._firstSubsysClient
-
-    @staticmethod
-    def sendServer(event, data):
-        client = subsystem._findFirstSubsystem() # type: ClientSubsystem
-        client.sendServer(event, data)
-
-    @staticmethod
-    def sendClient(target, event, data):
-        server = subsystem._findFirstSubsystem() # type: ServerSubsystem
-        server.sendClient(target, event, data)
-
-    @staticmethod
-    def sendAllClients(event, data):
-        server = subsystem._findFirstSubsystem() # type: ServerSubsystem
-        server.sendAllClients(event, data)
-
-    @staticmethod
-    def spawnServerEntity(template, location, rot, isNpc=False, isGlobal=False):
-        # type: (str, Location, tuple[float, float], bool, bool) -> 'None'
-        serverSubsys = subsystem._findFirstSubsystem() # type: ServerSubsystem
-        return serverSubsys.spawnEntity(template, location, rot, isNpc, isGlobal)
-
-    @staticmethod
-    def spawnClientEntity(template, pos, rot):
-        # type: (str|dict, tuple[float, float, float], tuple[float, float]) -> 'None'
-        clientSubsys = subsystem._findFirstSubsystem() # type: ClientSubsystem
-        return clientSubsys.spawnEntity(template, pos, rot)
-
-    @staticmethod
-    def spawnItem(itemCls, *args, **kwargs):
-        serverSubsys = subsystem._findFirstSubsystem()
-        return serverSubsys.spawnItem(itemCls, *args, **kwargs)
-    
-    @staticmethod
-    def addListener(event, fn, isCustomEvent=False):
-        # type: (str, function, bool) -> str
-        return subsystem._findFirstSubsystem()._addListener(event, fn, isCustomEvent)
-
-    @staticmethod
-    def removeListener(event, fn, isCustomEvent=False):
-        # type: (str, function, bool) -> str
-        return subsystem._findFirstSubsystem()._removeListener(event, fn, isCustomEvent)
-
-
 def SubsystemClient(subsystemCls):
     """
     Decorator to auto register subsystem class
@@ -648,8 +588,70 @@ class _ShadowSystemClient(ClientSystem):
         return SubsystemManager.getInstance()
 
 
+
 def createServer():
     return SubsystemManager.createServer()
 
 def createClient():
     return SubsystemManager.createClient()
+
+
+
+class subsystem:
+
+    _firstSubsysClient = None
+    _firstSubsysServer = None
+
+    @staticmethod
+    def _findFirstSubsystem():
+        # type: () -> ClientSubsystem | ServerSubsystem
+        if isServer():
+            if not subsystem._firstSubsysServer:
+                subsystem._firstSubsysServer = SubsystemManager.getInstance().getSubsystems().values()[0]
+            return subsystem._firstSubsysServer
+        else:
+            if not subsystem._firstSubsysClient:
+                subsystem._firstSubsysClient = SubsystemManager.getInstance().getSubsystems().values()[0]
+            return subsystem._firstSubsysClient
+
+    @staticmethod
+    def sendServer(event, data):
+        client = subsystem._findFirstSubsystem() # type: ClientSubsystem
+        client.sendServer(event, data)
+
+    @staticmethod
+    def sendClient(target, event, data):
+        server = subsystem._findFirstSubsystem() # type: ServerSubsystem
+        server.sendClient(target, event, data)
+
+    @staticmethod
+    def sendAllClients(event, data):
+        server = subsystem._findFirstSubsystem() # type: ServerSubsystem
+        server.sendAllClients(event, data)
+
+    @staticmethod
+    def spawnServerEntity(template, location, rot, isNpc=False, isGlobal=False):
+        # type: (str, Location, tuple[float, float], bool, bool) -> 'None'
+        serverSubsys = subsystem._findFirstSubsystem() # type: ServerSubsystem
+        return serverSubsys.spawnEntity(template, location, rot, isNpc, isGlobal)
+
+    @staticmethod
+    def spawnClientEntity(template, pos, rot):
+        # type: (str|dict, tuple[float, float, float], tuple[float, float]) -> 'None'
+        clientSubsys = subsystem._findFirstSubsystem() # type: ClientSubsystem
+        return clientSubsys.spawnEntity(template, pos, rot)
+
+    @staticmethod
+    def spawnItem(itemCls, *args, **kwargs):
+        serverSubsys = subsystem._findFirstSubsystem()
+        return serverSubsys.spawnItem(itemCls, *args, **kwargs)
+    
+    @staticmethod
+    def addListener(event, fn, isCustomEvent=False):
+        # type: (str, function, bool) -> str
+        return subsystem._findFirstSubsystem()._addListener(event, fn, isCustomEvent)
+
+    @staticmethod
+    def removeListener(event, fn, isCustomEvent=False):
+        # type: (str, function, bool) -> str
+        return subsystem._findFirstSubsystem()._removeListener(event, fn, isCustomEvent)
