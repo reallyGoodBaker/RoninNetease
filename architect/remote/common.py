@@ -73,7 +73,7 @@ def _callRemoteMethod(subsys, data):
             }
             if isServer():
                 # 客户端发送的rpc
-                subsys.sendClient(data.__id__, REMOTE_RET_KEY, returnVal)
+                subsys.sendClient(data['__id__'], REMOTE_RET_KEY, returnVal)
             else:
                 # 服务器发送的rpc
                 subsys.sendServer(REMOTE_RET_KEY, returnVal)
@@ -90,19 +90,24 @@ _serverRets = {}
 
 def _registerRemoteCalls(sysManager):
     # type: (SubsystemManager) -> None
+    def _handleCall(ev):
+        uri = ev['uri']
+        sysName = uri.split('.')[0]
+        _callRemoteMethod(sysManager.getSubsystem(sysName), ev)
+
     sysManager.addListener(
         REMOTE_CALL_KEY,
-        lambda ev: _callRemoteMethod(sysManager, ev),
+        _handleCall,
         True
     )
 
     def _handleRecev(ev):
         rets = _serverRets if isServer() else _clientRets
-        retHandler = rets.get(ev.id)
+        retHandler = rets.get(ev['id'])
         if not retHandler:
             return
-        retHandler(ev.result, ev.err)
-        del rets[ev.id]
+        retHandler(ev['result'], ev['err'])
+        del rets[ev['id']]
 
     sysManager.addListener(
         REMOTE_RET_KEY,
