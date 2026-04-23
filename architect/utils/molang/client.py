@@ -6,7 +6,6 @@ from ...event.core import EventSignal
 from ...event import EventListener
 
 _queryVariableUsed = {}
-LevelQuery = compClient.CreateQueryVariable(clientApi.GetLevelId())
 
 def _recordQueryVariableUsage(name, actorId):
     users = _queryVariableUsed.get(name, set()) # type: set
@@ -19,7 +18,7 @@ class QueryVariable(MolangMutable, Unreliable):
         self.rawName = name
         self.defaultValue = defaultValue
         self.OnValueChanged = EventSignal()
-        LevelQuery.Register(self.name, self.defaultValue)
+        compClient.CreateQueryVariable(clientApi.GetLevelId()).Register(self.name, self.defaultValue)
 
     def _molangComp(self, actorId):
         return compClient.CreateQueryVariable(actorId)

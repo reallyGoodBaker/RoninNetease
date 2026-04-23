@@ -55,6 +55,39 @@ function findAnimResources(resDir, consumer) {
 }
 
 
+/**
+ * 
+ * @param {Record<string, string[]>} animMeta 
+ * @param {Record<string, string>[]} timeline 
+ * @returns 
+ */
+function handleNotifies(animMeta, timeline) {
+    if (!timeline) {
+        return
+    }
+
+    animMeta.notifies = {}
+    for (const [ time, expr ] of Object.entries(timeline)) {
+        const notifies = []
+        const exprStr = Array.isArray(expr) ? expr.join('') : expr
+        for (const equalExpr of exprStr.slice(0, -1).replaceAll(' ', '').split(';')) {
+            const [ key, value ] = equalExpr.split('=')
+            const variableName = key.replace('v.', '').replace('variable.', '')
+            if (variableName.startsWith('notify_')) {
+                const notifyName = variableName.slice(7)
+                notifies.push({
+                    name: notifyName,
+                    state: Math.round(value)
+                })
+            }
+        }
+        if (notifies.length > 0) {
+            animMeta.notifies[time] = notifies
+        }
+    }
+}
+
+
 function extractAnimations() {
     const resDir = findResDir()
     if (!resDir) {
@@ -79,11 +112,13 @@ function extractAnimations() {
 
     // Merge anim resources
     findAnimResources(resDir, ({ animations }) => {
-        for (const [ key, { loop, animation_length } ] of Object.entries(animations)) {
-            animMetaInfos[key] = {
-                loop,
-                length: animation_length
+        for (const [ key, { loop, animation_length, timeline } ] of Object.entries(animations)) {
+            const metaInfo = {
+                loop: loop ?? false,
+                length: animation_length ?? -1,
             }
+            handleNotifies(metaInfo, timeline)
+            animMetaInfos[key] = metaInfo
         }
     })
 

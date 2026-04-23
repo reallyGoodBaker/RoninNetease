@@ -11,3 +11,21 @@ class AnimationEasingTypes:
     QUINT = 'quint'
     SINE = 'sine'
     EXPO = 'expo'
+
+
+class LoopType:
+    ONCE = 0
+    LOOP = 1
+    KEEP_LAST_FRAME = 2
+
+
+class NotifyState:
+    START = 1
+    END = 0
+
+
+class AnimEvents:
+    NotifyStart = 'animEx:NotifyStart'
+    NotifyEnd = 'animEx:NotifyEnd'
+    Finish = 'animEx:Finish'
+    Interrupted = 'animEx:Interrupted'

@@ -1,8 +1,13 @@
 import time
 
-from ....compact import Component, BaseCompClient, getOneComponent, NamedEntityVariable
+from ....compact import Ref, Component, BaseCompClient, getOneComponent, NamedEntityVariable, QueryVariable
 from ....utils.persona.client import PersonaRendererComponent
-from ..enum import AnimationEasingTypes, AnimationBlendingTypes
+from ..enum import AnimationEasingTypes, AnimationBlendingTypes, LoopType
+
+try:
+    from .....assets.animMeta import AnimMeta
+except:
+    print('[ERROR] 未找到 AnimMeta, 请使用 architect/tools/animExtractor 提取动画元数据')
 
 
 class AnimationEasingConf(object):
@@ -12,16 +17,67 @@ class AnimationEasingConf(object):
         self.duration = duration
 
 
+class AnimPlayingInfo(object):
+    def __init__(self, entityId, animName, layer, startTime, playRate):
+        self.animName = animName
+        self.layer = layer
+        self.startTime = startTime
+        self.playRate = playRate
+        self.playTime = 0
+        nameSuffix = animName.replace('animation.', '')
+        self.animTimeComp = NamedEntityVariable(entityId, 'anim_time.' + nameSuffix, 0)
+        self._manualStop = False
+        self._dt = 0
+        meta = AnimMeta[animName]
+        self.duration = float('inf') if meta['length'] == -1 else meta['length']
+        self.notifies = meta.get('notifies')
+        if meta['loop'] == True:
+            self.loop = LoopType.LOOP
+        elif meta['loop'] == False:
+            self.loop = LoopType.ONCE
+        else:
+            self.loop = LoopType.KEEP_LAST_FRAME
+
+    def doTick(self, _dt):
+        dt = _dt * self.playRate
+        self._dt = dt
+        prevTime = self.playTime
+        curTime = dt + prevTime
+        self.playTime = curTime
+        self.animTimeComp.setValue(curTime)
+
+    def getNotifies(self):
+        if not self.notifies:
+            return []
+        cur = self.playTime
+        prev = cur - self._dt
+        for time, notifies in self.notifies.items():
+            if prev < float(time) <= cur:
+                return notifies
+        return []
+
+    def isFinished(self):
+        if self._manualStop:
+            return True
+        if self.loop == LoopType.LOOP:
+            return False
+        elif self.loop in (LoopType.ONCE, LoopType.KEEP_LAST_FRAME):
+            return self.playTime >= self.duration
+        else:
+            raise Exception('Unknown loop type: ' + self.loop)
+
+
 @Component()
 class AnimationExComponent(BaseCompClient):
+
     def onCreate(self, entityId):
         self.entityId = entityId
-        self.layers = {}
-        self.animations = {}
+        self.layers = {} #type: dict[int, set]
+        self.animations = {} # type: dict[str, str]
         self.variables = {}
         self.blending = {}
         self.blendingConf = {}
-        self.playing = {}
+        self.playing = {} # type: dict[str, AnimPlayingInfo]
         self.notifies = {}
 
     def registerAnimations(self, mapping):
@@ -38,10 +94,11 @@ class AnimationExComponent(BaseCompClient):
     def _createActorAnimate(self):
         animateScripts = []
         for animKey, animName in self.animations.items():
-            variable = NamedEntityVariable(self.entityId, 'animex_' + animKey)
+            nameSuffix = animName.replace('animation.', '')
+            variable = NamedEntityVariable(self.entityId, 'blend.' + nameSuffix)
             self.variables[animKey] = variable
             animateScripts.append({
-                [animName]: variable.getName() + ' > 0'
+                animName: variable.getName() + ' > 0'
             })
         return animateScripts
 
@@ -94,8 +151,8 @@ class AnimationExComponent(BaseCompClient):
         # type: (str) -> bool
         return animKey in self.playing
 
-    def play(self, animKey, layer='default', replay=True):
-        # type: (str, str, bool) -> None
+    def play(self, animKey, layer='default', replay=True, playRate=1):
+        # type: (str, str, bool, float) -> None
         """
         不同 layer 的动画可以同时播放，但同一 layer 的动画不能同时播放
         """
@@ -104,9 +161,14 @@ class AnimationExComponent(BaseCompClient):
 
         # 将其他层的同名动画删除
         playingLayer = self.playing.get(animKey)
-        if playingLayer:
+        if playingLayer and playingLayer.layer:
             self.playing.pop(animKey)
-        self.playing[animKey] = layer
+            self.layers.pop(playingLayer.layer)
+        self.playing[animKey] = AnimPlayingInfo(
+            self.entityId,
+            self.animations[animKey],
+            layer, time.time(), playRate
+        )
 
         playing = self.layers.get(layer, set()) # type: set[str]
         if len(playing) > 0:
@@ -125,10 +187,11 @@ class AnimationExComponent(BaseCompClient):
 
     def stop(self, animKey, layer='default', noBlending=False):
         # type: (str, str, bool) -> None
-        playingLayer = self.playing.get(animKey)
-        if playingLayer != layer:
+        animInfo = self.playing.get(animKey)
+        if not animInfo or animInfo.layer != layer:
             return
-        self.playing.pop(animKey)
+        animInfo._manualStop = True
+
         if noBlending:
             self.variables[animKey].setValue(0)
         else:
