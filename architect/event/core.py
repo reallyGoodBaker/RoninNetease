@@ -52,6 +52,9 @@ class EventTarget(object):
         if event in self.__events:
             self.__events[event].off(fn)
 
+    def removeAllListener(self):
+        self.__events.clear()
+
     def dispatch(self, event, *args):
         if event in self.__events:
             self.__events[event].emit(*args)
@@ -93,8 +96,9 @@ class ChainedEvent(object):
 
 
 class EventChain(Unreliable):
-    def __init__(self):
+    def __init__(self, evType):
         Unreliable.__init__(self)
+        self.evType = evType
         self.__handlers = []
         """顺序触发监听器，通过 stop() 决定是否结束事件传递"""
         self.guarded = True
@@ -113,9 +117,9 @@ class EventChain(Unreliable):
     def removeListener(self, fn):
         self.__handlers.remove(fn)
 
-    def dispatch(self, evType, _ev):
+    def dispatch(self, _ev):
         shouldBreak = Ref(False)
-        ev = ChainedEvent(evType, _ev, shouldBreak)
+        ev = ChainedEvent(self.evType, _ev, shouldBreak)
         handlers = self.__handlers if self.useCapture else reversed(self.__handlers)
         for fn in handlers:
             _, err = self.tryCall(fn, ev)

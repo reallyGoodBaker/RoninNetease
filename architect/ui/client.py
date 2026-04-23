@@ -6,7 +6,7 @@ from ..core.basic import clientApi
 from ..level.client import LevelClient
 from ..core.subsystem import ClientSubsystem, SubsystemManager, subsystem
 
-from .gesture import GestureBinder, TouchEvents
+from .gesture import GestureBinder, TouchEvents, Touch
 
 class SinkContext(object):
     contextStack = [] # type: list[SinkContext]
@@ -31,8 +31,8 @@ class SinkContext(object):
     def __enter__(self):
         return self
 
-    def recordDep(self, dep, value):
-        # type: (EventSignal, object) -> None
+    def recordDep(self, dep):
+        # type: (EventSignal) -> None
         if dep in self.deps:
             return
         self.deps.append(dep)
@@ -62,28 +62,38 @@ def Hud(cls):
 
 
 def Sink(method):
+    """
+    @Sink 在控件初始化时会自动调用一遍用来获取控件依赖，之后在控件依赖发生变化时，会自动调用一遍。
+
+    如果你不希望某个响应式对象被加入依赖，只需要在 getter 执行前return即可。
+    """
     AnnotationHelper.addAnnotation(method, UI_SINK, True)
     return method
 
 
 def signal(defaultValue=None, updater=None):
     # type: (object, function) -> tuple[function, function]
+    """
+    用于object时, 由于修改object内字段不会导致object的hash值变化, 因此不会触发依赖更新。
+
+    你需要通过手动设置 updater(val: T, oldVal: T): T 来让系统强制更新依赖值。
+    """
     val = Ref(defaultValue)
     dep = EventSignal()
     def getter():
         top = SinkContext.stackTop()
         if top:
-            top.recordDep(dep, val.value)
+            top.recordDep(dep)
         return val.value
     def setter(v):
         if updater:
             newVal = updater(v, val.value)
-            dep.emit()
             val.value = newVal
+            dep.emit()
         else:
             if v != val.value:
-                dep.emit()
                 val.value = v
+                dep.emit()
     return (getter, setter)
 
 
@@ -122,22 +132,16 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
         def createAsync():
             isScreen = AnnotationHelper.getAnnotation(cls, UI_SCREEN)
             isHud = AnnotationHelper.getAnnotation(cls, UI_HUD)
-            cls.defineUi(AnnotationHelper.getAnnotation(cls, UI_DEF))
-            if isScreen:
-                subsystem.addListener(
-                    'UiInitFinished',
-                    lambda: cls.pushScreen()
-                )
-            elif isHud:
-                subsystem.addListener(
-                    'UiInitFinished',
-                    lambda: cls.getOrCreate(isHud=True)
-                )
-            else:
-                subsystem.addListener(
-                    'UiInitFinished',
-                    lambda: cls.create(isHud=False)
-                )
+            uiDef = AnnotationHelper.getAnnotation(cls, UI_DEF)
+            def _createUi(_):
+                cls.defineUi(uiDef)
+                if isScreen:
+                    cls.pushScreen()
+                elif isHud:
+                    cls.getOrCreate(isHud=1)
+                else:
+                    cls.create(isHud=0)
+            subsystem.addListener('UiInitFinished', _createUi)
         LevelClient.getInstance().game.AddTimer(0, createAsync)
 
     ns = UI_NAMESPACE
@@ -146,10 +150,7 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
     def _initGesture(self):
         for method in AnnotationHelper.findAnnotatedMethods(self, UI_GESTURE):
             type, controlPath = AnnotationHelper.getAnnotation(method, UI_GESTURE)
-            control = self.find(controlPath)
-            if type in TouchEvents:
-                control.asButton().AddTouchEventParams()
-            GestureBinder[type](control, method.__get__(self))
+            self.addEventListener(controlPath, type, method)
 
     @classmethod
     def defineUi(cls, uiDef):
@@ -222,6 +223,7 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
         self._initGesture()
 
     def Destroy(self):
+        self.removeAllListener()
         self._removeSinks()
         self.unlisten('OnBackButtonReleaseClientEvent', self._performBackPressed)
         self.unlisten('OnGamepadKeyPressClientEvent', self._handleGamepadBack)
@@ -248,4 +250,17 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
 
     def onDestroy(self):
         pass
+
+    def addEventListener(self, controlPath, type, handler, opt=None):
+        """
+        此方法会把 handler 的 self 绑定到当前 UiSubsystem 实例
+        """
+        control = self.find(controlPath)
+        if type in TouchEvents:
+            control.asButton().AddTouchEventParams(opt)
+        GestureBinder[type](self, control)
+        def _handlerWrapper(ev, _method=handler.__get__(self), _control=control):
+            if ev.control == _control:
+                _method(ev)
+        self.addListener(type, _handlerWrapper)
 

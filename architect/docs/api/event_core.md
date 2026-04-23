@@ -311,7 +311,7 @@ event.stop()  # 停止事件传递
 ```python
 from ..architect.event import EventChain
 
-chain = EventChain()
+chain = EventChain('evType')
 chain.addListener(lambda ev: print('Listener 1:', ev))
 chain.addListener(lambda ev: print('Listener 2:', ev))
 chain.dispatch('test', {'data': 'hello'})

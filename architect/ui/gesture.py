@@ -1,4 +1,5 @@
 from ..core.annotation import AnnotationHelper
+from ..event.core import ChainedEvent
 from ..conf import UI_GESTURE
 
 def _btnDecoratorBuilder(type):
@@ -30,11 +31,28 @@ TouchEvents = (
 )
 
 
+def _createGestureBinder(type, bindingFuncName, castFuncName):
+    def _binder(screen, control):
+        casted = getattr(control, castFuncName)()
+        bindingFunc = getattr(casted, bindingFuncName)
+        def _listener(_ev={}, target=casted, screen=screen):
+            _ev['target'] = target
+            _ev['control'] = control
+            _ev['screen'] = screen
+            _ev['x'] = _ev.get('TouchPosX')
+            _ev['y'] = _ev.get('TouchPosY')
+            _ev['pos'] = (_ev['x'], _ev['y'])
+            ev = ChainedEvent(type, _ev)
+            screen.dispatch(type, ev)
+        bindingFunc(_listener)
+    return _binder
+
+
 GestureBinder = {
-    'click': lambda control, method: control.asButton().SetButtonTouchUpCallback(method),
-    'down': lambda control, method: control.asButton().SetButtonTouchDownCallback(method),
-    'move': lambda control, method: control.asButton().SetButtonTouchMoveCallback(method),
-    'movein': lambda control, method: control.asButton().SetButtonTouchMoveInCallback(method),
-    'moveout': lambda control, method: control.asButton().SetButtonTouchMoveOutCallback(method),
-    'cancel': lambda control, method: control.asButton().SetButtonTouchCancelCallback(method),
+    'click': _createGestureBinder('click', 'SetButtonTouchUpCallback', 'asButton'),
+    'down': _createGestureBinder('down', 'SetButtonTouchDownCallback', 'asButton'),
+    'move': _createGestureBinder('move', 'SetButtonTouchMoveCallback', 'asButton'),
+    'movein': _createGestureBinder('movein', 'SetButtonTouchMoveInCallback', 'asButton'),
+    'moveout': _createGestureBinder('moveout', 'SetButtonTouchMoveOutCallback', 'asButton'),
+    'cancel': _createGestureBinder('cancel', 'SetButtonTouchCancelCallback', 'asButton'),
 }

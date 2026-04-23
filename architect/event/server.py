@@ -10,10 +10,10 @@ class ServerEvents:
         if (eventType, isCustomEvent) in ServerEvents.globalEvents:
             return ServerEvents.globalEvents[(eventType, isCustomEvent)]
         else:
-            chain = EventChain()
+            chain = EventChain(eventType)
             ServerEvents.globalEvents[(eventType, isCustomEvent)] = chain
             from ..core.subsystem import SubsystemManager
-            SubsystemManager.getInstance().addListener(eventType, lambda ev: chain.dispatch(eventType, ev), isCustomEvent)
+            SubsystemManager.getInstance().addListener(eventType, lambda ev: chain.dispatch(ev), isCustomEvent)
             return chain
 
 
