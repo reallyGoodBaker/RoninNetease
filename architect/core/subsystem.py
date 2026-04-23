@@ -108,7 +108,7 @@ class SubsystemManager:
 
     def getSubsystems(self):
         return self.clientSubs if isServer() else self.serverSubs
-    
+
 
     def _record(self, inst):
         self.getSubsystems()[inst.__class__.__name__] = inst
@@ -187,7 +187,7 @@ class SubsystemManager:
     def getSubsystem(self, subsystemCls):
         # type: (object) -> 'Subsystem'
         return self.getSubsystems().get(subsystemCls if type(subsystemCls) is str else subsystemCls.__name__)
-    
+
 
     def getSubsystemByName(self, name):
         # type: (str) -> 'Subsystem'
@@ -244,6 +244,7 @@ class SubsystemManager:
         self.lastTickTime = currentTime
         SubsystemManager.clientTickSched.executeSequence()
 
+
     def tickRender(self, _):
         currentTime = time.time()
         dt = max(1e-5, currentTime - self.lastFrameTime)
@@ -254,6 +255,7 @@ class SubsystemManager:
                 obj.onRender(dt)
 
         SubsystemManager.renderTickSched.executeSequence()
+
 
     def addListener(self, event, fn, isCustomEvent=False):
         listeners = self.serverListeners if isServer() else self.clientListeners
@@ -275,6 +277,7 @@ class SubsystemManager:
                 listener.fn
             )
         listeners.append(listener)
+
 
     def removeListener(self, event, fn):
         listeners = self.serverListeners if isServer() else self.clientListeners

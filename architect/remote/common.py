@@ -65,17 +65,23 @@ def _callRemoteMethod(subsys, data):
         print('[ERROR] Remote call failed: \n' + traceback.format_exc())
 
     if requireReturn:
-        returnVal = {
-            'result': result,
-            'err': err,
-            'id': id
-        }
-        if isServer():
-            # 客户端发送的rpc
-            subsys.sendClient(data.__id__, REMOTE_RET_KEY, returnVal)
+        def _sendReturn(result, err, id=id):
+            returnVal = {
+                'result': result,
+                'err': err,
+                'id': id
+            }
+            if isServer():
+                # 客户端发送的rpc
+                subsys.sendClient(data.__id__, REMOTE_RET_KEY, returnVal)
+            else:
+                # 服务器发送的rpc
+                subsys.sendServer(REMOTE_RET_KEY, returnVal)
+        if isinstance(result, Future):
+            result.done(lambda v: _sendReturn(v, None))
+            result.expected(lambda e: _sendReturn(None, e))
         else:
-            # 服务器发送的rpc
-            subsys.sendServer(REMOTE_RET_KEY, returnVal)
+            _sendReturn(result, err)
 
 
 _clientRets = {}

@@ -138,7 +138,7 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
                 if isScreen:
                     cls.pushScreen()
                 elif isHud:
-                    cls.getOrCreate(isHud=1)
+                    cls.create(isHud=1)
                 else:
                     cls.create(isHud=0)
             subsystem.addListener('UiInitFinished', _createUi)
@@ -166,13 +166,15 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
         if cls.inst:
             return cls.inst
 
-        ui = clientApi.CreateUI(cls.ns, cls.__name__, params)
+        ui = clientApi.CreateUI(cls.ns, cls.__name__, params) # type: UiSubsystem
         cls.inst = ui
         return ui
 
     @classmethod
     def create(cls, **params):
-        ui = clientApi.CreateUI(cls.ns, cls.__name__, params)
+        if cls.inst:
+            cls.inst.remove()
+        ui = clientApi.CreateUI(cls.ns, cls.__name__, params) # type: UiSubsystem
         return ui
 
     @classmethod
@@ -229,6 +231,7 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
         self.unlisten('OnGamepadKeyPressClientEvent', self._handleGamepadBack)
         self.unlisten('OnKeyPressInGame', self._handleKeyboardBack)
         self.onDestroy()
+        SubsystemManager.getInstance().removeSubsystem(self)
 
     def remove(self):
         if self.params.get('pushScreen'):
