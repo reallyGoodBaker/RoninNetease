@@ -25,7 +25,7 @@ class AnimPlayingInfo(object):
         self.playRate = playRate
         self.playTime = 0
         nameSuffix = animName.replace('animation.', '')
-        self.animTimeComp = NamedEntityVariable(entityId, 'anim_time.' + nameSuffix, 0)
+        self.animTimeComp = NamedEntityVariable(entityId, 'anim_timeex.' + nameSuffix, 0)
         self._manualStop = False
         self._dt = 0
         meta = AnimMeta[animName]
@@ -95,7 +95,7 @@ class AnimationExComponent(BaseCompClient):
         animateScripts = []
         for animKey, animName in self.animations.items():
             nameSuffix = animName.replace('animation.', '')
-            variable = NamedEntityVariable(self.entityId, 'blend.' + nameSuffix)
+            variable = NamedEntityVariable(self.entityId, 'blendex.' + nameSuffix)
             self.variables[animKey] = variable
             animateScripts.append({
                 animName: variable.getName() + ' > 0'
