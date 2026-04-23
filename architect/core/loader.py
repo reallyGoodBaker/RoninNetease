@@ -177,3 +177,7 @@ def modConf():
         else:
             return None
     return getter
+
+def animMeta(animName):
+    from ...assets.animMeta import AnimMeta
+    return AnimMeta[animName]

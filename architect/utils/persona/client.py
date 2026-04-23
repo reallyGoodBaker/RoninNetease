@@ -549,6 +549,12 @@ class PersonaRendererComponent(BaseCompClient):
         else:
             self.changeActorRenderConf(jsonObject, broadcast=broadcast, full=full) 
 
+    def addRenderConf(self, jsonObject, rebuild=True):
+        if compClient.CreateEngineType(self.entityId).GetEngineType() == EntityType.Player:
+            self.addPlayerRenderConf(jsonObject, rebuild)
+        else:
+            self.addActorRenderConf(jsonObject, rebuild)
+
     def resetActorRenderConf(self, broadcast=True):
         if not self.modified:
             return
