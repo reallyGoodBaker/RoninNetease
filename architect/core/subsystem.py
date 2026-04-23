@@ -8,7 +8,6 @@ from .scheduler import Scheduler, Sched, SimpleFixedScheduler
 from .basic import isServer, Location
 from .loader import __modname__, _loadPlugins, _notifyAddSubsystem, _notifyRemoveSubsystem, modConf
 
-from ..level.server import LevelServer
 from ..component.core import _registerCompsIntoGame, getOrCreateSingletonComponent
 from ..event.client import event as eventClient
 from ..event.server import event as eventServer
@@ -57,19 +56,15 @@ class SubsystemManager:
         getConf = modConf()
         engine = getConf('MOD_ENGINE_NAME')
         sysName = getConf('MOD_SYSTEM_NAME')
-        modules = getConf('MOD_CLIENT_MODULES')
         existed = clientApi.GetSystem(engine, sysName)
         manager = existed.getManager() if existed else SubsystemManager(
             clientApi.RegisterSystem(engine, sysName, cls.__module__ + '.' + SYSTEM_CLIENT_NAME),
             engine, sysName
         )
-        for clientModule in modules:
-            clientApi.ImportModule(cls._relative(clientModule))
+        # 在manager之前初始化，否则无法监听组件注册和子系统变更
         manager.rawEngine = clientApi.GetEngineNamespace()
         manager.rawSysName = clientApi.GetEngineSystemName()
         SubsystemManager.client = manager
-        # 在manager之前初始化，否则无法监听组件注册和子系统变更
-        _loadPlugins(manager)
         manager._initManager(False)
         return manager
 
@@ -90,14 +85,7 @@ class SubsystemManager:
         manager.rawEngine = serverApi.GetEngineNamespace()
         manager.rawSysName = serverApi.GetEngineSystemName()
         SubsystemManager.server = manager
-        def _initLater(_):
-            # 在manager之前初始化，否则无法监听组件注册和子系统变更
-            getConf = modConf()
-            for serverModule in getConf('MOD_SERVER_MODULES'):
-                serverApi.ImportModule(cls._relative(serverModule))
-            _loadPlugins(manager)
-            manager._initManager(True)
-        listener = EventListener('LoadServerAddonScriptsAfter', _initLater)
+        listener = EventListener('LoadServerAddonScriptsAfter', lambda _: manager._initManager(True))
         manager.system.ListenForEvent(
             manager.rawEngine,
             manager.rawSysName,
@@ -112,7 +100,10 @@ class SubsystemManager:
         self.engine = engine
         self.sysName = sysName
         self.system = system
+        self.preloaded = False
         setattr(system, 'getManager', lambda val=self: val)
+        from ..remote.common import _registerRemoteCalls
+        _registerRemoteCalls(self)
 
 
     def getSubsystems(self):
@@ -133,7 +124,17 @@ class SubsystemManager:
         SubsystemManager.unregisterSubsystems()
 
 
+    def _importModules(self, isHost):
+        getConf = modConf()
+        for module in getConf('MOD_{}_MODULES'.format('SERVER' if isHost else 'CLIENT')):
+            importer = serverApi if isHost else clientApi
+            importer.ImportModule(self._relative(module))
+
+
     def _initManager(self, isHost):
+        self._importModules(isHost)
+        _loadPlugins(self)
+        self.preloaded = True
         _registerCompsIntoGame(isHost)
         self._addAnnotatedSubsystems()
         self._callReady(isHost)
@@ -203,7 +204,7 @@ class SubsystemManager:
     @staticmethod
     def registerSubsystem(subsystem):
         inst = SubsystemManager.getInstance()
-        if not inst:
+        if not inst or not inst.preloaded:
             SubsystemManager.registeredSubsystems.append(subsystem)
         else:
             inst.addSubsystem(subsystem)
@@ -470,6 +471,18 @@ class Subsystem(object):
             elif schedType == Sched.TYPE_EVENT:
                 self._removeSchedEvents()
 
+    def _registerRemoteFuncs(self):
+        from ..remote.common import REMOTE_INNER_KEY, record
+        remoteRecord = record()
+        for method in AnnotationHelper.findAnnotatedMethods(self, REMOTE_INNER_KEY):
+            remoteRecord[self.__class__.__name__ + '.' + method.__name__] = method.__get__(self)
+
+    def _removeRemoteFuncs(self):
+        from ..remote.common import REMOTE_INNER_KEY, record
+        remoteRecord = record()
+        for method in AnnotationHelper.findAnnotatedMethods(self, REMOTE_INNER_KEY):
+            remoteRecord.pop(self.__class__.__name__ + '.' + method.__name__)
+
     def _init(self):
         SubsystemManager.getInstance()._record(self)
         self._fixedSchedsToAdd = {} # type: dict[str, function]
@@ -477,12 +490,14 @@ class Subsystem(object):
         self.fixedSchedulers = {} # type: dict[str, SimpleFixedScheduler]
         self._addListeners()
         self._addSchedMethods()
+        self._registerRemoteFuncs()
         self.onInit()
         self.initialized = True
 
     def _destroy(self):
         self.initialized = False
         self.onDestroy()
+        self._removeRemoteFuncs()
         self._removeSchedMethods()
         self._removeListeners()
         SubsystemManager.getInstance()._removeRecord(self)

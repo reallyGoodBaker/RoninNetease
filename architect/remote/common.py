@@ -2,6 +2,7 @@ from ..core.basic import isServer
 from ..core.scheduler import Future
 from ..level.server import LevelServer
 from ..level.client import LevelClient
+from ..core.annotation import AnnotationHelper
 
 if 1 > 2:
     from ..core.subsystem import SubsystemManager
@@ -9,15 +10,16 @@ if 1 > 2:
 
 REMOTE_CALL_KEY = '[[remote_call]]'
 REMOTE_RET_KEY = '[[remote_ret]]'
+REMOTE_INNER_KEY = '[[remote_inner]]'
 
 
 def Remote(method):
-    isHost = isServer()
-    sysName = method.__self__.__class__.__name__
-    methodName = method.__name__
-    record = _serverRemoteMethods if isHost else _clientRemoteMethods
-    record[sysName + '.' + methodName] = method
+    AnnotationHelper.addAnnotation(method, REMOTE_INNER_KEY, True)
     return method
+
+
+def record():
+    return _serverRemoteMethods if isServer() else _clientRemoteMethods
 
 
 _clientRemoteMethods = {}
@@ -44,21 +46,23 @@ def _createInvokeData(id, uri, *args, **kwargs):
 
 
 def _callRemoteMethod(subsys, data):
-    id = data.id
-    uri = data.uri
-    args = data.args
-    kwargs = data.kwargs
-    requireReturn = data.requireReturn
+    id = data['id']
+    uri = data['uri']
+    args = data['args']
+    kwargs = data['kwargs']
+    requireReturn = data['requireReturn']
     result = None
     err = None
 
     try:
         if isServer():
-            result = _serverRemoteMethods[uri](*args, **kwargs)
+            result = _serverRemoteMethods[uri](data['__id__'], *args, **kwargs)
         else:
             result = _clientRemoteMethods[uri](*args, **kwargs)
     except Exception as e:
         err = e
+        import traceback
+        print('[ERROR] Remote call failed: \n' + traceback.format_exc())
 
     if requireReturn:
         returnVal = {
@@ -187,5 +191,9 @@ class _RemoteServer(object):
 _remoteClient = _RemoteClient()
 _remoteServer = _RemoteServer()
 
-def remote():
+def getRemote():
     return _remoteServer if isServer() else _remoteClient
+
+class remote:
+    client = _remoteClient
+    server = _remoteServer
