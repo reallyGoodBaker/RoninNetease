@@ -24,7 +24,8 @@ class NotifyState:
     END = 0
 
 
-class AnimEvents:
+class AnimExEvents:
+    Notify = 'animEx:Notify'
     NotifyStart = 'animEx:NotifyStart'
     NotifyEnd = 'animEx:NotifyEnd'
     Finish = 'animEx:Finish'

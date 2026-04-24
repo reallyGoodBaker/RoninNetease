@@ -6,7 +6,7 @@ import mod.server.extraServerApi as serverApi
 from .annotation import AnnotationHelper
 from .scheduler import Scheduler, Sched, SimpleFixedScheduler
 from .basic import isServer, Location
-from .loader import __modname__, _loadPlugins, _notifyAddSubsystem, _notifyRemoveSubsystem, modConf
+from .loader import __modname__, _loadPlugins, _readyPlugins, _notifyAddSubsystem, _notifyRemoveSubsystem, modConf
 
 from ..component.core import _registerCompsIntoGame, getOrCreateSingletonComponent
 from ..event.client import event as eventClient
@@ -145,6 +145,7 @@ class SubsystemManager:
         subs = self.clientSubs if isServer else self.serverSubs
         for v in subs.values():
             v.onReady()
+        _readyPlugins(self)
 
 
     def startTicking(self, isServer):

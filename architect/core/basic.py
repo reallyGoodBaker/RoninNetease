@@ -8,15 +8,31 @@ class Location:
         self.dim = dim
 
 __threads = {}
+__meta = {}
 
 def isServer():
     curId = threading.current_thread().ident
     if curId in __threads:
         return __threads[curId]
     else:
-        _isServer = clientApi.GetLocalPlayerId() == '-1'
+        localPlayerId = clientApi.GetLocalPlayerId()
+        _isServer = localPlayerId == '-1'
+        if not _isServer:
+            __meta['localPlayerId'] = localPlayerId
         __threads[threading.current_thread().ident] = _isServer
         return _isServer
+
+def levelId():
+    if isServer():
+        if __meta.get('levelIdServer', None) is None:
+            __meta['levelIdServer'] = serverApi.GetLevelId()
+        return __meta['levelIdServer']
+    else:
+        if __meta.get('levelIdClient', None) is None:
+            __meta['levelIdClient'] = clientApi.GetLevelId()
+        return __meta['levelIdClient']
+
+localPlayerId = lambda: __meta.get('localPlayerId', '-1') # 不要在服务器端使用
 
 def getComponentCls():
     if isServer():
@@ -32,8 +48,6 @@ def serverTick():
 
 compServer = serverApi.GetEngineCompFactory()
 compClient = clientApi.GetEngineCompFactory()
-
-localPlayer = lambda: clientApi.GetLocalPlayerId() # 不要在服务器端使用
 
 defaultFilters = {
     "any_of": [

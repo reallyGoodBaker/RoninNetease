@@ -3,8 +3,10 @@ import time, math
 from ....compact import Sched, Query, ClientSubsystem, SubsystemClient
 from ....math.double import lerp
 
-from ..enum import AnimationEasingTypes, AnimationBlendingTypes, AnimEvents
+from ..enum import AnimationEasingTypes, AnimationBlendingTypes, AnimExEvents, LoopType
 from ..components.animClient import AnimationExComponent
+from ..components.dilation import AnimationDilation
+from ..utils import AnimationEventDispatcher
 
 
 @SubsystemClient
@@ -20,7 +22,8 @@ class AnimationExSubsystem(ClientSubsystem):
         AnimationEasingTypes.EXPO: lambda a, b, t: lerp(a, b, pow(2, 10 * (t - 1)))
     }
 
-    def registerEasingFunc(self, easingType, func):
+    @classmethod
+    def registerEasingFunc(cls, easingType, func):
         # type: (str, function) -> None
         """
         :example:
@@ -28,61 +31,72 @@ class AnimationExSubsystem(ClientSubsystem):
             registerEasingFunc('custom', lambda a, b, t: lerp(a, b, t * t * t))
         ```
         """
-        self.EasingFuncs[easingType] = func
+        cls.EasingFuncs[easingType] = func
 
 
-    def _getBlendValue(self, animEx, animKey, blending):
-        # type: (AnimationExComponent, str, dict) -> float
+    def _getBlendValue(self, animEx, animKey, blending, dilation):
+        # type: (AnimationExComponent, str, dict, float) -> float
         target = blending['target']
         duration = blending['duration']
         func = blending['func']
         startTime = blending['startTime']
         type = blending['type']
         now = time.time()
-        dt = now - startTime
+        dt = (now - startTime) * dilation
         if dt >= duration:
-            animEx.variables[animKey].setValue(target)
             animEx.blending.pop(animKey)
             animInfo = animEx.playing.get(animKey)
             if animInfo:
                 animInfo._manualStop = True
             return target
         t = dt / duration
-        if type == AnimationBlendingTypes.IN:
+        if type == AnimationBlendingTypes.OUT:
             t = 1 - t
-        if func in self.EasingFuncs:
-            t = self.EasingFuncs[func](0, 1, t)
-        return lerp(0, target, t)
+        return self.EasingFuncs[func](0, 1, t)
     
 
     def onInit(self):
         self.lastFrameTime = 0
         self.canTick = True
+        self.broadcastEvent = False
 
 
     def onRender(self, dt):
         self.lastFrameTime = dt
+
+
+    def _getEventDiapsatcher(self, name):
+        # type: (str) -> AnimationEventDispatcher
+        return AnimationEventDispatcher.dispatchers.get(name)
     
 
     @Sched.Render()
-    @Query(AnimationExComponent)
-    def updateAnimState(self, animEx):
-        # type: (AnimationExComponent) -> None
+    @Query(AnimationExComponent, AnimationDilation)
+    def updateAnimState(self, animEx, dilation):
+        # type: (AnimationExComponent, AnimationDilation) -> None
 
         # update blending
         for animKey, blending in animEx.blending.items():
-            curValue = self._getBlendValue(animEx, animKey, blending)
+            curValue = self._getBlendValue(animEx, animKey, blending, dilation.value)
             animEx.variables[animKey].setValue(curValue)
 
         # update animation
         for animKey, animInfo in animEx.playing.items():
+            animName = animInfo.animName
             if animInfo.isFinished():
-                eventType = AnimEvents.Interrupted if animInfo._manualStop else AnimEvents.Finish
-                self.broadcast(eventType, {
+                eventType = AnimExEvents.Interrupted if animInfo._manualStop else AnimExEvents.Finish
+                dispatcher = self._getEventDiapsatcher(animName)
+                eventDate = {
+                    'type': eventType,
                     'animKey': animKey,
                     'entityId': animEx.entityId,
-                    'animName': animInfo.animName
-                })
+                    'animName': animName
+                }
+                if dispatcher:
+                    dispatcher.dispatch(eventDate)
+                if self.broadcastEvent:
+                    self.broadcast(eventType, eventDate)
+
                 animEx.playing.pop(animKey)
                 animEx.variables[animKey].setValue(0)
                 targetLayer = animEx.layers[animInfo.layer]
@@ -93,14 +107,25 @@ class AnimationExSubsystem(ClientSubsystem):
             for notify in animInfo.getNotifies():
                 name = notify['name']
                 state = notify['state']
-                self.broadcast(
-                    AnimEvents.NotifyStart if state else AnimEvents.NotifyEnd,
-                    {
-                        'animKey': animKey,
-                        'entityId': animEx.entityId,
-                        'animName': animInfo.animName,
-                        'notifyName': name
-                    }
-                )
+                eventData = {
+                    'type': AnimExEvents.Notify,
+                    'state': state,
+                    'animKey': animKey,
+                    'entityId': animEx.entityId,
+                    'animName': animName,
+                    'notifyName': name
+                }
+                dispatcher = self._getEventDiapsatcher(animName)
+                if dispatcher:
+                    dispatcher.dispatch(eventData)
+                if self.broadcastEvent:
+                    self.broadcast(
+                        AnimExEvents.Notify,
+                        eventData
+                    )
+                    self.broadcast(
+                        AnimExEvents.NotifyStart if state else AnimExEvents.NotifyEnd,
+                        eventData
+                    )
 
-            animInfo.doTick(self.lastFrameTime)
+            animInfo.doTick(self.lastFrameTime * dilation.value)

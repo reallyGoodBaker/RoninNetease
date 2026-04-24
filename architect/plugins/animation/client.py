@@ -18,3 +18,18 @@ from ...core.loader import Plugin, PluginBase
 class AnimationExPlugin(PluginBase):
     def onAttach(self, manager):
         from .systems.animPlay import AnimationExSubsystem
+
+    def onReady(self, manager):
+        from ...core.basic import localPlayerId
+        from ...component.core import getOrCreateComponent
+        from .components.dilation import AnimationDilation
+        getOrCreateComponent(localPlayerId(), AnimationDilation)
+
+    @staticmethod
+    def setDilation(val):
+        from ...core.basic import localPlayerId
+        from ...component.core import getOrCreateComponent
+        from .components.dilation import AnimationDilation
+
+        dilation = getOrCreateComponent(localPlayerId(), AnimationDilation)
+        dilation.value = val

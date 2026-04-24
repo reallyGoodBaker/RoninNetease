@@ -1,6 +1,6 @@
 import time
 
-from ....compact import Ref, Component, BaseCompClient, getOneComponent, NamedEntityVariable, QueryVariable
+from ....compact import Component, BaseCompClient, getOneComponent, NamedEntityVariable
 from ....utils.persona.client import PersonaRendererComponent
 from ..enum import AnimationEasingTypes, AnimationBlendingTypes, LoopType
 
@@ -11,7 +11,7 @@ except:
 
 
 class AnimationEasingConf(object):
-    def __init__(self, target=1, duration=0.3, func=AnimationEasingTypes.LINEAR):
+    def __init__(self, target=1, duration=0.15, func=AnimationEasingTypes.LINEAR):
         self.target = target
         self.func = func
         self.duration = duration
@@ -74,9 +74,9 @@ class AnimationExComponent(BaseCompClient):
         self.entityId = entityId
         self.layers = {} #type: dict[int, set]
         self.animations = {} # type: dict[str, str]
-        self.variables = {}
+        self.variables = {} # type: dict[str, NamedEntityVariable]
         self.blending = {}
-        self.blendingConf = {}
+        self.blendingConf = {} # type: dict[str, dict[str, AnimationEasingConf]]
         self.playing = {} # type: dict[str, AnimPlayingInfo]
         self.notifies = {}
 
@@ -119,20 +119,28 @@ class AnimationExComponent(BaseCompClient):
 
     def registerEasing(self, animKey, inConf=AnimationEasingConf(), outConf=AnimationEasingConf(0)):
         # type: (str, AnimationEasingConf, AnimationEasingConf) -> None
+        """
+        注册动画混合的缓动效果, 不注册时没有混合效果
+        """
         self.blendingConf[animKey] = {
             'in': inConf,
             'out': outConf
         }
 
-    def updateBlending(self, blendingType, animKey, partial={}):
+    def setBlending(self, blendingType, animKey, partial={}):
         # type: (AnimationBlendingTypes, str, dict) -> None
         rawBlendingConf = self.blendingConf.get(animKey)
+        # 无混合时，直接设置值
         if not rawBlendingConf:
+            if blendingType == AnimationBlendingTypes.IN:
+                self.variables[animKey].setValue(1)
+            elif blendingType == AnimationBlendingTypes.OUT:
+                self.variables[animKey].setValue(0)
             return
         bConf = rawBlendingConf.get(blendingType)
-        target = partial.get('target', bConf['target'])
-        duration = partial.get('duration', bConf['duration'])
-        func = partial.get('func', bConf['func'])
+        target = partial.get('target', bConf.target)
+        duration = partial.get('duration', bConf.duration)
+        func = partial.get('func', bConf.func)
         existedBlending = self.blending.get(animKey)
         if existedBlending:
             existedBlending['target'] = target
@@ -160,23 +168,26 @@ class AnimationExComponent(BaseCompClient):
             return
 
         # 将其他层的同名动画删除
-        playingLayer = self.playing.get(animKey)
-        if playingLayer and playingLayer.layer:
+        animInfo = self.playing.get(animKey)
+        if animInfo and animInfo.layer:
             self.playing.pop(animKey)
-            self.layers.pop(playingLayer.layer)
+            self.layers.pop(animInfo.layer)
+
+        # 创建动画播放运行时
         self.playing[animKey] = AnimPlayingInfo(
             self.entityId,
             self.animations[animKey],
             layer, time.time(), playRate
         )
 
+        # 记录动画播放层级
         playing = self.layers.get(layer, set()) # type: set[str]
         if len(playing) > 0:
             # 长度大于 0 才需要混合动画
             for _animKey in playing:
-                self.updateBlending(AnimationBlendingTypes.OUT, _animKey)
+                self.setBlending(AnimationBlendingTypes.OUT, _animKey)
             self.variables[animKey].setValue(0)
-            self.updateBlending(AnimationBlendingTypes.IN, animKey)
+            self.setBlending(AnimationBlendingTypes.IN, animKey)
         else:
             variable = self.variables[animKey]
             # 直接播放
@@ -195,7 +206,7 @@ class AnimationExComponent(BaseCompClient):
         if noBlending:
             self.variables[animKey].setValue(0)
         else:
-            self.updateBlending(AnimationBlendingTypes.OUT, animKey)
+            self.setBlending(AnimationBlendingTypes.OUT, animKey)
         playing = self.layers.get(layer, set()) # type: set[str]
         playing.remove(animKey)
         self.layers[layer] = playing

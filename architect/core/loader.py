@@ -139,6 +139,8 @@ def _loadPlugins(manager):
             print('[INFO] Loaded plugin: ' + _host.name)
         except Exception as e:
             print('[ERROR] Failed to load plugin ' + _name)
+
+def _readyPlugins(manager):
     for _host in _plugins().values():
         try:
             _host.onReady(manager)
