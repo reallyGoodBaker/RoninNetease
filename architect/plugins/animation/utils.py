@@ -13,18 +13,18 @@ class AnimationEventDispatcher(Unreliable):
         if callable(method):
             self.tryCall(method, *args)
 
-    def dispatch(self, ev):
+    def dispatch(self, ev, animComp):
         entityId = ev['entityId']
         typeStr = ev['type']
         if typeStr == AnimExEvents.Interrupted:
-            return self._callNamedMethod('onInterrupted', entityId)
+            return self._callNamedMethod('onInterrupted', entityId, animComp)
         elif typeStr == AnimExEvents.Finish:
-            return self._callNamedMethod('onFinish', entityId)
+            return self._callNamedMethod('onFinish', entityId, animComp)
         elif typeStr == AnimExEvents.Notify:
             state = 'Start' if ev['state'] else 'End'
             notifyName = ev['notifyName']
             methodName = 'notify' + notifyName.capitalize() + state.capitalize()
-            return self._callNamedMethod(methodName, entityId)
+            return self._callNamedMethod(methodName, entityId, animComp)
 
 
 def AnimExListener(animName):

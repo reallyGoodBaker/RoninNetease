@@ -117,7 +117,7 @@ class AnimationExComponent(BaseCompClient):
             }
         })
 
-    def registerEasing(self, animKey, inConf=AnimationEasingConf(), outConf=AnimationEasingConf(0)):
+    def registerEasing(self, animKey, inConf=AnimationEasingConf(), outConf=AnimationEasingConf(0, 0.3)):
         # type: (str, AnimationEasingConf, AnimationEasingConf) -> None
         """
         注册动画混合的缓动效果, 不注册时没有混合效果
@@ -155,11 +155,14 @@ class AnimationExComponent(BaseCompClient):
                 'type': blendingType
             }
 
+    def anyAnimationPlaying(self):
+        return len(self.playing) > 0
+
     def isPlaying(self, animKey):
         # type: (str) -> bool
         return animKey in self.playing
 
-    def play(self, animKey, layer='default', replay=True, playRate=1):
+    def play(self, animKey, layer='default', replay=False, playRate=1):
         # type: (str, str, bool, float) -> None
         """
         不同 layer 的动画可以同时播放，但同一 layer 的动画不能同时播放

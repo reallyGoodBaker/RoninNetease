@@ -93,7 +93,7 @@ class AnimationExSubsystem(ClientSubsystem):
                     'animName': animName
                 }
                 if dispatcher:
-                    dispatcher.dispatch(eventDate)
+                    dispatcher.dispatch(eventDate, animEx)
                 if self.broadcastEvent:
                     self.broadcast(eventType, eventDate)
 
@@ -117,7 +117,7 @@ class AnimationExSubsystem(ClientSubsystem):
                 }
                 dispatcher = self._getEventDiapsatcher(animName)
                 if dispatcher:
-                    dispatcher.dispatch(eventData)
+                    dispatcher.dispatch(eventData, animEx)
                 if self.broadcastEvent:
                     self.broadcast(
                         AnimExEvents.Notify,
