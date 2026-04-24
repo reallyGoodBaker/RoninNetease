@@ -45,9 +45,6 @@ class AnimationExSubsystem(ClientSubsystem):
         dt = (now - startTime) * dilation
         if dt >= duration:
             animEx.blending.pop(animKey)
-            animInfo = animEx.playing.get(animKey)
-            if animInfo:
-                animInfo._manualStop = True
             return target
         t = dt / duration
         if type == AnimationBlendingTypes.OUT:
@@ -76,14 +73,17 @@ class AnimationExSubsystem(ClientSubsystem):
         # type: (AnimationExComponent, AnimationDilation) -> None
 
         # update blending
+        blendingOutFinished = []
         for animKey, blending in animEx.blending.items():
             curValue = self._getBlendValue(animEx, animKey, blending, dilation.value)
             animEx.variables[animKey].setValue(curValue)
+            if curValue == blending['target'] and blending['type'] == AnimationBlendingTypes.OUT:
+                blendingOutFinished.append(animKey)
 
         # update animation
         for animKey, animInfo in animEx.playing.items():
             animName = animInfo.animName
-            if animInfo.isFinished():
+            if animInfo.isFinished() or animKey in blendingOutFinished:
                 eventType = AnimExEvents.Interrupted if animInfo._manualStop else AnimExEvents.Finish
                 dispatcher = self._getEventDiapsatcher(animName)
                 eventDate = {
