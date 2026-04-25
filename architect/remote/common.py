@@ -1,4 +1,4 @@
-from ..core.basic import isServer
+from ..core.basic import isServer, serverApi, clientApi
 from ..core.scheduler import Future
 from ..level.server import LevelServer
 from ..level.client import LevelClient
@@ -14,6 +14,9 @@ REMOTE_INNER_KEY = '[[remote_inner]]'
 
 
 def Remote(method):
+    """
+    装饰器被应用在服务器子系统的方法上时, 会往参数列表第一个添加客户端的playerId
+    """
     AnnotationHelper.addAnnotation(method, REMOTE_INNER_KEY, True)
     return method
 
@@ -26,16 +29,71 @@ _clientRemoteMethods = {}
 _serverRemoteMethods = {}
 
 
+class DataTable(object):
+    @classmethod
+    def serialize(cls, dt):
+        pass
+
+    @classmethod
+    def deserialize(cls, data):
+        pass
+
+
+def _serializeDataTable(dt):
+    cls = dt.__class__
+    return {
+        '__module__': dt.__module__,
+        '__type__': cls.__name__,
+        '__data__': cls.serialize(dt)
+    }
+
+
+def _deserializeDataTable(data):
+    modulePath = data['__module__']
+    className = data['__type__']
+    importer = serverApi if isServer() else clientApi
+    cls = getattr(importer.ImportModule(modulePath), className)
+    return cls.deserialize(data['__data__'])
+
+
 def _createCallData(id, uri, *args, **kwargs):
+    copiedArgs = []
+    copiedKwargs = kwargs.copy()
+    for arg in args:
+        if isinstance(arg, DataTable):
+            copiedArgs.append(_serializeDataTable(arg))
+        else:
+            copiedArgs.append(arg)
+
+    for key, value in kwargs.items():
+        if isinstance(value, DataTable):
+            copiedKwargs[key] = _serializeDataTable(value)
+        else:
+            copiedKwargs[key] = value
+
     return {
         'id': id,
         'uri': uri,
-        'args': args,
-        'kwargs': kwargs,
+        'args': copiedArgs,
+        'kwargs': copiedKwargs,
         'requireReturn': False
     }
 
 def _createInvokeData(id, uri, *args, **kwargs):
+    copiedArgs = []
+    copiedKwargs = kwargs.copy()
+    for arg in args:
+        if isinstance(arg, DataTable):
+            copiedArgs.append(_serializeDataTable(arg))
+        else:
+            copiedArgs.append(arg)
+
+    for key, value in kwargs.items():
+        if isinstance(value, DataTable):
+            copiedKwargs[key] = _serializeDataTable(value)
+        else:
+            copiedKwargs[key] = value
+
     return {
         'id': id,
         'uri': uri,
@@ -48,11 +106,25 @@ def _createInvokeData(id, uri, *args, **kwargs):
 def _callRemoteMethod(subsys, data):
     id = data['id']
     uri = data['uri']
-    args = data['args']
-    kwargs = data['kwargs']
+    _args = data['args']
+    _kwargs = data['kwargs']
     requireReturn = data['requireReturn']
     result = None
     err = None
+
+    args = []
+    kwargs = {}
+    for arg in _args:
+        if isinstance(arg, dict) and '__module__' in arg:
+            args.append(_deserializeDataTable(arg))
+        else:
+            args.append(arg)
+
+    for key, value in _kwargs.items():
+        if isinstance(value, dict) and '__module__' in value:
+            kwargs[key] = _deserializeDataTable(value)
+        else: 
+            kwargs[key] = value
 
     try:
         if isServer():

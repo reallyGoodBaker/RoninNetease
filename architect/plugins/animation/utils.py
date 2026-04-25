@@ -1,4 +1,5 @@
 from ...core.unreliable import Unreliable
+from ...component import getOneComponent, NeC
 from .enum import AnimExEvents
 
 class AnimationEventDispatcher(Unreliable):
@@ -7,12 +8,21 @@ class AnimationEventDispatcher(Unreliable):
 
     @classmethod
     def getOrCreate(cls, animName):
-        dispatcher = AnimationEventDispatcher.dispatchers.get(cls.__name__)
+        clsName = cls.__name__
+        dispatcher = AnimationEventDispatcher.getDispatcher(animName)
         if dispatcher is None:
-            dispatcher = cls()
-            AnimationEventDispatcher.dispatchers[cls.__name__] = dispatcher
-        AnimationEventDispatcher.animDispatcherMapping[animName] = dispatcher
+            if clsName not in AnimationEventDispatcher.dispatchers:
+                dispatcher = cls()
+                AnimationEventDispatcher.dispatchers[clsName] = dispatcher
+            if animName not in AnimationEventDispatcher.animDispatcherMapping:
+                AnimationEventDispatcher.animDispatcherMapping[animName] = clsName
         return dispatcher
+    
+    @staticmethod
+    def getDispatcher(animName):
+        return AnimationEventDispatcher.dispatchers.get(
+            AnimationEventDispatcher.animDispatcherMapping.get(animName, None)
+        )
 
     def _callNamedMethod(self, methodName, *args):
         method = getattr(self, methodName, None)
@@ -35,6 +45,38 @@ class AnimationEventDispatcher(Unreliable):
 
 def AnimExListener(animName):
     def wrapper(cls):
-        AnimationEventDispatcher.getOrCreate(animName)
+        cls.getOrCreate(animName)
         return cls
     return wrapper
+
+
+from mod.client.component.cameraCompClient import CameraComponentClient
+from mod.client.component.operationCompClient import OperationCompClient
+
+
+class BaseActionDispatcher(AnimationEventDispatcher):
+    """
+    预定义了 v.notify_stun, v.notify_camlock
+    """
+    def movement(self, entityId, canMove=True):
+        op = getOneComponent(entityId, NeC.Operation)
+        op.SetCanMove(canMove)
+        op.SetCanJump(canMove)
+
+    def cam(self, entityId, lock=False):
+        op = getOneComponent(entityId, NeC.Operation) # type: CameraComponentClient
+        iLock = int(lock)
+        op.LockModCameraPitch(iLock)
+        op.LockModCameraYaw(iLock)
+
+    def notifyStunStart(self, entityId, animEx):
+        self.movement(entityId, False)
+
+    def notifyStunEnd(self, entityId, animEx):
+        self.movement(entityId, True)
+
+    def onInterrupted(self, entityId, animEx):
+        self.movement(entityId, True)
+
+    def onFinish(self, entityId, animEx):
+        self.movement(entityId, True)

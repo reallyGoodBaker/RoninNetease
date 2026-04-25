@@ -1,5 +1,5 @@
 from .mat4 import worldToScreen, identity, lookAt, perspective, screenToWorld, inverse, Matrix, transformPoint, transform, rotateAxis, translate, scale
-from ..math.vec3 import vec, modulo, Vector3, add, div
+from ..math.vec3 import vec, modulo, Vector3, add, div, tup
 from ..level.client import LevelClient, clientApi
 
 import math
@@ -101,12 +101,21 @@ def boxOverlap3dClient(pos, rot, size, debug=False):
         z + radius
     )
     firstFind = level.game.GetEntitiesInSquareArea(None, xozProjStart, xozProjEnd)
-    worldMatrix = inverse(transform(
+    _transform = transform(
         identity(),
         vec(pos),
         vec(rot),
         vec(size)
-    ))
+    )
+
+    if debug:
+        sx, sy, sz, sw = transformPoint(_transform, vec((0, 0, 0)))
+        ex, ey, ez, ew = transformPoint(_transform, vec((size[0], size[1], size[2])))
+        level.drawing.AddTextShape((sx, sy, sz), "start")
+        level.drawing.AddTextShape((ex, ey, ez), "end")
+        level.drawing.AddArrowShape((sx, sy, sz), (ex, ey, ez))
+
+    worldMatrix = inverse(_transform)
     result = []
     for entityId in firstFind:
         posComp = compClient.CreatePos(entityId)
@@ -118,26 +127,47 @@ def boxOverlap3dClient(pos, rot, size, debug=False):
     return result
 
 
-def boxOverlap3dForward(entityId, size):
+def boxOverlap3dForward(entityId, size, debug=False):
+    # type: (str, tuple[float, float, float], bool) -> list[str]
+    """
+    :param: size: (width, height, depth)
+    """
+    pos = compClient.CreatePos(entityId).GetPos()
+    dir = forward(entityId)
+    rot = clientApi.GetRotFromDir(tup(dir))
+    result = boxOverlap3dClient(
+        add(vec(pos), dir * 2).ToTuple(),
+        (math.radians(rot[0]), -math.radians(rot[1]), 0), size, debug
+    )
+    if entityId in result:
+        result.remove(entityId)
+    return result
+
+def boxOverlap3dFacing(entityId, size, debug=False):
+    # type: (str, tuple[float, float, float], bool) -> list[str]
+    """
+    :param: size: (width, height, depth)
+    """
     pos = compClient.CreatePos(entityId).GetPos()
     rot = compClient.CreateRot(entityId).GetRot()
     dir = clientApi.GetDirFromRot(rot)
     result = boxOverlap3dClient(
         add(vec(pos), vec(dir) * 2).ToTuple(),
-        (rot[0], rot[1], 0), size,
+        (math.radians(rot[0]), -math.radians(rot[1]), 0), size, debug
     )
     result.remove(entityId)
     return result
 
 
-def forward(entityId):
+def forward(entityId, dist=1):
     x, _, z = clientApi.GetDirFromRot(compClient.CreateRot(entityId).GetRot())
-    return vec((x, 0, z)).Normalized()
+    return vec((x, 0, z)).Normalized() * dist
 
 
 def facing(entityId):
     dir = clientApi.GetDirFromRot(compClient.CreateRot(entityId).GetRot())
     return vec(dir)
+
 
 def entityAabbDef(entityId):
     molang = compClient.CreateQueryVariable(entityId)
@@ -149,3 +179,14 @@ def entityAabbDef(entityId):
     py = molang.EvalMolangExpression("t.max.y")['value'] / 16
     pz = molang.EvalMolangExpression("t.max.z")['value'] / 16
     return (mx, my, mz), (px, py, pz)
+
+
+def around(entityId, radius):
+    pos = vec(compServer.CreatePos(entityId).GetPos())
+    radiusVec = vec((radius, radius, radius))
+    aroundEntities = LevelClient.getInstance().game.GetEntitiesInSquareArea(
+        None, tup(pos - radiusVec), tup(pos + radiusVec)
+    )
+    if entityId in aroundEntities:
+        aroundEntities.remove(entityId)
+    return aroundEntities

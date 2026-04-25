@@ -60,11 +60,6 @@ class AnimationExSubsystem(ClientSubsystem):
 
     def onRender(self, dt):
         self.lastFrameTime = dt
-
-
-    def _getEventDiapsatcher(self, name):
-        # type: (str) -> AnimationEventDispatcher
-        return AnimationEventDispatcher.dispatchers.get(name)
     
 
     @Sched.Render()
@@ -85,7 +80,7 @@ class AnimationExSubsystem(ClientSubsystem):
             animName = animInfo.animName
             if animInfo.isFinished() or animKey in blendingOutFinished:
                 eventType = AnimExEvents.Interrupted if animInfo._manualStop else AnimExEvents.Finish
-                dispatcher = self._getEventDiapsatcher(animName)
+                dispatcher = AnimationEventDispatcher.getDispatcher(animName)
                 eventDate = {
                     'type': eventType,
                     'animKey': animKey,
@@ -115,7 +110,7 @@ class AnimationExSubsystem(ClientSubsystem):
                     'animName': animName,
                     'notifyName': name
                 }
-                dispatcher = self._getEventDiapsatcher(animName)
+                dispatcher = AnimationEventDispatcher.getDispatcher(animName)
                 if dispatcher:
                     dispatcher.dispatch(eventData, animEx)
                 if self.broadcastEvent:

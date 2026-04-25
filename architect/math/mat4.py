@@ -143,7 +143,7 @@ def transform(m, t, r, s):
     return m * translate(t) * rotateXYZ(rz, ry, rx) * scale(s)
 
 def transformPoint(m, point):
-    # type: (Matrix, Vector3) -> Vector3
+    # type: (Matrix, Vector3) -> tuple[float, float, float, float]
     """
     使用矩阵变换一个点（包含平移影响）
     将点表示为齐次坐标 [x, y, z, 1] 并进行矩阵乘法

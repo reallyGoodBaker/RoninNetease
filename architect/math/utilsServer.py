@@ -1,7 +1,7 @@
 from .mat4 import identity, inverse, transformPoint, transform
-from ..math.vec3 import vec, add, div, normalize
+from ..math.vec3 import vec, add, div, normalize, tup
 from ..level.server import LevelServer
-from ..core.basic import compServer, serverApi, defaultFilters
+from ..core.basic import compServer, serverApi, defaultFilters, Location
 from mod.common.minecraftEnum import EntityType
 
 import math
@@ -50,19 +50,35 @@ def boxOverlap3dServer(pos, rot, size, dim, filter=None):
     return result
 
 
-def boxOverlap3dForward(entityId, size):
-    length = size[2]
+def boxOverlap3dForward(entityId, size, debug=False):
+    # type: (str, tuple[float, float, float], bool) -> list[str]
+    """
+    :param: size: (width, height, depth)
+    """
     pos = compServer.CreatePos(entityId).GetPos()
-    rot = compServer.CreateRot(entityId).GetRot()
-    dim = compServer.CreateDimension(entityId).GetEntityDimensionId()
-    dir = serverApi.GetDirFromRot(rot)
+    dir = forward(entityId)
+    rot = serverApi.GetRotFromDir(tup(dir))
     result = boxOverlap3dServer(
-        add(vec(pos), vec(dir) * (length / 2)).ToTuple(),
-        (rot[0], rot[1], 0), size, dim,
-        lambda en: compServer.CreateEngineType(en).GetEngineType() not in (EntityType.ItemEntity, EntityType.Experience)
+        add(vec(pos), dir * 2).ToTuple(),
+        (math.radians(rot[0]), -math.radians(rot[1]), 0), size, debug
     )
     if entityId in result:
         result.remove(entityId)
+    return result
+
+def boxOverlap3dFacing(entityId, size, debug=False):
+    # type: (str, tuple[float, float, float], bool) -> list[str]
+    """
+    :param: size: (width, height, depth)
+    """
+    pos = compServer.CreatePos(entityId).GetPos()
+    rot = compServer.CreateRot(entityId).GetRot()
+    dir = serverApi.GetDirFromRot(rot)
+    result = boxOverlap3dServer(
+        add(vec(pos), vec(dir) * 2).ToTuple(),
+        (math.radians(rot[0]), -math.radians(rot[1]), 0), size, debug
+    )
+    result.remove(entityId)
     return result
 
 
@@ -72,5 +88,18 @@ def facing(entityId):
 
 
 def forward(entityId, dist=1):
-    x, _, z = serverApi.GetDirFromRot(compServer.CreateRot(entityId).GetRot())
+    rot = compServer.CreateRot(entityId).GetRot()
+    if not rot:
+        return vec((0, 0, 0))
+    x, _, z = serverApi.GetDirFromRot(rot)
     return normalize(vec((x, 0, z))) * dist
+
+
+def around(loc, radius):
+    # type: (Location, float) -> list[str]
+    pos = vec(loc.pos)
+    dim = loc.dim
+    radiusVec = vec((radius, radius, radius))
+    return LevelServer.game.GetEntitiesInSquareArea(
+        None, tup(pos - radiusVec), tup(pos + radiusVec), dim
+    )
