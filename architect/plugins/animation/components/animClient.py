@@ -2,6 +2,7 @@ import time
 
 from ....compact import Component, BaseCompClient, getOneComponent, NamedEntityVariable
 from ....utils.persona.client import PersonaRendererComponent
+from ....math.double import clamp, inf, epsilon
 from ..enum import AnimationEasingTypes, AnimationBlendingTypes, LoopType
 
 try:
@@ -29,7 +30,7 @@ class AnimPlayingInfo(object):
         self._manualStop = False
         self._dt = 0
         meta = AnimMeta[animName]
-        self.duration = float('inf') if meta['length'] == -1 else meta['length']
+        self.duration = inf if meta['length'] == -1 else meta['length']
         self.notifies = meta.get('notifies')
         if meta['loop'] == True:
             self.loop = LoopType.LOOP
@@ -43,8 +44,19 @@ class AnimPlayingInfo(object):
         self._dt = dt
         prevTime = self.playTime
         curTime = dt + prevTime
-        self.playTime = curTime
-        self.animTimeComp.setValue(curTime)
+        self.setPlayTime(curTime)
+
+    def setPlayTime(self, time, dt=-1):
+        # type: (float, float) -> None
+        """
+        :param time: 播放时间, 对于于循环动画和保持最后一帧的动画, time 可以大于 duration
+        :param dt: 与上一帧的间隔
+        这个属性会影响 notifies 的触发, 如果 dt 为 -1, 则使用当前帧和上一帧的时间差
+        """
+        if dt != -1:
+            self._dt = clamp(dt, epsilon, self.duration)
+        self.playTime = time
+        self.animTimeComp.setValue(self.progress() * self.duration)
 
     def getNotifies(self):
         if not self.notifies:
@@ -56,7 +68,19 @@ class AnimPlayingInfo(object):
                 return notifies
         return []
 
+    def progress(self):
+        # type: () -> float
+        """
+        动画进度, 始终返回 0 ~ 1
+        """
+        return clamp((self.playTime % self.duration) / self.duration, 0, 1)
+
     def isFinished(self):
+        # type: () -> bool
+        """
+        动画是否播放完毕, 如果循环类型为始终或者保持最后一帧则始终返回 False .
+        你可以使用 stop 方法手动终止这两种动画
+        """
         if self._manualStop:
             return True
         if self.loop == LoopType.LOOP:
@@ -161,6 +185,9 @@ class AnimationExComponent(BaseCompClient):
     def isPlaying(self, animKey):
         # type: (str) -> bool
         return animKey in self.playing
+    
+    def getPlayingAnimation(self, animKey):
+        return self.playing.get(animKey)
 
     def play(self, animKey, layer='default', replay=False, playRate=1):
         # type: (str, str, bool, float) -> None
@@ -185,16 +212,17 @@ class AnimationExComponent(BaseCompClient):
 
         # 记录动画播放层级
         playing = self.layers.get(layer, set()) # type: set[str]
+        variable = self.variables[animKey]
+
+        # 重置播放状态
+        variable.setValue(0)
         if len(playing) > 0:
             # 长度大于 0 才需要混合动画
             for _animKey in playing:
                 self.setBlending(AnimationBlendingTypes.OUT, _animKey)
-            self.variables[animKey].setValue(0)
             self.setBlending(AnimationBlendingTypes.IN, animKey)
         else:
-            variable = self.variables[animKey]
             # 直接播放
-            variable.setValue(0)
             variable.setValue(1)
         playing.add(animKey)
         self.layers[layer] = playing

@@ -3,10 +3,16 @@ from .enum import AnimExEvents
 
 class AnimationEventDispatcher(Unreliable):
     dispatchers = {}
+    animDispatcherMapping = {}
 
-    def __init__(self, animName):
-        self.bindAnim = animName
-        AnimationEventDispatcher.dispatchers[animName] = self
+    @classmethod
+    def getOrCreate(cls, animName):
+        dispatcher = AnimationEventDispatcher.dispatchers.get(cls.__name__)
+        if dispatcher is None:
+            dispatcher = cls()
+            AnimationEventDispatcher.dispatchers[cls.__name__] = dispatcher
+        AnimationEventDispatcher.animDispatcherMapping[animName] = dispatcher
+        return dispatcher
 
     def _callNamedMethod(self, methodName, *args):
         method = getattr(self, methodName, None)
@@ -29,6 +35,6 @@ class AnimationEventDispatcher(Unreliable):
 
 def AnimExListener(animName):
     def wrapper(cls):
-        cls(animName)
+        AnimationEventDispatcher.getOrCreate(animName)
         return cls
     return wrapper

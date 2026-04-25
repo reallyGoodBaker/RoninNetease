@@ -10,3 +10,6 @@ def smoothstep(edge0, edge1, x):
     # x in [edge0, edge1]
     t = clamp((x - edge0) / (edge1 - edge0), 0, 1)
     return t * t * (3 - 2 * t)
+
+inf = float('inf')
+epsilon = 1e-6
