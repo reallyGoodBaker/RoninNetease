@@ -52,7 +52,10 @@ def _registerCompsIntoGame(isHost):
     _notifyRegisterComponent(clsList)
     for cls in clsList:
         result = api.RegisterComponent(COMPONENT_NAMESPACE, cls.__name__, cls.__module__ + '.' + cls.__name__)
-        print('[INFO] Register {} component'.format('server' if isHost else 'client'), cls.__name__, 'result:', result)
+        if result:
+            print('[INFO] Registered {} component "{}"'.format('server' if isHost else 'client', cls.__name__))
+        else:
+            print('[ERROR] Failed to register {} component "{}"'.format('server' if isHost else 'client', cls.__name__))
 
 
 def getComponentAnnotation(cls):

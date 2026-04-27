@@ -79,7 +79,6 @@ class AnimationExSubsystem(ClientSubsystem):
         for animKey, animInfo in animEx.playing.items():
             animName = animInfo.animName
             for notify in animInfo.getNotifies():
-                print notify
                 name = notify['name']
                 state = notify['state']
                 eventData = {
