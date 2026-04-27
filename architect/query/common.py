@@ -42,6 +42,8 @@ FakeComponents = [EntityId, ExtraArguments, ExtraArgDict]
 
 def _getQueryArgs(entityId, compClsSrc, required, excluded, args, kwargs):
     # type: (str, list, list, list, list, dict) -> list
+    if not entityId:
+        return None
     compCls = compClsSrc[:]
     entityIdIndex = -1
     extraArgsIndex = -1
@@ -110,7 +112,9 @@ def Query(*compCls, **options):
         def wrapper(inst, *args, **kwargs):
             _compList = list(compCls)
             if isAllSingleton:
-                fn(inst, *_getQueryArgs(None, _compList, required, excluded, args, kwargs))
+                comps = _getQueryArgs(None, _compList, required, excluded, args, kwargs)
+                if comps:
+                    fn(inst, *comps)
             else:
                 for entityId in getEntities():
                     comps = _getQueryArgs(str(entityId), _compList, required, excluded, args, kwargs)

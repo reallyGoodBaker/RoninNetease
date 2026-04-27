@@ -107,7 +107,10 @@ class AnimationExComponent(BaseCompClient):
     def registerAnimations(self, mapping):
         # type: (dict[str, str]) -> None
         for name, anim in mapping.items():
-            self.animations[name] = anim
+            if anim in AnimMeta:
+                self.animations[name] = anim
+            else:
+                print('[ERROR] 动画 {} 元数据不存在, 动画是否存在或通过 animExtractor 提取?'.format(anim))
 
     def _createActorRendererAnims(self):
         animations = {}
@@ -195,6 +198,10 @@ class AnimationExComponent(BaseCompClient):
         不同 layer 的动画可以同时播放，但同一 layer 的动画不能同时播放
         """
         if not replay and self.isPlaying(animKey):
+            return
+
+        animName = self.animations.get(animKey)
+        if not animName:
             return
 
         # 将其他层的同名动画删除
