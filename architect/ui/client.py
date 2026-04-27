@@ -42,6 +42,7 @@ class SinkContext(object):
 def UiDef(uiDef):
     def decorator(cls):
         AnnotationHelper.addAnnotation(cls, UI_DEF, uiDef)
+        cls._handleUiDef(uiDef)
         return cls
     return decorator
 
@@ -128,13 +129,22 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
         self._sinks = {} # type: dict[function, SinkContext]
 
     @classmethod
+    def _handleUiDef(cls, uiDef):
+        def defineAsync():
+            def _define(_):
+                cls.defineUi(uiDef)
+            subsystem.addListener('UiInitFinished', _define)
+
+        game = LevelClient.getInstance().game
+        game.AddTimer(0, defineAsync)
+
+    @classmethod
     def _handleAutoCreate(cls):
         def createAsync():
             isScreen = AnnotationHelper.getAnnotation(cls, UI_SCREEN)
             isHud = AnnotationHelper.getAnnotation(cls, UI_HUD)
-            uiDef = AnnotationHelper.getAnnotation(cls, UI_DEF)
             def _createUi(_):
-                cls.defineUi(uiDef)
+                cls.defineUi(AnnotationHelper.getAnnotation(cls, UI_DEF))
                 if isScreen:
                     cls.pushScreen()
                 elif isHud:
@@ -142,7 +152,9 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
                 else:
                     cls.create(isHud=0)
             subsystem.addListener('UiInitFinished', _createUi)
-        LevelClient.getInstance().game.AddTimer(0, createAsync)
+
+        game = LevelClient.getInstance().game
+        game.AddTimer(0, createAsync)
 
     ns = UI_NAMESPACE
     inst = None
@@ -154,12 +166,15 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
 
     @classmethod
     def defineUi(cls, uiDef):
-        return clientApi.RegisterUI(
-            cls.ns,
-            cls.__name__,
-            cls.__module__ + '.' + cls.__name__,
-            uiDef
-        )
+        try:
+            clientApi.RegisterUI(
+                cls.ns,
+                cls.__name__,
+                cls.__module__ + '.' + cls.__name__,
+                uiDef
+            )
+        except Exception as e:
+            return
 
     @classmethod
     def getOrCreate(cls, **params):
@@ -231,7 +246,7 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
         self.unlisten('OnGamepadKeyPressClientEvent', self._handleGamepadBack)
         self.unlisten('OnKeyPressInGame', self._handleKeyboardBack)
         self.onDestroy()
-        SubsystemManager.getInstance().removeSubsystem(self)
+        SubsystemManager.getInstance().removeSubsystem(self.__class__)
 
     def remove(self):
         if self.params.get('pushScreen'):
