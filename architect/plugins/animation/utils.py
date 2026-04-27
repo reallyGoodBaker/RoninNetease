@@ -33,14 +33,26 @@ class AnimationEventDispatcher(Unreliable):
         entityId = ev['entityId']
         typeStr = ev['type']
         if typeStr == AnimExEvents.Interrupted:
-            return self._callNamedMethod('onInterrupted', entityId, animComp)
+            self._callNamedMethod('onInterrupted', entityId, animComp)
+            return self._callNamedMethod('onEnded', entityId, animComp)
         elif typeStr == AnimExEvents.Finish:
-            return self._callNamedMethod('onFinish', entityId, animComp)
+            self._callNamedMethod('onFinish', entityId, animComp)
+            return self._callNamedMethod('onEnded', entityId, animComp)
         elif typeStr == AnimExEvents.Notify:
             state = 'Start' if ev['state'] else 'End'
-            notifyName = ev['notifyName']
-            methodName = 'notify' + notifyName.capitalize() + state.capitalize()
+            notifyName = ev['notifyName'] # type: str
+            capitalizedName = ''.join(map(lambda s: s.capitalize(), notifyName.split('_')))
+            methodName = 'notify' + capitalizedName + state.capitalize()
             return self._callNamedMethod(methodName, entityId, animComp)
+
+    def onEnded(self, entityId, animComp):
+        pass
+
+    def onInterrupted(self, entityId, animComp):
+        pass
+
+    def onFinish(self, entityId, animComp):
+        pass
 
 
 def AnimExListener(animName):
