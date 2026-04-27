@@ -28,7 +28,7 @@ class AnimPlayingInfo(object):
         nameSuffix = animName.replace('animation.', '')
         self.animTimeComp = NamedEntityVariable(entityId, 'anim_timeex.' + nameSuffix, 0)
         self._manualStop = False
-        self._dt = 0
+        self._dt = epsilon
         meta = AnimMeta[animName]
         self.duration = inf if meta['length'] == -1 else meta['length']
         self.notifies = meta.get('notifies')

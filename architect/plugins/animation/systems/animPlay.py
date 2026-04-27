@@ -78,28 +78,8 @@ class AnimationExSubsystem(ClientSubsystem):
         # update animation
         for animKey, animInfo in animEx.playing.items():
             animName = animInfo.animName
-            if animInfo.isFinished() or animKey in blendingOutFinished:
-                eventType = AnimExEvents.Interrupted if animInfo._manualStop else AnimExEvents.Finish
-                dispatcher = AnimationEventDispatcher.getDispatcher(animName)
-                eventDate = {
-                    'type': eventType,
-                    'animKey': animKey,
-                    'entityId': animEx.entityId,
-                    'animName': animName
-                }
-                if dispatcher:
-                    dispatcher.dispatch(eventDate, animEx)
-                if self.broadcastEvent:
-                    self.broadcast(eventType, eventDate)
-
-                animEx.playing.pop(animKey)
-                animEx.variables[animKey].setValue(0)
-                targetLayer = animEx.layers[animInfo.layer]
-                if animKey in targetLayer:
-                    targetLayer.remove(animKey)
-                continue
-
             for notify in animInfo.getNotifies():
+                print notify
                 name = notify['name']
                 state = notify['state']
                 eventData = {
@@ -122,5 +102,26 @@ class AnimationExSubsystem(ClientSubsystem):
                         AnimExEvents.NotifyStart if state else AnimExEvents.NotifyEnd,
                         eventData
                     )
+
+            if animInfo.isFinished() or animKey in blendingOutFinished:
+                eventType = AnimExEvents.Interrupted if animInfo._manualStop else AnimExEvents.Finish
+                dispatcher = AnimationEventDispatcher.getDispatcher(animName)
+                eventDate = {
+                    'type': eventType,
+                    'animKey': animKey,
+                    'entityId': animEx.entityId,
+                    'animName': animName
+                }
+                if dispatcher:
+                    dispatcher.dispatch(eventDate, animEx)
+                if self.broadcastEvent:
+                    self.broadcast(eventType, eventDate)
+
+                animEx.playing.pop(animKey)
+                animEx.variables[animKey].setValue(0)
+                targetLayer = animEx.layers[animInfo.layer]
+                if animKey in targetLayer:
+                    targetLayer.remove(animKey)
+                continue
 
             animInfo.doTick(self.lastFrameTime * dilation.value)
