@@ -125,6 +125,8 @@ def _handlePersistKeys(comp, entityId):
 
 def createComponent(entityId, cls):
     # type: (str, type|str) -> object
+    if not entityId:
+        raise ValueError('entityId is empty')
     api = serverApi if isServer() else clientApi
     compKey = cls if type(cls) == str else cls.__name__
     comp = api.CreateComponent(entityId, COMPONENT_NAMESPACE, compKey)

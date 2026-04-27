@@ -112,12 +112,12 @@ def Query(*compCls, **options):
         def wrapper(inst, *args, **kwargs):
             _compList = list(compCls)
             if isAllSingleton:
-                comps = _getQueryArgs(None, _compList, required, excluded, args, kwargs)
-                if comps:
-                    fn(inst, *comps)
+                fn(inst, *_getQueryArgs(None, _compList, required, excluded, args, kwargs))
             else:
                 for entityId in getEntities():
-                    comps = _getQueryArgs(str(entityId), _compList, required, excluded, args, kwargs)
+                    if not entityId:
+                        continue
+                    comps = _getQueryArgs(entityId, _compList, required, excluded, args, kwargs)
                     if comps:
                         fn(inst, *comps)
         return wrapper
