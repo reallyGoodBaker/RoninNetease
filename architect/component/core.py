@@ -1,6 +1,6 @@
 from ..conf import COMPONENT_NAMESPACE, COMPONENT_TAG, PERSIST_INFO
 from ..core.annotation import AnnotationHelper
-from ..core.basic import isServer, clientApi, serverApi
+from ..core.basic import isServer, clientApi, serverApi, levelId
 from ..persistent.client import ClientKVDatabase, ClientKVDatabaseGlobal
 from ..persistent.server import ServerKVDatabase
 from ..core.loader import _notifyRegisterComponent
@@ -9,12 +9,10 @@ from .common import _nativeCompGet
 clientCompCls = []
 serverCompCls = []
 components = {}
-singletonServer = serverApi.GetLevelId()
-singletonClient = clientApi.GetLevelId()
 
 
 def singletonId():
-    return singletonServer if isServer() else singletonClient
+    return levelId()
 
 
 def _registerComponent(isServer, cls, persist=False, singleton=False):

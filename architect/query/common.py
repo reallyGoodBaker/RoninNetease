@@ -42,8 +42,6 @@ FakeComponents = [EntityId, ExtraArguments, ExtraArgDict]
 
 def _getQueryArgs(entityId, compClsSrc, required, excluded, args, kwargs):
     # type: (str, list, list, list, list, dict) -> list
-    if not entityId:
-        return None
     compCls = compClsSrc[:]
     entityIdIndex = -1
     extraArgsIndex = -1
