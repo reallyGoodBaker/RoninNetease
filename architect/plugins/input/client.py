@@ -1,7 +1,7 @@
 from ...core.loader import Plugin, PluginBase
 from ...core.subsystem import SubsystemManager
 from ...component import Component, BaseCompClient, createSingletonComponent
-from ...core.basic import localPlayer
+from ...core.basic import localPlayerId
 
 
 @Component(singleton=True)
@@ -25,5 +25,5 @@ class InputExPlugin(PluginBase):
         )
 
     def _bindInputEx(self, player):
-        if localPlayer() == player:
+        if localPlayerId() == player:
             createSingletonComponent(InputExComponent)

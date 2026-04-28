@@ -62,8 +62,9 @@ def AnimExListener(animName):
     return wrapper
 
 
-from mod.client.component.cameraCompClient import CameraComponentClient
-from mod.client.component.operationCompClient import OperationCompClient
+# TODO: should ignore
+# from mod.client.component.cameraCompClient import CameraComponentClient
+# from mod.client.component.operationCompClient import OperationCompClient
 
 
 class BaseActionDispatcher(AnimationEventDispatcher):
@@ -77,9 +78,7 @@ class BaseActionDispatcher(AnimationEventDispatcher):
 
     def cam(self, entityId, lock=False):
         op = getOneComponent(entityId, NeC.Operation) # type: CameraComponentClient
-        iLock = int(lock)
-        op.LockModCameraPitch(iLock)
-        op.LockModCameraYaw(iLock)
+        op.SetCanDrag(not lock)
 
     def notifyStunStart(self, entityId, animEx):
         self.movement(entityId, False)
