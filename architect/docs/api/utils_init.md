@@ -6,7 +6,6 @@
 
 `architect.utils` 模块包含以下子模块：
 
-- `architect.utils.animFader` - 动画淡入淡出工具
 - `architect.utils.client` - 客户端工具
 - `architect.utils.loader` - 资源加载器
 - `architect.utils.server` - 服务端工具
@@ -24,7 +23,6 @@
 from ..architect.utils import *
 
 # 或者导入特定子模块
-from ..architect.utils.animFader import AnimFader
 from ..architect.utils.client import ClientUtils
 from ..architect.utils.loader import ResourceLoader
 from ..architect.utils.server import ServerUtils

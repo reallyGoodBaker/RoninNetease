@@ -110,6 +110,8 @@ function extractAnimations() {
         }
     }
 
+    const animKeys = []
+
     // Merge anim resources
     findAnimResources(resDir, ({ animations }) => {
         for (const [ key, { loop, animation_length, timeline } ] of Object.entries(animations)) {
@@ -119,6 +121,10 @@ function extractAnimations() {
             }
             handleNotifies(metaInfo, timeline)
             animMetaInfos[key] = metaInfo
+            if (animKeys.includes(key)) {
+                console.error(`Conflict animations: ${key}`)
+            }
+            animKeys.push(key)
         }
     })
 
@@ -128,6 +134,9 @@ function extractAnimations() {
             .replaceAll('true', 'True')
             .replaceAll('false', 'False')
     )
+
+
+    console.log('Extracted animations:', animKeys.length)
 }
 
 extractAnimations()

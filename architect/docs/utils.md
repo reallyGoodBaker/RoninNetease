@@ -36,7 +36,6 @@
 
 ## 动画与效果 (architect.utils)
 
-- **animFader**: 用于处理属性值的平滑淡入淡出（如音量、亮度、透明度）。
 - **molang**: 提供 `architect.utils.molang.client/server` 接口，方便在代码中快速设置实体的 Molang 变量或查询变量。
 - **persona**: 皮肤形象相关的工具集。
 - **device**: 获取客户端运行环境信息。
