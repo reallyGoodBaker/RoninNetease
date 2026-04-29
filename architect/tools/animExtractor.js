@@ -2,32 +2,7 @@ const fs = require('fs')
 const path = require('path')
 
 const moduleDir = path.resolve(__dirname, '../../../../')
-
-function findResDir() {
-    for (const dir of fs.readdirSync(moduleDir)) {
-        const filePath = path.join(moduleDir, dir)
-        if (fs.statSync(filePath).isDirectory()) {
-            const manifest = findManifest(filePath)
-            if (manifest) {
-                return manifest
-            }
-        }
-    }
-}
-
-function findManifest(filePath) {
-    const manifestPath = path.join(filePath, 'manifest.json')
-    if (!fs.existsSync(manifestPath)) {
-        return
-    }
-
-    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
-    for (const { type } of manifest.modules) {
-        if (type === 'resources') {
-            return filePath
-        }
-    }
-}
+const { findManifest, findResDir } = require('./utils')
 
 
 function walkDir(dir, callback) {

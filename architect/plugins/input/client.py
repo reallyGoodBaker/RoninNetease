@@ -1,14 +1,9 @@
 from ...core.loader import Plugin, PluginBase
 from ...core.subsystem import SubsystemManager
-from ...component import Component, BaseCompClient, createSingletonComponent
+from ...component import createSingletonComponent
 from ...core.basic import localPlayerId
 
-
-@Component(singleton=True)
-class InputExComponent(BaseCompClient):
-    def onCreate(self, entityId):
-        self.pressingKeys = set()
-        self.inputStack = []
+from .components.inputEx import InputExComponent
 
 
 @Plugin(
@@ -22,8 +17,9 @@ class InputExPlugin(PluginBase):
         # type: (SubsystemManager) -> None
         manager.addListener(
             'AddPlayerCreatedClientEvent',
+            self._bindInputEx
         )
 
-    def _bindInputEx(self, player):
-        if localPlayerId() == player:
+    def _bindInputEx(self, ev):
+        if localPlayerId() == ev.playerId:
             createSingletonComponent(InputExComponent)

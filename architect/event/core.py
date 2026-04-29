@@ -72,9 +72,8 @@ class ChainedEvent(object):
 
     def prevent(self):
         """阻止默认事件 (cancel 设置为 True)"""
-        if 'cancel' in self._data:
-            self._data['cancel'] = True
-            self._data['ret'] = True
+        self._data['cancel'] = True
+        self._data['ret'] = True
 
     def dict(self):
         return self._data
