@@ -247,6 +247,12 @@ class _RemoteServer(object):
             _createCallData(self.accId(), uri, *args, **kwargs)
         )
 
+    def callEvery(self, uri, *args, **kwargs):
+        self.subsys.sendAllClients(
+            REMOTE_CALL_KEY,
+            _createCallData(self.accId(), uri, *args, **kwargs)
+        )
+
     def invoke(self, id, uri, *args, **kwargs):
         ftr, resolve, reject = Future.resolvers()
         retId = self.accId()

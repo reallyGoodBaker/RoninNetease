@@ -1,6 +1,6 @@
 import time
 
-from ....compact import Component, BaseCompClient, getOneComponent, NamedEntityVariable
+from ....compact import remote, Component, BaseCompClient, getOneComponent, NamedEntityVariable
 from ....utils.persona.client import PersonaRendererComponent
 from ....math.double import clamp, inf, epsilon
 from ..enum import AnimationEasingTypes, AnimationBlendingTypes, LoopType
@@ -19,7 +19,8 @@ class AnimationEasingConf(object):
 
 
 class AnimPlayingInfo(object):
-    def __init__(self, entityId, animName, layer, startTime, playRate):
+    def __init__(self, entityId, animName, layer, startTime, playRate, serverSync=False):
+        self.serverSync = serverSync
         self.animName = animName
         self.layer = layer
         self.startTime = startTime
@@ -192,8 +193,8 @@ class AnimationExComponent(BaseCompClient):
     def getPlayingAnimation(self, animKey):
         return self.playing.get(animKey)
 
-    def play(self, animKey, layer='default', replay=False, playRate=1):
-        # type: (str, str, bool, float) -> None
+    def _playAnim(self, animKey, layer='default', replay=False, playRate=1, startTime=0, serverSync=False):
+        # type: (str, str, bool, float, float, bool) -> None
         """
         不同 layer 的动画可以同时播放，但同一 layer 的动画不能同时播放
         """
@@ -211,11 +212,11 @@ class AnimationExComponent(BaseCompClient):
             self.layers.pop(animInfo.layer)
 
         # 创建动画播放运行时
-        self.playing[animKey] = AnimPlayingInfo(
-            self.entityId,
-            self.animations[animKey],
-            layer, time.time(), playRate
+        animInfo = AnimPlayingInfo(
+            self.entityId, self.animations[animKey],
+            layer, startTime, playRate, serverSync
         )
+        self.playing[animKey] = animInfo
 
         # 记录动画播放层级
         playing = self.layers.get(layer, set()) # type: set[str]
@@ -234,8 +235,19 @@ class AnimationExComponent(BaseCompClient):
         playing.add(animKey)
         self.layers[layer] = playing
 
-    def stop(self, animKey, layer='default', noBlending=False):
-        # type: (str, str, bool) -> None
+    def play(self, animKey, layer='default', replay=False, playRate=1, startOffset=0, clientOnly=False):
+        # type: (str, str, bool, float, float, bool) -> None
+        startTime = time.time() - startOffset
+        self._playAnim(animKey, layer, replay, playRate, startTime)
+        if clientOnly:
+            return
+        remote.client.call(
+            'AnimExServer._syncPlay',
+            animKey, layer, replay, playRate, startTime
+        )
+
+    def stop(self, animKey, layer='default', noBlending=False, clientOnly=False):
+        # type: (str, str, bool, bool) -> None
         animInfo = self.playing.get(animKey)
         if not animInfo or animInfo.layer != layer:
             return
@@ -248,3 +260,9 @@ class AnimationExComponent(BaseCompClient):
         playing = self.layers.get(layer, set()) # type: set[str]
         playing.remove(animKey)
         self.layers[layer] = playing
+        if clientOnly:
+            return
+        remote.client.call(
+            'AnimExServer._syncStop',
+            animKey, layer, noBlending
+        )

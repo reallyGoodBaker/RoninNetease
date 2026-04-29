@@ -1,9 +1,9 @@
 import time, math
 
-from ....compact import Sched, Query, ClientSubsystem, SubsystemClient
+from ....compact import remote, getOneComponent, Remote, Sched, Query, ClientSubsystem, SubsystemClient, EventListener, createComponent
 from ....math.double import lerp
 
-from ..enum import AnimationEasingTypes, AnimationBlendingTypes, AnimExEvents, LoopType
+from ..enum import AnimationEasingTypes, AnimationBlendingTypes, AnimExEvents
 from ..components.animClient import AnimationExComponent
 from ..components.dilation import AnimationDilation
 from ..utils import AnimationEventDispatcher
@@ -60,7 +60,33 @@ class AnimationExSubsystem(ClientSubsystem):
 
     def onRender(self, dt):
         self.lastFrameTime = dt
-    
+
+
+    @EventListener('AddPlayerCreatedClientEvent')
+    def onAddPlayerCreatedClientEvent(self, event):
+        createComponent(event.playerId, AnimationDilation)
+        createComponent(event.playerId, AnimationExComponent)
+
+
+    @Sched.Render()
+    @Query(AnimationDilation, required=[AnimationExComponent])
+    def updateDilation(self, dilation):
+        oldVal = dilation._oldValue
+        newVal = dilation.value
+        if oldVal == newVal:
+            return
+        dilation._oldValue = newVal
+        remote.client.call(
+            'AnimationServer.updateDilation',
+            dilation.value
+        )
+
+
+    @Remote
+    def syncDilation(self, instigator, dilation):
+        dilationComp = getOneComponent(instigator, AnimationDilation)
+        dilationComp.value = dilation
+
 
     @Sched.Render()
     @Query(AnimationExComponent, AnimationDilation)
@@ -87,11 +113,13 @@ class AnimationExSubsystem(ClientSubsystem):
                     'animKey': animKey,
                     'entityId': animEx.entityId,
                     'animName': animName,
-                    'notifyName': name
+                    'notifyName': name,
+                    'serverSync': animInfo.serverSync,
                 }
-                dispatcher = AnimationEventDispatcher.getDispatcher(animName)
-                if dispatcher:
-                    dispatcher.dispatch(eventData, animEx)
+                if not animInfo.serverSync:
+                    dispatcher = AnimationEventDispatcher.getDispatcher(animName)
+                    if dispatcher:
+                        dispatcher.dispatch(eventData, animEx)
                 if self.broadcastEvent:
                     self.broadcast(
                         AnimExEvents.Notify,
@@ -104,15 +132,17 @@ class AnimationExSubsystem(ClientSubsystem):
 
             if animInfo.isFinished() or animKey in blendingOutFinished:
                 eventType = AnimExEvents.Interrupted if animInfo._manualStop else AnimExEvents.Finish
-                dispatcher = AnimationEventDispatcher.getDispatcher(animName)
                 eventDate = {
                     'type': eventType,
                     'animKey': animKey,
                     'entityId': animEx.entityId,
-                    'animName': animName
+                    'animName': animName,
+                    'serverSync': animInfo.serverSync,
                 }
-                if dispatcher:
-                    dispatcher.dispatch(eventDate, animEx)
+                if not animInfo.serverSync:
+                    dispatcher = AnimationEventDispatcher.getDispatcher(animName)
+                    if dispatcher:
+                        dispatcher.dispatch(eventDate, animEx)
                 if self.broadcastEvent:
                     self.broadcast(eventType, eventDate)
 
@@ -124,3 +154,23 @@ class AnimationExSubsystem(ClientSubsystem):
                 continue
 
             animInfo.doTick(self.lastFrameTime * dilation.value)
+
+
+    @Remote
+    def playFromServer(self, actorId, animKey, layer, replay, playRate, startTime, sync):
+        animEx = getOneComponent(actorId, AnimationExComponent)
+        # 防止服务端触发的重复播放
+        # 通过 startTime 判断
+        if animEx.isPlaying(animKey) and animEx.getPlayingAnimation(animKey).startTime == startTime:
+            return
+        animEx._playAnim(
+            animKey, layer, replay, playRate, startTime, sync
+        )
+
+
+    @Remote
+    def stopFromServer(self, actorId, key, layer, noBlending):
+        animEx = getOneComponent(actorId, AnimationExComponent)
+        animEx.stop(
+            key, layer, noBlending
+        )

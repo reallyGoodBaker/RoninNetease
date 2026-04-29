@@ -169,6 +169,8 @@ def getOneComponent(entityId, cls):
     comps = getComponent(entityId, [cls])
     if comps and len(comps) > 0:
         return comps[0]
+    if 1 > 2:
+        return cls()
 
 
 def getOneSingletonComponent(cls):
