@@ -9,30 +9,30 @@ def drawLine(start, end, color, duration=5):
     shape = drawing.AddLineShape(
         (start.x, start.y, start.z),
         (end.x, end.y, end.z),
-        (color.x, color.y, color.z),
-        duration
+        (color.x, color.y, color.z)
     )
     game.AddTimer(duration, lambda: shape.Remove())
 
-def drawBox(start, size, forward, color, duration=5):
-    # type: (Vector3, Vector3, Vector3, tuple, float) -> None
+def drawBox(center, size, forward, color, duration=5):
+    # type: (Vector3, Vector3, Vector3, tuple|Vector3, float) -> None
     right = normalize(cross(forward, vec((0, 1, 0))))
     up = normalize(cross(right, forward))
+    halfSize = size / 2
 
-    _forward = forward * size.z
-    _up = up * size.y
-    _right = right * size.x
+    _forward = forward * halfSize.z
+    _up = up * halfSize.y
+    _right = right * halfSize.x
 
     # 8个顶点
     vertices = [
-        start + _forward + _up + _right,
-        start - _forward + _up + _right,
-        start - _forward - _up + _right,
-        start + _forward - _up + _right,
-        start + _forward + _up - _right,
-        start - _forward + _up - _right,
-        start - _forward - _up - _right,
-        start + _forward - _up - _right
+        center + _forward + _up + _right,
+        center - _forward + _up + _right,
+        center - _forward - _up + _right,
+        center + _forward - _up + _right,
+        center + _forward + _up - _right,
+        center - _forward + _up - _right,
+        center - _forward - _up - _right,
+        center + _forward - _up - _right
     ]
 
     # 12条线
@@ -52,4 +52,4 @@ def drawBox(start, size, forward, color, duration=5):
     ]
 
     for line in lines:
-        drawLine(line[0], line[1], color, duration)
+        drawLine(line[0], line[1], vec(color), duration)

@@ -1,5 +1,6 @@
 from .mat4 import identity, inverse, transformPoint, transform
-from ..math.vec3 import vec, add, div, normalize, tup
+from .vec3 import vec, add, div, normalize, tup
+from .vec4 import tup4
 from ..level.server import LevelServer
 from ..core.basic import compServer, serverApi, defaultFilters, Location
 from mod.common.minecraftEnum import EntityType
@@ -18,10 +19,13 @@ def pointInBox(point, box):
     return -half_x <= point[0] <= half_x and -half_y <= point[1] <= half_y and -half_z <= point[2] <= half_z
 
 
-def boxOverlap3dServer(pos, rot, size, dim, filter=None):
-    # type: (tuple[float, float, float], tuple[float, float, float], tuple[float, float, float], int, function) -> list[str]
+def boxOverlap3dServer(loc, rot, size):
+    # type: (Location, tuple[float, float, float], tuple[float, float, float]) -> list[str]
+    """
+    :param: rot: (yaw, pitch, roll) 弧度
+    """
     radius = math.ceil(math.sqrt(size[0] ** 2 + size[2] ** 2))
-    x, y, z = pos
+    x, y, z = loc.pos
     xozProjStart = (
         x - radius,
         y - radius,
@@ -32,19 +36,21 @@ def boxOverlap3dServer(pos, rot, size, dim, filter=None):
         y + radius,
         z + radius
     )
-    firstFind = LevelServer.game.GetEntitiesInSquareArea(None, xozProjStart, xozProjEnd, dim)
-    worldMatrix = inverse(transform(
+    firstFind = LevelServer.game.GetEntitiesInSquareArea(None, xozProjStart, xozProjEnd, dimensionId=loc.dim)
+    _transform = transform(
         identity(),
-        vec(pos),
+        vec(loc.pos),
         vec(rot),
-        vec(size)
-    ))
+        vec((1, 1, 1))
+    )
+
+    worldMatrix = inverse(_transform)
     result = []
     for entityId in firstFind:
         posComp = compServer.CreatePos(entityId)
         centerPos = div(add(vec(posComp.GetPos()), vec(posComp.GetFootPos())), 2)
-        modelCenterPos = transformPoint(worldMatrix, centerPos)
-        if pointInBox(modelCenterPos, size) and (filter is None or filter(entityId)):
+        modelCenterPos = tup4(transformPoint(worldMatrix, centerPos))
+        if pointInBox(modelCenterPos, size):
             result.append(entityId)
 
     return result
@@ -58,27 +64,13 @@ def boxOverlap3dForward(entityId, size, debug=False):
     pos = compServer.CreatePos(entityId).GetPos()
     dir = forward(entityId)
     rot = serverApi.GetRotFromDir(tup(dir))
+    zDist = size[2] / 2
     result = boxOverlap3dServer(
-        add(vec(pos), dir * 2).ToTuple(),
+        add(vec(pos), dir * zDist).ToTuple(),
         (math.radians(rot[0]), -math.radians(rot[1]), 0), size, debug
     )
     if entityId in result:
         result.remove(entityId)
-    return result
-
-def boxOverlap3dFacing(entityId, size, debug=False):
-    # type: (str, tuple[float, float, float], bool) -> list[str]
-    """
-    :param: size: (width, height, depth)
-    """
-    pos = compServer.CreatePos(entityId).GetPos()
-    rot = compServer.CreateRot(entityId).GetRot()
-    dir = serverApi.GetDirFromRot(rot)
-    result = boxOverlap3dServer(
-        add(vec(pos), vec(dir) * 2).ToTuple(),
-        (math.radians(rot[0]), -math.radians(rot[1]), 0), size, debug
-    )
-    result.remove(entityId)
     return result
 
 

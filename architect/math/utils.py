@@ -120,6 +120,9 @@ def pointInAabb(point, min, max):
 
 def boxOverlap3dClient(pos, rot, size, debug=False):
     # type: (tuple[float, float, float], tuple[float, float, float], tuple[float, float, float], bool) -> list[str]
+    """
+    :param: rot: (yaw, pitch, roll) 弧度
+    """
     radius = math.ceil(math.sqrt(size[0] ** 2 + size[2] ** 2))
     x, y, z = pos
     xozProjStart = (
@@ -138,18 +141,15 @@ def boxOverlap3dClient(pos, rot, size, debug=False):
         identity(),
         vec(pos),
         vec(rot),
-        vec(size)
+        vec((1, 1, 1))
     )
 
     if debug:
-        sizeRect = vec(size)
-        halfSize = sizeRect / 2
-        rotX, rotY, rotZ = rot
-        sx, sy, sz, sw = tup4(transformPoint(_transform, halfSize))
+        rotX, rotY = math.degrees(rot[0]), -math.degrees(rot[1])
         drawBox(
-            vec(sx, sy, sz),
-            sizeRect,
-            clientApi.GetDirFromRot((rotX, rotY)),
+            vec(pos),
+            vec(size),
+            vec(clientApi.GetDirFromRot((rotX, rotY))),
             (1, 1, 0)
         )
 
@@ -173,13 +173,15 @@ def boxOverlap3dForward(entityId, size, debug=False):
     pos = compClient.CreatePos(entityId).GetPos()
     dir = forward(entityId)
     rot = clientApi.GetRotFromDir(tup(dir))
+    zDist = size[2] / 2
     result = boxOverlap3dClient(
-        add(vec(pos), dir * 2).ToTuple(),
+        add(vec(pos), dir * zDist).ToTuple(),
         (math.radians(rot[0]), -math.radians(rot[1]), 0), size, debug
     )
     if entityId in result:
         result.remove(entityId)
     return result
+
 
 def boxOverlap3dFacing(entityId, size, debug=False):
     # type: (str, tuple[float, float, float], bool) -> list[str]
