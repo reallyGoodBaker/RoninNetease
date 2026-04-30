@@ -1,13 +1,22 @@
-from .mat4 import worldToScreen, identity, lookAt, perspective, screenToWorld, inverse, Matrix, transformPoint, transform, rotateAxis, translate, scale
-from ..math.vec3 import vec, modulo, Vector3, add, div, tup
+from .mat4 import multiply, worldToScreen, identity, lookAt, perspective, inverse, Matrix, transformPoint, transform
+from .vec3 import vec, Vector3, add, div, tup, normalize, modulo
+from .vec4 import tup4
 from ..level.client import LevelClient, clientApi
+from ..core.basic import compClient, compServer
+from ..utils.drawing import drawBox
+
+from mod.common.minecraftEnum import RayFilterType
 
 import math
 
-level = LevelClient.getInstance()
-screenWidth, screenHeight = level.game.GetScreenSize()
+
+def screenSize():
+    level = LevelClient.getInstance()
+    return level.game.GetScreenSize()
+
 
 def localViewMatrix():
+    level = LevelClient.getInstance()
     camPos = level.camera.GetPosition()
     camForward = level.camera.GetForward()
     target = (
@@ -22,6 +31,8 @@ def localViewMatrix():
     )
 
 def localProjectionMatrix():
+    level = LevelClient.getInstance()
+    screenWidth, screenHeight = screenSize()
     return perspective(
         level.camera.GetFov(),
         screenWidth / screenHeight,
@@ -35,21 +46,47 @@ def worldPosToScreenPos(worldPoint):
         identity(),
         localViewMatrix(),
         localProjectionMatrix(),
-        (screenWidth, screenHeight),
+        screenSize(),
         vec(worldPoint)
     )
 
-def screenPosToWorldPos(screenPoint, depth):
-    # type: (tuple[float, float], float) -> Vector3
-    pointVec = vec((screenPoint[0], screenPoint[1], 0))
-    return screenToWorld(
-        identity(),
-        localViewMatrix(),
-        localProjectionMatrix(),
-        (screenWidth, screenHeight),
-        pointVec,
-        depth
+def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks):
+    # type: (Matrix, Vector3, RayFilterType) -> Vector3 | None
+    """
+    只能在客户端使用
+
+    将屏幕坐标系中的点转换到世界坐标系
+    modelMatrix: 模型到世界的变换矩阵（即模型的世界矩阵）
+    viewMatrix: 世界到视图的变换矩阵（即摄像机矩阵）
+    projectionMatrix: 视图到投影的变换矩阵（即投影矩阵）
+    viewport: 屏幕视口（即窗口）
+    screenPoint: 在屏幕坐标系中的点（x, y为屏幕坐标，z为深度值）
+    depth: 深度值（从摄像机到点的距离）
+    返回世界坐标系中的点
+    """
+    # 先将屏幕坐标转换到裁剪空间
+    w, h = screenSize()
+    nx = (screenPoint.x / w * 2 - 1)
+    ny = (1 - screenPoint.y / h * 2)
+    rayStartNdc = Vector3(nx, ny, -1)
+    rayEndNdc = Vector3(nx, ny, 1)
+    # 再将裁剪空间坐标转换到世界坐标
+    invMvpMatrix = inverse(multiply(localProjectionMatrix(), multiply(localViewMatrix(), modelMatrix)))
+    rayStart = vec(transformPoint(invMvpMatrix, rayStartNdc))
+    rayEnd = vec(transformPoint(invMvpMatrix, rayEndNdc))
+    ray = rayEnd - rayStart
+    # 计算射线
+    result = clientApi.getEntitiesOrBlockFromRay(
+        tup(rayStart),
+        tup(normalize(ray)),
+        math.ceil(modulo(ray)),
+        False,
+        filterType
     )
+    if not result:
+        return None
+    raycasted = result[0]
+    return vec(raycasted['hitPos'])
 
 defaultFilters = {
     "any_of": [
@@ -66,11 +103,6 @@ defaultFilters = {
     ]
 }
 
-from ..core.basic import compClient, compServer
-from ..level.client import LevelClient
-from ..level.server import LevelServer
-
-level = LevelClient.getInstance()
 
 def pointInBox(point, box):
     # type: (tuple[float, float, float], tuple[float, float, float]) -> bool
@@ -100,6 +132,7 @@ def boxOverlap3dClient(pos, rot, size, debug=False):
         y + radius,
         z + radius
     )
+    level = LevelClient.getInstance()
     firstFind = level.game.GetEntitiesInSquareArea(None, xozProjStart, xozProjEnd)
     _transform = transform(
         identity(),
@@ -109,18 +142,23 @@ def boxOverlap3dClient(pos, rot, size, debug=False):
     )
 
     if debug:
-        sx, sy, sz, sw = transformPoint(_transform, vec((0, 0, 0)))
-        ex, ey, ez, ew = transformPoint(_transform, vec((size[0], size[1], size[2])))
-        level.drawing.AddTextShape((sx, sy, sz), "start")
-        level.drawing.AddTextShape((ex, ey, ez), "end")
-        level.drawing.AddArrowShape((sx, sy, sz), (ex, ey, ez))
+        sizeRect = vec(size)
+        halfSize = sizeRect / 2
+        rotX, rotY, rotZ = rot
+        sx, sy, sz, sw = tup4(transformPoint(_transform, halfSize))
+        drawBox(
+            vec(sx, sy, sz),
+            sizeRect,
+            clientApi.GetDirFromRot((rotX, rotY)),
+            (1, 1, 0)
+        )
 
     worldMatrix = inverse(_transform)
     result = []
     for entityId in firstFind:
         posComp = compClient.CreatePos(entityId)
         centerPos = div(add(vec(posComp.GetPos()), vec(posComp.GetFootPos())), 2)
-        modelCenterPos = transformPoint(worldMatrix, centerPos)
+        modelCenterPos = tup4(transformPoint(worldMatrix, centerPos))
         if pointInBox(modelCenterPos, size):
             result.append(entityId)
 

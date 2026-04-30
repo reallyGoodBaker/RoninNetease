@@ -1,8 +1,17 @@
 from mod.common.utils.mcmath import Vector3
 import math
 
-def vec(tup=(0,0,0)):
-    return Vector3(tup) if tup else vec()
+def vec(*init):
+    if len(init) == 0:
+        return Vector3((0, 0, 0))
+    elif type(init[0]) == float:
+        return Vector3(init)
+    elif type(init[0]) == tuple:
+        return Vector3(init[0])
+    elif hasattr(init[0], 'x'):
+        return Vector3((init[0].x, init[0].y, init[0].z))
+    else:
+        raise TypeError("Invalid argument type '{}': {}".format(type(init[0]), init))
 
 def add(a, b):
     # type: (Vector3, Vector3) -> Vector3
@@ -70,5 +79,5 @@ def nlerp(a, b, t):
     return normalize(lerp(a, b, t))
 
 def tup(a):
-    # type: (Vector3) -> tuple
+    # type: (Vector3) -> tuple[float, float, float]
     return a.ToTuple()

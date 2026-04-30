@@ -1,6 +1,8 @@
 from __future__ import division, print_function
 from mod.common.utils.mcmath import Matrix, Vector3
 from .vec3 import normalize, dot, cross
+from .vec4 import vec4, Vector4
+from .double import epsilon
 import math
 
 def identity():
@@ -143,26 +145,24 @@ def transform(m, t, r, s):
     return m * translate(t) * rotateXYZ(rz, ry, rx) * scale(s)
 
 def transformPoint(m, point):
-    # type: (Matrix, Vector3) -> tuple[float, float, float, float]
+    # type: (Matrix, Vector3) -> Vector4
     """
     使用矩阵变换一个点（包含平移影响）
     将点表示为齐次坐标 [x, y, z, 1] 并进行矩阵乘法
-    返回变换后的 Vector3
+    返回变换后的 Vector4
+
+    你可以使用 vec(Vector4) 将w分量舍弃，得到一个 Vector3
     """
     # 手动矩阵-向量乘法
     # 矩阵访问方法：m[row, col]，4x4矩阵，row和col从0到3
     x, y, z = point.ToTuple()
-    # 计算齐次坐标结果
+
     rx = m[0,0]*x + m[0,1]*y + m[0,2]*z + m[0,3]*1
     ry = m[1,0]*x + m[1,1]*y + m[1,2]*z + m[1,3]*1
     rz = m[2,0]*x + m[2,1]*y + m[2,2]*z + m[2,3]*1
     rw = m[3,0]*x + m[3,1]*y + m[3,2]*z + m[3,3]*1
-    # 透视除法（如果w不为1）
-    if rw != 1 and rw != 0:
-        rx /= rw
-        ry /= rw
-        rz /= rw
-    return (rx, ry, rz, rw)
+
+    return vec4(rx, ry, rz, rw)
 
 def transformVector(m, vector):
     # type: (Matrix, Vector3) -> Vector3
@@ -179,7 +179,7 @@ def transformVector(m, vector):
     return Vector3(rx, ry, rz)
 
 def localToWorld(modelMatrix, localPoint):
-    # type: (Matrix, Vector3) -> Vector3
+    # type: (Matrix, Vector3) -> Vector4
     """
     将模型局部坐标系中的点转换到世界坐标系
     modelMatrix: 模型到世界的变换矩阵（即模型的世界矩阵）
@@ -189,7 +189,7 @@ def localToWorld(modelMatrix, localPoint):
     return transformPoint(modelMatrix, localPoint)
 
 def worldToLocal(modelMatrix, worldPoint):
-    # type: (Matrix, Vector3) -> Vector3
+    # type: (Matrix, Vector3) -> Vector4
     """
     将世界坐标系中的点转换到模型局部坐标系
     modelMatrix: 模型到世界的变换矩阵（即模型的世界矩阵）
@@ -212,34 +212,16 @@ def worldToScreen(modelMatrix, viewMatrix, projectionMatrix, viewport, worldPoin
     """
     # 先将世界坐标转换到裁剪空间
     mvpMatrix = multiply(projectionMatrix, multiply(viewMatrix, modelMatrix))
-    clipPoint = transformPoint(mvpMatrix, worldPoint)  # clipPoint 已经是 (x_ndc, y_ndc, z_ndc, w_clip)
+    x, y, z, w = transformPoint(mvpMatrix, worldPoint)
+    w += epsilon
+    x /= w
+    y /= w
+    z /= w
+
     # 直接将 NDC 坐标映射到屏幕坐标
     screenPoint = Vector3(
-        (clipPoint[0] + 1) * 0.5 * viewport[0],
-        (1 - (clipPoint[1] + 1) * 0.5) * viewport[1],
-        clipPoint[2]  # 直接使用 z_ndc 作为深度
+        (x + 1) * 0.5 * viewport[0],
+        (1 - (y + 1) * 0.5) * viewport[1],
+        z  # 直接使用 z_ndc 作为深度
     )
     return screenPoint
-
-def screenToWorld(modelMatrix, viewMatrix, projectionMatrix, viewport, screenPoint, depth):
-    # type: (Matrix, Matrix, Matrix, tuple[int, int], Vector3, float) -> Vector3
-    """
-    将屏幕坐标系中的点转换到世界坐标系
-    modelMatrix: 模型到世界的变换矩阵（即模型的世界矩阵）
-    viewMatrix: 世界到视图的变换矩阵（即摄像机矩阵）
-    projectionMatrix: 视图到投影的变换矩阵（即投影矩阵）
-    viewport: 屏幕视口（即窗口）
-    screenPoint: 在屏幕坐标系中的点（x, y为屏幕坐标，z为深度值）
-    depth: 深度值（从摄像机到点的距离）
-    返回世界坐标系中的点
-    """
-    # 先将屏幕坐标转换到裁剪空间
-    clipPoint = Vector3(
-        (screenPoint.x / viewport[0] * 2 - 1) * depth,
-        (1 - screenPoint.y / viewport[1] * 2) * depth,
-        depth
-    )
-    # 再将裁剪空间坐标转换到世界坐标
-    invMvpMatrix = inverse(multiply(projectionMatrix, multiply(viewMatrix, modelMatrix)))
-    worldPoint = transformPoint(invMvpMatrix, clipPoint)
-    return worldPoint

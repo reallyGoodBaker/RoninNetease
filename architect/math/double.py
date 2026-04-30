@@ -12,4 +12,4 @@ def smoothstep(edge0, edge1, x):
     return t * t * (3 - 2 * t)
 
 inf = float('inf')
-epsilon = 1e-6
+epsilon = 1e-8
