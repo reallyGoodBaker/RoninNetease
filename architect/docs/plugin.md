@@ -1,83 +1,120 @@
 # 插件系统 (architect.plugins)
 
-提供可插拔的扩展机制。插件跟随子系统生命周期运行，支持 `$vendor`（框架内置）和 `$user`（用户自定义）两种来源。
+`architect.plugins` 提供了插件/模组间的模块加载和依赖管理机制。
 
-## 注册插件
+## 核心组件
 
-使用 `@Plugin` 装饰器注册一个插件：
+### 插件管理器 (PluginManager)
+
+由框架自动管理，负责插件的注册、依赖解析和执行生命周期回调。
+
+### 装饰器
+
+#### `@Plugin(name, version, author, description)`
+
+将类注册为插件。必须使用函数调用形式。
 
 ```python
-from architect.core.loader import Plugin, PluginBase
+from architect.compact import Plugin, PluginBase
 
-@Plugin(
-    'MyPlugin',          # 插件名称（唯一标识）
-    [ 1, 0, 0 ],         # 版本号 [major, minor, patch]
-    'AuthorName',        # 作者
-    'Description here'   # 插件描述
-)
+@Plugin('MyPlugin', [1, 0, 0], 'AuthorName', 'A sample plugin')
 class MyPlugin(PluginBase):
+    def __init__(self):
+        self.data = {}
+
     def onAttach(self, manager):
-        # 插件加载时调用，此时子系统已创建
+        # 插件被挂载时调用
+        print('MyPlugin attached')
+
+    def onReady(self, manager):
+        # 所有插件加载完成后调用
+        print('MyPlugin ready')
+```
+
+参数说明：
+- `name`（str）: 插件唯一名称，用于 `getPlugin()` 查询
+- `version`（list[int]）: 语义化版本号 `[major, minor, patch]`
+- `author`（str）: 作者名称
+- `description`（str）: 插件描述
+
+### 基类
+
+#### `PluginBase`
+
+所有插件的基类，提供生命周期方法：
+
+```python
+class PluginBase:
+    def __init__(self):
+        pass
+
+    def onAttach(self, manager):
+        # 当插件被挂载到管理器时调用
         pass
 
     def onReady(self, manager):
-        # 所有子系统就绪后调用
+        # 当所有插件都完成 onAttach 后调用
         pass
 ```
 
-## 启用插件
-
-在 `architect/conf.py` 的 `PLUGINS` 列表中声明插件路径：
+### 核心函数
 
 ```python
-PLUGINS = [
-    # 框架内置插件（$vendor 前缀）
-    '$vendor.animation',
+from architect.compact import getPlugin, hasPlugin
 
-    # 用户自定义插件（$user 前缀）
-    '$user.my_plugin',
+# 获取已注册的插件实例
+plugin = getPlugin('MyPlugin')
+if plugin:
+    plugin.do_something()
 
-    # 纯模块路径
-    'my_module.plugins.custom',
-]
+# 检查插件是否存在
+if hasPlugin('other_mod'):
+    print('other_mod is loaded')
 ```
 
-框架会自动为客户端和服务端加载对应的 `.client` / `.server` 模块。
+### 使用示例
 
-## 获取插件
+#### 定义插件
 
 ```python
-from architect.core.loader import getPlugin, hasPlugin
+from architect.compact import Plugin, PluginBase
 
-# 检查插件是否已加载
-if hasPlugin('MyPlugin'):
-    plugin = getPlugin('MyPlugin')
+@Plugin('my_weapon_mod', [1, 2, 0], 'DevTeam', 'Custom weapon system')
+class WeaponPlugin(PluginBase):
+    def __init__(self):
+        self.weapons = {}
 
-# 调用插件暴露的静态方法
-plugin.some_static_method()
+    def onAttach(self, manager):
+        self.weapons = {'sword': 10, 'bow': 8}
+
+    def onReady(self, manager):
+        print('Weapon system ready')
+
+    def getDamage(self, weaponName):
+        return self.weapons.get(weaponName, 0)
 ```
 
-## 内置插件：动画扩展 (RoninAnimationEx)
-
-框架内置的 `animation` 插件提供动画序列与过渡控制。
-
-### 动画时间缩放
+#### 使用插件
 
 ```python
-from architect.plugins.animation.client import AnimationExPlugin
+from architect.compact import getPlugin, hasPlugin
 
-# 设置全局动画时间缩放（值越大动画越快）
-AnimationExPlugin.setDilation(2.0)   # 2倍速
-AnimationExPlugin.setDilation(0.5)   # 0.5倍慢动作
-AnimationExPlugin.setDilation(1.0)   # 恢复正常
+# 在子系统或组件中使用
+class GameSystem:
+    def onInit(self):
+        if hasPlugin('my_weapon_mod'):
+            plugin = getPlugin('my_weapon_mod')
+            damage = plugin.getDamage('sword')
+            print('Damage: %d' % damage)
 ```
 
-### Molang 变量约定
+---
 
-该插件通过以下 Molang 变量控制动画：
+## 完整 API 对照
 
-| 变量 | 用途 |
-|------|------|
-| `v.blendex.<动画名>` | 控制动画混合权重（0~1） |
-| `v.anim_timeex.<动画名>` | 控制动画时间进度 |
-| `v.notify_<通知名>` | 定义通知触发（设为 1 触发，0 关闭） |
+| 功能 | API | 说明 |
+|------|-----|------|
+| 插件注册 | `@Plugin(name, version, author, desc)` | 装饰器-注册插件类 |
+| 插件基类 | `PluginBase` | 插件的基类（含 onAttach/onReady） |
+| 获取插件 | `getPlugin(name)` | 通过名称获取插件实例 |
+| 检查插件 | `hasPlugin(name)` | 检查插件是否已加载 |
