@@ -1,85 +1,187 @@
-# 调度系统 (Scheduler)
+# 调度器系统
 
-调度系统提供了灵活的任务执行机制，支持 tick、渲染帧以及固定频率的任务调度。
+`architect` 的调度器系统为子系统提供声明式的调度方法注册，同时提供了独立的任务调度、异步编程和定时器能力。
 
-## @Sched 装饰器
+## 概述
 
-在子系统内部，可以使用 `@Sched` 装饰器定义定时任务。
+调度器是一个基于 Tick 循环的任务执行框架，每一帧按顺序执行各个阶段的任务。
 
-### @Sched.Tick()
-每一 tick 执行一次。
-```python
-@Sched.Tick()
-def onTick(self):
-    # 逻辑代码
-    pass
-```
-
-### @Sched.Render()
-每一渲染帧执行一次（仅限客户端子系统）。
-```python
-@Sched.Render()
-def onRender(self):
-    # 适合处理 UI 平滑过渡或特效
-    pass
-```
-
-### @Sched.Fixed(name)
-按固定频率执行。需要先通过 `scheduleFixed` 启动调度器。
-```python
-@SubsystemServer
-class MyService(ServerSubsystem):
-    def onReady(self):
-        # 启动一个名为 'sec1' 的调度器，周期为 1.0 秒
-        self.scheduleFixed('sec1', 1.0)
-
-    @Sched.Fixed('sec1')
-    def onTimer(self):
-        print("执行定时任务")
-```
-
-### @Sched.Event(eventType, isCustom=False)
-当特定事件触发时，作为调度任务执行。
-
-## 任务顺序 (Flags)
-调度任务可以指定在 tick 的不同阶段执行：
-- `BeforeUpdate`: 在标准 update 之前。
-- `Update`: (默认) 标准 update 阶段。
-- `AfterUpdate`: 在标准 update 之后。
+### Scheduler 核心方法
 
 ```python
-from ..architect.conf import SchedUpdateFlags
+from architect.core.scheduler import Scheduler
 
-@Sched.Tick(SchedUpdateFlags.AfterUpdate)
-def lateUpdate(self):
-    pass
+sched = Scheduler()
+
+# 添加任务到指定阶段
+task_id = sched.addTask('Update', my_fn)
+
+# 指定阶段执行
+sched.execute('Update')
+
+# 执行完整序列（TimerTask -> BeforeUpdate -> Update -> AfterUpdate）
+sched.executeSequence()
+
+# 添加可挂起任务（生成器函数）
+sched.addSuspendableTask('Update', my_generator)
+
+# 移除任务
+sched.removeTask('Update', task_id)
+
+# 移除某个阶段的所有任务
+sched.removeTask('Update')
 ```
 
-## 编程式任务 (Scheduler API)
+## 调度阶段
 
-除了装饰器，你也可以通过子系统获取调度器实例来手动管理任务：
+调度器按固定序列执行任务，顺序为：
 
-- `run(fn)`: 立即在下一帧/tick 执行。
-- `runTimeout(fn, ticks)`: 延迟指定 tick 数后执行一次。
-- `runInterval(fn, ticks)`: 每隔指定 tick 数循环执行。
-- `clearTimeout(taskId)`: 取消已排期的任务。
+1. **`TimerTask`** - 定时任务（通过 `addPeriodicTask`、`runTimeout`、`runInterval` 注册）
+2. **`BeforeUpdate`** - 更新前
+3. **`Update`** - 正常更新
+4. **`AfterUpdate`** - 更新后
+
+## 便捷定时器方法
 
 ```python
-def onInit(self):
-    # 在客户端 tick 调度器中运行一个定时任务
-    from ..subsystem import SubsystemManager
-    SubsystemManager.clientTickSched.runInterval(self.my_task, 20)
+sched = Scheduler()
+
+# 延迟执行（指定 tick 数后执行一次）
+sched.runTimeout(my_fn, ticks=20)
+
+# 间隔执行（每隔指定 tick 数执行一次）
+sched.runInterval(my_fn, ticks=10)
+
+# 下次 tick 执行
+sched.run(my_fn)
+
+# 取消定时任务
+sched.clearTimeout(task_id)
 ```
 
-## 协程支持 (SuspendableTask)
-调度器内部支持生成器形式的协程任务，通过 `addSuspendableTask` 手动添加。
+## 装饰器风格的调度注册
+
+通过 `@Sched` 装饰器可以在 Subsystem 中声明式地注册调度方法：
+
 ```python
-def my_coroutine(self):
-    print("Step 1")
-    yield
-    print("Step 2")
+from architect.core.scheduler import Sched
 
-# 在 Scheduler 实例中添加
-# manager.clientTickSched.addSuspendableTask(SchedUpdateFlags.Update, self.my_coroutine)
+class MySystem(ServerSubsystem):
+
+    @Sched.Tick()  # 默认为 Update 阶段
+    def on_tick(self):
+        pass
+
+    @Sched.Tick(scheduleFlag=SchedUpdateFlags.BeforeUpdate)
+    def before_update(self):
+        pass
+
+    @Sched.Tick(scheduleFlag=SchedUpdateFlags.AfterUpdate)
+    def after_update(self):
+        pass
+
+    @Sched.Render()  # 仅在客户端生效
+    def on_render(self):
+        pass
+
+    @Sched.Fixed('my_sched')  # 固定频率调度器
+    def on_fixed(self):
+        pass
+
+    @Sched.Event('PlayerJoinEvent')  # 事件时调度
+    def on_player_join(self):
+        pass
 ```
-> 注意：通常建议优先使用标准的装饰器。
+
+### 调度类型
+
+- **`@Sched.Tick()`** - 每帧执行, 跟随主 Tick 循环
+- **`@Sched.Render()`** - 每渲染帧执行（仅客户端）
+- **`@Sched.Fixed(schedulerName)`** - 固定频率执行，需调用 `scheduleFixed` 启动
+- **`@Sched.Event(eventType)`** - 事件触发时执行（与 `EventReader` 配合）
+
+## 游戏引擎定时器
+
+直接使用游戏引擎的定时器 API：
+
+```python
+from architect.core.scheduler import addTimer, cancelTimer
+
+# 添加周期定时器（秒）
+timer = addTimer(1.0, my_fn)
+
+# 取消定时器
+cancelTimer(timer)
+```
+
+## TimerAdapter
+
+`TimerAdapter` 是游戏引擎定时器的简单封装：
+
+```python
+from architect.core.scheduler import TimerAdapter
+
+timer = TimerAdapter(1.0, my_fn)
+timer.start()
+timer.cancel()
+```
+
+## 固定频率调度器 `SimpleFixedScheduler`
+
+`SimpleFixedScheduler` 是一个完整的周期性调度器，自带内部 `Scheduler`：
+
+```python
+from architect.core.scheduler import SimpleFixedScheduler
+
+sched = SimpleFixedScheduler(period=1.0)
+
+# 添加任务
+sched.scheduler.addTask('Update', my_fn)
+
+# 启动
+sched.start()
+
+# 停止
+sched.cancel()
+```
+
+## 可挂起任务 `SuspendableTask`
+
+`SuspendableTask` 支持生成器函数，每次 tick 执行一步：
+
+```python
+def my_generator():
+    yield  # 暂停
+    print("step 1")
+    yield  # 暂停
+    print("step 2")
+
+sched.addSuspendableTask('Update', my_generator)
+```
+
+## 异步编程 `Future` 和 `@Async`
+
+`Future` 和 `@Async` 装饰器提供了基于生成器的协程支持：
+
+```python
+from architect.core.scheduler import Future, Async
+
+# 创建 Future
+def executor(resolve, reject):
+    resolve(42)
+
+ftr = Future(executor)
+
+# 注册回调
+ftr.done(lambda v: print("Result:", v))
+ftr.expected(lambda e: print("Error:", e))
+
+# 异步协程
+@Async
+def my_coro():
+    result = yield some_future()
+    print("Got:", result)
+    return result * 2
+
+# 调用异步函数
+my_coro().done(lambda v: print("Final:", v))

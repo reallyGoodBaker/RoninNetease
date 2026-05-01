@@ -1,65 +1,148 @@
-# 子系统 (Subsystem)
+# Subsystem 子系统
 
-子系统是 `architect` 框架中承载业务逻辑的基础单元。它通过装饰器实现自动注册，并管理自身的生命周期。
+`architect` 的核心组织单位是 Subsystem（子系统），每个子系统负责特定的功能逻辑。
 
-## 注册子系统
+## 生命周期
 
-- **@SubsystemServer**: 仅在服务端注册。
-- **@SubsystemClient**: 仅在客户端注册。
+Subsystem 定义了清晰的初始化顺序：
+
+1. **`__init__`** - 构造函数，接收底层引擎系统实例
+2. **`onInit()`** - 子系统创建完毕后调用，此时 `SubsystemManager` 已就绪
+3. **`onReady()`** - 所有子系统初始化完毕后调用，此时可安全获取其他子系统
+4. **`onUpdate(dt)`** - 每 Tick 调用，需设置 `self.canTick = True`
+5. **`onRender(dt)`** - 每渲染帧调用（仅客户端）
+6. **`onDestroy()`** - 子系统销毁时调用
+
+## 定义子系统
+
+使用 `@SubsystemServer` 或 `@SubsystemClient` 装饰器标记子系统类：
 
 ```python
-from ..architect.subsystem import ServerSubsystem, SubsystemServer, SubsystemClient, ClientSubsystem
+from architect.core.subsystem import SubsystemServer, ServerSubsystem
 
 @SubsystemServer
-class MyServerService(ServerSubsystem):
-    pass
+class MySystem(ServerSubsystem):
+    def onInit(self):
+        print("Server Subsystem initialized")
 
-@SubsystemClient
-class MyClientService(ClientSubsystem):
-    pass
+    def onReady(self):
+        other = self.getSubsystem(OtherSystem)
+        print("Other system is ready:", other)
 ```
 
-## 生命周期方法
+### 属性
 
-子系统提供了一系列生命周期回调，方便在不同阶段初始化逻辑：
+- **`system`**: 底层引擎系统实例
+- **`engine`**: 引擎命名空间
+- **`sysName`**: 系统名称
+- **`ticks`**: 子系统被更新的次数
+- **`canTick`**: 是否允许 `onUpdate` 调用（默认 False）
+- **`initialized`**: 初始化状态标记
 
-| 方法 | 说明 |
-| --- | --- |
-| `onInit(self)` | 子系统实例创建完成，但其他子系统可能尚未全部创建。在此处通常进行内部状态初始化和事件绑定。 |
-| `onReady(self)` | 所有子系统均已创建并初始化完成。此时可以使用 `self.getSubsystem(Cls)` 安全地获取其他子系统。 |
-| `onUpdate(self, dt)` | 每 tick 调用。需设置 `self.canTick = True` 才会生效。 |
-| `onRender(self, dt)` | 每渲染帧调用（仅限客户端子系统）。 |
-| `onDestroy(self)` | 子系统销毁时调用，用于清理资源、注销事件监听等。 |
-
-## 核心实例方法
-
-- `self.getHost()`: 获取底层的引擎系统实例。
-- `self.getEngine()`: 获取引擎命名空间。
-- `self.getSysName()`: 获取引擎系统名称。
-- `self.broadcast(eventName, eventData)`: 广播自定义事件。
-- `self.sendServer(eventName, eventData)`: (仅限客户端) 向服务端发送通知。
-- `self.sendClient(targetIds, eventName, eventData)`: (仅限服务端) 向指定客户端发送通知。`targetIds` 可以是字符串、整数或列表。
-- `self.sendAllClients(eventName, eventData)`: (仅限服务端) 向所有客户端发送广播。
-- `self.spawnEntity(template, location, rot, isNpc=False, isGlobal=False)`: 生成实体。`template` 支持类型字符串或 NBT 字典。
-- `self.destroyEntity(entityId)`: 销毁实体。
-- `self.spawnItem(itemDict, location)`: (仅限服务端) 在指定位置生成物品。
-
-## 全局静态方法 (subsystem 类)
-
-`architect.subsystem.subsystem` 提供了一些静态方法，允许在不持有子系统实例的情况下执行常用操作（通过自动寻找第一个注册的子系统实现）：
+## 获取子系统实例
 
 ```python
-from ..architect.subsystem import subsystem
+# 通过类获取
+target = self.getSubsystem(MySystem)
 
-subsystem.sendServer('Event', {})
-subsystem.sendClient(playerId, 'Event', {})
-subsystem.spawnServerEntity('minecraft:zombie', location, (0, 0))
-subsystem.addListener('Event', handler)
+# 通过名称获取
+target = self.getSubsystemByName('MySystem')
+
+# 类方法获取单例
+inst = MySystem.getInstance()
 ```
 
-## 基础工具 API
+## 编程式事件监听
 
-- `architect.basic.isServer()`: 判断当前是否运行在服务端。
-- `architect.basic.compServer` / `compClient`: 直接访问引擎组件工厂。
-- `architect.basic.serverTick()`: 获取服务端 tick 时间。
-- `architect.basic.Location(pos, dim)`: 封装坐标与维度的位置对象。
+```python
+# 监听自定义事件（默认 isCustomEvent=True）
+self.on('MyEvent', self.my_handler)
+
+# 取消监听
+self.off('MyEvent', self.my_handler)
+
+# 监听引擎原生事件
+self.listen('PlayerJoinEvent', self.on_player_join)
+
+# 取消监听引擎事件
+self.unlisten('PlayerJoinEvent', self.on_player_join)
+```
+
+## 广播事件
+
+```python
+self.broadcast('EventName', {'key': 'value'})
+```
+
+## 服务端子系统的特有功能
+
+`ServerSubsystem` 提供了向客户端发送数据的方法：
+
+```python
+# 向指定客户端发送
+self.sendClient(playerId, 'EventName', data)
+
+# 向多个客户端发送
+self.sendClient([playerId1, playerId2], 'EventName', data)
+
+# 向所有客户端广播
+self.sendAllClients('EventName', data)
+
+# 生成实体
+eid = self.spawnEntity('minecraft:zombie', location, (0, 0))
+
+# 销毁实体
+self.destroyEntity(eid)
+
+# 生成物品实体
+self.spawnItem(itemDict, location)
+```
+
+## 客户端子系统的特有功能
+
+`ClientSubsystem` 提供了渲染帧和特效相关的方法：
+
+```python
+# 向服务端发送事件
+self.sendServer('EventName', data)
+
+# 生成客户端实体
+self.spawnEntity('minecraft:sheep', (0, 0, 0), (0, 0))
+
+# 创建特效/粒子
+self.createSfx('path/to/sfx', pos)
+self.createParticle('path/to/particle', pos)
+self.createEffectBind('path/to/effect', entityId, 'animation')
+
+# 渲染帧回调
+def onRender(self, dt):
+    pass
+```
+
+## 静态辅助方法 `subsystem`
+
+在不方便获取子系统实例的场合使用：
+
+```python
+from architect.core.subsystem import subsystem
+
+# 客户端→服务端通信
+subsystem.sendServer('EventName', data)
+
+# 服务端→客户端通信
+subsystem.sendClient(playerId, 'EventName', data)
+subsystem.sendAllClients('EventName', data)
+
+# 生成实体
+subsystem.spawnServerEntity(template, location, rot)
+subsystem.spawnClientEntity(template, pos, rot)
+```
+
+## 固定频率调度器
+
+```python
+# 启动固定频率调度器（onReady 或 onInit 中调用）
+self.scheduleFixed('myScheduler', period=1.0)
+
+# 停止调度器
+self.stopFixed('myScheduler')

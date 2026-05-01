@@ -1,59 +1,137 @@
-# 事件系统 (Event)
+# 事件系统
 
-`architect` 提供了便捷的事件监听方式，通过装饰器和统一的 API 管理引擎事件及自定义事件。
+`architect` 提供了一套灵活的事件系统，支持引擎原生事件和自定义事件的监听与广播。
 
-## @EventListener / @CustomEvent 装饰器
+## 架构概览
 
-在子系统的方法上使用 `@EventListener` 装饰器，可以自动完成事件监听的注册与注销。
+事件系统由以下核心组件构成：
 
-### 监听引擎事件
-默认情况下，装饰器监听的是引擎的标准事件。
-```python
-@EventListener('PlayerJoinEvent')
-def onPlayerJoin(self, ev):
-    print(ev.playerId)
-```
+- **`EventChain`**: 事件链，管理同一事件类型的多个监听器
+- **`EventSignal`**: 事件信号，轻量级的事件通知机制，适合响应式编程
+- **`EventTarget`**: 事件目标，提供事件的添加/移除/广播能力
+- **`CustomEvent`**: 自定义事件，封装了事件名称和选项
+- **`Delegate`**: 委托，链式调用监听器集合
 
-### 监听自定义事件
-通过设置 `isCustomEvent=True` 监听自定义广播的事件。
-```python
-@EventListener('MyModEvent', isCustomEvent=True)
-def onMyEvent(self, ev):
-    pass
-```
+## 获取事件链
 
-@CustomEvent 是 @EventListener 的别名，可以用于监听自定义事件。
-与 @EventListener 不同的是，@CustomEvent 自带了 `isCustomEvent=True` 所以不需要手动设置。
-
-## 编程式监听
-
-除了装饰器，也可以在子系统中使用 `on` 和 `off` 方法：
+通过 `event()` 函数获取事件链实例：
 
 ```python
-def onInit(self):
-    self.on('SomeEvent', self.my_handler)
+from architect.event.server import event as serverEvent
+from architect.event.client import event as clientEvent
 
-def my_handler(self, ev):
-    pass
+# 服务端事件链
+ev = serverEvent('PlayerJoinEvent')
 
-def onDestroy(self):
-    # 装饰器会自动清理，但编程式监听建议手动清理（如果不是生命周期绑定的）
-    self.off('SomeEvent', self.my_handler)
+# 客户端事件链
+ev = clientEvent('CustomEvent', isCustomEvent=True)
 ```
 
-## 事件发送 (Broadcast)
-
-- **广播事件**: `self.broadcast('EventName', {'data': 1})`
-- **发送至客户端/服务端**: 参考 [Subsystem 模块](subsystem.md)。
-
-## Tick
-`Subsystem` 提供了 `onUpdate` 生命周期，每刻调用一次，若你需要使用 `Tick`, 请优先考虑使用 `onUpdate`。
+## 事件链 API
 
 ```python
-def onInit(self):
-    # 设置 canTick 为 True，表示允许 onUpdate 被调用, 否则 onUpdate 不会被调用
-    self.canTick = True
+chain = event('EventName', isCustomEvent=False)
 
-def onUpdate(self, dt):
-    pass
+# 添加监听器
+chain.addListener(lambda ev: print("Event fired:", ev))
+
+# 移除监听器
+fn = lambda ev: print("remove me")
+chain.addListener(fn)
+chain.removeListener(fn)
+
+# 分发事件
+chain.dispatch({"key": "value"})
+
+# 清空所有监听器
+chain.clear()
 ```
+
+## 事件信号 `EventSignal`
+
+`EventSignal` 是轻量级的信号/槽机制，适合响应式数据绑定：
+
+```python
+from architect.event import EventSignal
+
+signal = EventSignal()
+
+def handler():
+    print("Signal emitted!")
+
+# 监听信号
+signal.on(handler)
+
+# 触发信号
+signal.emit()
+
+# 取消监听
+signal.off(handler)
+```
+
+## 事件目标 `EventTarget`
+
+`EventTarget` 提供封装的事件管理能力，适合作为基类使用：
+
+```python
+from architect.event import EventTarget
+
+class MyClass(EventTarget):
+    def __init__(self):
+        EventTarget.__init__(self)
+        self.listen('SomeEvent', self.on_event)
+
+    def on_event(self, ev):
+        print("Event received:", ev)
+
+    def cleanup(self):
+        self.removeAllListener()
+```
+
+### EventTarget 方法
+
+- **`listen(event, handler)`**: 监听事件
+- **`unlisten(event, handler)`**: 取消监听
+- **`addListener(event, handler)`**: 监听事件
+- **`removeListener(event, handler)`**: 取消监听
+- **`removeAllListener()`**: 移除所有监听器
+- **`dispatchEvent(event, args)`**: 广播事件
+
+## 服务端全局事件
+
+通过 `ServerEvents` 管理全局事件链：
+
+```python
+from architect.event.server import ServerEvents
+
+chain = ServerEvents.getOrCreateChain('EventName', isCustomEvent=False)
+chain.addListener(my_handler)
+```
+
+## 自定义事件
+
+通过 `CustomEvent` 封装事件，支持自定义选项：
+
+```python
+from architect.event import CustomEvent
+
+# 创建自定义事件
+my_event = CustomEvent('MyEvent', option1=True)
+my_event.dispatch({"data": 123})
+
+# 监听
+my_event.addListener(lambda e: print(e))
+```
+
+## 委托 / 链式调用
+
+`Delegate` 用于封装一组可调用的监听器，支持链式操作：
+
+```python
+from architect.event import Delegate
+
+del = Delegate(lambda: print("not implemented"))
+
+# 添加调用
+del += lambda: print("+ added callback")
+del("hello")  # 调用
