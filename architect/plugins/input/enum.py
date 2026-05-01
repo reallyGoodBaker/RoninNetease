@@ -128,26 +128,50 @@ class GamepadKey:     # Xbox layout
     RB = 12                        # RB键
     View = 13                    # VIEW键
     Menu = 14                    # MENU键
-    
+
 
 class GamepadAxis:
-    LSX = 0                     # 左摇杆X轴
-    LSY = 1                     # 左摇杆Y轴
-    RSX = 2                     # 右摇杆X轴
-    RSY = 3                     # 右摇杆Y轴
-    LT = 4                      # 左触发器
-    RT = 5                      # 右触发器
-    
+    LS = 0                      # 左摇杆
+    RS = 1                      # 右摇杆
+    LT = 2                      # 左触发器
+    RT = 3                      # 右触发器
+
+
+class InputType:
+    Key = 1
+    Gamepad = 2
+    Axis = 3
+
 
 class ValueType:
-    Bool = 0
-    Float = 1
-    
+    Double = 1
+    Vector2 = 2
+    Vector3 = 3
 
-class TriggerType:
-    Release = 'release'
-    Press = 'press'
-    Value = 'value'
-    Hold = 'hold'
-    Combination = 'combination'
-    Repeat = 'repeat'
+
+class AxisSwizzleOrder:
+    XYZ = 'xyz'
+    XZY = 'xzy'
+    YXZ = 'yxz'
+    YZX = 'yzx'
+    ZXY = 'zxy'
+    ZYX = 'zyx'
+
+
+class TriggerState:
+    Empty = 0
+    Ongoing = 1
+    Triggered = 2
+
+
+class InputState:
+    Empty = 0
+    Started = 1
+    Triggered = 2
+    Completed = 3
+    Canceled = 4
+
+
+class TriggerCombineType:
+    And = 1
+    Or = 2
