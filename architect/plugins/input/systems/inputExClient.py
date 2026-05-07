@@ -1,12 +1,10 @@
-from time import time
-
-from ....compact import ClientSubsystem, SubsystemClient, getOneSingletonComponent, EventListener, localPlayerId
+from ....compact import LevelClient, clientApi, compClient, ClientSubsystem, SubsystemClient, getOneSingletonComponent, EventListener, localPlayerId
 from ..utils.mappingContext import InputMapping
 from ..utils.inputValue import InputValue
 from ..utils.inputAction import InputAction
 from ..utils.trigger import InputTrigger
 from ..components.inputEx import InputExComponent
-from ..enum import AccumulationBehavior, InputType, TriggerState, TriggerCombineType, InputState, IA_EVENT_PREFIX
+from ..enum import TouchType, MouseAxis, MouseKey, AccumulationBehavior, InputType, TriggerState, TriggerCombineType, InputState, IA_EVENT_PREFIX
 
 
 class _TransState:
@@ -28,7 +26,7 @@ _StateTransResultMapping = {
     (TriggerState.Ongoing, TriggerState.Triggered):     (_TransState.Triggered,             InputState.Triggered),
     (TriggerState.Triggered, TriggerState.Empty):       (_TransState.Completed,             InputState.Completed),
     (TriggerState.Triggered, TriggerState.Triggered):   (_TransState.Triggered,             InputState.Triggered),
-    (TriggerState.Triggered, TriggerState.Ongoing):     (_TransState.Empty,                 InputState.Ongoing)
+    (TriggerState.Triggered, TriggerState.Ongoing):     (_TransState.Ongoing,               InputState.Ongoing)
 }
 
 
@@ -37,28 +35,13 @@ class InputExClient(ClientSubsystem):
 
     def onInit(self):
         self.canTick = True
-        self.inputMappings = [] # type: list[InputMapping]
         self._iaEvents = set()
+        self.localActorMotion = compClient.CreateActorMotion(localPlayerId())
+        self.playerView = LevelClient.getInstance().playerView
 
 
-    def enableMapping(self, name):
-        mapping = InputMapping.get(name)
-        if not mapping:
-            return False
-        self.inputMappings.append(mapping)
-        if len(self.inputMappings):
-            self.inputMappings.sort(key=lambda x: x.priority, reverse=True)
-        return True
-    
-
-    def disableMapping(self, name):
-        mapping = InputMapping.get(name)
-        if not mapping:
-            return False
-        self.inputMappings.remove(mapping)
-        if len(self.inputMappings):
-            self.inputMappings.sort(key=lambda x: x.priority, reverse=True)
-        return True
+    def isMouseInput(self):
+        return self.playerView.GetToggleOption('INPUT_MODE') == 0
 
 
     def _updateMapping(self, mapping, inputEx, dt):
@@ -71,8 +54,8 @@ class InputExClient(ClientSubsystem):
             for modifier in binding.modifiers:
                 modifiedValue = modifier.doModify(modifiedValue)
             self._handleAction(value, inputEx, binding.action, modifiedValue, dt, binding.triggers)
-        for actionName, transState in self._iaEvents:
-            self._dispatchIAEvent(transState, actionName, inputEx)
+        for actionName, transState, inputState in self._iaEvents:
+            self._dispatchIAEvent(transState, inputState, actionName, inputEx)
 
 
     def _evalTriggers(self, dt, inputVal, prevState, mappingTriggers, actionTriggers):
@@ -114,6 +97,7 @@ class InputExClient(ClientSubsystem):
                 elif triggerState == TriggerState.Empty:
                     _emptyTriggers += 1
 
+        print _explicitsSize, _triggeredExplicits, _ongoings
         curTriggerState = TriggerState.Empty
         # Trigger: And triggers 必须全部为 Triggered, Or 触发器只要有一个为 Triggered 即可
         if _triggeredImplicits == _implicitsSize and (_explicitsSize == 0 or _triggeredExplicits > 0):
@@ -124,12 +108,13 @@ class InputExClient(ClientSubsystem):
         else:
             curTriggerState = TriggerState.Empty
 
-        return _StateTransResultMapping.get((prevState, curTriggerState), (InputState.Empty, InputState.Empty))
+        _transState, _inputState = _StateTransResultMapping.get((prevState, curTriggerState), (_TransState.Empty, InputState.Empty))
+        return curTriggerState, _transState, _inputState
 
 
-    def _dispatchIAEvent(self, transState, actionName, inputEx):
-        # type: (_TransState, str, InputExComponent) -> None
-        _, valVec = inputEx.actionValues[actionName]
+    def _dispatchIAEvent(self, transState, inputState, actionName, inputEx):
+        # type: (_TransState, InputState, str, InputExComponent) -> None
+        valVec = inputEx.actionValues[actionName]
         if transState == 0:
             return
         ia = InputAction.get(actionName)
@@ -137,11 +122,11 @@ class InputExClient(ClientSubsystem):
             valVec = modifier.doModify(valVec)
         value = InputValue.value(valVec, ia.valueType)
         evNamePrefix = IA_EVENT_PREFIX + actionName
-        if transState == _TransState.StartedAndTriggered:
+        if transState != inputState:
             self.broadcast(evNamePrefix + str(InputState.Started), { 'value': value })
             self.broadcast(evNamePrefix + str(InputState.Triggered), { 'value': value })
         else:
-            self.broadcast(evNamePrefix + str(transState), { 'value': value })
+            self.broadcast(evNamePrefix + str(inputState), { 'value': value })
 
 
     def _mixIAValue(self, ia, prevValue, value):
@@ -168,21 +153,32 @@ class InputExClient(ClientSubsystem):
         if not ia:
             return
 
-        prevState, actionValue = inputEx.actionValues.get(actionName, (TriggerState.Empty, (0.0, 0.0, 0.0)))
-        transState, inputState = self._evalTriggers(dt, inputValue, prevState, mappingTriggers, ia.triggers)
+        prevState = inputEx._triggerStates.get(actionName, TriggerState.Empty)
+        actionValue = inputEx.actionValues.get(actionName, (0.0, 0.0, 0.0))
+        curTriggerState, transState, inputState = self._evalTriggers(dt, inputValue, prevState, mappingTriggers, ia.triggers)
         newActionValue = self._mixIAValue(ia, actionValue, value)
-        inputEx.actionValues[actionName] = (inputState, newActionValue)
-        self._iaEvents.add((actionName, transState))
+        inputEx.actionValues[actionName] = newActionValue
+        inputEx._triggerStates[actionName] = curTriggerState
+        self._iaEvents.add((actionName, transState, inputState))
 
 
-    def updateMapping(self, deltaTime):
-        inputEx = getOneSingletonComponent(InputExComponent)
-        for mapping in self.inputMappings:
+    def updateMapping(self, inputEx, deltaTime):
+        for mapping in inputEx.inputMappings:
             self._updateMapping(mapping, inputEx, deltaTime)
 
 
+    def _updateMousePos(self, inputEx):
+        # type: (InputExComponent) -> None
+        x, y = self.localActorMotion.GetMousePosition()
+        inputEx.updateInputValue(InputType.Axis, MouseAxis.Pos, (x, y, 0.0))
+
+
     def onRender(self, dt):
-        self.updateMapping(dt)
+        inputEx = getOneSingletonComponent(InputExComponent)
+        if not inputEx:
+            return
+        self._updateMousePos(inputEx)
+        self.updateMapping(inputEx, dt)
 
 
     @EventListener('OnKeyPressInGame')
@@ -216,3 +212,75 @@ class InputExClient(ClientSubsystem):
         value = ev.magnitude
         inputEx = getOneSingletonComponent(InputExComponent)
         inputEx.updateInputValue(InputType.Axis, key, (value, 0.0, 0.0))
+
+
+    @EventListener('RightClickBeforeClientEvent')
+    def onRightClick(self, ev):
+        inputEx = getOneSingletonComponent(InputExComponent)
+        if self.isMouseInput():
+            inputEx.updateInputValue(InputType.Key, MouseKey.Right, (1.0, 0.0, 0.0))
+        if inputEx.preventUse:
+            ev.prevent()
+
+
+    @EventListener('RightClickReleaseClientEvent')
+    def onRightRelease(self, ev):
+        inputEx = getOneSingletonComponent(InputExComponent)
+        if self.isMouseInput():
+            inputEx.updateInputValue(InputType.Key, MouseKey.Right, (0.0, 0.0, 0.0))
+
+
+    @EventListener('LeftClickBeforeClientEvent')
+    def onLeftClick(self, ev):
+        inputEx = getOneSingletonComponent(InputExComponent)
+        if self.isMouseInput():
+            inputEx.updateInputValue(InputType.Key, MouseKey.Left, (1.0, 0.0, 0.0))
+        if inputEx.preventAttack:
+            ev.prevent()
+
+
+    @EventListener('LeftClickReleaseClientEvent')
+    def onLeftRelease(self, ev):
+        inputEx = getOneSingletonComponent(InputExComponent)
+        if self.isMouseInput():
+            inputEx.updateInputValue(InputType.Key, MouseKey.Left, (0.0, 0.0, 0.0))
+
+
+    @EventListener('OnMouseMiddleDownClientEvent')
+    def onMiddleClick(self, ev):
+        inputEx = getOneSingletonComponent(InputExComponent)
+        inputEx.updateInputValue(InputType.Key, MouseKey.Middle, (ev.isDown, 0.0, 0.0))
+
+
+    @EventListener('MouseWheelClientEvent')
+    def onMouseWheel(self, ev):
+        inputEx = getOneSingletonComponent(InputExComponent)
+        delta = ev.direction if ev.direction > 0 else -1
+        inputEx.updateInputValue(InputType.Axis, MouseAxis.Scroll, (delta, 0.0, 0.0))
+
+
+    @EventListener('TapBeforeClientEvent')
+    def onTap(self, ev):
+        inputEx = getOneSingletonComponent(InputExComponent)
+        x, y = clientApi.GetTouchPos()
+        inputEx.updateInputValue(InputType.Axis, MouseAxis.Pos, (x, y, 0.0))
+        inputEx.updateInputValue(InputType.Touch, TouchType.Tap, (1.0, 0.0, 0.0))
+        if inputEx.preventTap:
+            ev.prevent()
+
+
+    @EventListener('HoldBeforeClientEvent')
+    def onHold(self, ev):
+        inputEx = getOneSingletonComponent(InputExComponent)
+        x, y = clientApi.GetTouchPos()
+        inputEx.updateInputValue(InputType.Axis, MouseAxis.Pos, (x, y, 0.0))
+        inputEx.updateInputValue(InputType.Touch, TouchType.Hold, (1.0, 0.0, 0.0))
+        if inputEx.preventHold:
+            ev.prevent()
+
+
+    @EventListener('TapOrHoldReleaseClientEvent')
+    def onTapOrHoldRelease(self, ev):
+        inputEx = getOneSingletonComponent(InputExComponent)
+        inputEx.updateInputValue(InputType.Touch, TouchType.Tap, (0.0, 0.0, 0.0))
+        inputEx.updateInputValue(InputType.Touch, TouchType.Hold, (0.0, 0.0, 0.0))

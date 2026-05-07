@@ -18,14 +18,12 @@ class InputExPlugin(PluginBase):
     def onAttach(self, manager):
         # type: (SubsystemManager) -> None
         from .systems import inputExClient
-        manager.addListener(
-            'AddPlayerCreatedClientEvent',
-            self._bindInputEx
-        )
 
-    def _bindInputEx(self, ev):
-        if localPlayerId() == ev['playerId']:
-            createSingletonComponent(InputExComponent)
+    def onReady(self, manager):
+        self._bindInputEx()
+
+    def _bindInputEx(self):
+        createSingletonComponent(InputExComponent)
 
 
 def InputAction(actionName, inputState=InputState.Triggered):

@@ -17,5 +17,17 @@ InputAction(
 )
 
 InputAction(
-    'toggleFly', ValueType.Double,
+    'startFly', ValueType.Double,
+)
+
+InputAction(
+    'stopFly', ValueType.Double,
+)
+
+InputAction(
+    'spying', ValueType.Double,
+)
+
+InputAction(
+    'flyMove', ValueType.Vector2,
 )

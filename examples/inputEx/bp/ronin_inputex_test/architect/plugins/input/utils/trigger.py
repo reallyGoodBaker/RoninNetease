@@ -1,4 +1,5 @@
 from ..enum import TriggerState, TriggerCombineType
+from time import time
 
 
 class InputTrigger(object):
@@ -56,30 +57,35 @@ class TriggerReleased(InputTrigger):
 class TriggerHold(InputTrigger):
     combineType = TriggerCombineType.Or
 
-    def __init__(self, holdTime=0.5):
-        self.holdTime = holdTime
-        self._timer = 0.0
-        self._wasPressed = False
-        self._fired = False
+    def __init__(self, holdThreshold=0.5, startThreshold=0.0):
+        self.startThreshold = startThreshold
+        self.holdThreshold = holdThreshold
+        self._pressStart = None
+        self._pressing = False
 
     def updateState(self, rawValue, deltaTime):
-        pressed = rawValue.size() > 0
+        pressing = rawValue.size() > 0
+        pressed = pressing and not self._pressing
+        released = not pressing and self._pressing
+        self._pressing = pressing
+
         if pressed:
-            if not self._wasPressed:
-                self._timer = 0.0
-                self._fired = False
-            else:
-                self._timer += deltaTime
-                if not self._fired and self._timer >= self.holdTime:
-                    self._fired = True
-                    self._wasPressed = pressed
-                    return TriggerState.Triggered
+            self._pressStart = time()
+            # 如果startThreshold为 0 ，则直接返回TriggerState.Ongoing
+            return TriggerState.Ongoing if self.startThreshold <= 0 else TriggerState.Empty
+
+        if self._pressStart is None:
+            return TriggerState.Empty
+
+        if released:
+            self._pressStart = None
+            return TriggerState.Empty
+
+        pressTime = time() - self._pressStart
+        if pressTime < self.holdThreshold:
             return TriggerState.Ongoing
-        else:
-            self._timer = 0.0
-            self._fired = False
-        self._wasPressed = pressed
-        return TriggerState.Empty
+        return TriggerState.Triggered
+
 
 
 class TriggerTap(InputTrigger):
@@ -108,32 +114,41 @@ class TriggerTap(InputTrigger):
                     return TriggerState.Triggered
                 self._timer = 0.0
         return TriggerState.Empty
-
-
-class TriggerCombo(InputTrigger):
-    """Fires if all the specified triggers are triggered within a specified time window."""
-    combineType = TriggerCombineType.And
-
-    def __init__(self, triggers, comboTime=0.2):
-        self.triggers = triggers
-        self.comboTime = comboTime
-        self._timer = 0.0
-        self._fired = False
-
-    def updateState(self, rawValue, deltaTime):
-        if self._fired:
-            return TriggerState.Empty
-        if self._timer > self.comboTime:
-            self._timer = 0.0
-            self._fired = True
-            return TriggerState.Triggered
-        self._timer += deltaTime
-        for trigger in self.triggers:
-            if trigger.updateState(rawValue, deltaTime) == TriggerState.Triggered:
-                return TriggerState.Ongoing
-        return TriggerState.Empty
     
 
-class DoubleTap(TriggerCombo):
-    def __init__(self, interval=0.5):
-        pass
+class DoubleTap(InputTrigger):
+    combineType = TriggerCombineType.And
+
+    def __init__(self, interval=0.3):
+        self.pressing = False
+        self.interval = interval
+        self.lastTap = 0
+
+    def updateState(self, rawValue, deltaTime):
+        pressing = rawValue.size() > 0
+        # 松开再按下才能判定为一次主动按下
+        pressed = pressing and not self.pressing
+        self.pressing = pressing
+
+        # pressed 为 false 时，表示持续按住或不按或松开
+        if not pressed:
+            if not self.lastTap:
+                # 从未按下
+                return TriggerState.Empty
+            else:
+                # 按住或松开或不按都必须默认转换到 Ongoing, 因为已经按下过一次了
+                # 此时需要再次判断是否超时
+                if time() - self.lastTap > self.interval:
+                    self.lastTap = 0
+                    return TriggerState.Empty
+                else:
+                    return TriggerState.Ongoing
+
+        # 第一次按下
+        if not self.lastTap:
+            self.lastTap = time()
+            return TriggerState.Ongoing
+        
+        # 第二次按下
+        self.lastTap = 0
+        return TriggerState.Triggered

@@ -5,7 +5,7 @@ from .trigger import InputTrigger
 class InputAction(object):
     _registry = {}
 
-    def __init__(self, name, valueType, triggers=[], modifiers=[], accBehavior=AccumulationBehavior.Cumulative):
+    def __init__(self, name, valueType=ValueType.Vector3, triggers=[], modifiers=[], accBehavior=AccumulationBehavior.Cumulative):
         # type: (str, ValueType, list[InputTrigger], list[InputModifier], AccumulationBehavior) -> None
         self.name = name
         self.valueType = valueType

@@ -141,6 +141,17 @@ class InputType:
     Key = 1
     Gamepad = 2
     Axis = 3
+    Touch = 4
+
+
+class TouchType:
+    Tap = 1
+    Hold = 2
+
+
+class MouseAxis:
+    Pos = 1
+    Scroll = 2
 
 
 class ValueType:

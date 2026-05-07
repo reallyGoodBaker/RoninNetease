@@ -1,23 +1,26 @@
 from .architect.compact import *
-from .architect.plugins.input.client import InputAction, InputState
-from .architect.plugins.input.systems.inputExClient import InputExClient
+from .architect.plugins.input.client import InputAction, InputState, InputExComponent
 
 JUMP_POWER = 0.5
 MOVE_SPEED = 0.5
+FLY_SPEED = 1
+VERTICAL_FLY_SPEED = 0.1
 
 
 @SubsystemClient
 class TestClient(ClientSubsystem):
 
-    def onReady(self):
-        self.inputExCient = InputExClient.getInstance()
-
     @EventListener('OnLocalPlayerStopLoading')
     def onLocalPlayerStopLoading(self, ev):
-        # 启用 'move' 映射
-        self.inputExCient.enableMapping('move')
+        inputEx = getOneSingletonComponent(InputExComponent)
+        # 启用 'move', 'spying' 映射
+        # inputEx.enableMappings(
+        #     'move', 'spying',
+        # )
+        inputEx.enableMappings(
+            'spying',
+        )
         # 屏蔽原版走路逻辑
-        LevelClient.getInstance().camera.DepartCamera()
         operation = LevelClient.getInstance().operation
         operation.SetCanMove(False)
         operation.SetCanJump(False)
@@ -37,6 +40,18 @@ class TestClient(ClientSubsystem):
         my = motion.GetMotion()[1]
         motion.SetMotion((mx, my, mz))
 
+    @InputAction('flyMove')
+    def iaFlyMove(self, ev):
+        # 通过输入控制玩家移动
+        x, y = ev.value
+        motion = compClient.CreateActorMotion(localPlayerId())
+        cam = LevelClient.getInstance().camera
+        forward = vec(cam.GetForward())
+        up = vec((0, 1, 0))
+        right = normalize(cross(forward, up))
+        moveVec = (y * forward + x * right) * FLY_SPEED
+        motion.SetMotion(tup(moveVec))
+
     @InputAction('jump')
     def iaJump(self, _):
         # 通过输入控制玩家跳跃
@@ -47,7 +62,24 @@ class TestClient(ClientSubsystem):
             x, _, z = motion.GetMotion()
             motion.SetMotion((x, JUMP_POWER, z))
 
-    @InputAction('toggleFly')
-    def iaToggleFly(self, _):
-        # 通过输入控制玩家飞行
-        print ('toggleFly')
+    @InputAction('startFly')
+    def iaStartFly(self, _):
+        inputEx = getOneSingletonComponent(InputExComponent)
+        inputEx.disableMapping('move')
+        inputEx.enableMapping('fly')
+        print ('start fly')
+
+    @InputAction('stopFly')
+    def iaStopFly(self, _):
+        inputEx = getOneSingletonComponent(InputExComponent)
+        inputEx.disableMapping('fly')
+        inputEx.enableMapping('move')
+        print ('stop fly')
+
+    @InputAction('spying')
+    def iaSpying(self, _):
+        LevelClient.getInstance().playerView.SetPlayerFovScale(0.1)
+
+    @InputAction('spying', InputState.Completed)
+    def iaCompleteSpying(self, _):
+        LevelClient.getInstance().playerView.SetPlayerFovScale(1)

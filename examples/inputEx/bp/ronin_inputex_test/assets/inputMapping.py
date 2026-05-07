@@ -1,7 +1,7 @@
-from ..architect.plugins.input.enum import InputType, KeyboardKey, AxisSwizzleOrder, GamepadAxis, GamepadKey
+from ..architect.plugins.input.enum import MouseKey, InputType, KeyboardKey, AxisSwizzleOrder, GamepadAxis, GamepadKey
 from ..architect.plugins.input.utils.mappingContext import InputMapping, InputBinding
 from ..architect.plugins.input.utils.modifier import SwizzleAxis, Negate
-from ..architect.plugins.input.utils.trigger import TriggerDown, DoubleTap
+from ..architect.plugins.input.utils.trigger import TriggerDown, DoubleTap, TriggerHold
 
 
 InputMapping(
@@ -54,6 +54,18 @@ InputMapping(
             'jump',
             triggers=[ TriggerDown() ],
         ),
+
+        # 切换飞行
+        InputBinding(
+            InputType.Key, KeyboardKey.Space,
+            'startFly',
+            triggers=[ DoubleTap() ],
+        ),
+        InputBinding(
+            InputType.Gamepad, GamepadKey.A,
+            'startFly',
+            triggers=[ DoubleTap() ],
+        ),
     ]
 )
 
@@ -61,9 +73,63 @@ InputMapping(
 InputMapping(
     'fly', [
         InputBinding(
+            InputType.Key, KeyboardKey.W,
+            'flyMove',
+            modifiers=[ SwizzleAxis(order=AxisSwizzleOrder.YXZ) ],
+            triggers=[ TriggerDown() ],
+        ),
+        InputBinding(
+            InputType.Key, KeyboardKey.S,
+            'flyMove',
+            modifiers=[
+                SwizzleAxis(order=AxisSwizzleOrder.YXZ),
+                Negate()
+            ],
+            triggers=[ TriggerDown() ],
+        ),
+        InputBinding(
+            InputType.Key, KeyboardKey.D,
+            'flyMove',
+            triggers=[ TriggerDown() ],
+        ),
+        InputBinding(
+            InputType.Key, KeyboardKey.A,
+            'flyMove',
+            modifiers=[ Negate() ],
+            triggers=[ TriggerDown() ],
+        ),
+        InputBinding(
+            InputType.Axis, GamepadAxis.LS,
+            'flyMove',
+            triggers=[ TriggerDown() ],
+        ),
+
+        InputBinding(
             InputType.Key, KeyboardKey.Space,
-            'toggleFly',
+            'stopFly',
             triggers=[ DoubleTap() ],
-        )
+        ),
+        InputBinding(
+            InputType.Gamepad, GamepadKey.A,
+            'stopFly',
+            triggers=[ DoubleTap() ],
+        ),
+    ]
+)
+
+
+InputMapping(
+    'spying', [
+        # 长按右键或LT一秒进入缩放
+        InputBinding(
+            InputType.Key, MouseKey.Right,
+            'spying',
+            triggers=[ TriggerHold(1) ],
+        ),
+        InputBinding(
+            InputType.Axis, GamepadAxis.LT,
+            'spying',
+            triggers=[ TriggerHold(1) ],
+        ),
     ]
 )
