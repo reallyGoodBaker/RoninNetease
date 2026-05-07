@@ -4,9 +4,9 @@
       "type": "resources",
       "uuid": "dafcdb94-756c-4476-8da4-b88a0f478467",
       "version": [
+        1,
         0,
-        0,
-        3
+        0
       ],
       "description": "desc"
     }
@@ -14,9 +14,9 @@
   "header": {
     "uuid": "c33bc195-fa13-4ec0-a3ce-4bf8d4b7ffdb",
     "version": [
+      1,
       0,
-      0,
-      3
+      0
     ],
     "description": "desc",
     "name": "name",

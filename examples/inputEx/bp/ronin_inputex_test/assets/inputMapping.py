@@ -1,11 +1,12 @@
-from ..architect.plugins.input.enum import InputType, KeyboardKey, AxisSwizzleOrder, GamepadAxis
+from ..architect.plugins.input.enum import InputType, KeyboardKey, AxisSwizzleOrder, GamepadAxis, GamepadKey
 from ..architect.plugins.input.utils.mappingContext import InputMapping, InputBinding
 from ..architect.plugins.input.utils.modifier import SwizzleAxis, Negate
-from ..architect.plugins.input.utils.trigger import TriggerDown
+from ..architect.plugins.input.utils.trigger import TriggerDown, DoubleTap
 
 
 InputMapping(
     'move', [
+        # Laravel Movement
         InputBinding(
             InputType.Key, KeyboardKey.W,
             'laravelMovement',
@@ -39,6 +40,30 @@ InputMapping(
             InputType.Axis, GamepadAxis.LS,
             'laravelMovement',
             triggers=[ TriggerDown() ],
+        ),
+
+        # Jump
+        InputBinding(
+            InputType.Key, KeyboardKey.Space,
+            'jump',
+            # 按下跳跃会一直处于跳跃状态，我们在监听中处理是否跳跃
+            triggers=[ TriggerDown() ],
+        ),
+        InputBinding(
+            InputType.Gamepad, GamepadKey.A,
+            'jump',
+            triggers=[ TriggerDown() ],
+        ),
+    ]
+)
+
+
+InputMapping(
+    'fly', [
+        InputBinding(
+            InputType.Key, KeyboardKey.Space,
+            'toggleFly',
+            triggers=[ DoubleTap() ],
         )
     ]
 )

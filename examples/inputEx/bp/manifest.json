@@ -4,9 +4,9 @@
       "type": "data",
       "uuid": "11bdca5f-5a2b-4614-a35c-74277de639f9",
       "version": [
+        1,
         0,
-        0,
-        3
+        0
       ],
       "description": "desc"
     }
@@ -14,9 +14,9 @@
   "header": {
     "uuid": "43e1fd38-20b3-4cd1-8e28-bb8d34905e72",
     "version": [
+      1,
       0,
-      0,
-      3
+      0
     ],
     "description": "desc",
     "name": "name",

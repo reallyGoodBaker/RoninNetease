@@ -6,7 +6,7 @@ class InputTrigger(object):
     Determines when an action event is fired based on input state changes.
     """
     combineType = TriggerCombineType.Or
-    def updateState(self, inputVal, deltaTime=0.0):
+    def updateState(self, inputVal, deltaTime):
         # type: (InputTrigger, object, float) -> TriggerState
         """Check if this trigger condition is met.
         Returns True if the action should fire.
@@ -16,7 +16,7 @@ class InputTrigger(object):
 
 class TriggerDown(InputTrigger):
     combineType = TriggerCombineType.Or
-    def updateState(self, rawValue, deltaTime=0.0):
+    def updateState(self, rawValue, deltaTime):
         if rawValue.size() > 0:
             return TriggerState.Triggered
         return TriggerState.Empty
@@ -28,12 +28,15 @@ class TriggerPressed(InputTrigger):
     def __init__(self):
         self._wasPressed = False
 
-    def updateState(self, rawValue, deltaTime=0.0):
-        released = rawValue.size() == 0
-        if released and self._wasPressed:
-            self._wasPressed = False
-            return TriggerState.Triggered
-        self._wasPressed = rawValue.size() > 0
+    def updateState(self, rawValue, deltaTime):
+        pressing = rawValue.size() != 0
+        if pressing:
+            if self._wasPressed:
+                return TriggerState.Empty
+            else:
+                self._wasPressed = True
+                return TriggerState.Triggered
+        self._wasPressed = False
         return TriggerState.Empty
 
 
@@ -43,7 +46,7 @@ class TriggerReleased(InputTrigger):
     def __init__(self):
         self._wasPressed = False
 
-    def updateState(self, rawValue, deltaTime=0.0):
+    def updateState(self, rawValue, deltaTime):
         pressed = rawValue.size()
         triggered = not pressed and self._wasPressed
         self._wasPressed = pressed
@@ -59,7 +62,7 @@ class TriggerHold(InputTrigger):
         self._wasPressed = False
         self._fired = False
 
-    def updateState(self, rawValue, deltaTime=0.0):
+    def updateState(self, rawValue, deltaTime):
         pressed = rawValue.size() > 0
         if pressed:
             if not self._wasPressed:
@@ -88,7 +91,7 @@ class TriggerTap(InputTrigger):
         self._timer = 0.0
         self._isDown = False
 
-    def updateState(self, rawValue, deltaTime=0.0):
+    def updateState(self, rawValue, deltaTime):
         pressed = rawValue.size() > 0
         if pressed and not self._isDown:
             self._timer = 0.0
@@ -117,7 +120,7 @@ class TriggerCombo(InputTrigger):
         self._timer = 0.0
         self._fired = False
 
-    def updateState(self, rawValue, deltaTime=0.0):
+    def updateState(self, rawValue, deltaTime):
         if self._fired:
             return TriggerState.Empty
         if self._timer > self.comboTime:
@@ -129,3 +132,8 @@ class TriggerCombo(InputTrigger):
             if trigger.updateState(rawValue, deltaTime) == TriggerState.Triggered:
                 return TriggerState.Ongoing
         return TriggerState.Empty
+    
+
+class DoubleTap(TriggerCombo):
+    def __init__(self, interval=0.5):
+        pass
