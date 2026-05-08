@@ -74,7 +74,7 @@ class SubsystemManager:
         try:
             from ...conf import MOD_ENGINE_NAME, MOD_SYSTEM_NAME
         except ImportError:
-            raise ImportError('请在 {} 文件夹中创建 conf.py 文件，并定义 MOD_ENGINE_NAME 和 MOD_SYSTEM_NAME'.format(__modname__))
+            raise ImportError('请在 {} 文件夹中创建 conf.py 文件，并定义 MOD_ENGINE_NAME 和 MOD_SYSTEM_NAME, 如果你已经有了conf文件夹, 请在 __init__.py 中定义以上两个常量'.format(__modname__))
         engine = MOD_ENGINE_NAME
         sysName = MOD_SYSTEM_NAME
         existed = serverApi.GetSystem(engine, sysName)
