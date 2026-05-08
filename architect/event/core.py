@@ -65,6 +65,8 @@ class ChainedEvent(object):
         self.eventType = eventType
         self._interruptRef = interruptRef
         self._data = data
+        if 'from' in data:
+            data['source'] = data['from']
 
     def stop(self):
         """停止事件传递"""
@@ -129,10 +131,16 @@ class EventChain(Unreliable):
                 return
 
 
-def EventListener(eventType, isCustomEvent=False):
+def EventListener(eventType=None, isCustomEvent=False):
     def decorator(fn):
         # 标记方法为事件监听器
-        AnnotationHelper.addAnnotation(fn, EVENT_LISTENER, eventType)
+        _evType = eventType
+        if eventType is None:
+            defaults = fn.func_defaults
+            if not defaults or defaults[0] is None:
+                raise ValueError('Event type is required')
+            _evType = defaults[0].__class__.__name__
+        AnnotationHelper.addAnnotation(fn, EVENT_LISTENER, _evType)
         if isCustomEvent:
             AnnotationHelper.addAnnotation(fn, CUSTOM_EVENT, True)
         return fn
@@ -142,7 +150,13 @@ def EventListener(eventType, isCustomEvent=False):
 def CustomEvent(eventType):
     def decorator(fn):
         # 标记方法为自定义事件监听器
-        AnnotationHelper.addAnnotation(fn, EVENT_LISTENER, eventType)
+        _evType = eventType
+        if eventType is None:
+            defaults = fn.func_defaults
+            if not defaults or defaults[0] is None:
+                raise ValueError('Event type is required')
+            _evType = defaults[0].__class__.__name__
+        AnnotationHelper.addAnnotation(fn, EVENT_LISTENER, _evType)
         AnnotationHelper.addAnnotation(fn, CUSTOM_EVENT, True)
         return fn
     return decorator

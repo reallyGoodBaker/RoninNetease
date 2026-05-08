@@ -97,7 +97,7 @@ class InputExClient(ClientSubsystem):
                 elif triggerState == TriggerState.Empty:
                     _emptyTriggers += 1
 
-        print _explicitsSize, _triggeredExplicits, _ongoings
+        # print _explicitsSize, _triggeredExplicits, _ongoings
         curTriggerState = TriggerState.Empty
         # Trigger: And triggers 必须全部为 Triggered, Or 触发器只要有一个为 Triggered 即可
         if _triggeredImplicits == _implicitsSize and (_explicitsSize == 0 or _triggeredExplicits > 0):

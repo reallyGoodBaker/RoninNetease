@@ -14,12 +14,12 @@ class TestClient(ClientSubsystem):
     def onLocalPlayerStopLoading(self, ev):
         inputEx = getOneSingletonComponent(InputExComponent)
         # 启用 'move', 'spying' 映射
-        # inputEx.enableMappings(
-        #     'move', 'spying',
-        # )
         inputEx.enableMappings(
-            'spying',
+            'move', 'spying',
         )
+        # inputEx.enableMappings(
+        #     'spying',
+        # )
         # 屏蔽原版走路逻辑
         operation = LevelClient.getInstance().operation
         operation.SetCanMove(False)
