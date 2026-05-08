@@ -61,7 +61,6 @@ def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks)
     projectionMatrix: 视图到投影的变换矩阵（即投影矩阵）
     viewport: 屏幕视口（即窗口）
     screenPoint: 在屏幕坐标系中的点（x, y为屏幕坐标，z为深度值）
-    depth: 深度值（从摄像机到点的距离）
     返回世界坐标系中的点
     """
     # 先将屏幕坐标转换到裁剪空间
