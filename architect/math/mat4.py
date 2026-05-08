@@ -1,7 +1,7 @@
 from __future__ import division, print_function
 from mod.common.utils.mcmath import Matrix, Vector3
 from .vec3 import normalize, dot, cross
-from .vec4 import vec4, Vector4
+from .vec4 import vec4, Vector4, tup4
 from .double import epsilon
 import math
 
@@ -212,7 +212,7 @@ def worldToScreen(modelMatrix, viewMatrix, projectionMatrix, viewport, worldPoin
     """
     # 先将世界坐标转换到裁剪空间
     mvpMatrix = multiply(projectionMatrix, multiply(viewMatrix, modelMatrix))
-    x, y, z, w = transformPoint(mvpMatrix, worldPoint)
+    x, y, z, w = tup4(transformPoint(mvpMatrix, worldPoint))
     w += epsilon
     x /= w
     y /= w
