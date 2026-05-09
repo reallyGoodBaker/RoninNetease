@@ -174,6 +174,8 @@ class AnimationExComponent(BaseCompClient):
             existedBlending['target'] = target
             existedBlending['duration'] = duration
             existedBlending['func'] = func
+            existedBlending['startTime'] = time.time()
+            existedBlending['type'] = blendingType
         else:
             self.blending[animKey] = {
                 'target': target,
@@ -205,11 +207,13 @@ class AnimationExComponent(BaseCompClient):
         if not animName:
             return
 
-        # 将其他层的同名动画删除
+        # 如果同名动画已存在，从原层中移除（不删除整个 layer）
         animInfo = self.playing.get(animKey)
         if animInfo and animInfo.layer:
             self.playing.pop(animKey)
-            self.layers.pop(animInfo.layer)
+            oldLayer = animInfo.layer
+            if oldLayer in self.layers:
+                self.layers[oldLayer].discard(animKey)
 
         # 创建动画播放运行时
         animInfo = AnimPlayingInfo(
@@ -221,17 +225,23 @@ class AnimationExComponent(BaseCompClient):
         # 记录动画播放层级
         playing = self.layers.get(layer, set()) # type: set[str]
         variable = self.variables[animKey]
+        isBlendingOut = animKey in self.blending
 
-        # 重置播放状态
-        variable.setValue(0)
-        if len(playing) > 0:
-            # 长度大于 0 才需要混合动画
-            for _animKey in playing:
-                self.setBlending(AnimationBlendingTypes.OUT, _animKey)
-            self.setBlending(AnimationBlendingTypes.IN, animKey)
+        if not isBlendingOut:
+            # 重置播放状态
+            variable.setValue(0)
+            if len(playing) > 0:
+                # 长度大于 0 才需要混合动画
+                for _animKey in playing:
+                    self.setBlending(AnimationBlendingTypes.OUT, _animKey)
+                self.setBlending(AnimationBlendingTypes.IN, animKey)
+            else:
+                # 直接播放
+                variable.setValue(1)
         else:
-            # 直接播放
-            variable.setValue(1)
+            # 混合动画
+            self.setBlending(AnimationBlendingTypes.IN, animKey)
+
         playing.add(animKey)
         self.layers[layer] = playing
 
