@@ -41,7 +41,7 @@ class InputExComponent(BaseCompClient):
 
     def disableMapping(self, name):
         mapping = InputMapping.get(name)
-        if not mapping or mapping not in self.inputMappings:
+        if not mapping:
             return False
         self.inputMappings.remove(mapping)
         if len(self.inputMappings):

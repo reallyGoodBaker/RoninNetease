@@ -122,15 +122,15 @@
 							"post": [0, 0, 0],
 							"lerp_mode": "catmullrom"
 						},
-						"0.1458": {
+						"0.1875": {
 							"post": [0, 17.5, 0],
 							"lerp_mode": "catmullrom"
 						},
-						"0.2083": {
+						"0.25": {
 							"post": [0, -27.5, 0],
 							"lerp_mode": "catmullrom"
 						},
-						"0.3125": {
+						"0.3542": {
 							"post": [0, -35, 0],
 							"lerp_mode": "catmullrom"
 						},
@@ -143,15 +143,15 @@
 							"post": [0, 0, 0],
 							"lerp_mode": "catmullrom"
 						},
-						"0.1458": {
+						"0.1875": {
 							"post": [0, 10, 0],
 							"lerp_mode": "catmullrom"
 						},
-						"0.2083": {
+						"0.25": {
 							"post": [0, -22.5, 0],
 							"lerp_mode": "catmullrom"
 						},
-						"0.3125": {
+						"0.3542": {
 							"post": [0, -22.5, 0],
 							"lerp_mode": "catmullrom"
 						},
@@ -164,15 +164,15 @@
 							"post": [-126.6167, 42.3083, -15.4297],
 							"lerp_mode": "catmullrom"
 						},
-						"0.1458": {
+						"0.1875": {
 							"post": [-126.6167, 42.3083, -15.4297],
 							"lerp_mode": "catmullrom"
 						},
-						"0.2083": {
+						"0.25": {
 							"post": [-109.0861, 22.0903, -79.5975],
 							"lerp_mode": "catmullrom"
 						},
-						"0.3125": {
+						"0.3542": {
 							"post": [-91.6176, 48.292, -57.8999],
 							"lerp_mode": "catmullrom"
 						},
@@ -185,15 +185,15 @@
 							"post": [-112.5, 0, 0],
 							"lerp_mode": "catmullrom"
 						},
-						"0.1458": {
+						"0.1875": {
 							"post": [-112.5, 0, 0],
 							"lerp_mode": "catmullrom"
 						},
-						"0.2083": {
+						"0.25": {
 							"post": [-12.5, 0, 0],
 							"lerp_mode": "catmullrom"
 						},
-						"0.3125": {
+						"0.3542": {
 							"post": [-12.5, 0, 0],
 							"lerp_mode": "catmullrom"
 						},
@@ -206,15 +206,15 @@
 							"post": [0, 0, 0],
 							"lerp_mode": "catmullrom"
 						},
-						"0.1458": {
+						"0.1875": {
 							"post": [0, 0, 0],
 							"lerp_mode": "catmullrom"
 						},
-						"0.2083": {
+						"0.25": {
 							"post": [75, 0, 0],
 							"lerp_mode": "catmullrom"
 						},
-						"0.3125": {
+						"0.3542": {
 							"post": [75, 0, 0],
 							"lerp_mode": "catmullrom"
 						},
@@ -224,8 +224,8 @@
 			},
 			"timeline": {
 				"0.0": "v.notify_stun = 1;",
-				"0.1458": "v.notify_stun = 1;",
-				"0.2083": "v.notify_attack = 1;",
+				"0.1875": "v.notify_stun = 1;",
+				"0.25": "v.notify_attack = 1;",
 				"0.375": "v.notify_stun = 0;",
 				"0.3958": "v.notify_restore = 1;"
 			}

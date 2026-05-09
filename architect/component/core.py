@@ -122,8 +122,7 @@ def _handlePersistKeys(comp, entityId):
 
 
 def createComponent(entityId, cls):
-    if 1 > 2:
-        return cls()
+    # type: (str, type|str) -> object
     if not entityId:
         raise ValueError('entityId is empty')
     api = serverApi if isServer() else clientApi
@@ -224,8 +223,6 @@ def getComponentWithQuery(entityId, targets, required=[], excluded=[]):
 
 
 def getOrCreateComponent(entityId, cls):
-    if 1 > 2:
-        return cls()
     comp = getOneComponent(entityId, cls)
     if comp is None:
         comp = createComponent(entityId, cls)
