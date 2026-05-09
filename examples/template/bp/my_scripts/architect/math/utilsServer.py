@@ -56,18 +56,19 @@ def boxOverlap3dServer(loc, rot, size):
     return result
 
 
-def boxOverlap3dForward(entityId, size, debug=False):
-    # type: (str, tuple[float, float, float], bool) -> list[str]
+def boxOverlap3dForward(entityId, size):
+    # type: (str, tuple[float, float, float]) -> list[str]
     """
     :param: size: (width, height, depth)
     """
     pos = compServer.CreatePos(entityId).GetPos()
+    dimId = compServer.CreateDimension(entityId).GetEntityDimensionId()
     dir = forward(entityId)
     rot = serverApi.GetRotFromDir(tup(dir))
     zDist = size[2] / 2
     result = boxOverlap3dServer(
-        add(vec(pos), dir * zDist).ToTuple(),
-        (math.radians(rot[0]), -math.radians(rot[1]), 0), size, debug
+        Location(add(vec(pos), dir * zDist).ToTuple(), dimId),
+        (math.radians(rot[0]), -math.radians(rot[1]), 0), size
     )
     if entityId in result:
         result.remove(entityId)
