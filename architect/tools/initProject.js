@@ -2,26 +2,28 @@ const fs = require('fs')
 const path = require('path')
 
 
-const modMainCode = `
-# -*- coding: utf-8 -*-
+const modMainCode = `# -*- coding: utf-8 -*-
 from mod.common.mod import Mod
 from .architect.conf import conf
+from .architect.compact import createServer, createClient
 
 
 @Mod.Binding(name = conf('MOD_NAME'), version = conf('MOD_VERSION'))
 class ModBase(object):
     @Mod.InitServer()
     def initServer(self):
-        from .architect.compact import createServer
         createServer()
 
     @Mod.InitClient()
     def initClient(self):
-        from .architect.compact import createClient
         createClient()`
 
 
-const confCode = `
+const confCode = `# -*- coding: utf-8 -*-
+
+MOD_NAME = 'my_mod'
+MOD_VERSION = '1.0.0'
+
 MOD_ENGINE_NAME = 'engine'
 MOD_SYSTEM_NAME = 'system'
 
