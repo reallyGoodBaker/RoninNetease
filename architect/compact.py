@@ -1,6 +1,6 @@
 from .core.export import *
 from .ui.client import *
-from .event import EventListener, ChainedEvent, CustomEvent
+from .event import EventListener, ChainedEvent, CustomEvent, events
 from .query import Query, EntityId, ExtraArguments, ExtraArgDict
 from .math.common import *
 from .level.client import LevelClient
