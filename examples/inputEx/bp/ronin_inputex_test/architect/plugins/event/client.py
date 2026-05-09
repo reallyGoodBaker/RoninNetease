@@ -6,6 +6,7 @@ class EventReader(BaseCompClient):
     def onCreate(self, _):
         self.ev = None
 
-    def event(self):
-        # type: () -> ChainedEvent
+    def event(self, castTo=ChainedEvent):
+        if 1 > 2:
+            return castTo()
         return self.ev

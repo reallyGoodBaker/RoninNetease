@@ -77,7 +77,7 @@ class BaseActionDispatcher(AnimationEventDispatcher):
         op.SetCanJump(canMove)
 
     def cam(self, entityId, lock=False):
-        op = getOneComponent(entityId, NeC.Operation) # type: CameraComponentClient
+        op = getOneComponent(entityId, NeC.Operation)
         op.SetCanDrag(not lock)
 
     def notifyStunStart(self, entityId, animEx):
