@@ -232,8 +232,12 @@ class AnimationExComponent(BaseCompClient):
             variable.setValue(0)
             if len(playing) > 0:
                 # 长度大于 0 才需要混合动画
-                for _animKey in playing:
+                for _animKey in list(playing):
                     self.setBlending(AnimationBlendingTypes.OUT, _animKey)
+                    # 立即从 playing 中移除，保证同 layer 只有一个活跃动画
+                    # blend out 视觉效果由 self.blending 独立驱动
+                    if _animKey in self.playing:
+                        self.playing.pop(_animKey)
                 self.setBlending(AnimationBlendingTypes.IN, animKey)
             else:
                 # 直接播放
