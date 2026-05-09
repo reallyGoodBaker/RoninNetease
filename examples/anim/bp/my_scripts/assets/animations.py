@@ -5,5 +5,5 @@ GenericMapping = {
     'wood': 'animation.standard_steve.wood',
     'iron': 'animation.standard_steve.iron',
     'stop': 'animation.standard_steve.stop',
-    'attack': 'animation.standard_steve.diamond.attack',
+    'attack': 'animation.standard_steve.attack.diamond',
 }

@@ -3,7 +3,7 @@ from ..architect.plugins.animation.components.animClient import AnimationExCompo
 from ..architect.compact import *
 from ..architect.math.utils import boxOverlap3dForward
 
-@Dispatch('animation.standard_steve.diamond.attack')
+@Dispatch('animation.standard_steve.attack.diamond')
 class DiamondAttackDispatcher(BaseActionDispatcher):
     def onEnded(self, entityId, animComp):
         animComp.play('diamond', 'holding')

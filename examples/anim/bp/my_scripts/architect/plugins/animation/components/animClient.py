@@ -227,20 +227,25 @@ class AnimationExComponent(BaseCompClient):
         variable = self.variables[animKey]
         isBlendingOut = animKey in self.blending
 
+        # 先清理同层的旧动画，无论 isBlendingOut 是什么值
+        # 保证同 layer 只有一个活跃动画
+        hasOldAnims = len(playing) > 0
+        if hasOldAnims:
+            for _animKey in list(playing):
+                if _animKey == animKey:
+                    continue
+                self.setBlending(AnimationBlendingTypes.OUT, _animKey)
+                # 立即从 playing 中移除，blend out 视觉效果由 self.blending 独立驱动
+                if _animKey in self.playing:
+                    self.playing.pop(_animKey)
+                playing.discard(_animKey)
+
         if not isBlendingOut:
             # 重置播放状态
             variable.setValue(0)
-            if len(playing) > 0:
-                # 长度大于 0 才需要混合动画
-                for _animKey in list(playing):
-                    self.setBlending(AnimationBlendingTypes.OUT, _animKey)
-                    # 立即从 playing 中移除，保证同 layer 只有一个活跃动画
-                    # blend out 视觉效果由 self.blending 独立驱动
-                    if _animKey in self.playing:
-                        self.playing.pop(_animKey)
+            if hasOldAnims:
                 self.setBlending(AnimationBlendingTypes.IN, animKey)
             else:
-                # 直接播放
                 variable.setValue(1)
         else:
             # 混合动画

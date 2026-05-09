@@ -103,8 +103,8 @@ class AnimationExSubsystem(ClientSubsystem):
             if curValue == blending['target'] and blending['type'] == AnimationBlendingTypes.OUT:
                 blendingOutFinished.append(animKey)
 
-        # update animation
-        for animKey, animInfo in animEx.playing.items():
+        # update animation - use list() to avoid "dict changed size during iteration"
+        for animKey, animInfo in list(animEx.playing.items()):
             animName = animInfo.animName
             for notify in animInfo.getNotifies():
                 name = notify['name']
@@ -148,11 +148,17 @@ class AnimationExSubsystem(ClientSubsystem):
                 if self.broadcastEvent:
                     self.broadcast(eventType, eventDate)
 
+                # 动画可能在 dispatch 中被 _playAnim 重新创建（新对象引用）
+                # 通过对象引用判断，避免误清理新创建的动画
+                currentInfo = animEx.playing.get(animKey)
+                if currentInfo is not animInfo:
+                    continue
                 animEx.playing.pop(animKey)
-                animEx.variables[animKey].setValue(0)
-                targetLayer = animEx.layers[animInfo.layer]
-                if animKey in targetLayer:
-                    targetLayer.remove(animKey)
+                if animKey in animEx.variables:
+                    animEx.variables[animKey].setValue(0)
+                targetLayer = animEx.layers.get(animInfo.layer)
+                if targetLayer:
+                    targetLayer.discard(animKey)
                 continue
 
             animInfo.doTick(self.lastFrameTime * dilation.value)

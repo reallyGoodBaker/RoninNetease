@@ -58,8 +58,8 @@ class AnimPlayerClient(ClientSubsystem):
         for animKey in GenericMapping.keys():
             animEx.registerEasing(
                 animKey,
-                AnimationEasingConf(1, 0.15, AnimationEasingTypes.SINE),
-                AnimationEasingConf(0, 0.2, AnimationEasingTypes.CUBIC),
+                AnimationEasingConf(1, 0.4, AnimationEasingTypes.SINE),
+                AnimationEasingConf(0, 0.4, AnimationEasingTypes.CUBIC),
             )
 
     @Sched.Render()

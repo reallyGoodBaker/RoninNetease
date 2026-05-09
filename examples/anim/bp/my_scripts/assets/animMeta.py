@@ -27,7 +27,7 @@ AnimMeta = {
         "loop": False,
         "length": 0.25
     },
-    "animation.standard_steve.diamond.attack": {
+    "animation.standard_steve.attack.diamond": {
         "loop": "hold_on_last_frame",
         "length": 0.4167,
         "notifies": {

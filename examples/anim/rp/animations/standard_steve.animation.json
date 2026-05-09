@@ -110,11 +110,11 @@
 			"anim_time_update": "v.anim_timeex.standard_steve.stop",
 			"blend_weight": "v.blendex.standard_steve.stop"
 		},
-		"animation.standard_steve.diamond.attack": {
+		"animation.standard_steve.attack.diamond": {
 			"loop": "hold_on_last_frame",
 			"animation_length": 0.4167,
-			"anim_time_update": "v.anim_timeex.standard_steve.diamond.attack",
-			"blend_weight": "v.blendex.standard_steve.diamond.attack",
+			"anim_time_update": "v.anim_timeex.standard_steve.attack.diamond",
+			"blend_weight": "v.blendex.standard_steve.attack.diamond",
 			"bones": {
 				"waist": {
 					"rotation": {
