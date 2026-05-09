@@ -36,14 +36,16 @@ function findAnimResources(resDir, consumer) {
  * @param {Record<string, string>[]} timeline 
  * @returns 
  */
-function handleNotifies(animMeta, timeline) {
+function handleExtraData(animMeta, timeline) {
     if (!timeline) {
         return
     }
 
     animMeta.notifies = {}
+    animMeta.extra = {}
     for (const [ time, expr ] of Object.entries(timeline)) {
         const notifies = []
+        const extra = {}
         const exprStr = Array.isArray(expr) ? expr.join('') : expr
         for (const equalExpr of exprStr.slice(0, -1).replaceAll(' ', '').split(';')) {
             const [ key, value ] = equalExpr.split('=')
@@ -55,9 +57,16 @@ function handleNotifies(animMeta, timeline) {
                     state: Math.round(value)
                 })
             }
+            if (variableName.startsWith('data_')) {
+                const dataName = variableName.slice(5)
+                extra[dataName] = value
+            }
         }
         if (notifies.length > 0) {
             animMeta.notifies[time] = notifies
+        }
+        if (Object.keys(extra).length > 0) {
+            animMeta.extra[time] = extra
         }
     }
 }
@@ -94,7 +103,7 @@ function extractAnimations() {
                 loop: loop ?? false,
                 length: animation_length ?? -1,
             }
-            handleNotifies(metaInfo, timeline)
+            handleExtraData(metaInfo, timeline)
             animMetaInfos[key] = metaInfo
             if (animKeys.includes(key)) {
                 console.error(`Conflict animations: ${key}`)
