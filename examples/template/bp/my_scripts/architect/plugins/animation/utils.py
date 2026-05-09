@@ -55,7 +55,7 @@ class AnimationEventDispatcher(Unreliable):
         pass
 
 
-def NotifyDispatch(animName):
+def Dispatch(animName):
     def wrapper(cls):
         cls.getOrCreate(animName)
         return cls
