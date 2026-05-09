@@ -26,5 +26,36 @@ AnimMeta = {
     "animation.standard_steve.stop": {
         "loop": False,
         "length": 0.25
+    },
+    "animation.standard_steve.diamond.attack": {
+        "loop": "hold_on_last_frame",
+        "length": 0.4167,
+        "notifies": {
+            "0.0": [
+                {
+                    "name": "stun",
+                    "state": 1
+                }
+            ],
+            "0.25": [
+                {
+                    "name": "attack",
+                    "state": 1
+                }
+            ],
+            "0.375": [
+                {
+                    "name": "stun",
+                    "state": 0
+                }
+            ],
+            "0.3958": [
+                {
+                    "name": "restore",
+                    "state": 1
+                }
+            ]
+        },
+        "extra": {}
     }
 }

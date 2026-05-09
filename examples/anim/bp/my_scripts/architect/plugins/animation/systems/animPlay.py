@@ -43,13 +43,15 @@ class AnimationExSubsystem(ClientSubsystem):
         type = blending['type']
         now = time.time()
         dt = (now - startTime) * dilation
+        low = 0 if type == AnimationBlendingTypes.IN else target
+        high = target if type == AnimationBlendingTypes.IN else 1
         if dt >= duration:
             animEx.blending.pop(animKey)
             return target
         t = dt / duration
         if type == AnimationBlendingTypes.OUT:
             t = 1 - t
-        return self.EasingFuncs[func](0, 1, t)
+        return self.EasingFuncs[func](low, high, t)
     
 
     def onInit(self):

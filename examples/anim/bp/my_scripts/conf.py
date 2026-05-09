@@ -7,11 +7,17 @@ MOD_ENGINE_NAME = 'engine'
 MOD_SYSTEM_NAME = 'system'
 
 MOD_SERVER_MODULES = [
+    'server'
 ]
 MOD_CLIENT_MODULES = [
     'client',
+
+    'assets.notifies',
+    'assets.inputAction',
+    'assets.inputMapping',
 ]
 
 PLUGINS = [
-    '$vendor.animation'
+    '$vendor.animation',
+    '$vendor.input',
 ]
