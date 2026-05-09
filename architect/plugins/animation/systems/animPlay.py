@@ -1,6 +1,6 @@
 import time, math
 
-from ....compact import remote, getOneComponent, Remote, Sched, Query, ClientSubsystem, SubsystemClient, EventListener, createComponent
+from ....compact import remote, getOneComponent, Remote, Sched, Query, ClientSubsystem, SubsystemClient, EventListener, getOrCreateComponent
 from ....math.double import lerp
 
 from ..enum import AnimationEasingTypes, AnimationBlendingTypes, AnimExEvents
@@ -43,13 +43,15 @@ class AnimationExSubsystem(ClientSubsystem):
         type = blending['type']
         now = time.time()
         dt = (now - startTime) * dilation
+        low = 0 if type == AnimationBlendingTypes.IN else target
+        high = target if type == AnimationBlendingTypes.IN else 1
         if dt >= duration:
             animEx.blending.pop(animKey)
             return target
         t = dt / duration
         if type == AnimationBlendingTypes.OUT:
             t = 1 - t
-        return self.EasingFuncs[func](0, 1, t)
+        return self.EasingFuncs[func](low, high, t)
     
 
     def onInit(self):
@@ -64,8 +66,8 @@ class AnimationExSubsystem(ClientSubsystem):
 
     @EventListener('AddPlayerCreatedClientEvent')
     def onAddPlayerCreatedClientEvent(self, event):
-        createComponent(event.playerId, AnimationDilation)
-        createComponent(event.playerId, AnimationExComponent)
+        getOrCreateComponent(event.playerId, AnimationDilation)
+        getOrCreateComponent(event.playerId, AnimationExComponent)
 
 
     @Sched.Render()
@@ -101,8 +103,8 @@ class AnimationExSubsystem(ClientSubsystem):
             if curValue == blending['target'] and blending['type'] == AnimationBlendingTypes.OUT:
                 blendingOutFinished.append(animKey)
 
-        # update animation
-        for animKey, animInfo in animEx.playing.items():
+        # update animation - use list() to avoid "dict changed size during iteration"
+        for animKey, animInfo in list(animEx.playing.items()):
             animName = animInfo.animName
             for notify in animInfo.getNotifies():
                 name = notify['name']
@@ -146,11 +148,17 @@ class AnimationExSubsystem(ClientSubsystem):
                 if self.broadcastEvent:
                     self.broadcast(eventType, eventDate)
 
+                # 动画可能在 dispatch 中被 _playAnim 重新创建（新对象引用）
+                # 通过对象引用判断，避免误清理新创建的动画
+                currentInfo = animEx.playing.get(animKey)
+                if currentInfo is not animInfo:
+                    continue
                 animEx.playing.pop(animKey)
-                animEx.variables[animKey].setValue(0)
-                targetLayer = animEx.layers[animInfo.layer]
-                if animKey in targetLayer:
-                    targetLayer.remove(animKey)
+                if animKey in animEx.variables:
+                    animEx.variables[animKey].setValue(0)
+                targetLayer = animEx.layers.get(animInfo.layer)
+                if targetLayer:
+                    targetLayer.discard(animKey)
                 continue
 
             animInfo.doTick(self.lastFrameTime * dilation.value)

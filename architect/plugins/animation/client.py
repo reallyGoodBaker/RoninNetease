@@ -18,6 +18,7 @@ from ...core.loader import Plugin, PluginBase
 class AnimationExPlugin(PluginBase):
     def onAttach(self, manager):
         from .systems.animPlay import AnimationExSubsystem
+        from .systems.serverSync import AnimExServer
 
     @staticmethod
     def setDilation(val):
