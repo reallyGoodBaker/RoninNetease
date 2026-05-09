@@ -4,7 +4,7 @@ from ..utils.inputValue import InputValue
 from ..utils.inputAction import InputAction
 from ..utils.trigger import InputTrigger
 from ..components.inputEx import InputExComponent
-from ..enum import TouchType, MouseAxis, MouseKey, AccumulationBehavior, InputType, TriggerState, TriggerCombineType, InputState, IA_EVENT_PREFIX
+from ..enum import TouchType, GamepadAxis, MouseAxis, MouseKey, AccumulationBehavior, InputType, TriggerState, TriggerCombineType, InputState, IA_EVENT_PREFIX
 
 
 class _TransState:
@@ -30,6 +30,27 @@ _StateTransResultMapping = {
 }
 
 
+_AllowlistMapping = (
+    (InputType.Key, 0),
+    (InputType.Touch, 1),
+    (InputType.Gamepad, 2),
+)
+
+
+def checkIfAllow(inputType, inputMode, bindKey):
+    _firstReturn = (inputType, inputMode) in _AllowlistMapping
+    if _firstReturn:
+        return True
+    if inputType != InputType.Axis:
+        return False
+    if inputMode == 0:
+        return bindKey in (MouseAxis.Pos, MouseAxis.Scroll)
+    if inputMode == 2:
+        return bindKey in (GamepadAxis.LS, GamepadAxis.RS, GamepadAxis.LT, GamepadAxis.RT)
+    return False
+
+
+
 @SubsystemClient
 class InputExClient(ClientSubsystem):
 
@@ -38,10 +59,19 @@ class InputExClient(ClientSubsystem):
         self._iaEvents = set()
         self.localActorMotion = compClient.CreateActorMotion(localPlayerId())
         self.playerView = LevelClient.getInstance().playerView
+        self.inputMode = 0
 
 
     def isMouseInput(self):
-        return self.playerView.GetToggleOption('INPUT_MODE') == 0
+        return self.inputMode == 0
+    
+
+    def isGamepadInput(self):
+        return self.inputMode == 2
+    
+
+    def isTouchInput(self):
+        return self.inputMode == 1
 
 
     def _updateMapping(self, mapping, inputEx, dt):
@@ -49,6 +79,8 @@ class InputExClient(ClientSubsystem):
         inputEx.actionValues.clear()
         self._iaEvents.clear()
         for binding in mapping.bindings:
+            if not checkIfAllow(binding.inputType, self.inputMode, binding.key):
+                continue
             value = inputEx.getInputValue(binding.inputType, binding.key) # type: InputValue
             modifiedValue = value.rawValue[:]
             for modifier in binding.modifiers:
@@ -97,7 +129,6 @@ class InputExClient(ClientSubsystem):
                 elif triggerState == TriggerState.Empty:
                     _emptyTriggers += 1
 
-        # print _explicitsSize, _triggeredExplicits, _ongoings
         curTriggerState = TriggerState.Empty
         # Trigger: And triggers 必须全部为 Triggered, Or 触发器只要有一个为 Triggered 即可
         if _triggeredImplicits == _implicitsSize and (_explicitsSize == 0 or _triggeredExplicits > 0):
@@ -174,6 +205,7 @@ class InputExClient(ClientSubsystem):
 
 
     def onRender(self, dt):
+        self.inputMode = self.playerView.GetToggleOption('INPUT_MODE')
         inputEx = getOneSingletonComponent(InputExComponent)
         if not inputEx:
             return

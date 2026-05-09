@@ -148,7 +148,7 @@ class DoubleTap(InputTrigger):
         if not self.lastTap:
             self.lastTap = time()
             return TriggerState.Ongoing
-        
+
         # 第二次按下
         self.lastTap = 0
         return TriggerState.Triggered

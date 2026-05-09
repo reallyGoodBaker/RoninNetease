@@ -17,9 +17,6 @@ class TestClient(ClientSubsystem):
         inputEx.enableMappings(
             'move', 'spying',
         )
-        # inputEx.enableMappings(
-        #     'spying',
-        # )
         # 屏蔽原版走路逻辑
         operation = LevelClient.getInstance().operation
         operation.SetCanMove(False)

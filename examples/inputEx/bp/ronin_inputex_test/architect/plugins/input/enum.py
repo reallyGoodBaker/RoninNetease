@@ -137,21 +137,21 @@ class GamepadAxis:
     RT = 257                       # 右触发器
 
 
+class MouseAxis:
+    Pos = 1
+    Scroll = 2
+
+
 class InputType:
     Key = 1
-    Gamepad = 2
-    Axis = 3
-    Touch = 4
+    Touch = 2
+    Gamepad = 3
+    Axis = 4
 
 
 class TouchType:
     Tap = 1
     Hold = 2
-
-
-class MouseAxis:
-    Pos = 1
-    Scroll = 2
 
 
 class ValueType:
