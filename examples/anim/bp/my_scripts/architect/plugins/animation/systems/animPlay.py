@@ -97,15 +97,18 @@ class AnimationExSubsystem(ClientSubsystem):
 
         # update blending
         blendingOutFinished = []
-        for animKey, blending in animEx.blending.items():
+        for animKey, blending in list(animEx.blending.items()):
             curValue = self._getBlendValue(animEx, animKey, blending, dilation.value)
             animEx.variables[animKey].setValue(curValue)
             if curValue == blending['target'] and blending['type'] == AnimationBlendingTypes.OUT:
                 blendingOutFinished.append(animKey)
 
-        # update animation
-        for animKey, animInfo in animEx.playing.items():
+        # first pass: process notifies and collect finished animations
+        # use list() to snapshot keys so event handlers can safely modify animEx.playing
+        finishedAnims = []
+        for animKey, animInfo in list(animEx.playing.items()):
             animName = animInfo.animName
+
             for notify in animInfo.getNotifies():
                 name = notify['name']
                 state = notify['state']
@@ -134,28 +137,39 @@ class AnimationExSubsystem(ClientSubsystem):
 
             if animInfo.isFinished() or animKey in blendingOutFinished:
                 eventType = AnimExEvents.Interrupted if animInfo._manualStop else AnimExEvents.Finish
-                eventDate = {
-                    'type': eventType,
-                    'animKey': animKey,
-                    'entityId': animEx.entityId,
-                    'animName': animName,
-                    'serverSync': animInfo.serverSync,
-                }
-                if not animInfo.serverSync:
-                    dispatcher = AnimationEventDispatcher.getDispatcher(animName)
-                    if dispatcher:
-                        dispatcher.dispatch(eventDate, animEx)
-                if self.broadcastEvent:
-                    self.broadcast(eventType, eventDate)
+                finishedAnims.append((
+                    animKey,
+                    animName,
+                    animInfo.layer,
+                    animInfo.serverSync,
+                    eventType,
+                ))
+            else:
+                animInfo.doTick(self.lastFrameTime * dilation.value)
 
-                animEx.playing.pop(animKey)
-                animEx.variables[animKey].setValue(0)
-                targetLayer = animEx.layers[animInfo.layer]
-                if animKey in targetLayer:
-                    targetLayer.remove(animKey)
-                continue
+        # second pass: clean up and dispatch events
+        # this is done AFTER iterating playing, so event handlers (e.g. onEnded)
+        # calling play() won't be blocked by old entries still in the playing dict
+        for animKey, animName, layerKey, serverSync, eventType in finishedAnims:
+            animEx.playing.pop(animKey, None)
+            animEx.variables[animKey].setValue(0)
+            targetLayer = animEx.layers.get(layerKey)
+            if targetLayer and animKey in targetLayer:
+                targetLayer.remove(animKey)
 
-            animInfo.doTick(self.lastFrameTime * dilation.value)
+            eventDate = {
+                'type': eventType,
+                'animKey': animKey,
+                'entityId': animEx.entityId,
+                'animName': animName,
+                'serverSync': serverSync,
+            }
+            if not serverSync:
+                dispatcher = AnimationEventDispatcher.getDispatcher(animName)
+                if dispatcher:
+                    dispatcher.dispatch(eventDate, animEx)
+            if self.broadcastEvent:
+                self.broadcast(eventType, eventDate)
 
 
     @Remote
