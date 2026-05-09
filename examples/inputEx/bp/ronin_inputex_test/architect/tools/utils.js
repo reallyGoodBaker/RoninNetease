@@ -1,3 +1,8 @@
+const fs = require('fs')
+const path = require('path')
+
+const moduleDir = path.resolve(__dirname, '../../../../')
+
 function findResDir() {
     for (const dir of fs.readdirSync(moduleDir)) {
         const filePath = path.join(moduleDir, dir)

@@ -9,8 +9,9 @@ MOD_SYSTEM_NAME = 'system'
 MOD_SERVER_MODULES = [
 ]
 MOD_CLIENT_MODULES = [
+    'client',
 ]
 
 PLUGINS = [
-
+    '$vendor.animation'
 ]
