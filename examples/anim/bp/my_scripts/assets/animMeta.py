@@ -37,6 +37,12 @@ AnimMeta = {
                     "state": 1
                 }
             ],
+            "0.1875": [
+                {
+                    "name": "stun",
+                    "state": 1
+                }
+            ],
             "0.25": [
                 {
                     "name": "attack",

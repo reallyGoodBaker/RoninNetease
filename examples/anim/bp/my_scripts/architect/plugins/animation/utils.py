@@ -46,12 +46,21 @@ class AnimationEventDispatcher(Unreliable):
             return self._callNamedMethod(methodName, entityId, animComp)
 
     def onEnded(self, entityId, animComp):
+        """
+        动画被打断或者正常结束时都会调用
+        """
         pass
 
     def onInterrupted(self, entityId, animComp):
+        """
+        动画被打断时调用
+        """
         pass
 
     def onFinish(self, entityId, animComp):
+        """
+        动画正常结束时调用
+        """
         pass
 
 

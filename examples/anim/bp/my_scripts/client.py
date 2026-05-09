@@ -59,13 +59,8 @@ class AnimPlayerClient(ClientSubsystem):
             animEx.registerEasing(
                 animKey,
                 AnimationEasingConf(1, 0.15, AnimationEasingTypes.SINE),
-                AnimationEasingConf(0, 0.2, AnimationEasingTypes.SINE),
+                AnimationEasingConf(0, 0.2, AnimationEasingTypes.CUBIC),
             )
-        animEx.registerEasing(
-            'attack',
-            AnimationEasingConf(1, 0.15, AnimationEasingTypes.SINE),
-            AnimationEasingConf(0, 0.01, AnimationEasingTypes.LINEAR),
-        )
 
     @Sched.Render()
     def onPlayerMove(self):

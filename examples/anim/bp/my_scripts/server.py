@@ -4,7 +4,7 @@ from .architect.compact import *
 class AnimPlayerServer(ServerSubsystem):
     @Remote
     def cameraShake(self, playerId):
-        runCommand('camera_shake {} 0.5 1 0.5'.format(playerId), playerId)
+        runCommand('camerashake add @s 0.4 0.1 positional'.format(playerId), playerId)
 
     @Remote
     def doAttack(self, playerId, entities, damage):
