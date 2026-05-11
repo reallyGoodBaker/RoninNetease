@@ -71,14 +71,26 @@ def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks)
     rayEndNdc = Vector3(nx, ny, 1)
     # 再将裁剪空间坐标转换到世界坐标
     invMvpMatrix = inverse(multiply(localProjectionMatrix(), multiply(localViewMatrix(), modelMatrix)))
-    rayStart = vec(transformPoint(invMvpMatrix, rayStartNdc))
-    rayEnd = vec(transformPoint(invMvpMatrix, rayEndNdc))
+    rayStartHomog = transformPoint(invMvpMatrix, rayStartNdc)
+    rayEndHomog = transformPoint(invMvpMatrix, rayEndNdc)
+
+    # 透视除法：齐次坐标除以 w，得到 NDC 空间坐标
+    rayStart = Vector3(
+        rayStartHomog.x / rayStartHomog.w,
+        rayStartHomog.y / rayStartHomog.w,
+        rayStartHomog.z / rayStartHomog.w
+    )
+    rayEnd = Vector3(
+        rayEndHomog.x / rayEndHomog.w,
+        rayEndHomog.y / rayEndHomog.w,
+        rayEndHomog.z / rayEndHomog.w
+    )
     ray = rayEnd - rayStart
     # 计算射线
     result = clientApi.getEntitiesOrBlockFromRay(
         tup(rayStart),
         tup(normalize(ray)),
-        math.ceil(modulo(ray)),
+        int(math.ceil(modulo(ray))),
         False,
         filterType
     )
