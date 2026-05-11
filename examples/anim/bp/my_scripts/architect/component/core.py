@@ -95,7 +95,6 @@ def _getEntityMarker():
 
 
 def createSingletonComponent(cls):
-    # type: (type) -> object
     """
     创建单例组件
     若你的组件没有标记为单例，调用此方法不会报错，并且可以通过 `getOneSingletonComponent` 等方法获得组件。
