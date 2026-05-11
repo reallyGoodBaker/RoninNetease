@@ -81,3 +81,6 @@ def nlerp(a, b, t):
 def tup(a):
     # type: (Vector3) -> tuple[float, float, float]
     return a.ToTuple()
+
+def vabs(a):
+    return Vector3(abs(a.x), abs(a.y), abs(a.z))

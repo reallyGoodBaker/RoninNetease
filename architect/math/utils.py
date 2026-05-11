@@ -180,6 +180,26 @@ def boxOverlap3dClient(pos, rot, size, debug=False):
     return result
 
 
+def boxOverlap3dBouding(start, end, forward, debug=False):
+    # type: (tuple[float, float, float], tuple[float, float, float], tuple[float, float, float], bool) -> list[str]
+    """
+    :param: forward: (x, y, z)
+    """
+    rotX, rotY = clientApi.GetRotFromDir(tup(normalize(vec(forward))))
+    size = (
+        end[0] - start[0],
+        end[1] - start[1],
+        end[2] - start[2]
+    )
+    center = tup((vec(start) + vec(end)) / 2)
+    return boxOverlap3dClient(
+        center,
+        (rotX, rotY, 0),
+        size,
+        debug
+    )
+
+
 def boxOverlap3dForward(entityId, size, debug=False):
     # type: (str, tuple[float, float, float], bool) -> list[str]
     """

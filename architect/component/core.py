@@ -95,12 +95,13 @@ def _getEntityMarker():
 
 
 def createSingletonComponent(cls):
-    # type: (type) -> object
     """
     创建单例组件
     若你的组件没有标记为单例，调用此方法不会报错，并且可以通过 `getOneSingletonComponent` 等方法获得组件。
     但请注意，未标记 singleton=True 的组件无法被 @Query 注解查询。
     """
+    if 1 > 2:
+        return cls()
     entityId = singletonId()
     return createComponent(entityId, cls)
 
@@ -164,6 +165,10 @@ def destroyComponent(entityId, cls):
         done = True
     _getEntityMarker().unmark(entityId)
     return done
+
+
+def destrySingletonComponent(cls):
+    destroyComponent(singletonId(), cls)
 
 
 def getOneComponent(entityId, cls):

@@ -1,10 +1,10 @@
-from ..math.vec3 import Vector3, vec, cross, normalize
+from ..math.vec3 import Vector3, vec, cross, normalize, vabs
 from ..level.client import LevelClient, compClient
 from ..core.basic import levelId
 
 
 def drawLine(start, end, color, duration=5):
-    # type: (Vector3, Vector3, Vector3, float) -> None
+    # type: (Vector3, Vector3, Vector3, float) -> function
     game = LevelClient.getInstance().game
     drawing = compClient.CreateDrawing(levelId())
     shape = drawing.AddLineShape(
@@ -12,11 +12,15 @@ def drawLine(start, end, color, duration=5):
         (end.x, end.y, end.z),
         (color.x, color.y, color.z)
     )
-    game.AddTimer(duration, lambda: shape.Remove())
+    timer = game.AddTimer(duration, lambda: shape.Remove())
+    def cancel():
+        shape.Remove()
+        game.CancelTimer(timer)
+    return cancel
 
 
-def drawBox(center, size, forward, color, duration=5):
-    # type: (Vector3, Vector3, Vector3, tuple|Vector3, float) -> None
+def drawBox(center, size, forward, color=vec((0, 1, 0)), duration=5):
+    # type: (Vector3, Vector3, Vector3, tuple|Vector3, float) -> function
     right = normalize(cross(forward, vec((0, 1, 0))))
     up = normalize(cross(right, forward))
     halfSize = size / 2
@@ -53,12 +57,26 @@ def drawBox(center, size, forward, color, duration=5):
         (vertices[3], vertices[7])
     ]
 
+    shapes = []
+
     for line in lines:
-        drawLine(line[0], line[1], vec(color), duration)
+        shapes.append(drawLine(line[0], line[1], vec(color), duration))
+
+    def cancel():
+        for remove in shapes:
+            remove()
+    return cancel
+
+
+def drawBoxFromBound(start, end, forward, color=vec((0, 1, 0)), duration=5):
+    # type: (Vector3, Vector3, Vector3, tuple|Vector3, float) -> function
+    size = end - start
+    center = (start + end) / 2
+    return drawBox(center, size, forward, color, duration)
 
 
 def drawSphere(center, radius=0.3, color=vec((0, 1, 0)), duration=1):
-    # type: (Vector3, float, tuple|Vector3, float) -> None
+    # type: (Vector3, float, tuple|Vector3, float) -> function
     game = LevelClient.getInstance().game
     drawing = compClient.CreateDrawing(levelId())
     shape = drawing.AddSphereShape(
@@ -66,4 +84,28 @@ def drawSphere(center, radius=0.3, color=vec((0, 1, 0)), duration=1):
         radius,
         (color.x, color.y, color.z)
     )
-    game.AddTimer(duration, lambda: shape.Remove())
+    timer = game.AddTimer(duration, lambda: shape.Remove())
+    def cancel():
+        shape.Remove()
+        game.CancelTimer(timer)
+    return cancel
+
+
+def drawRect(start, size, color=vec((0, 1, 0)), duration=5):
+    game = LevelClient.getInstance().game
+    drawing = compClient.CreateDrawing(levelId())
+    shape = drawing.AddBoxShape(
+        (start.x, start.y, start.z),
+        (size.x, size.y, size.z),
+        (color.x, color.y, color.z)
+    )
+    timer = game.AddTimer(duration, lambda: shape.Remove())
+    def cancel():
+        shape.Remove()
+        game.CancelTimer(timer)
+    return cancel
+
+
+def drawRectFromBound(start, end, color=vec((0, 1, 0)), duration=5):
+    size = vabs(end - start)
+    return drawRect(start, size, color, duration)
