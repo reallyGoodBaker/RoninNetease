@@ -2,7 +2,7 @@
   "modules": [
     {
       "type": "data",
-      "uuid": "11bdca5f-5a2b-4614-a35c-74277de639f9",
+      "uuid": "11bdca5f-5a2b-4614-a35c-74277da639f9",
       "version": [
         1,
         0,
@@ -12,7 +12,7 @@
     }
   ],
   "header": {
-    "uuid": "43e1fd38-20b3-4cd1-8e28-bb8d34905e72",
+    "uuid": "43e1fd38-20b3-4cd1-8e28-bbad34905e72",
     "version": [
       1,
       0,

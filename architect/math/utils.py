@@ -3,7 +3,7 @@ from .vec3 import vec, Vector3, add, div, tup, normalize, modulo
 from .vec4 import tup4
 from ..level.client import LevelClient, clientApi
 from ..core.basic import compClient, compServer
-from ..utils.drawing import drawBox, drawLine
+from ..utils.drawing import drawBox, drawLine, drawSphere
 
 from mod.common.minecraftEnum import RayFilterType
 
@@ -97,8 +97,9 @@ def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks,
     )
     if not result:
         return None
-    raycasted = result[0]
-    return vec(raycasted['hitPos'])
+    raycasted = vec(result[0]['hitPos'])
+    if debug: drawSphere(raycasted)
+    return raycasted
 
 defaultFilters = {
     "any_of": [
