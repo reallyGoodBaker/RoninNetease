@@ -33,8 +33,9 @@ def localViewMatrix():
 def localProjectionMatrix():
     level = LevelClient.getInstance()
     screenWidth, screenHeight = screenSize()
+    fov = level.camera.GetFov()
     return perspective(
-        level.camera.GetFov(),
+        fov * 1.1,
         screenWidth / screenHeight,
         0.1,
         100
@@ -65,8 +66,9 @@ def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks,
     """
     # 先将屏幕坐标转换到裁剪空间
     w, h = screenSize()
-    nx = (screenPoint.x / w * 2 - 1)
-    ny = (1 - screenPoint.y / h * 2)
+    # TODO: 这只是一个近似值
+    nx = (screenPoint.x / w * 2 - 1) * 1
+    ny = (1 - screenPoint.y / h * 2) * 1
     rayStartNdc = Vector3(nx, ny, -1)
     rayEndNdc = Vector3(nx, ny, 1)
     # 再将裁剪空间坐标转换到世界坐标

@@ -205,7 +205,10 @@ class InputExClient(ClientSubsystem):
 
     def _updateMousePos(self, inputEx):
         # type: (InputExComponent) -> None
-        x, y = self.localActorMotion.GetMousePosition()
+        mousePos = self.localActorMotion.GetMousePosition()
+        if not mousePos:
+            return
+        x, y = mousePos
         if self._mousePos is None:
             self._mousePos = vec(x, y, 0.0)
             return
