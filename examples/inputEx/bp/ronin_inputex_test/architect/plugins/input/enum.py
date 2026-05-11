@@ -140,6 +140,7 @@ class GamepadAxis:
 class MouseAxis:
     Pos = 1
     Scroll = 2
+    Move = 3
 
 
 class InputType:
@@ -152,6 +153,11 @@ class InputType:
 class TouchType:
     Tap = 1
     Hold = 2
+
+
+class TouchAxis:
+    Pos = 1
+    Move = 2
 
 
 class ValueType:

@@ -3,7 +3,7 @@ from .vec3 import vec, Vector3, add, div, tup, normalize, modulo
 from .vec4 import tup4
 from ..level.client import LevelClient, clientApi
 from ..core.basic import compClient, compServer
-from ..utils.drawing import drawBox
+from ..utils.drawing import drawBox, drawLine
 
 from mod.common.minecraftEnum import RayFilterType
 
@@ -50,8 +50,8 @@ def worldPosToScreenPos(worldPoint):
         vec(worldPoint)
     )
 
-def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks):
-    # type: (Matrix, Vector3, RayFilterType) -> Vector3 | None
+def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks, debug=False):
+    # type: (Matrix, Vector3, RayFilterType, bool) -> Vector3 | None
     """
     只能在客户端使用
 
@@ -86,6 +86,8 @@ def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks)
         rayEndHomog.z / rayEndHomog.w
     )
     ray = rayEnd - rayStart
+    if debug:
+        drawLine(rayStart, rayEnd, (1, 0, 0), 1)
     # 计算射线
     result = clientApi.getEntitiesOrBlockFromRay(
         tup(rayStart),
