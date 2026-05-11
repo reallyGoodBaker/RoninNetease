@@ -2,6 +2,7 @@ from ..math.vec3 import Vector3, vec, cross, normalize
 from ..level.client import LevelClient, compClient
 from ..core.basic import levelId
 
+
 def drawLine(start, end, color, duration=5):
     # type: (Vector3, Vector3, Vector3, float) -> None
     game = LevelClient.getInstance().game
@@ -12,6 +13,7 @@ def drawLine(start, end, color, duration=5):
         (color.x, color.y, color.z)
     )
     game.AddTimer(duration, lambda: shape.Remove())
+
 
 def drawBox(center, size, forward, color, duration=5):
     # type: (Vector3, Vector3, Vector3, tuple|Vector3, float) -> None
@@ -53,3 +55,15 @@ def drawBox(center, size, forward, color, duration=5):
 
     for line in lines:
         drawLine(line[0], line[1], vec(color), duration)
+
+
+def drawSphere(center, radius=0.3, color=vec((0, 1, 0)), duration=1):
+    # type: (Vector3, float, tuple|Vector3, float) -> None
+    game = LevelClient.getInstance().game
+    drawing = compClient.CreateDrawing(levelId())
+    shape = drawing.AddSphereShape(
+        (center.x, center.y, center.z),
+        radius,
+        (color.x, color.y, color.z)
+    )
+    game.AddTimer(duration, lambda: shape.Remove())

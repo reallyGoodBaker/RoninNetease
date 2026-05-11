@@ -46,6 +46,8 @@ def checkIfAllow(inputType, inputMode, bindKey):
         return False
     if inputMode == 0:
         return bindKey in (MouseAxis.Pos, MouseAxis.Scroll)
+    if inputMode == 1:
+        return bindKey in (TouchAxis.Pos, TouchAxis.Move)
     if inputMode == 2:
         return bindKey in (GamepadAxis.LS, GamepadAxis.RS, GamepadAxis.LT, GamepadAxis.RT)
     return False
@@ -209,6 +211,7 @@ class InputExClient(ClientSubsystem):
             return
         curPos = vec(x, y, 0.0)
         delta = curPos - vec(self._mousePos)
+        self._mousePos = curPos
         inputEx.updateInputValue(InputType.Axis, MouseAxis.Pos, (x, y, 0.0))
         inputEx.updateInputValue(InputType.Axis, MouseAxis.Move, (delta.x, delta.y, 0.0))
 
@@ -220,6 +223,7 @@ class InputExClient(ClientSubsystem):
             self._touchPos = curPos
             return
         delta = curPos - vec(self._touchPos)
+        self._touchPos = curPos
         inputEx.updateInputValue(InputType.Axis, TouchAxis.Pos, (x, y, 0.0))
         inputEx.updateInputValue(InputType.Axis, TouchAxis.Move, (delta.x, delta.y, 0.0))
 

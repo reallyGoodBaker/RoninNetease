@@ -86,8 +86,7 @@ def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks,
         rayEndHomog.z / rayEndHomog.w
     )
     ray = rayEnd - rayStart
-    if debug:
-        drawLine(rayStart, rayEnd, (1, 0, 0), 1)
+    if debug: drawLine(rayStart, rayEnd, vec((1, 0, 0)), 1)
     # 计算射线
     result = clientApi.getEntitiesOrBlockFromRay(
         tup(rayStart),
