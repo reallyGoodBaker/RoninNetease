@@ -32,7 +32,7 @@ class State:
 
     def markVariant(self, value=None):
         compFact = compServer if isServer() else compClient
-        defs = compFact.CreateEntityDefinitions(self.entityId)
+        defs = compFact.CreateEntityDefinitions(self.entityId) # type: ignore
         if value is None:
             return defs.GetMarkVariant()
         else:

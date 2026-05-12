@@ -13,7 +13,7 @@ class ClientEvents:
             chain = EventChain(eventType)
             ClientEvents.globalEvents[(eventType, isCustomEvent)] = chain
             from ..core.subsystem import SubsystemManager
-            SubsystemManager.getInstance().addListener(eventType, lambda ev: chain.dispatch(ev), isCustomEvent)
+            SubsystemManager.getInstance().addListener(eventType, lambda ev: chain.dispatch(ev), isCustomEvent) # type: ignore
             return chain
 
 

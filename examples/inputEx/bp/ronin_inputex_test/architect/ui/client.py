@@ -72,7 +72,7 @@ def Sink(method):
     return method
 
 
-def signal(defaultValue=None, updater=None):
+def signal(defaultValue=None, updater=None): # type: ignore
     # type: (object, function) -> tuple[function, function]
     """
     用于object时, 由于修改object内字段不会导致object的hash值变化, 因此不会触发依赖更新。
@@ -88,14 +88,14 @@ def signal(defaultValue=None, updater=None):
         return val.value
     def setter(v):
         if updater:
-            newVal = updater(v, val.value)
+            newVal = updater(v, val.value) # type: ignore
             val.value = newVal
             dep.emit()
         else:
             if v != val.value:
                 val.value = v
                 dep.emit()
-    return (getter, setter)
+    return (getter, setter) # type: ignore
 
 
 def reactive(obj):
@@ -108,7 +108,7 @@ def reactive(obj):
         objClass = obj.__class__
         previous = objClass.__setattr__
         def newSetattr(self, name, value):
-            setVal(value)
+            setVal(value) # type: ignore
             previous(self, name, value)
         objClass.__setattr__ = newSetattr
     wrapSetattr(obj)
@@ -119,10 +119,10 @@ ScreenNode = clientApi.GetScreenNodeCls()
 class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
     def __init__(self, engine, system, params):
         manager = SubsystemManager.getInstance()
-        ScreenNode.__init__(self, engine, system, params)
-        ClientSubsystem.__init__(self, manager.system, manager.engine, manager.sysName)
+        ScreenNode.__init__(self, engine, system, params) # type: ignore
+        ClientSubsystem.__init__(self, manager.system, manager.engine, manager.sysName) # type: ignore
         EventTarget.__init__(self)
-        manager.addSubsystemInst(self)
+        manager.addSubsystemInst(self) # type: ignore
         self.params = params
         self.rootControl = None
         self._foundControls = {}
@@ -133,10 +133,10 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
         def defineAsync():
             def _define(_):
                 cls.defineUi(uiDef)
-            subsystem.addListener('UiInitFinished', _define)
+            subsystem.addListener('UiInitFinished', _define) # type: ignore
 
         game = LevelClient.getInstance().game
-        game.AddTimer(0, defineAsync)
+        game.AddTimer(0, defineAsync) # type: ignore
 
     @classmethod
     def _handleAutoCreate(cls):
@@ -151,17 +151,17 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
                     cls.create(isHud=1)
                 else:
                     cls.create(isHud=0)
-            subsystem.addListener('UiInitFinished', _createUi)
+            subsystem.addListener('UiInitFinished', _createUi) # type: ignore
 
         game = LevelClient.getInstance().game
-        game.AddTimer(0, createAsync)
+        game.AddTimer(0, createAsync) # type: ignore
 
     ns = UI_NAMESPACE
     inst = None
 
     def _initGesture(self):
         for method in AnnotationHelper.findAnnotatedMethods(self, UI_GESTURE):
-            type, controlPath = AnnotationHelper.getAnnotation(method, UI_GESTURE)
+            type, controlPath = AnnotationHelper.getAnnotation(method, UI_GESTURE) # type: ignore
             self.addEventListener(controlPath, type, method)
 
     @classmethod
@@ -181,15 +181,15 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
         if cls.inst:
             return cls.inst
 
-        ui = clientApi.CreateUI(cls.ns, cls.__name__, params) # type: UiSubsystem
+        ui = clientApi.CreateUI(cls.ns, cls.__name__, params) # type: ignore
         cls.inst = ui
         return ui
 
     @classmethod
     def create(cls, **params):
         if cls.inst:
-            cls.inst.remove()
-        ui = clientApi.CreateUI(cls.ns, cls.__name__, params) # type: UiSubsystem
+            cls.inst.remove() # type: ignore
+        ui = clientApi.CreateUI(cls.ns, cls.__name__, params) # type: ignore
         return ui
 
     @classmethod
@@ -208,7 +208,7 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
             return ctrl
 
     def findByName(self, name):
-        return self.rootControl.GetChildByName(name)
+        return self.rootControl.GetChildByName(name) # type: ignore
 
     def _handleGamepadBack(self, ev):
         if not self.GetIsHud() and ev.key == 2 and ev.isDown:
@@ -233,20 +233,20 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
     def Create(self):
         self.rootControl = self.GetBaseUIControl('/')
         self.onCreate()
-        self.listen('OnBackButtonReleaseClientEvent', self._performBackPressed)
-        self.listen('OnGamepadKeyPressClientEvent', self._handleGamepadBack)
-        self.listen('OnKeyPressInGame', self._handleKeyboardBack)
+        self.listen('OnBackButtonReleaseClientEvent', self._performBackPressed) # type: ignore
+        self.listen('OnGamepadKeyPressClientEvent', self._handleGamepadBack) # type: ignore
+        self.listen('OnKeyPressInGame', self._handleKeyboardBack) # type: ignore
         self._initSinks()
         self._initGesture()
 
     def Destroy(self):
         self.removeAllListener()
         self._removeSinks()
-        self.unlisten('OnBackButtonReleaseClientEvent', self._performBackPressed)
-        self.unlisten('OnGamepadKeyPressClientEvent', self._handleGamepadBack)
-        self.unlisten('OnKeyPressInGame', self._handleKeyboardBack)
+        self.unlisten('OnBackButtonReleaseClientEvent', self._performBackPressed) # type: ignore
+        self.unlisten('OnGamepadKeyPressClientEvent', self._handleGamepadBack) # type: ignore
+        self.unlisten('OnKeyPressInGame', self._handleKeyboardBack) # type: ignore
         self.onDestroy()
-        SubsystemManager.getInstance().removeSubsystem(self.__class__)
+        SubsystemManager.getInstance().removeSubsystem(self.__class__) # type: ignore
 
     def remove(self):
         if self.params.get('pushScreen'):
@@ -264,7 +264,7 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
 
     def onBackPressed(self):
         # type: () -> bool
-        pass
+        return False
 
     def onDestroy(self):
         pass
@@ -275,7 +275,7 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
         """
         control = self.find(controlPath)
         if type in TouchEvents:
-            control.asButton().AddTouchEventParams(opt)
+            control.asButton().AddTouchEventParams(opt) # type: ignore
         GestureBinder[type](self, control)
         def _handlerWrapper(ev, _method=handler.__get__(self), _control=control):
             if ev.control == _control:

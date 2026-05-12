@@ -29,7 +29,7 @@ class AnnotationHelper:
     
     @staticmethod
     def findAnnotatedMethods(target, key):
-        # type: (type, object) -> list
+        # type: (object, object) -> list
         methods = []
         for attr_name in dir(target):
             attr = getattr(target, attr_name)

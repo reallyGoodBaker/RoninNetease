@@ -1,7 +1,7 @@
 # coding=utf-8
 from .basic import compClient, compServer, isServer, clientApi, serverApi
 from time import time
-from types import *
+from types import FunctionType, GeneratorType
 from functools import wraps
 from .unreliable import Unreliable
 from .annotation import AnnotationHelper
@@ -53,7 +53,7 @@ class Scheduler:
 
 
     def _getTaskQueue(self, scheduleFlag):
-        # type: (str) -> list[Task]
+        # type: (str) -> list
         queue = self._scheduleQueues.get(scheduleFlag)
         if queue is None:
             queue = []
@@ -266,7 +266,7 @@ class Future(Unreliable):
     def __init__(self, executor):
         Unreliable.__init__(self)
         self.executor = executor
-        self.result = None
+        self.result = tuple() # type: tuple
         self.status = Future.PENDING
         self._done = []
         self._expected = []

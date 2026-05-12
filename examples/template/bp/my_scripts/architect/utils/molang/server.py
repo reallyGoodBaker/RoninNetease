@@ -12,7 +12,7 @@ class NamedProperty(MolangMutable, Unreliable):
     def _molang(self, actorId):
         return compServer.CreateQueryVariable(actorId)
 
-    def getValue(self, actorId):
+    def getValue(self, actorId): # type: ignore
         result = self._molang(actorId).EvalMolangExpression("v.property('{}')".format(self.name))
         if result['error']:
             self._handleError(result['error'])

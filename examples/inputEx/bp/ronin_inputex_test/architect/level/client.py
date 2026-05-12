@@ -21,7 +21,7 @@ class LevelClient:
         self.chunkSource = compClient.CreateChunkSource(levelId)
         self.configClient = compClient.CreateConfigClient(levelId)
         self.customAudio = compClient.CreateCustomAudio(levelId)
-        self.dimension = compClient.CreateDimension(levelId)
+        self.dimension = compClient.CreateDimension(levelId) # type: ignore
         self.drawing = compClient.CreateDrawing(levelId)
         self.fog = compClient.CreateFog(levelId)
         self.game = compClient.CreateGame(levelId)
@@ -40,6 +40,7 @@ class LevelClient:
 
     @staticmethod
     def getInstance():
+        # type: () -> LevelClient
         if not hasattr(LevelClient, '_inst'):
-            LevelClient._inst = LevelClient()
-        return LevelClient._inst
+            LevelClient._inst = LevelClient() # type: ignore
+        return LevelClient._inst # type: ignore

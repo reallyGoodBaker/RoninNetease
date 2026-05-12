@@ -13,6 +13,8 @@ from ..event.client import event as eventClient
 from ..event.server import event as eventServer
 from ..conf import EVENT_LISTENER, CUSTOM_EVENT, SYSTEM_SCHED_ANNO, SCHED_EVENT
 
+from .typeHelper import castTo
+
 
 SYSTEM_CLIENT_NAME = '_ShadowSystemClient'
 SYSTEM_SERVER_NAME = '_ShadowSystemServer'
@@ -56,9 +58,9 @@ class SubsystemManager:
         getConf = modConf()
         engine = getConf('MOD_ENGINE_NAME')
         sysName = getConf('MOD_SYSTEM_NAME')
-        existed = clientApi.GetSystem(engine, sysName)
-        manager = existed.getManager() if existed else SubsystemManager(
-            clientApi.RegisterSystem(engine, sysName, cls.__module__ + '.' + SYSTEM_CLIENT_NAME),
+        existed = clientApi.GetSystem(engine, sysName) # type: ignore
+        manager = existed.getManager() if existed else SubsystemManager( # type: ignore
+            clientApi.RegisterSystem(engine, sysName, cls.__module__ + '.' + SYSTEM_CLIENT_NAME), # type: ignore
             engine, sysName
         )
         # 在manager之前初始化，否则无法监听组件注册和子系统变更
@@ -78,7 +80,7 @@ class SubsystemManager:
         engine = MOD_ENGINE_NAME
         sysName = MOD_SYSTEM_NAME
         existed = serverApi.GetSystem(engine, sysName)
-        manager = existed.getManager() if existed else SubsystemManager(
+        manager = existed.getManager() if existed else SubsystemManager( # type: ignore
             serverApi.RegisterSystem(engine, sysName, cls.__module__ + '.' + SYSTEM_SERVER_NAME),
             engine, sysName
         )
@@ -91,7 +93,7 @@ class SubsystemManager:
             manager.rawSysName,
             'LoadServerAddonScriptsAfter',
             listener,
-            listener.fn
+            listener.fn # type: ignore
         )
         return manager
 
@@ -126,7 +128,7 @@ class SubsystemManager:
 
     def _importModules(self, isHost):
         getConf = modConf()
-        for module in getConf('MOD_{}_MODULES'.format('SERVER' if isHost else 'CLIENT')):
+        for module in getConf('MOD_{}_MODULES'.format('SERVER' if isHost else 'CLIENT')): # type: ignore
             importer = serverApi if isHost else clientApi
             importer.ImportModule(self._relative(module))
 
@@ -187,12 +189,12 @@ class SubsystemManager:
 
     def getSubsystem(self, subsystemCls):
         # type: (object) -> 'Subsystem'
-        return self.getSubsystems().get(subsystemCls if type(subsystemCls) is str else subsystemCls.__name__)
+        return self.getSubsystems().get(subsystemCls if type(subsystemCls) is str else subsystemCls.__name__) # type: ignore
 
 
     def getSubsystemByName(self, name):
         # type: (str) -> 'Subsystem'
-        return self.getSubsystems().get(name)
+        return self.getSubsystems().get(name) # type: ignore
 
 
     def removeSubsystem(self, subsystemCls):
@@ -319,7 +321,7 @@ def getSubsystemCls():
 
 class Subsystem(object):
     def __init__(self, system, engine, sysName):
-        # type: (object, str, str) -> 'None'
+        # type: (_ShadowSystemServer | _ShadowSystemClient, str, str) -> 'None'
         self.system = system        # type: _ShadowSystemServer | _ShadowSystemClient
         self.engine = engine        # type: str
         self.sysName = sysName      # type: str
@@ -357,8 +359,8 @@ class Subsystem(object):
     @classmethod
     def getInstance(cls):
         if 1 > 2:
-            return cls(None, None, None)
-        return SubsystemManager.getInstance().getSubsystem(cls)
+            return cls() # type: ignore
+        return SubsystemManager.getInstance().getSubsystem(cls) # type: ignore
 
     def getHost(self):
         # type: () -> _ShadowSystemServer | _ShadowSystemClient
@@ -373,23 +375,23 @@ class Subsystem(object):
         return self.sysName
     
     def on(self, eventName, handler, isCustomEvent=True):
-        # type: (str, function, bool) -> str
+        # type: (str, function, bool) -> None
         return self._addListener(eventName, handler, isCustomEvent)
 
     def off(self, eventName, handler, isCustomEvent=True):
-        # type: (str, function, bool) -> str
+        # type: (str, function, bool) -> None
         return self._removeListener(eventName, handler, isCustomEvent)
 
     def listen(self, eventName, handler):
-        # type: (str, function) -> str
+        # type: (str, function) -> None
         return self._addListener(eventName, handler, False)
 
     def unlisten(self, eventName, handler):
-        # type: (str, function) -> str
+        # type: (str, function) -> None
         return self._removeListener(eventName, handler, False)
 
     def broadcast(self, eventName, eventData):
-        # type: (str, dict) -> str
+        # type: (str, dict) -> None
         self.system.BroadcastEvent(eventName, eventData)
 
     def _addListener(self, eventType, fn, isCustom=False):
@@ -406,7 +408,7 @@ class Subsystem(object):
             eventType = AnnotationHelper.getAnnotation(method, EVENT_LISTENER)
             isCustomEvent = AnnotationHelper.getAnnotation(method, CUSTOM_EVENT) or False
             instMethod = method.__get__(self)
-            self._removeListener(eventType, instMethod, isCustomEvent)
+            self._removeListener(eventType, instMethod, isCustomEvent) # type: ignore
 
     def _addListeners(self):
         methods = AnnotationHelper.findAnnotatedMethods(self, EVENT_LISTENER)
@@ -414,12 +416,12 @@ class Subsystem(object):
             eventType = AnnotationHelper.getAnnotation(method, EVENT_LISTENER)
             isCustomEvent = AnnotationHelper.getAnnotation(method, CUSTOM_EVENT) or False
             instMethod = method.__get__(self)
-            self._addListener(eventType, instMethod, isCustomEvent)
+            self._addListener(eventType, instMethod, isCustomEvent) # type: ignore
 
     def _addSchedMethods(self):
         methods = AnnotationHelper.findAnnotatedMethods(self, SYSTEM_SCHED_ANNO)
         for method in methods:
-            schedType, schedFlag, opt = AnnotationHelper.getAnnotation(method, SYSTEM_SCHED_ANNO)
+            schedType, schedFlag, opt = castTo(AnnotationHelper.getAnnotation(method, SYSTEM_SCHED_ANNO), tuple, str, str, dict)
             instMethod = method.__get__(self)
             _isServer = isServer()
             if schedType == Sched.TYPE_RENDER:
@@ -443,14 +445,15 @@ class Subsystem(object):
         if not reader:
             return
         if schedKey not in self._schedEvents:
-            self._schedEvents[schedKey] = ([], [])
+            schedListeners = ([], []) # type: tuple[list[function], list[function]]
+            self._schedEvents[schedKey] = schedListeners
             def handler(event):
-                reader.ev = event
+                reader.ev = event # type: ignore
                 for stage in self._schedEvents[schedKey]:
                     for fn in stage:
-                        fn()
-                reader.ev = None
-            self.on(eventType, handler, isCustom)
+                        fn()  # type: ignore
+                reader.ev = None  # type: ignore
+            self.on(eventType, handler, isCustom)  # type: ignore
         schedListeners = self._schedEvents[schedKey]
         targetList = schedListeners[0] if schedFlag == SCHED_EVENT else schedListeners[1]
         targetList.append(instMethod)
@@ -459,12 +462,12 @@ class Subsystem(object):
         for schedKey, schedList in self._schedEvents.items():
             eventType, isCustom = schedKey
             for fn in schedList:
-                self.off(eventType, fn, isCustom)
+                self.off(eventType, fn, isCustom) # type: ignore
 
     def _removeSchedMethods(self):
         methods = AnnotationHelper.findAnnotatedMethods(self, SYSTEM_SCHED_ANNO)
         for method in methods:
-            schedType, schedName = AnnotationHelper.getAnnotation(method, SYSTEM_SCHED_ANNO)
+            schedType, schedName = AnnotationHelper.getAnnotation(method, SYSTEM_SCHED_ANNO) # type: ignore
             if schedType == Sched.TYPE_RENDER:
                 SubsystemManager.renderTickSched.removeTask(schedName)
             elif schedType == Sched.TYPE_TICK:
@@ -488,9 +491,9 @@ class Subsystem(object):
             remoteRecord.pop(self.__class__.__name__ + '.' + method.__name__)
 
     def _init(self):
-        SubsystemManager.getInstance()._record(self)
-        self._fixedSchedsToAdd = {} # type: dict[str, function]
-        self._schedEvents = {} # type: dict[str, tuple[list[function], list[function]]]
+        SubsystemManager.getInstance()._record(self) # type: ignore
+        self._fixedSchedsToAdd = {} # type: dict[str, list]
+        self._schedEvents = {} # type: dict[tuple, tuple[list[function], list[function]]]
         self.fixedSchedulers = {} # type: dict[str, SimpleFixedScheduler]
         self._addListeners()
         self._addSchedMethods()
@@ -504,7 +507,7 @@ class Subsystem(object):
         self._removeRemoteFuncs()
         self._removeSchedMethods()
         self._removeListeners()
-        SubsystemManager.getInstance()._removeRecord(self)
+        SubsystemManager.getInstance()._removeRecord(self) # type: ignore
 
     def _addFixedSched(self, schedulerName, schedFlag, method):
         schedList = self._fixedSchedsToAdd.get(schedulerName, [])
@@ -540,56 +543,56 @@ class Subsystem(object):
 class ServerSubsystem(Subsystem):
     def __init__(self, system, engine, sysName):
         # type: (object, str, str) -> 'None'
-        Subsystem.__init__(self, system, engine, sysName)
+        Subsystem.__init__(self, system, engine, sysName) # type: ignore
 
     def sendAllClients(self, eventName, eventData):
-        self.system.BroadcastToAllClient(eventName, eventData)
+        self.system.BroadcastToAllClient(eventName, eventData) # type: ignore
 
     def sendClient(self, targetIds, eventName, eventData):
         if type(targetIds) == str or type(targetIds) == int:
-            self.system.NotifyToClient(targetIds, eventName, eventData)
+            self.system.NotifyToClient(targetIds, eventName, eventData) # type: ignore
             return
 
-        self.system.NotifyToMultiClients(targetIds, eventName, eventData)
+        self.system.NotifyToMultiClients(targetIds, eventName, eventData) # type: ignore
 
     def spawnEntity(self, template, location, rot, isNpc=False, isGlobal=False):
         if type(template) == str:
-            return self.system.CreateEngineEntityByTypeStr(template, location.pos, rot, dimensionId=location.dim, isNpc=isNpc, isGlobal=isGlobal)
+            return self.system.CreateEngineEntityByTypeStr(template, location.pos, rot, dimensionId=location.dim, isNpc=isNpc, isGlobal=isGlobal) # type: ignore
         elif type(template) == dict:
-            return self.system.CreateEngineEntityByNBT(template, location.pos, rot, dimensionId=location.dim, isNpc=isNpc, isGlobal=isGlobal)
+            return self.system.CreateEngineEntityByNBT(template, location.pos, rot, dimensionId=location.dim, isNpc=isNpc, isGlobal=isGlobal) # type: ignore
         return None
         
     def destroyEntity(self, entityId):
         return self.system.DestroyEntity(entityId)
     
     def spawnItem(self, itemDict, location):
-        return self.system.CreateEngineItemEntity(itemDict, dimensionId=location.dim, pos=location.pos)
+        return self.system.CreateEngineItemEntity(itemDict, dimensionId=location.dim, pos=location.pos) # type: ignore
 
 
 class ClientSubsystem(Subsystem):
 
     def sendServer(self, eventName, eventData):
-        self.system.NotifyToServer(eventName, eventData)
+        self.system.NotifyToServer(eventName, eventData) # type: ignore
 
     def spawnEntity(self, typeStr, pos, rot):
         if type(typeStr) == str:
-            return self.system.CreateClientEntityByTypeStr(typeStr, pos, rot)
+            return self.system.CreateClientEntityByTypeStr(typeStr, pos, rot) # type: ignore
         return None
     
     def onRender(self, dt):
         pass
     
     def destroyEntity(self, entityId):
-        self.system.DestroyClientEntity(entityId)
+        self.system.DestroyClientEntity(entityId) # type: ignore
 
     def createSfx(self, path, pos=None, rot=None, scale=None):
-        return self.system.CreateEngineSfx(path, pos, rot, scale)
+        return self.system.CreateEngineSfx(path, pos, rot, scale) # type: ignore
     
     def createParticle(self, path, pos):
-        return self.system.CreateEngineParticle(path, pos)
+        return self.system.CreateEngineParticle(path, pos) # type: ignore
     
     def createEffectBind(self, path, bindEntity, aniName):
-        return self.system.CreateEngineEffectBind(path, bindEntity, aniName)
+        return self.system.CreateEngineEffectBind(path, bindEntity, aniName) # type: ignore
     
     def destroySfx(self, entityId):
         return self.system.DestroyEntity(entityId)
@@ -623,14 +626,13 @@ class subsystem:
 
     @staticmethod
     def _findFirstSubsystem():
-        # type: () -> ClientSubsystem | ServerSubsystem
         if isServer():
             if not subsystem._firstSubsysServer:
-                subsystem._firstSubsysServer = SubsystemManager.getInstance().getSubsystems().values()[0]
+                subsystem._firstSubsysServer = SubsystemManager.getInstance().getSubsystems().values()[0] # type: ignore
             return subsystem._firstSubsysServer
         else:
             if not subsystem._firstSubsysClient:
-                subsystem._firstSubsysClient = SubsystemManager.getInstance().getSubsystems().values()[0]
+                subsystem._firstSubsysClient = SubsystemManager.getInstance().getSubsystems().values()[0] # type: ignore
             return subsystem._firstSubsysClient
 
     @staticmethod
@@ -650,13 +652,13 @@ class subsystem:
 
     @staticmethod
     def spawnServerEntity(template, location, rot, isNpc=False, isGlobal=False):
-        # type: (str, Location, tuple[float, float], bool, bool) -> 'None'
+        # type: (str, Location, tuple[float, float], bool, bool) -> str | None
         serverSubsys = subsystem._findFirstSubsystem() # type: ServerSubsystem
         return serverSubsys.spawnEntity(template, location, rot, isNpc, isGlobal)
 
     @staticmethod
     def spawnClientEntity(template, pos, rot):
-        # type: (str|dict, tuple[float, float, float], tuple[float, float]) -> 'None'
+        # type: (str|dict, tuple[float, float, float], tuple[float, float]) -> str | None
         clientSubsys = subsystem._findFirstSubsystem() # type: ClientSubsystem
         return clientSubsys.spawnEntity(template, pos, rot)
 

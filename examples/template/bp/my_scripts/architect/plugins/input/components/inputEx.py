@@ -5,7 +5,7 @@ from ..utils.inputValue import InputValue
 
 @Component(singleton=True)
 class InputExComponent(BaseCompClient):
-    def onCreate(self, _):
+    def onCreate(self, entityId):
         self.inputMappings = [] # type: list[InputMapping]
         self._rawInputs = {} # type: dict[tuple[str, str], InputValue]
         self.actionValues = {} # type: dict[str, float|tuple[float, float, float]|tuple[float, float]]

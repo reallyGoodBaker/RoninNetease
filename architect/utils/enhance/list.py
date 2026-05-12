@@ -18,7 +18,7 @@ def compact(list):
     # type: (list) -> list
     return [item for item in list if item]
 
-def fill(list, item, start=0, end=None):
+def fill(list, item, start=0, end=None): # type: ignore
     # type: (list, object, int, int) -> list
     if end is None:
         end = len(list)

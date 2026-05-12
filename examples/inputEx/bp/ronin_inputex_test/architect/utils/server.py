@@ -26,12 +26,12 @@ def particle(particle, pos):
     return LevelServer.command.SetCommand('particle {} {} {} {}'.format(particle, x, y, z))
 
 def soundServer(entityId, sound):
-    utilsServer = ServerUtilsSubsys.getInstance() # type: ServerUtilsSubsys
-    utilsServer.playSound(entityId, sound)
+    utilsServer = ServerUtilsSubsys.getInstance() # type: ignore
+    utilsServer.playSound(entityId, sound) # type: ignore
 
 def soundStopServer(entityId, sound):
-    utilsServer = ServerUtilsSubsys.getInstance() # type: ServerUtilsSubsys
-    utilsServer.stopSound(entityId, sound)
+    utilsServer = ServerUtilsSubsys.getInstance() # type: ignore
+    utilsServer.stopSound(entityId, sound) # type: ignore
 
 @SubsystemServer
 class ServerUtilsSubsys(ServerSubsystem):

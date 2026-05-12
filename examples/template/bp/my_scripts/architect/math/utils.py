@@ -47,11 +47,11 @@ def worldPosToScreenPos(worldPoint):
         identity(),
         localViewMatrix(),
         localProjectionMatrix(),
-        screenSize(),
+        screenSize(), # type: ignore
         vec(worldPoint)
     )
 
-def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks, debug=False):
+def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks, debug=False): # type: ignore
     # type: (Matrix, Vector3, RayFilterType, bool) -> Vector3 | None
     """
     只能在客户端使用
@@ -67,8 +67,8 @@ def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks,
     # 先将屏幕坐标转换到裁剪空间
     w, h = screenSize()
     # TODO: 这只是一个近似值
-    nx = (screenPoint.x / w * 2 - 1) * 1
-    ny = (1 - screenPoint.y / h * 2) * 1
+    nx = (screenPoint.x / w * 2 - 1) * 1 # type: ignore
+    ny = (1 - screenPoint.y / h * 2) * 1 # type: ignore
     rayStartNdc = Vector3(nx, ny, -1)
     rayEndNdc = Vector3(nx, ny, 1)
     # 再将裁剪空间坐标转换到世界坐标
@@ -92,10 +92,10 @@ def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks,
     # 计算射线
     result = clientApi.getEntitiesOrBlockFromRay(
         tup(rayStart),
-        tup(normalize(ray)),
-        int(math.ceil(modulo(ray))),
+        tup(normalize(ray)), # type: ignore
+        int(math.ceil(modulo(ray))), # type: ignore
         False,
-        filterType
+        filterType # type: ignore
     )
     if not result:
         return None
@@ -151,7 +151,7 @@ def boxOverlap3dClient(pos, rot, size, debug=False):
         z + radius
     )
     level = LevelClient.getInstance()
-    firstFind = level.game.GetEntitiesInSquareArea(None, xozProjStart, xozProjEnd)
+    firstFind = level.game.GetEntitiesInSquareArea(None, xozProjStart, xozProjEnd) # type: ignore
     _transform = transform(
         identity(),
         vec(pos),
@@ -174,7 +174,7 @@ def boxOverlap3dClient(pos, rot, size, debug=False):
         posComp = compClient.CreatePos(entityId)
         centerPos = div(add(vec(posComp.GetPos()), vec(posComp.GetFootPos())), 2)
         modelCenterPos = tup4(transformPoint(worldMatrix, centerPos))
-        if pointInBox(modelCenterPos, size):
+        if pointInBox(modelCenterPos, size): # type: ignore
             result.append(entityId)
 
     return result
@@ -191,7 +191,7 @@ def boxOverlap3dBouding(start, end, forward, debug=False):
         end[1] - start[1],
         end[2] - start[2]
     )
-    center = tup((vec(start) + vec(end)) / 2)
+    center = tup((vec(start) + vec(end)) / 2) # type: ignore
     return boxOverlap3dClient(
         center,
         (rotX, rotY, 0),
@@ -210,7 +210,7 @@ def boxOverlap3dForward(entityId, size, debug=False):
     rot = clientApi.GetRotFromDir(tup(dir))
     zDist = size[2] / 2
     result = boxOverlap3dClient(
-        add(vec(pos), dir * zDist).ToTuple(),
+        add(vec(pos), dir * zDist).ToTuple(), # type: ignore
         (math.radians(rot[0]), -math.radians(rot[1]), 0), size, debug
     )
     if entityId in result:
@@ -227,7 +227,7 @@ def boxOverlap3dFacing(entityId, size, debug=False):
     rot = compClient.CreateRot(entityId).GetRot()
     dir = clientApi.GetDirFromRot(rot)
     result = boxOverlap3dClient(
-        add(vec(pos), vec(dir) * 2).ToTuple(),
+        add(vec(pos), vec(dir) * 2).ToTuple(), # type: ignore
         (math.radians(rot[0]), -math.radians(rot[1]), 0), size, debug
     )
     result.remove(entityId)
@@ -236,7 +236,7 @@ def boxOverlap3dFacing(entityId, size, debug=False):
 
 def forward(entityId, dist=1):
     x, _, z = clientApi.GetDirFromRot(compClient.CreateRot(entityId).GetRot())
-    return vec((x, 0, z)).Normalized() * dist
+    return vec((x, 0, z)).Normalized() * dist # type: ignore
 
 
 def facing(entityId):
@@ -260,7 +260,7 @@ def around(entityId, radius):
     pos = vec(compServer.CreatePos(entityId).GetPos())
     radiusVec = vec((radius, radius, radius))
     aroundEntities = LevelClient.getInstance().game.GetEntitiesInSquareArea(
-        None, tup(pos - radiusVec), tup(pos + radiusVec)
+        None, tup(pos - radiusVec), tup(pos + radiusVec) # type: ignore
     )
     if entityId in aroundEntities:
         aroundEntities.remove(entityId)

@@ -12,20 +12,20 @@ def identity():
         [0, 1, 0, 0],
         [0, 0, 1, 0],
         [0, 0, 0, 1]
-    ])
+    ])  # type: ignore
 
 def lookAt(eye, target, up):
     # type: (Vector3, Vector3, Vector3) -> Matrix
     # 右手系：相机看向 -Z 方向
-    zaxis = normalize(eye - target)
+    zaxis = normalize(eye - target) # type: ignore
     xaxis = normalize(cross(up, zaxis))
     yaxis = cross(zaxis, xaxis)
     return Matrix.Create([
-        [xaxis.x, xaxis.y, xaxis.z, -dot(xaxis, eye)],
-        [yaxis.x, yaxis.y, yaxis.z, -dot(yaxis, eye)],
-        [zaxis.x, zaxis.y, zaxis.z, -dot(zaxis, eye)],
+        [xaxis.x, xaxis.y, xaxis.z, -dot(xaxis, eye)], # type: ignore
+        [yaxis.x, yaxis.y, yaxis.z, -dot(yaxis, eye)], # type: ignore
+        [zaxis.x, zaxis.y, zaxis.z, -dot(zaxis, eye)], # type: ignore
         [0, 0, 0, 1]
-    ])
+    ]) # type: ignore
 
 def perspective(fov_degrees, aspect, near, far):
     # type: (float, float, float, float) -> Matrix
@@ -44,33 +44,33 @@ def perspective(fov_degrees, aspect, near, far):
         [0, b, 0, 0],
         [0, 0, c, d],
         [0, 0, -1, 0]
-    ])
+    ]) # type: ignore
 
 def multiply(a, b):
     # type: (Matrix, Matrix) -> Matrix
-    return Matrix.matrix4_multiply(a, b)
+    return Matrix.matrix4_multiply(a, b) # type: ignore
 
 def transpose(m):
     # type: (Matrix) -> Matrix
-    return m.Transpose()
+    return m.Transpose() # type: ignore
 
 def inverse(m):
     # type: (Matrix) -> Matrix
-    return m.Inverse()
+    return m.Inverse() # type: ignore
 
 def translate(v):
     # type: (Vector3) -> Matrix
-    x, y, z = v.ToTuple()
+    x, y, z = v.ToTuple() # type: ignore
     return Matrix.Create([
         [1, 0, 0, x],
         [0, 1, 0, y],
         [0, 0, 1, z],
         [0, 0, 0, 1]
-    ])
+    ]) # type: ignore
 
 def rotateAxis(axis, angle):
     # type: (Vector3, float) -> Matrix
-    x, y, z = normalize(axis).ToTuple()
+    x, y, z = normalize(axis).ToTuple() # type: ignore
     c = math.cos(angle)
     s = math.sin(angle)
     return Matrix.Create([
@@ -78,7 +78,7 @@ def rotateAxis(axis, angle):
         [(1 - c) * x * y + s * z, c + (1 - c) * y * y, (1 - c) * y * z - s * x, 0],
         [(1 - c) * x * z - s * y, (1 - c) * y * z + s * x, c + (1 - c) * z * z, 0],
         [0, 0, 0, 1]
-    ])
+    ]) # type: ignore
 
 def rotateX(angle):
     # type: (float) -> Matrix
@@ -89,7 +89,7 @@ def rotateX(angle):
         [0, c, -s, 0],
         [0, s, c, 0],
         [0, 0, 0, 1]
-    ])
+    ]) # type: ignore
 
 def rotateY(angle):
     # type: (float) -> Matrix
@@ -100,7 +100,7 @@ def rotateY(angle):
         [0, 1, 0, 0],
         [-s, 0, c, 0],
         [0, 0, 0, 1]
-    ])
+    ]) # type: ignore
 
 def rotateZ(angle):
     # type: (float) -> Matrix
@@ -111,7 +111,7 @@ def rotateZ(angle):
         [s, c, 0, 0],
         [0, 0, 1, 0],
         [0, 0, 0, 1]
-    ])
+    ]) # type: ignore
 
 def rotateXYZ(roll, yaw, pitch):
     # type: (float, float, float) -> Matrix
@@ -119,17 +119,17 @@ def rotateXYZ(roll, yaw, pitch):
     """
     右手系摄像机正方向为 -Z 轴
     """
-    return rotateZ(roll) * rotateY(yaw) * rotateX(pitch)
+    return rotateZ(roll) * rotateY(yaw) * rotateX(pitch) # type: ignore
 
 def scale(s):
     # type: (Vector3) -> Matrix
-    x, y, z = s.ToTuple()
+    x, y, z = s.ToTuple() # type: ignore
     return Matrix.Create([
         [x, 0, 0, 0],
         [0, y, 0, 0],
         [0, 0, z, 0],
         [0, 0, 0, 1]
-    ])
+    ]) # type: ignore
 
 def transform(m, t, r, s):
     # type: (Matrix, Vector3, Vector3, Vector3) -> Matrix
@@ -141,8 +141,8 @@ def transform(m, t, r, s):
     """
     # 注意：rotateXYZ 函数期望参数顺序为 (roll, yaw, pitch)
     # 其中 roll = r.z（绕Z轴）, yaw = r.y（绕Y轴）, pitch = r.x（绕X轴）
-    rx, ry, rz = r.ToTuple()
-    return m * translate(t) * rotateXYZ(rz, ry, rx) * scale(s)
+    rx, ry, rz = r.ToTuple() # type: ignore
+    return m * translate(t) * rotateXYZ(rz, ry, rx) * scale(s) # type: ignore
 
 def transformPoint(m, point):
     # type: (Matrix, Vector3) -> Vector4
@@ -155,12 +155,12 @@ def transformPoint(m, point):
     """
     # 手动矩阵-向量乘法
     # 矩阵访问方法：m[row, col]，4x4矩阵，row和col从0到3
-    x, y, z = point.ToTuple()
+    x, y, z = point.ToTuple() # type: ignore
 
-    rx = m[0,0]*x + m[0,1]*y + m[0,2]*z + m[0,3]*1
-    ry = m[1,0]*x + m[1,1]*y + m[1,2]*z + m[1,3]*1
-    rz = m[2,0]*x + m[2,1]*y + m[2,2]*z + m[2,3]*1
-    rw = m[3,0]*x + m[3,1]*y + m[3,2]*z + m[3,3]*1
+    rx = m[0,0]*x + m[0,1]*y + m[0,2]*z + m[0,3]*1 # type: ignore
+    ry = m[1,0]*x + m[1,1]*y + m[1,2]*z + m[1,3]*1 # type: ignore
+    rz = m[2,0]*x + m[2,1]*y + m[2,2]*z + m[2,3]*1 # type: ignore
+    rw = m[3,0]*x + m[3,1]*y + m[3,2]*z + m[3,3]*1 # type: ignore
 
     return vec4(rx, ry, rz, rw)
 
@@ -171,7 +171,7 @@ def transformVector(m, vector):
     将向量表示为齐次坐标 [x, y, z, 0] 并进行矩阵乘法
     返回变换后的 Vector3，适用于法线、方向等
     """
-    x, y, z = vector.ToTuple()
+    x, y, z = vector.ToTuple() # type: ignore
     # 忽略平移部分（因为w=0）
     rx = m[0,0]*x + m[0,1]*y + m[0,2]*z
     ry = m[1,0]*x + m[1,1]*y + m[1,2]*z

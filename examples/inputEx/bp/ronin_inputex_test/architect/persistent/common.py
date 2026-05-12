@@ -40,14 +40,14 @@ class DatabaseView:
         self.key = key
 
     def get(self, item, default=None):
-        v = self.cache.get(item)
+        v = self.cache.get(item) # type: ignore
         if v is None:
             self.set(item, default)
             return default
         return v
     
     def set(self, key, value):
-        self.cache[key] = value
+        self.cache[key] = value # type: ignore
         self.db.setData(self.key, self.cache)
 
     def has(self, item):
@@ -55,7 +55,7 @@ class DatabaseView:
 
     def batch(self, updater):
         cache = self.cache
-        for k, v in self.cache.items():
+        for k, v in self.cache.items(): # type: ignore
             updater(v, k, cache)
 
 
@@ -67,23 +67,23 @@ class DatabaseArrayView:
         self.key = key
 
     def get(self, item, default=None):
-        v = self.cache[item]
+        v = self.cache[item] # type: ignore
         if v is None:
             self.set(item, default)
             return default
         return v
     
     def set(self, key, value):
-        self.cache[key] = value
+        self.cache[key] = value # type: ignore
         self.db.setData(self.key, self.cache)
 
     def batch(self, updater):
         cache = self.cache
-        for i, v in enumerate(self.cache):
+        for i, v in enumerate(self.cache): # type: ignore
             updater(v, i, cache)
 
     def size(self):
-        return len(self.cache)
+        return len(self.cache) # type: ignore
 
     def iter(self):
         return self.cache

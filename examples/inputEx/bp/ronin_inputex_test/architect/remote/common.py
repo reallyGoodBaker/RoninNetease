@@ -216,7 +216,7 @@ class _RemoteClient(object):
         def _timeout():
             del _clientRets[retId]
             reject('timeout')
-        timer = LevelClient.getInstance().game.AddTimer(3, _timeout)
+        timer = LevelClient.getInstance().game.AddTimer(3, _timeout) # type: ignore
 
         def _recieveReturn(result, err):
             LevelClient.getInstance().game.CancelTimer(timer)
@@ -266,7 +266,7 @@ class _RemoteServer(object):
             del _serverRets[retId]
             reject('timeout')
 
-        timer = LevelServer.game.AddTimer(3, _timeout)
+        timer = LevelServer.game.AddTimer(3, _timeout) # type: ignore
 
         def _recieveReturn(result, err):
             LevelServer.game.CancelTimer(timer)

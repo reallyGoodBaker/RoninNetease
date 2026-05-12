@@ -72,11 +72,12 @@ def _notifyRegisterComponent(compCls):
 
 class _PluginHost(object):
     def __init__(self, name, ver, author, desc, compCls):
+        # type: (str, list[int], str, str, type[PluginBase]) -> None
         self.name = name
         self.ver = ver
         self.author = author
         self.desc = desc
-        self.compCls = compCls # type: type[PluginBase]
+        self.compCls = compCls
         self._inst = None
 
     def load(self, manager):
@@ -121,7 +122,10 @@ def pluginPath(name):
 
 def _scanPlugins():
     getConf = modConf()
-    for _name in getConf('PLUGINS'):
+    _plugins = getConf('PLUGINS')
+    if _plugins is None:
+        return
+    for _name in _plugins:
         _absPath = pluginPath(_name)
         if isServer():
             serverApi.ImportModule(_absPath)
@@ -145,7 +149,7 @@ def _readyPlugins(manager):
         try:
             _host.onReady(manager)
         except Exception as e:
-            print('[ERROR] Failed to ready plugin ' + _host.name)
+            print('[ERROR] Failed to ready plugin ' + _host.__class__.__name__)
 
 
 MOD_CONST_NAMES = [
@@ -163,19 +167,22 @@ MOD_ARRAYS = [
 def modConf():
     from .. import conf
     _confModule = serverApi.ImportModule(__modname__ + '.conf') if isServer() else clientApi.ImportModule(__modname__ + '.conf')
-    engineConf = conf.__dict__
-    userConf = _confModule.__dict__
+    engineConf = conf.__dict__ # type: dict[str, str | list[str]]
+    userConf = _confModule.__dict__ # type: dict[str, str | list[str]]
     def getter(key):
+        # type: (str) -> str | list[str] | set[str] | None
         if key in MOD_CONST_NAMES:
-            _user = userConf.get(key)
+            _user = userConf.get(key) # type: ignore
             if _user is None:
                 return engineConf.get(key)
             return _user
         elif key in MOD_ARRAYS:
-            _user = userConf.get(key)
+            _user = userConf.get(key) # type: ignore
             if _user is None:
-                return getattr(conf, key)
-            return set(engineConf.get(key) + _user)
+                return engineConf.get(key)
+            rawConf = engineConf.get(key) # type: ignore
+            if isinstance(_user, list) and isinstance(rawConf, list):
+                return set(rawConf + _user)
         else:
             return None
     return getter

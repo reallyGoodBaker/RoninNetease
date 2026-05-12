@@ -16,4 +16,4 @@ class ServerKVDatabase(DBSource):
         self.data.SaveExtraData()
 
     def clearData(self):
-        self.data.CleanExtraData()
+        self.data.CleanExtraData() # type: ignore

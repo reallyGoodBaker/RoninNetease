@@ -1,9 +1,13 @@
+from types import FunctionType
+
 from .annotation import AnnotationHelper
 from ..conf import Aspects, ASPECT
 
+from .typeHelper import castTo
+    
 
 def Before(methodName):
-    # type: (str) -> AnnotationHelper
+    # type: (str) -> FunctionType
     """
     :example:
     ```
@@ -20,7 +24,7 @@ def Before(methodName):
 
 
 def After(methodName):
-    # type: (str) -> AnnotationHelper
+    # type: (str) -> FunctionType
     """
     :example:
     ```
@@ -37,7 +41,7 @@ def After(methodName):
 
 
 def AfterReturning(methodName):
-    # type: (str) -> AnnotationHelper
+    # type: (str) -> FunctionType
     """
     :example:
     ```
@@ -54,7 +58,7 @@ def AfterReturning(methodName):
 
 
 def AfterThrowing(methodName):
-    # type: (str) -> AnnotationHelper
+    # type: (str) -> FunctionType
     """
     :example:
     ```
@@ -71,7 +75,7 @@ def AfterThrowing(methodName):
 
 
 def Replace(methodName):
-    # type: (str) -> AnnotationHelper
+    # type: (str) -> FunctionType
     """
     :example:
     ```
@@ -160,7 +164,7 @@ class AspectUtils(object):
 
 
 def Aspect(target):
-    # type: (type) -> type
+    # type: (type) -> FunctionType
     def wrapper(cls):
         aspectInst = cls()
         # 只允许注册一次，之后的更改无效
@@ -168,7 +172,7 @@ def Aspect(target):
             return cls
         AspectUtils._aspectInst[cls] = aspectInst
         for method in AnnotationHelper.findAnnotatedMethods(cls, ASPECT):
-            aspect, methodName = AnnotationHelper.getAnnotation(method, ASPECT)
+            aspect, methodName = castTo(AnnotationHelper.getAnnotation(method, ASPECT), tuple, str, str)
             if aspect == Aspects.Before:
                 AspectUtils.before(target, methodName, method)
             elif aspect == Aspects.After:

@@ -62,7 +62,7 @@ def getComponentAnnotation(cls):
 
 def isPersistComponent(cls):
     ann = getComponentAnnotation(cls)
-    return ann is not None and ann.get('persist', False)
+    return ann is not None and ann.get('persist', False) # type: ignore
 
 class Marker:
     def __init__(self):
@@ -111,8 +111,8 @@ def _handlePersistKeys(comp, entityId):
     persistInfo = AnnotationHelper.getAnnotation(cls, PERSIST_INFO)
     if persistInfo is None:
         return
-    keys = persistInfo.get('keys', [])
-    isGlobal = persistInfo.get('global', False)
+    keys = persistInfo.get('keys', []) # type: ignore
+    isGlobal = persistInfo.get('global', False) # type: ignore
     db = ServerKVDatabase.getInstance() if isServer() else (ClientKVDatabaseGlobal.getInstance() if isGlobal else ClientKVDatabase.getInstance())
     for k in keys:
         dataKey = cls.__name__ + entityId + k
@@ -134,10 +134,10 @@ def createComponent(entityId, cls):
     if isPersistComponent(cls):
         _handlePersistKeys(comp, entityId)
         if hasattr(comp, 'loadData'):
-            comp.loadData(entityId)
+            comp.loadData(entityId) # type: ignore
 
     if hasattr(comp, 'onCreate'):
-        comp.onCreate(entityId)
+        comp.onCreate(entityId) # type: ignore
 
     _getEntityMarker().mark(entityId)
     return comp
@@ -198,15 +198,15 @@ def _findNamedComp(entityId, name):
             return None
 
 def getComponent(entityId, clsList):
-    # type: (str, list[type|str]) -> list
+    # type: (str, list[type|str]) -> list | None
     result = []
     for c in iter(clsList):
         if c is None:
             result.append(None)
             continue
         notStr = type(c) != str
-        compKey = c.__name__ if notStr else c
-        _entityId = singletonId() if notStr and getComponentAnnotation(c)['singleton'] else entityId
+        compKey = c.__name__ if notStr else c # type: ignore
+        _entityId = singletonId() if notStr and getComponentAnnotation(c)['singleton'] else entityId # type: ignore
         comp = _findNamedComp(_entityId, compKey)
         if comp:
             result.append(comp)
@@ -261,7 +261,7 @@ def hasComponent(entityId, *desc):
             if (entityId, key) not in components:
                 return False
         else:
-            if (entityId, key.__name__) not in components:
+            if (entityId, key.__name__) not in components: # type: ignore
                 return False
     return True
 

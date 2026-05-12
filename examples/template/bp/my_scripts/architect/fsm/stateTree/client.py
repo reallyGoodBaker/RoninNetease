@@ -15,7 +15,7 @@ class StateTreeClientSubsystem(ClientSubsystem):
     def onInit(self):
         self.canTick = True
 
-    def onUpdate(self, _):
+    def onUpdate(self, dt):
         for comp in StateTreeClientSubsystem._comps:
             if comp.enabled:
                 comp.execute()

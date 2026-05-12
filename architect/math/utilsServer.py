@@ -50,7 +50,7 @@ def boxOverlap3dServer(loc, rot, size):
         posComp = compServer.CreatePos(entityId)
         centerPos = div(add(vec(posComp.GetPos()), vec(posComp.GetFootPos())), 2)
         modelCenterPos = tup4(transformPoint(worldMatrix, centerPos))
-        if pointInBox(modelCenterPos, size):
+        if pointInBox(modelCenterPos, size): # type: ignore
             result.append(entityId)
 
     return result
@@ -64,10 +64,10 @@ def boxOverlap3dForward(entityId, size):
     pos = compServer.CreatePos(entityId).GetPos()
     dimId = compServer.CreateDimension(entityId).GetEntityDimensionId()
     dir = forward(entityId)
-    rot = serverApi.GetRotFromDir(tup(dir))
+    rot = serverApi.GetRotFromDir(tup(dir)) # type: ignore
     zDist = size[2] / 2
     result = boxOverlap3dServer(
-        Location(add(vec(pos), dir * zDist).ToTuple(), dimId),
+        Location(add(vec(pos), dir * zDist).ToTuple(), dimId), # type: ignore
         (math.radians(rot[0]), -math.radians(rot[1]), 0), size
     )
     if entityId in result:
@@ -94,5 +94,5 @@ def around(loc, radius):
     dim = loc.dim
     radiusVec = vec((radius, radius, radius))
     return LevelServer.game.GetEntitiesInSquareArea(
-        None, tup(pos - radiusVec), tup(pos + radiusVec), dim
+        None, tup(pos - radiusVec), tup(pos + radiusVec), dim # type: ignore
     )

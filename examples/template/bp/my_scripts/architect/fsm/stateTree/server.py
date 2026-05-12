@@ -13,7 +13,7 @@ class StateTreeCompServer(BaseCompServer, StateTree):
 
 class StateNodeServer(StateNode):
     def __init__(self, name='unknown', subsystem=None):
-        # type: (str, ServerSubsystem) -> None
+        # type: (str, ServerSubsystem|None) -> None
         StateNode.__init__(self, name)
         self.subsys = subsystem
 
@@ -68,7 +68,7 @@ class StateTreeServerSubsystem(ServerSubsystem):
     def onInit(self):
         self.canTick = True
 
-    def onUpdate(self, _):
+    def onUpdate(self, dt):
         for comp in StateTreeServerSubsystem._comps:
             if comp.enabled:
                 comp.execute()
