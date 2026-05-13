@@ -1,20 +1,17 @@
-if 1 > 2:
-    from .subsystem import SubsystemManager, Subsystem
-
-from ..conf import PLUGINS
+from .subsystem import SubsystemManager, Subsystem, _ShadowSystemClient, _ShadowSystemServer
 from .basic import isServer, clientApi, serverApi
-from .annotation import AnnotationHelper
+from .contextRecorder import ContextRecorder, Context
+from .configurator import modConf, __modname__, __framework__, __dirname__, VendorPlugins, UserPlugins
 
-class _ModuleLocator(object):
-    pass
+from ..utils.enhance.fn import compVer
 
-
-__modname__ = _ModuleLocator.__module__[:_ModuleLocator.__module__.find('.')]
-__framework__ = __modname__ + '.architect'
-__dirname__ = __framework__ + '.core'
 
 
 class PluginBase(object):
+
+    def onCreate(self):
+        # type: () -> None
+        pass
 
     def onAttach(self, manager):
         # type: (SubsystemManager) -> None
@@ -36,6 +33,10 @@ class PluginBase(object):
         # type: (Subsystem) -> None
         pass
 
+    def onDestroy(self):
+        # type: () -> None
+        pass
+
 
 _REGISTERED_SER_PLUGINS = {} # type: dict[str, _PluginHost]
 _REGISTERED_CLI_PLUGINS = {} # type: dict[str, _PluginHost]
@@ -54,21 +55,9 @@ def hasPlugin(name):
     # type: (str) -> bool
     return name in _plugins()
 
-def _notifyAddSubsystem(subsystem):
-    # type: (Subsystem) -> None
-    for _host in _plugins().values():
-        _host.onAddSubsystem(subsystem)
 
-def _notifyRemoveSubsystem(subsystem):
-    # type: (Subsystem) -> None
-    for _host in _plugins().values():
-        _host.onRemoveSubsystem(subsystem)
-
-def _notifyRegisterComponent(compCls):
-    # type: (list[type]) -> None
-    for _host in _plugins().values():
-        _host.onRegisterComponent(compCls)
-
+depComps = ContextRecorder.get('depComps')
+depSubsystems = ContextRecorder.get('depSubsystems')
 
 class _PluginHost(object):
     def __init__(self, name, ver, author, desc, compCls):
@@ -79,6 +68,52 @@ class _PluginHost(object):
         self.desc = desc
         self.compCls = compCls
         self._inst = None
+        self._capturedComps = []
+        self._capturedSubsystems = []
+
+    def create(self):
+        loadedPlugins = _plugins()
+        if self.name in loadedPlugins:
+            print('[INFO] Plugin {} already loaded')
+            return
+        compModule = self.compCls.__module__
+        depComps.start(compModule)
+        depSubsystems.start(compModule)
+        try:
+            _inst = self.compCls()
+            _inst.onCreate()
+        finally:
+            depComps.stop()
+            depSubsystems.stop()
+        # 按模块前缀扫描所有 context 记录，确保被其他插件预导入的组件/子系统也能被捕获
+        prefix = compModule.rsplit('.', 1)[0]
+        seen = set()
+        for ctx in Context._contexts.values():
+            for (cat, cls), _ in ctx.iter():
+                if not hasattr(cls, '__module__'):
+                    continue
+                if cls in seen:
+                    continue
+                if not cls.__module__.startswith(prefix):
+                    continue
+                seen.add(cls)
+                if cat == 'depSubsystems':
+                    self._capturedSubsystems.append(cls)
+                elif cat == 'depComps':
+                    self._capturedComps.append(cls)
+        self._inst = _inst
+        return _inst
+    
+    def destroy(self):
+        if self._inst is None:
+            return
+        self._inst.onDestroy()
+        if self._capturedComps:
+            for _comp in self._capturedComps:
+                pass
+        if self._capturedSubsystems:
+            for _sys in self._capturedSubsystems:
+                LoaderUtils.getManager().removeSubsystem(_sys)
 
     def load(self, manager):
         # type: (SubsystemManager) -> None
@@ -89,10 +124,27 @@ class _PluginHost(object):
         if self.name in _LOADED_PLUGINS:
             print('[INFO] Plugin {} already loaded')
             return
-        _inst = self.compCls()
+        _inst = self._inst
         _inst.onAttach(manager)
         _LOADED_PLUGINS[self.name] = _inst
         self._inst = _inst
+
+
+def _upgradePlugin(pluginHost, newCls, name, ver, author, desc):
+    # type: (_PluginHost, type[PluginBase], str, list[int], str, str) -> None
+    pluginHost.compCls = newCls
+    pluginHost.ver = ver
+    pluginHost.author = author
+    pluginHost.desc = desc
+    pluginHost.name = name
+
+    loadedPlugins = _plugins()
+    if name in loadedPlugins:
+        pluginHost._inst.onDestroy()
+        _inst = pluginHost.create()
+        loadedPlugins[name] = _inst
+        from .subsystem import SubsystemManager
+        _inst.onAttach(SubsystemManager.getInstance())
 
 
 def Plugin(name, ver=[0, 0, 1], author='Unknown', desc='Unknown'):
@@ -101,12 +153,13 @@ def Plugin(name, ver=[0, 0, 1], author='Unknown', desc='Unknown'):
         registerList = _REGISTERED_SER_PLUGINS if isServer() else _REGISTERED_CLI_PLUGINS
         if cls not in registerList:
             registerList[name] = _PluginHost(name, ver, author, desc, cls)
+            registerList[name].create()
+        else:
+            registered = registerList[name]
+            if compVer(ver, registered.ver) > 0:
+                _upgradePlugin(registered, cls, name, ver, author, desc)
         return cls
     return _decorator
-
-
-VendorPlugins = __dirname__[:__dirname__.rfind('.')] + '.plugins'
-UserPlugins = __modname__ + '.plugins'
 
 
 def pluginPath(name):
@@ -120,23 +173,30 @@ def pluginPath(name):
     ) + ('.server' if isServer() else '.client')
 
 
-def _scanPlugins():
+def _scanPlugins(isHost):
+    # type: (bool) -> None
     getConf = modConf()
     _plugins = getConf('PLUGINS')
     if _plugins is None:
         return
     for _name in _plugins:
         _absPath = pluginPath(_name)
-        if isServer():
-            serverApi.ImportModule(_absPath)
-        else:
-            clientApi.ImportModule(_absPath)
+        depComps.start(_absPath)
+        depSubsystems.start(_absPath)
+        try:
+            if isHost:
+                serverApi.ImportModule(_absPath)
+            else:
+                clientApi.ImportModule(_absPath)
+        finally:
+            depComps.stop()
+            depSubsystems.stop()
 
 
-def _loadPlugins(manager):
-    # type: (SubsystemManager) -> None
-    _scanPlugins()
-    registerList = _REGISTERED_SER_PLUGINS if isServer() else _REGISTERED_CLI_PLUGINS
+def _loadPlugins(manager, isHost):
+    # type: (SubsystemManager, bool) -> None
+    _scanPlugins(isHost)
+    registerList = _REGISTERED_SER_PLUGINS if isHost else _REGISTERED_CLI_PLUGINS
     for _name, _host in registerList.items():
         try:
             _host.load(manager)
@@ -152,41 +212,132 @@ def _readyPlugins(manager):
             print('[ERROR] Failed to ready plugin ' + _host.__class__.__name__)
 
 
-MOD_CONST_NAMES = [
-    'MOD_NAME',
-    'MOD_VERSION',
-    'MOD_ENGINE_NAME',
-    'MOD_SYSTEM_NAME',
-]
-MOD_ARRAYS = [
-    'MOD_SERVER_MODULES',
-    'MOD_CLIENT_MODULES',
-    'PLUGINS',
-]
 
-def modConf():
-    from .. import conf
-    _confModule = serverApi.ImportModule(__modname__ + '.conf') if isServer() else clientApi.ImportModule(__modname__ + '.conf')
-    engineConf = conf.__dict__ # type: dict[str, str | list[str]]
-    userConf = _confModule.__dict__ # type: dict[str, str | list[str]]
-    def getter(key):
-        # type: (str) -> str | list[str] | set[str] | None
-        if key in MOD_CONST_NAMES:
-            _user = userConf.get(key) # type: ignore
-            if _user is None:
-                return engineConf.get(key)
-            return _user
-        elif key in MOD_ARRAYS:
-            _user = userConf.get(key) # type: ignore
-            if _user is None:
-                return engineConf.get(key)
-            rawConf = engineConf.get(key) # type: ignore
-            if isinstance(_user, list) and isinstance(rawConf, list):
-                return set(rawConf + _user)
+ServerSystem = serverApi.GetServerSystemCls()
+ClientSystem = clientApi.GetClientSystemCls()
+
+RONIN_ENGINE = 'RoninFramework'
+RONIN_SYSTEM_CLI = 'LoaderClient'
+RONIN_SYSTEM_SER = 'LoaderServer'
+
+conf = modConf()
+
+CURRENT_ENGINE = conf('MOD_ENGINE_NAME')
+CURRENT_SYSTEM = conf('MOD_SYSTEM_NAME')
+
+
+
+class FrameworkLoaderServer(ServerSystem):
+    _recordedSystems = {} # type: dict[tuple[str, str], SubsystemManager]
+
+    @classmethod
+    def getLoader(cls):
+        # type: () -> FrameworkLoaderServer
+        loaderServer = serverApi.GetSystem(RONIN_ENGINE, RONIN_SYSTEM_SER)
+        if not loaderServer:
+            loaderServer = serverApi.RegisterSystem(
+                RONIN_ENGINE,
+                RONIN_SYSTEM_SER,
+                cls.__module__ + '.' + cls.__name__
+            )
+        return loaderServer
+
+    def recordSystem(self, engine, system, manager):
+        self._recordedSystems[(engine, system)] = manager
+
+    def getManager(self, engine=CURRENT_ENGINE, system=CURRENT_SYSTEM):
+        # type: (str, str) -> SubsystemManager | None
+        visitor = (engine, system)
+        return self._recordedSystems.get(visitor, None)
+
+
+class FrameworkLoaderClient(ClientSystem):
+    _recordedSystems = {} # type: dict[tuple[str, str], SubsystemManager]
+
+    @classmethod
+    def getLoader(cls):
+        # type: () -> FrameworkLoaderClient
+        loaderClient = clientApi.GetSystem(RONIN_ENGINE, RONIN_SYSTEM_CLI)
+        if not loaderClient:
+            loaderClient = clientApi.RegisterSystem(
+                RONIN_ENGINE,
+                RONIN_SYSTEM_CLI,
+                cls.__module__ + '.' + cls.__name__
+            )
+        return loaderClient
+
+    def recordSystem(self, engine, system, manager):
+        self._recordedSystems[(engine, system)] = manager
+
+    def getManager(self, engine=CURRENT_ENGINE, system=CURRENT_SYSTEM):
+        # type: (str, str) -> SubsystemManager | None
+        visitor = (engine, system)
+        return self._recordedSystems.get(visitor, None)
+
+
+class LoaderUtils(object):
+
+    @staticmethod
+    def getLoader():
+        if isServer():
+            return FrameworkLoaderServer.getLoader()
         else:
-            return None
-    return getter
+            return FrameworkLoaderClient.getLoader()
 
-def animMeta(animName):
-    from ...assets.animMeta import AnimMeta
-    return AnimMeta[animName]
+    @staticmethod
+    def getManager(engine=CURRENT_ENGINE, system=CURRENT_SYSTEM):
+        # type: (str, str) -> SubsystemManager | None
+        return LoaderUtils.getLoader().getManager(engine, system)
+    
+    @staticmethod
+    def createManager():
+        # type: () -> SubsystemManager
+        loader = LoaderUtils.getLoader()
+        isHost = isServer()
+        api = serverApi if isHost else clientApi
+        shadowSystemCls = _ShadowSystemServer if isHost else _ShadowSystemClient
+        system = api.GetSystem(CURRENT_ENGINE, CURRENT_SYSTEM) or api.RegisterSystem(CURRENT_ENGINE, CURRENT_SYSTEM, shadowSystemCls.__module__ + '.' + shadowSystemCls.__name__)
+        manager = SubsystemManager(system, CURRENT_ENGINE, CURRENT_SYSTEM)
+        loader.recordSystem(CURRENT_ENGINE, CURRENT_SYSTEM, manager)
+        SubsystemManager.getInstance = staticmethod(lambda: manager)
+        return manager
+
+
+def SubsystemClient(subsystemCls):
+    """
+    Decorator to auto register subsystem class
+    """
+    manager = LoaderUtils.getManager()
+    if not manager:
+        raise RuntimeError('错误的加载顺序: SubsystemClient 装饰器被调用时，SubsystemManager 尚未创建，请确保在引擎加载完成后再使用 SubsystemClient 装饰器')
+    if not isServer():
+        depSubsystems.record(subsystemCls)
+        manager.registerSubsystem(subsystemCls)
+    return subsystemCls
+
+
+def SubsystemServer(subsystemCls):
+    """
+    Decorator to auto register subsystem class
+    """
+    manager = LoaderUtils.getManager()
+    if not manager:
+        raise RuntimeError('错误的加载顺序: SubsystemServer 装饰器被调用时，SubsystemManager 尚未创建，请确保在引擎加载完成后再使用 SubsystemServer 装饰器')
+    if isServer():
+        depSubsystems.record(subsystemCls)
+        manager.registerSubsystem(subsystemCls)
+    return subsystemCls
+
+
+def createServer():
+    manager = LoaderUtils.createManager()
+    manager.INITIALIZED.on(lambda: _loadPlugins(manager, True))
+    manager.PRELOADED.on(lambda: _readyPlugins(manager))
+    manager.createServer()
+
+
+def createClient():
+    manager = LoaderUtils.createManager()
+    manager.INITIALIZED.on(lambda: _loadPlugins(manager, False))
+    manager.PRELOADED.on(lambda: _readyPlugins(manager))
+    manager.createClient()

@@ -55,7 +55,7 @@ def checkIfAllow(inputType, inputMode, bindKey):
 
 
 @SubsystemClient
-class InputExClient(ClientSubsystem):
+class InputExClientSystem(ClientSubsystem):
 
     def onInit(self):
         self.canTick = True

@@ -1,4 +1,4 @@
-from ..core.subsystem import ClientSubsystem, SubsystemClient
+from ..core.export import ClientSubsystem, SubsystemClient
 from ..event import EventListener
 from .common import ClientAttrEvents, ReactiveBase, ReactiveDepEvents
 

@@ -1,4 +1,5 @@
 from .enhance import list as listx
+from .enhance import fn
 from .molang.types import *
 from .molang.common import NamedVariable, NamedEntityVariable
 from .molang.server import NamedProperty

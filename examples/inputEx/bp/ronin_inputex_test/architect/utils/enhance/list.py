@@ -5,7 +5,7 @@ def remove(list, item):
         return True
     except ValueError:
         return False
-    
+
 def chunk(list, size):
     # type: (list, int) -> list
     return [list[i:i + size] for i in range(0, len(list), size)]

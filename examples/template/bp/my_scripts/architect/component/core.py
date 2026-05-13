@@ -1,9 +1,9 @@
 from ..conf import COMPONENT_NAMESPACE, COMPONENT_TAG, PERSIST_INFO
 from ..core.annotation import AnnotationHelper
+from ..core.contextRecorder import ContextRecorder
 from ..core.basic import isServer, clientApi, serverApi, levelId
 from ..persistent.client import ClientKVDatabase, ClientKVDatabaseGlobal
 from ..persistent.server import ServerKVDatabase
-from ..core.loader import _notifyRegisterComponent
 from .common import _nativeCompGet
 
 clientCompCls = []
@@ -17,6 +17,7 @@ def singletonId():
 
 def _registerComponent(isServer, cls, persist=False, singleton=False):
     clsList = serverCompCls if isServer else clientCompCls
+    ContextRecorder.get('depComps').record(cls)
     if cls in clsList:
         return
     # 标记类为组件
@@ -47,7 +48,6 @@ def PersistKeys(*keys, **kwargs):
 def _registerCompsIntoGame(isHost):
     clsList = serverCompCls if isHost else clientCompCls
     api = serverApi if isHost else clientApi
-    _notifyRegisterComponent(clsList)
     for cls in clsList:
         result = api.RegisterComponent(COMPONENT_NAMESPACE, cls.__name__, cls.__module__ + '.' + cls.__name__)
         if result:

@@ -1,7 +1,7 @@
 from .common import MolangMutable
 from ...core.basic import compServer
 from ...core.unreliable import Unreliable
-from ...core.subsystem import ServerSubsystem, SubsystemServer
+from ...core.export import ServerSubsystem, SubsystemServer
 from ...event import EventListener
 
 class NamedProperty(MolangMutable, Unreliable):

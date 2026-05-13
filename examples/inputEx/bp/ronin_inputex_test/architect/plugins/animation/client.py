@@ -16,15 +16,5 @@ from ...core.loader import Plugin, PluginBase
     'Anim Seq & Montage'
 )
 class AnimationExPlugin(PluginBase):
-    def onAttach(self, manager):
+    def onCreate(self):
         from .systems.animPlay import AnimationExSubsystem
-        from .systems.serverSync import AnimExServer
-
-    @staticmethod
-    def setDilation(val):
-        from ...core.basic import localPlayerId
-        from ...component.core import getOrCreateComponent
-        from .components.dilation import AnimationDilation
-
-        dilation = getOrCreateComponent(localPlayerId(), AnimationDilation)
-        dilation.value = val

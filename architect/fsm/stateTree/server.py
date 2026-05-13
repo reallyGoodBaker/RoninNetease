@@ -1,6 +1,6 @@
 from ...component import BaseCompServer
 from .common import StateTree, StateNode
-from ...core.subsystem import SubsystemServer, ServerSubsystem
+from ...core.export import SubsystemServer, ServerSubsystem
 from ...core.basic import compServer, isServer
 from ...level.server import LevelServer
 from mod.common.minecraftEnum import EntityType, AttrType

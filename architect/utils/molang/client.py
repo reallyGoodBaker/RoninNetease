@@ -1,7 +1,7 @@
 from ...core.unreliable import Unreliable
 from ...core.basic import compClient, clientApi
 from .common import MolangMutable
-from ...core.subsystem import ClientSubsystem, SubsystemClient
+from ...core.export import ClientSubsystem, SubsystemClient
 from ...event.core import EventSignal
 from ...event import EventListener
 

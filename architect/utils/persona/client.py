@@ -1,4 +1,4 @@
-from ...core.subsystem import ClientSubsystem, SubsystemClient
+from ...core.export import ClientSubsystem, SubsystemClient
 from ...component import BaseCompClient, Component, createComponent, getOneComponent
 from ...core.basic import compClient, clientApi
 from ...event import EventListener
