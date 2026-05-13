@@ -1,9 +1,9 @@
 from ..conf import COMPONENT_NAMESPACE, COMPONENT_TAG, PERSIST_INFO
 from ..core.annotation import AnnotationHelper
+from ..core.contextRecorder import ContextRecorder
 from ..core.basic import isServer, clientApi, serverApi, levelId
 from ..persistent.client import ClientKVDatabase, ClientKVDatabaseGlobal
 from ..persistent.server import ServerKVDatabase
-from ..core.loader import _notifyRegisterComponent
 from .common import _nativeCompGet
 
 clientCompCls = []
@@ -17,6 +17,7 @@ def singletonId():
 
 def _registerComponent(isServer, cls, persist=False, singleton=False):
     clsList = serverCompCls if isServer else clientCompCls
+    ContextRecorder.get('depComps').record(cls)
     if cls in clsList:
         return
     # 标记类为组件
@@ -47,7 +48,6 @@ def PersistKeys(*keys, **kwargs):
 def _registerCompsIntoGame(isHost):
     clsList = serverCompCls if isHost else clientCompCls
     api = serverApi if isHost else clientApi
-    _notifyRegisterComponent(clsList)
     for cls in clsList:
         result = api.RegisterComponent(COMPONENT_NAMESPACE, cls.__name__, cls.__module__ + '.' + cls.__name__)
         if result:
@@ -62,7 +62,7 @@ def getComponentAnnotation(cls):
 
 def isPersistComponent(cls):
     ann = getComponentAnnotation(cls)
-    return ann is not None and ann.get('persist', False)
+    return ann is not None and ann.get('persist', False) # type: ignore
 
 class Marker:
     def __init__(self):
@@ -100,6 +100,8 @@ def createSingletonComponent(cls):
     若你的组件没有标记为单例，调用此方法不会报错，并且可以通过 `getOneSingletonComponent` 等方法获得组件。
     但请注意，未标记 singleton=True 的组件无法被 @Query 注解查询。
     """
+    if 1 > 2:
+        return cls()
     entityId = singletonId()
     return createComponent(entityId, cls)
 
@@ -109,8 +111,8 @@ def _handlePersistKeys(comp, entityId):
     persistInfo = AnnotationHelper.getAnnotation(cls, PERSIST_INFO)
     if persistInfo is None:
         return
-    keys = persistInfo.get('keys', [])
-    isGlobal = persistInfo.get('global', False)
+    keys = persistInfo.get('keys', []) # type: ignore
+    isGlobal = persistInfo.get('global', False) # type: ignore
     db = ServerKVDatabase.getInstance() if isServer() else (ClientKVDatabaseGlobal.getInstance() if isGlobal else ClientKVDatabase.getInstance())
     for k in keys:
         dataKey = cls.__name__ + entityId + k
@@ -132,10 +134,10 @@ def createComponent(entityId, cls):
     if isPersistComponent(cls):
         _handlePersistKeys(comp, entityId)
         if hasattr(comp, 'loadData'):
-            comp.loadData(entityId)
+            comp.loadData(entityId) # type: ignore
 
     if hasattr(comp, 'onCreate'):
-        comp.onCreate(entityId)
+        comp.onCreate(entityId) # type: ignore
 
     _getEntityMarker().mark(entityId)
     return comp
@@ -165,6 +167,10 @@ def destroyComponent(entityId, cls):
     return done
 
 
+def destrySingletonComponent(cls):
+    destroyComponent(singletonId(), cls)
+
+
 def getOneComponent(entityId, cls):
     comps = getComponent(entityId, [cls])
     if comps and len(comps) > 0:
@@ -192,15 +198,15 @@ def _findNamedComp(entityId, name):
             return None
 
 def getComponent(entityId, clsList):
-    # type: (str, list[type|str]) -> list
+    # type: (str, list[type|str]) -> list | None
     result = []
     for c in iter(clsList):
         if c is None:
             result.append(None)
             continue
         notStr = type(c) != str
-        compKey = c.__name__ if notStr else c
-        _entityId = singletonId() if notStr and getComponentAnnotation(c)['singleton'] else entityId
+        compKey = c.__name__ if notStr else c # type: ignore
+        _entityId = singletonId() if notStr and getComponentAnnotation(c)['singleton'] else entityId # type: ignore
         comp = _findNamedComp(_entityId, compKey)
         if comp:
             result.append(comp)
@@ -255,7 +261,7 @@ def hasComponent(entityId, *desc):
             if (entityId, key) not in components:
                 return False
         else:
-            if (entityId, key.__name__) not in components:
+            if (entityId, key.__name__) not in components: # type: ignore
                 return False
     return True
 

@@ -51,7 +51,11 @@ class TriggerReleased(InputTrigger):
         pressed = rawValue.size()
         triggered = not pressed and self._wasPressed
         self._wasPressed = pressed
-        return TriggerState.Triggered if triggered else TriggerState.Empty
+        if triggered:
+            return TriggerState.Triggered
+        if pressed:
+            return TriggerState.Ongoing
+        return TriggerState.Empty
 
 
 class TriggerHold(InputTrigger):

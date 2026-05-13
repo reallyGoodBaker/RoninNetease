@@ -26,7 +26,7 @@ class _Query:
 
 def query(entityId, comps):
     # type: (int, list) -> _Query
-    return _Query(entityId, comps)
+    return _Query(entityId, comps) # type: ignore
 
 
 class EntityId:
@@ -41,7 +41,7 @@ class ExtraArgDict:
 FakeComponents = [EntityId, ExtraArguments, ExtraArgDict]
 
 def _getQueryArgs(entityId, compClsSrc, required, excluded, args, kwargs):
-    # type: (str, list, list, list, list, dict) -> list
+    # type: (str, list, list, list, list, dict) -> list | None
     compCls = compClsSrc[:]
     entityIdIndex = -1
     extraArgsIndex = -1
@@ -76,7 +76,7 @@ def _isCompAllSingleton(compCls):
             return False
         if comp == EntityId:
             return False
-        if AnnotationHelper.getAnnotation(comp, COMPONENT_TAG).get('singleton'):
+        if AnnotationHelper.getAnnotation(comp, COMPONENT_TAG).get('singleton'): # type: ignore
             singletonCount += 1
     return singletonCount == compSize
 
@@ -106,16 +106,18 @@ def Query(*compCls, **options):
     required = options.get('required', [])
     excluded = options.get('excluded', [])
     def decorator(fn):
-        isAllSingleton = _isCompAllSingleton(compCls)
+        isAllSingleton = _isCompAllSingleton(compCls) # type: ignore
         def wrapper(inst, *args, **kwargs):
             _compList = list(compCls)
             if isAllSingleton:
-                fn(inst, *_getQueryArgs(None, _compList, required, excluded, args, kwargs))
+                args = _getQueryArgs(None, _compList, required, excluded, args, kwargs) # type: ignore
+                if args:
+                    fn(inst, *args)
             else:
                 for entityId in getEntities():
                     if not entityId:
                         continue
-                    comps = _getQueryArgs(entityId, _compList, required, excluded, args, kwargs)
+                    comps = _getQueryArgs(entityId, _compList, required, excluded, args, kwargs) # type: ignore
                     if comps:
                         fn(inst, *comps)
         return wrapper

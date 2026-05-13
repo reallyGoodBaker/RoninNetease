@@ -1,4 +1,4 @@
-from ...core.subsystem import ClientSubsystem, SubsystemClient
+from ...core.export import ClientSubsystem, SubsystemClient
 from ...component import BaseCompClient, Component, createComponent, getOneComponent
 from ...core.basic import compClient, clientApi
 from ...event import EventListener
@@ -120,12 +120,12 @@ class PersonaRendererComponent(BaseCompClient):
             self._applyPlayerRenderConfToSelf()
 
     def broadcastRenderConf(self, jsonObj={}):
-        PersonaEventsSubsystem.getInstance().sendServer('BroadcastPersonaChange', { 'id': self.entityId, 'data': jsonObj })
+        PersonaEventsSubsystem.getInstance().sendServer('BroadcastPersonaChange', { 'id': self.entityId, 'data': jsonObj }) # type: ignore
 
     def broadcastResetConf(self):
-        PersonaEventsSubsystem.getInstance().sendServer('BroadcastPersonaReset', { 'id': self.entityId })
+        PersonaEventsSubsystem.getInstance().sendServer('BroadcastPersonaReset', { 'id': self.entityId }) # type: ignore
 
-    def addActorRenderConf(self, jsonObject, actor=None):
+    def addActorRenderConf(self, jsonObject, actor=None): # type: ignore
         # type: (dict, str) -> None
 
         actorId = actor or self.entityId
@@ -173,7 +173,7 @@ class PersonaRendererComponent(BaseCompClient):
         if renderControllers:
             for renderControllerDef in renderControllers:
                 if isinstance(renderControllerDef, dict):
-                    name, cond = renderControllerDef.items()[0]
+                    name, cond = renderControllerDef.items()[0] # type: ignore
                     self.actorRenderer.AddRenderControllerToOneActor(actorId, name, cond)
                 else:
                     self.actorRenderer.AddRenderControllerToOneActor(actorId, renderControllerDef)
@@ -185,10 +185,10 @@ class PersonaRendererComponent(BaseCompClient):
             if animates:
                 for animate in animates:
                     if isinstance(animate, dict):
-                        name, cond = animate.items()[0]
+                        name, cond = animate.items()[0] # type: ignore
                         self.actorRenderer.AddScriptAnimateToOneActor(actorId, name, cond, True)
                     else:
-                        self.actorRenderer.AddScriptAnimateToOneActor(actorId, animate, True)
+                        self.actorRenderer.AddScriptAnimateToOneActor(actorId, animate, True) # type: ignore
 
         self.actorRenderer.RebuildRenderForOneActor()
 
@@ -241,7 +241,7 @@ class PersonaRendererComponent(BaseCompClient):
         if renderControllers:
             for renderControllerDef in renderControllers:
                 if isinstance(renderControllerDef, dict):
-                    name, cond = renderControllerDef.items()[0]
+                    name, cond = renderControllerDef.items()[0] # type: ignore
                     actorRenderer.AddActorRenderController(actorType, name, cond)
                 else:
                     actorRenderer.AddActorRenderController(actorType, renderControllerDef)
@@ -253,7 +253,7 @@ class PersonaRendererComponent(BaseCompClient):
             if animates:
                 for animate in animates:
                     if isinstance(animate, dict):
-                        name, cond = animate.items()[0]
+                        name, cond = animate.items()[0] # type: ignore
                         actorRenderer.AddActorScriptAnimate(actorType, name, cond)
                     else:
                         actorRenderer.AddActorScriptAnimate(actorType, animate)
@@ -307,7 +307,7 @@ class PersonaRendererComponent(BaseCompClient):
         if renderControllers:
             for renderControllerDef in renderControllers:
                 if isinstance(renderControllerDef, dict):
-                    name, cond = renderControllerDef.items()[0]
+                    name, cond = renderControllerDef.items()[0] # type: ignore
                     if self.hasRenderController(name):
                         self.actorRenderer.RemovePlayerRenderController(name)
                     self.actorRenderer.AddPlayerRenderController(name, cond)
@@ -323,10 +323,10 @@ class PersonaRendererComponent(BaseCompClient):
             if animates:
                 for animate in animates:
                     if isinstance(animate, dict):
-                        name, cond = animate.items()[0]
+                        name, cond = animate.items()[0] # type: ignore
                         self.actorRenderer.AddPlayerScriptAnimate(name, cond, True)
                     else:
-                        self.actorRenderer.AddPlayerScriptAnimate(animate, True)
+                        self.actorRenderer.AddPlayerScriptAnimate(animate, True) # type: ignore
 
         if rebuild:
             self.actorRenderer.RebuildPlayerRender()
@@ -348,7 +348,7 @@ class PersonaRendererComponent(BaseCompClient):
         else:
             self.actorRenderer.RebuildRenderForOneActor()
 
-    def changeActorRenderConf(self, jsonObject, actor=None, full=False, broadcast=True):
+    def changeActorRenderConf(self, jsonObject, actor=None, full=False, broadcast=True): # type: ignore
         # type: (dict, str, bool, bool) -> None
         """
         当full为False时，此方法不会修改 geometry, texture 和 particle_effects 的配置
@@ -402,13 +402,13 @@ class PersonaRendererComponent(BaseCompClient):
                 actorOverride["render_controllers"] = renderControllers
                 for renderControllerDef in renderControllers:
                     if isinstance(renderControllerDef, dict):
-                        name, cond = renderControllerDef.items()[0]
+                        name, cond = renderControllerDef.items()[0] # type: ignore
                         if self.hasRenderController(name):
-                            self.actorRenderer.RemoveRenderControllerForOneActor(name)
+                            self.actorRenderer.RemoveRenderControllerForOneActor(name) # type: ignore
                         self.actorRenderer.AddRenderControllerToOneActor(actorId, name, cond)
                     else:
                         if self.hasRenderController(renderControllerDef):
-                            self.actorRenderer.RemoveRenderControllerForOneActor(renderControllerDef)
+                            self.actorRenderer.RemoveRenderControllerForOneActor(renderControllerDef) # type: ignore
                         self.actorRenderer.AddRenderControllerToOneActor(actorId, renderControllerDef)
 
 
@@ -430,7 +430,7 @@ class PersonaRendererComponent(BaseCompClient):
             if animates:
                 for animate in animates:
                     if isinstance(animate, dict):
-                        name, cond = animate.items()[0]
+                        name, cond = animate.items()[0] # type: ignore
                         self.actorRenderer.AddScriptAnimateToOneActor(actorId, name, cond)
                     else:
                         self.actorRenderer.AddScriptAnimateToOneActor(actorId, animate)
@@ -499,7 +499,7 @@ class PersonaRendererComponent(BaseCompClient):
                 overrideSnapshot["render_controllers"] = renderControllers
                 for renderControllerDef in renderControllers:
                     if isinstance(renderControllerDef, dict):
-                        name, cond = renderControllerDef.items()[0]
+                        name, cond = renderControllerDef.items()[0] # type: ignore
                         overrideObj['renderController'].append(name)
                         if self.hasRenderController(name):
                             self.actorRenderer.RemovePlayerRenderController(name)
@@ -529,7 +529,7 @@ class PersonaRendererComponent(BaseCompClient):
             if animates:
                 for animate in animates:
                     if isinstance(animate, dict):
-                        name, cond = animate.items()[0]
+                        name, cond = animate.items()[0] # type: ignore
                         self.actorRenderer.AddPlayerScriptAnimate(name, cond)
                     else:
                         self.actorRenderer.AddPlayerScriptAnimate(animate)
@@ -547,13 +547,13 @@ class PersonaRendererComponent(BaseCompClient):
         if compClient.CreateEngineType(self.entityId).GetEngineType() == EntityType.Player:
             self.changePlayerRenderConf(jsonObject, full, broadcast)
         else:
-            self.changeActorRenderConf(jsonObject, full, broadcast) 
+            self.changeActorRenderConf(jsonObject, full, broadcast) # type: ignore
 
     def addRenderConf(self, jsonObject, rebuild=True):
         if compClient.CreateEngineType(self.entityId).GetEngineType() == EntityType.Player:
             self.addPlayerRenderConf(jsonObject, rebuild)
         else:
-            self.addActorRenderConf(jsonObject, rebuild)
+            self.addActorRenderConf(jsonObject, rebuild) # type: ignore
 
     def resetActorRenderConf(self, broadcast=True):
         if not self.modified:
@@ -597,7 +597,7 @@ class PersonaRendererComponent(BaseCompClient):
         else:
             self.resetActorRenderConf(broadcast)
 
-    def shadowPlayerRootAnim(self, anim=None):
+    def shadowPlayerRootAnim(self, anim=None): # type: ignore
         # type: (str) -> None
         """
         使用一个动画遮蔽玩家根动画，可以为空
@@ -646,13 +646,13 @@ class PersonaEventsSubsystem(ClientSubsystem):
     def onPersonaChangeServer(self, event):
         if not event.id:
             return
-        personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
+        personaRenderer = getPersona(event.id) # type: ignore
         if personaRenderer:
             personaRenderer.changeRenderConf(event.data, False, full=True)
 
     @EventListener('PersonaResetServer', isCustomEvent=True)
     def onPersonaResetServer(self, event):
-        personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
+        personaRenderer = getPersona(event.id) # type: ignore
         if personaRenderer:
             personaRenderer.resetRenderConf(False)
 
@@ -660,13 +660,13 @@ class PersonaEventsSubsystem(ClientSubsystem):
     def onPersonaChangeServerAuth(self, event):
         if not event.id:
             return
-        personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
+        personaRenderer = getPersona(event.id) # type: ignore
         if personaRenderer:
             personaRenderer.changeRenderConf(event.data, False, True)
 
     @EventListener('PersonaResetClientAuthed', isCustomEvent=True)
     def onPersonaResetServerAuth(self, event):
-        personaRenderer = getPersona(event.id) # type: PersonaRendererComponent
+        personaRenderer = getPersona(event.id) # type: ignore
         if personaRenderer:
             personaRenderer.resetRenderConf(False)
 

@@ -1,7 +1,5 @@
 from ...core.loader import Plugin, PluginBase
-from ...core.subsystem import SubsystemManager
 from ...component import createSingletonComponent
-from ...core.basic import localPlayerId
 from ...event import CustomEvent
 
 from .components.inputEx import InputExComponent
@@ -15,8 +13,8 @@ from .enum import IA_EVENT_PREFIX, InputState
     'Extended input plugin'
 )
 class InputExPlugin(PluginBase):
-    def onAttach(self, manager):
-        # type: (SubsystemManager) -> None
+    def onCreate(self):
+        from .components.inputEx import InputExComponent
         from .systems import inputExClient
 
     def onReady(self, manager):

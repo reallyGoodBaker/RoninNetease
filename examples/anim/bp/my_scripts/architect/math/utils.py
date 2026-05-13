@@ -3,7 +3,7 @@ from .vec3 import vec, Vector3, add, div, tup, normalize, modulo
 from .vec4 import tup4
 from ..level.client import LevelClient, clientApi
 from ..core.basic import compClient, compServer
-from ..utils.drawing import drawBox
+from ..utils.drawing import drawBox, drawLine, drawSphere
 
 from mod.common.minecraftEnum import RayFilterType
 
@@ -33,8 +33,9 @@ def localViewMatrix():
 def localProjectionMatrix():
     level = LevelClient.getInstance()
     screenWidth, screenHeight = screenSize()
+    fov = level.camera.GetFov()
     return perspective(
-        level.camera.GetFov(),
+        fov * 1.1,
         screenWidth / screenHeight,
         0.1,
         100
@@ -46,12 +47,12 @@ def worldPosToScreenPos(worldPoint):
         identity(),
         localViewMatrix(),
         localProjectionMatrix(),
-        screenSize(),
+        screenSize(), # type: ignore
         vec(worldPoint)
     )
 
-def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks):
-    # type: (Matrix, Vector3, RayFilterType) -> Vector3 | None
+def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks, debug=False): # type: ignore
+    # type: (Matrix, Vector3, RayFilterType, bool) -> Vector3 | None
     """
     只能在客户端使用
 
@@ -65,27 +66,42 @@ def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks)
     """
     # 先将屏幕坐标转换到裁剪空间
     w, h = screenSize()
-    nx = (screenPoint.x / w * 2 - 1)
-    ny = (1 - screenPoint.y / h * 2)
+    # TODO: 这只是一个近似值
+    nx = (screenPoint.x / w * 2 - 1) * 1 # type: ignore
+    ny = (1 - screenPoint.y / h * 2) * 1 # type: ignore
     rayStartNdc = Vector3(nx, ny, -1)
     rayEndNdc = Vector3(nx, ny, 1)
     # 再将裁剪空间坐标转换到世界坐标
     invMvpMatrix = inverse(multiply(localProjectionMatrix(), multiply(localViewMatrix(), modelMatrix)))
-    rayStart = vec(transformPoint(invMvpMatrix, rayStartNdc))
-    rayEnd = vec(transformPoint(invMvpMatrix, rayEndNdc))
+    rayStartHomog = transformPoint(invMvpMatrix, rayStartNdc)
+    rayEndHomog = transformPoint(invMvpMatrix, rayEndNdc)
+
+    # 透视除法：齐次坐标除以 w，得到 NDC 空间坐标
+    rayStart = Vector3(
+        rayStartHomog.x / rayStartHomog.w,
+        rayStartHomog.y / rayStartHomog.w,
+        rayStartHomog.z / rayStartHomog.w
+    )
+    rayEnd = Vector3(
+        rayEndHomog.x / rayEndHomog.w,
+        rayEndHomog.y / rayEndHomog.w,
+        rayEndHomog.z / rayEndHomog.w
+    )
     ray = rayEnd - rayStart
+    if debug: drawLine(rayStart, rayEnd, vec((1, 0, 0)), 1)
     # 计算射线
     result = clientApi.getEntitiesOrBlockFromRay(
         tup(rayStart),
-        tup(normalize(ray)),
-        math.ceil(modulo(ray)),
+        tup(normalize(ray)), # type: ignore
+        int(math.ceil(modulo(ray))), # type: ignore
         False,
-        filterType
+        filterType # type: ignore
     )
     if not result:
         return None
-    raycasted = result[0]
-    return vec(raycasted['hitPos'])
+    raycasted = vec(result[0]['hitPos'])
+    if debug: drawSphere(raycasted)
+    return raycasted
 
 defaultFilters = {
     "any_of": [
@@ -135,7 +151,7 @@ def boxOverlap3dClient(pos, rot, size, debug=False):
         z + radius
     )
     level = LevelClient.getInstance()
-    firstFind = level.game.GetEntitiesInSquareArea(None, xozProjStart, xozProjEnd)
+    firstFind = level.game.GetEntitiesInSquareArea(None, xozProjStart, xozProjEnd) # type: ignore
     _transform = transform(
         identity(),
         vec(pos),
@@ -158,10 +174,30 @@ def boxOverlap3dClient(pos, rot, size, debug=False):
         posComp = compClient.CreatePos(entityId)
         centerPos = div(add(vec(posComp.GetPos()), vec(posComp.GetFootPos())), 2)
         modelCenterPos = tup4(transformPoint(worldMatrix, centerPos))
-        if pointInBox(modelCenterPos, size):
+        if pointInBox(modelCenterPos, size): # type: ignore
             result.append(entityId)
 
     return result
+
+
+def boxOverlap3dBouding(start, end, forward, debug=False):
+    # type: (tuple[float, float, float], tuple[float, float, float], tuple[float, float, float], bool) -> list[str]
+    """
+    :param: forward: (x, y, z)
+    """
+    rotX, rotY = clientApi.GetRotFromDir(tup(normalize(vec(forward))))
+    size = (
+        end[0] - start[0],
+        end[1] - start[1],
+        end[2] - start[2]
+    )
+    center = tup((vec(start) + vec(end)) / 2) # type: ignore
+    return boxOverlap3dClient(
+        center,
+        (rotX, rotY, 0),
+        size,
+        debug
+    )
 
 
 def boxOverlap3dForward(entityId, size, debug=False):
@@ -174,7 +210,7 @@ def boxOverlap3dForward(entityId, size, debug=False):
     rot = clientApi.GetRotFromDir(tup(dir))
     zDist = size[2] / 2
     result = boxOverlap3dClient(
-        add(vec(pos), dir * zDist).ToTuple(),
+        add(vec(pos), dir * zDist).ToTuple(), # type: ignore
         (math.radians(rot[0]), -math.radians(rot[1]), 0), size, debug
     )
     if entityId in result:
@@ -191,7 +227,7 @@ def boxOverlap3dFacing(entityId, size, debug=False):
     rot = compClient.CreateRot(entityId).GetRot()
     dir = clientApi.GetDirFromRot(rot)
     result = boxOverlap3dClient(
-        add(vec(pos), vec(dir) * 2).ToTuple(),
+        add(vec(pos), vec(dir) * 2).ToTuple(), # type: ignore
         (math.radians(rot[0]), -math.radians(rot[1]), 0), size, debug
     )
     result.remove(entityId)
@@ -200,7 +236,7 @@ def boxOverlap3dFacing(entityId, size, debug=False):
 
 def forward(entityId, dist=1):
     x, _, z = clientApi.GetDirFromRot(compClient.CreateRot(entityId).GetRot())
-    return vec((x, 0, z)).Normalized() * dist
+    return vec((x, 0, z)).Normalized() * dist # type: ignore
 
 
 def facing(entityId):
@@ -224,7 +260,7 @@ def around(entityId, radius):
     pos = vec(compServer.CreatePos(entityId).GetPos())
     radiusVec = vec((radius, radius, radius))
     aroundEntities = LevelClient.getInstance().game.GetEntitiesInSquareArea(
-        None, tup(pos - radiusVec), tup(pos + radiusVec)
+        None, tup(pos - radiusVec), tup(pos + radiusVec) # type: ignore
     )
     if entityId in aroundEntities:
         aroundEntities.remove(entityId)

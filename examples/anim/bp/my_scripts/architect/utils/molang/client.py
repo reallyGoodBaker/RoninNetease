@@ -1,7 +1,7 @@
 from ...core.unreliable import Unreliable
 from ...core.basic import compClient, clientApi
 from .common import MolangMutable
-from ...core.subsystem import ClientSubsystem, SubsystemClient
+from ...core.export import ClientSubsystem, SubsystemClient
 from ...event.core import EventSignal
 from ...event import EventListener
 
@@ -23,11 +23,11 @@ class QueryVariable(MolangMutable, Unreliable):
     def _molangComp(self, actorId):
         return compClient.CreateQueryVariable(actorId)
 
-    def getValue(self, actorId):
+    def getValue(self, actorId): # type: ignore
         molang = self._molangComp(actorId)
         return molang.Get(self.name)
 
-    def setValue(self, actorId, value):
+    def setValue(self, actorId, value): # type: ignore
         molang = self._molangComp(actorId)
         result = molang.Set(self.name, value)
         self.OnValueChanged.emit(actorId, value)
@@ -41,7 +41,7 @@ class ReactiveQueryVariable(QueryVariable):
         self.calc = calc
 
     def update(self, actorId):
-        self.setValue(actorId, self.calc(actorId))
+        self.setValue(actorId, self.calc(actorId)) # type: ignore
 
 
 reactiveQueryVariables = {} # type: dict[str, ReactiveQueryVariable]
@@ -80,7 +80,7 @@ class MolangClient(ClientSubsystem):
             'value': value
         })
 
-    def onRender(self, _):
+    def onRender(self, dt):
         for name, users in _queryVariableUsed.items():
             qv = reactiveQueryVariables.get(name)
             if not qv:
@@ -94,8 +94,8 @@ def MolangQuery(shared=False):
         name = func.__name__
         if shared:
             def onChange(actorId, value):
-                clientSys = MolangClient.getInstance() # type: MolangClient
-                clientSys.broadcastQuery(actorId, name, value)
+                clientSys = MolangClient.getInstance() # type: ignore
+                clientSys.broadcastQuery(actorId, name, value) # type: ignore
             _addReactiveQueryVariable(name, func, onChange)
         else:
             _addReactiveQueryVariable(name, func)

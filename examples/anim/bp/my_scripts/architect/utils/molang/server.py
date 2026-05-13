@@ -1,7 +1,7 @@
 from .common import MolangMutable
 from ...core.basic import compServer
 from ...core.unreliable import Unreliable
-from ...core.subsystem import ServerSubsystem, SubsystemServer
+from ...core.export import ServerSubsystem, SubsystemServer
 from ...event import EventListener
 
 class NamedProperty(MolangMutable, Unreliable):
@@ -12,7 +12,7 @@ class NamedProperty(MolangMutable, Unreliable):
     def _molang(self, actorId):
         return compServer.CreateQueryVariable(actorId)
 
-    def getValue(self, actorId):
+    def getValue(self, actorId): # type: ignore
         result = self._molang(actorId).EvalMolangExpression("v.property('{}')".format(self.name))
         if result['error']:
             self._handleError(result['error'])

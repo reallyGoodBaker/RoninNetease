@@ -1,6 +1,6 @@
 from ...component import BaseCompClient
 from .common import StateTree
-from ...core.subsystem import SubsystemClient, ClientSubsystem
+from ...core.export import SubsystemClient, ClientSubsystem
 
 class StateTreeCompClient(BaseCompClient, StateTree):
     def onCreate(self, entityId):
@@ -15,7 +15,7 @@ class StateTreeClientSubsystem(ClientSubsystem):
     def onInit(self):
         self.canTick = True
 
-    def onUpdate(self, _):
+    def onUpdate(self, dt):
         for comp in StateTreeClientSubsystem._comps:
             if comp.enabled:
                 comp.execute()

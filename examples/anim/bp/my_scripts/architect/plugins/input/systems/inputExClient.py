@@ -1,10 +1,11 @@
 from ....compact import LevelClient, clientApi, compClient, ClientSubsystem, SubsystemClient, getOneSingletonComponent, EventListener, localPlayerId
+from ....compact import vec, moduloSqrt
 from ..utils.mappingContext import InputMapping
 from ..utils.inputValue import InputValue
 from ..utils.inputAction import InputAction
 from ..utils.trigger import InputTrigger
 from ..components.inputEx import InputExComponent
-from ..enum import TouchType, GamepadAxis, MouseAxis, MouseKey, AccumulationBehavior, InputType, TriggerState, TriggerCombineType, InputState, IA_EVENT_PREFIX
+from ..enum import TouchAxis, TouchType, GamepadAxis, MouseAxis, MouseKey, AccumulationBehavior, InputType, TriggerState, TriggerCombineType, InputState, IA_EVENT_PREFIX
 
 
 class _TransState:
@@ -45,6 +46,8 @@ def checkIfAllow(inputType, inputMode, bindKey):
         return False
     if inputMode == 0:
         return bindKey in (MouseAxis.Pos, MouseAxis.Scroll)
+    if inputMode == 1:
+        return bindKey in (TouchAxis.Pos, TouchAxis.Move)
     if inputMode == 2:
         return bindKey in (GamepadAxis.LS, GamepadAxis.RS, GamepadAxis.LT, GamepadAxis.RT)
     return False
@@ -52,7 +55,7 @@ def checkIfAllow(inputType, inputMode, bindKey):
 
 
 @SubsystemClient
-class InputExClient(ClientSubsystem):
+class InputExClientSystem(ClientSubsystem):
 
     def onInit(self):
         self.canTick = True
@@ -60,6 +63,8 @@ class InputExClient(ClientSubsystem):
         self.localActorMotion = compClient.CreateActorMotion(localPlayerId())
         self.playerView = LevelClient.getInstance().playerView
         self.inputMode = 0
+        self._mousePos = None
+        self._touchPos = None
 
 
     def isMouseInput(self):
@@ -200,8 +205,30 @@ class InputExClient(ClientSubsystem):
 
     def _updateMousePos(self, inputEx):
         # type: (InputExComponent) -> None
-        x, y = self.localActorMotion.GetMousePosition()
+        mousePos = self.localActorMotion.GetMousePosition()
+        if not mousePos:
+            return
+        x, y = mousePos
+        if self._mousePos is None:
+            self._mousePos = vec(x, y, 0.0)
+            return
+        curPos = vec(x, y, 0.0)
+        delta = curPos - vec(self._mousePos)
+        self._mousePos = curPos
         inputEx.updateInputValue(InputType.Axis, MouseAxis.Pos, (x, y, 0.0))
+        inputEx.updateInputValue(InputType.Axis, MouseAxis.Move, (delta.x, delta.y, 0.0))
+
+    def _updateTouchPos(self, inputEx):
+        # type: (InputExComponent) -> None
+        x, y = clientApi.GetTouchPos()
+        curPos = vec(x, y, 0.0)
+        if self._touchPos is None:
+            self._touchPos = curPos
+            return
+        delta = curPos - vec(self._touchPos)
+        self._touchPos = curPos
+        inputEx.updateInputValue(InputType.Axis, TouchAxis.Pos, (x, y, 0.0))
+        inputEx.updateInputValue(InputType.Axis, TouchAxis.Move, (delta.x, delta.y, 0.0))
 
 
     def onRender(self, dt):
@@ -210,6 +237,7 @@ class InputExClient(ClientSubsystem):
         if not inputEx:
             return
         self._updateMousePos(inputEx)
+        self._updateTouchPos(inputEx)
         self.updateMapping(inputEx, dt)
 
 
@@ -294,8 +322,6 @@ class InputExClient(ClientSubsystem):
     @EventListener('TapBeforeClientEvent')
     def onTap(self, ev):
         inputEx = getOneSingletonComponent(InputExComponent)
-        x, y = clientApi.GetTouchPos()
-        inputEx.updateInputValue(InputType.Axis, MouseAxis.Pos, (x, y, 0.0))
         inputEx.updateInputValue(InputType.Touch, TouchType.Tap, (1.0, 0.0, 0.0))
         if inputEx.preventTap:
             ev.prevent()
@@ -304,8 +330,6 @@ class InputExClient(ClientSubsystem):
     @EventListener('HoldBeforeClientEvent')
     def onHold(self, ev):
         inputEx = getOneSingletonComponent(InputExComponent)
-        x, y = clientApi.GetTouchPos()
-        inputEx.updateInputValue(InputType.Axis, MouseAxis.Pos, (x, y, 0.0))
         inputEx.updateInputValue(InputType.Touch, TouchType.Hold, (1.0, 0.0, 0.0))
         if inputEx.preventHold:
             ev.prevent()

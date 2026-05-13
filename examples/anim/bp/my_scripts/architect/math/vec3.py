@@ -15,39 +15,39 @@ def vec(*init):
 
 def add(a, b):
     # type: (Vector3, Vector3) -> Vector3
-    return a + b
+    return a + b # type: ignore
 
 def sub(a, b):
     # type: (Vector3, Vector3) -> Vector3
-    return a - b
+    return a - b # type: ignore
 
 def mul(a, b):
     # type: (Vector3, float | int) -> Vector3
-    return a * b
+    return a * b # type: ignore
 
 def div(a, b):
     # type: (Vector3, float | int) -> Vector3
-    return a / b
+    return a / b # type: ignore
 
 def dot(a, b):
     # type: (Vector3, Vector3) -> float
-    return a * b
+    return a * b # type: ignore
 
 def cross(a, b):
     # type: (Vector3, Vector3) -> Vector3
-    return Vector3.Cross(a, b)
+    return Vector3.Cross(a, b) # type: ignore
 
 def modulo(a):
     # type: (Vector3) -> float
-    return Vector3.Length(a)
+    return Vector3.Length(a) # type: ignore
 
 def moduloSqrt(a):
     # type: (Vector3) -> float
-    return Vector3.LengthSquared(a)
+    return Vector3.LengthSquared(a) # type: ignore
 
 def normalize(a):
     # type: (Vector3) -> Vector3
-    return Vector3.Normalized(a)
+    return Vector3.Normalized(a) # type: ignore
 
 def compare(a, b):
     # type: (Vector3, Vector3) -> float
@@ -56,20 +56,20 @@ def compare(a, b):
     Less if a < b
     Equal if a == b
     """
-    return Vector3.LengthSquared(a) - Vector3.LengthSquared(b)
+    return Vector3.LengthSquared(a) - Vector3.LengthSquared(b) # type: ignore
 
 def clamp(v, min, max):
     # type: (Vector3, float, float) -> Vector3
     lenSqrt = Vector3.LengthSquared(v)
-    if lenSqrt > max * max:
-        return v * (max / math.sqrt(lenSqrt))
-    elif lenSqrt < min * min:
-        return v * (min / math.sqrt(lenSqrt))
+    if lenSqrt > max * max: # type: ignore
+        return v * (max / math.sqrt(lenSqrt)) # type: ignore
+    elif lenSqrt < min * min: # type: ignore
+        return v * (min / math.sqrt(lenSqrt)) # type: ignore
     return v
 
 def lerp(a, b, t):
     # type: (Vector3, Vector3, float) -> Vector3
-    return a * (1 - t) + b * t
+    return a * (1 - t) + b * t # type: ignore
 
 def nlerp(a, b, t):
     # type: (Vector3, Vector3, float) -> Vector3
@@ -80,4 +80,7 @@ def nlerp(a, b, t):
 
 def tup(a):
     # type: (Vector3) -> tuple[float, float, float]
-    return a.ToTuple()
+    return a.ToTuple() # type: ignore
+
+def vabs(a):
+    return Vector3(abs(a.x), abs(a.y), abs(a.z))

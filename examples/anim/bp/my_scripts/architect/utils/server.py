@@ -1,6 +1,6 @@
 from ..level.server import LevelServer, compServer
 from mod.common.minecraftEnum import EntityType
-from ..core.subsystem import ServerSubsystem, SubsystemServer
+from ..core.export import ServerSubsystem, SubsystemServer
 
 def isPlayer(entityId):
     return compServer.CreateEngineType(entityId).GetEngineType() == EntityType.Player
@@ -26,12 +26,12 @@ def particle(particle, pos):
     return LevelServer.command.SetCommand('particle {} {} {} {}'.format(particle, x, y, z))
 
 def soundServer(entityId, sound):
-    utilsServer = ServerUtilsSubsys.getInstance() # type: ServerUtilsSubsys
-    utilsServer.playSound(entityId, sound)
+    utilsServer = ServerUtilsSubsys.getInstance() # type: ignore
+    utilsServer.playSound(entityId, sound) # type: ignore
 
 def soundStopServer(entityId, sound):
-    utilsServer = ServerUtilsSubsys.getInstance() # type: ServerUtilsSubsys
-    utilsServer.stopSound(entityId, sound)
+    utilsServer = ServerUtilsSubsys.getInstance() # type: ignore
+    utilsServer.stopSound(entityId, sound) # type: ignore
 
 @SubsystemServer
 class ServerUtilsSubsys(ServerSubsystem):
