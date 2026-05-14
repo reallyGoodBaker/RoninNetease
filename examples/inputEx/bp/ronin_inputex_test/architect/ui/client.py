@@ -122,7 +122,7 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
         ScreenNode.__init__(self, engine, system, params) # type: ignore
         ClientSubsystem.__init__(self, manager.system, manager.engine, manager.sysName) # type: ignore
         EventTarget.__init__(self)
-        manager.addSubsystemInst(self) # type: ignore
+        manager._record(self) # type: ignore
         self.params = params
         self.rootControl = None
         self._foundControls = {}

@@ -148,6 +148,10 @@ class SubsystemManager(object):
         subSys = subsystemCls(self.system, self.engine, self.sysName)
         subSys._init()
         print('[INFO] {} Subsystem "{}" has been initialized'.format('Server' if isServer() else 'Client', subSys.__class__.__name__))
+        if isServer():
+            subsystem._firstSubsysServer = subSys
+        else:
+            subsystem._firstSubsysClient = subSys
 
 
     def getSubsystem(self, subsystemCls):
@@ -166,11 +170,11 @@ class SubsystemManager(object):
         subSys._destroy()
 
 
-    def registerSubsystem(self, subsystem):
+    def registerSubsystem(self, _subsystem):
         if not self._preloaded:
-            self.registeredSubsystems.append(subsystem)
+            self.registeredSubsystems.append(_subsystem)
         else:
-            self.addSubsystem(subsystem)
+            self.addSubsystem(_subsystem)
 
 
     def unregisterSubsystems(self):
@@ -538,17 +542,10 @@ class subsystem:
 
     _firstSubsysClient = None
     _firstSubsysServer = None
-
+    
     @staticmethod
     def _findFirstSubsystem():
-        if isServer():
-            if not subsystem._firstSubsysServer:
-                subsystem._firstSubsysServer = SubsystemManager.getInstance().subsystems.values()[0] # type: ignore
-            return subsystem._firstSubsysServer
-        else:
-            if not subsystem._firstSubsysClient:
-                subsystem._firstSubsysClient = SubsystemManager.getInstance().subsystems.values()[0] # type: ignore
-            return subsystem._firstSubsysClient
+        return subsystem._firstSubsysServer if isServer() else subsystem._firstSubsysClient
 
     @staticmethod
     def sendServer(event, data):
