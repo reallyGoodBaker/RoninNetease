@@ -100,7 +100,7 @@ class EventChain(Unreliable):
     def __init__(self, evType):
         Unreliable.__init__(self)
         self.evType = evType
-        self.__handlers = []
+        self._handlers = []
         """顺序触发监听器，通过 stop() 决定是否结束事件传递"""
         self.guarded = True
         """当为 True 时, 上一个事件监听器出错后，后续事件监听器将不会执行"""
@@ -109,19 +109,19 @@ class EventChain(Unreliable):
 
     def capture(self, fn):
         """添加事件监听器（捕获）"""
-        self.__handlers.append(fn)
+        self._handlers.append(fn)
 
     def addListener(self, fn):
         """添加事件监听器（冒泡）"""
-        self.__handlers.insert(0, fn)
+        self._handlers.insert(0, fn)
 
     def removeListener(self, fn):
-        self.__handlers.remove(fn)
+        self._handlers.remove(fn)
 
     def dispatch(self, _ev):
         shouldBreak = Ref(False)
         ev = ChainedEvent(self.evType, _ev, shouldBreak)
-        handlers = self.__handlers if self.useCapture else reversed(self.__handlers)
+        handlers = self._handlers if self.useCapture else reversed(self._handlers)
         for fn in handlers:
             _, err = self.tryCall(fn, ev)
             if err and self.guarded:

@@ -288,7 +288,7 @@ class LoaderUtils(object):
     def getManager(engine=CURRENT_ENGINE, system=CURRENT_SYSTEM):
         # type: (str, str) -> SubsystemManager | None
         return LoaderUtils.getLoader().getManager(engine, system)
-    
+
     @staticmethod
     def createManager():
         # type: () -> SubsystemManager
@@ -299,7 +299,10 @@ class LoaderUtils(object):
         system = api.GetSystem(CURRENT_ENGINE, CURRENT_SYSTEM) or api.RegisterSystem(CURRENT_ENGINE, CURRENT_SYSTEM, shadowSystemCls.__module__ + '.' + shadowSystemCls.__name__)
         manager = SubsystemManager(system, CURRENT_ENGINE, CURRENT_SYSTEM)
         loader.recordSystem(CURRENT_ENGINE, CURRENT_SYSTEM, manager)
-        SubsystemManager.getInstance = staticmethod(lambda: manager)
+        if isHost:
+            SubsystemManager.instServer = manager
+        else:
+            SubsystemManager.instClient = manager
         return manager
 
 

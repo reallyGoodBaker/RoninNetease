@@ -25,6 +25,10 @@ class EventListener:
 
 
 class SubsystemManager(object):
+
+    instServer = None
+    instClient = None
+    
     @staticmethod
     def _relative(path):
         # type: (str) -> str
@@ -34,10 +38,7 @@ class SubsystemManager(object):
     @staticmethod
     def getInstance():
         # type: () -> SubsystemManager
-        """
-        可以放心调用，因为具体实现逻辑不在 SubsystemManager 内部
-        """
-        pass
+        return SubsystemManager.instServer if isServer() else SubsystemManager.instClient
 
 
     def createClient(self):
@@ -445,7 +446,7 @@ class Subsystem(object):
             'method': method
         })
         self._fixedSchedsToAdd[schedulerName] = schedList
-    
+
     def scheduleFixed(self, schedName, period=1):
         """
         添加一个固定频率的调度器
@@ -470,9 +471,6 @@ class Subsystem(object):
 
 
 class ServerSubsystem(Subsystem):
-    def __init__(self, system, engine, sysName):
-        # type: (object, str, str) -> 'None'
-        Subsystem.__init__(self, system, engine, sysName) # type: ignore
 
     def sendAllClients(self, eventName, eventData):
         self.system.BroadcastToAllClient(eventName, eventData) # type: ignore
@@ -540,9 +538,9 @@ class _ShadowSystemClient(ClientSystem):
 
 class subsystem:
 
-    _firstSubsysClient = None
-    _firstSubsysServer = None
-    
+    _firstSubsysClient = None # type: ClientSubsystem
+    _firstSubsysServer = None # type: ServerSubsystem
+
     @staticmethod
     def _findFirstSubsystem():
         return subsystem._firstSubsysServer if isServer() else subsystem._firstSubsysClient
@@ -578,7 +576,7 @@ class subsystem:
     def spawnItem(itemCls, *args, **kwargs):
         serverSubsys = subsystem._findFirstSubsystem()
         return serverSubsys.spawnItem(itemCls, *args, **kwargs)
-    
+
     @staticmethod
     def addListener(event, fn, isCustomEvent=False):
         # type: (str, function, bool) -> str
