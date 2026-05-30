@@ -1,10 +1,10 @@
-const fs = require('fs')
-const path = require('path')
+import path from 'path'
+import * as fs from 'fs'
 
 
 const modMainCode = `# -*- coding: utf-8 -*-
 from mod.common.mod import Mod
-from .architect.startup import createServer, createClient, conf
+from .engine.architect.startup import createServer, createClient, conf
 
 
 @Mod.Binding(name = conf('MOD_NAME'), version = conf('MOD_VERSION'))
@@ -37,7 +37,7 @@ PLUGINS = [
 
 
 function initProject() {
-    const rootDir = path.resolve(__dirname, '../../')
+    const rootDir = path.resolve(import.meta.dirname, '../../')
     const assetsDir = path.join(rootDir, 'assets')
     const confFile = path.join(rootDir, 'conf.py')
     const modMainFile = path.join(rootDir, 'modMain.py')

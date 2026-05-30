@@ -1,11 +1,9 @@
-const fs = require('fs')
-const path = require('path')
-
-const moduleDir = path.resolve(__dirname, '../../../../')
-const { findManifest, findResDir } = require('./utils')
+import path from 'path'
+import * as fs from 'fs'
+import { findResDir } from './utils'
 
 
-function walkDir(dir, callback) {
+function walkDir(dir: string, callback: (fp: string) => void) {
     fs.readdirSync(dir).forEach((file) => {
         const filePath = path.join(dir, file)
         if (fs.statSync(filePath).isDirectory()) {
@@ -17,7 +15,7 @@ function walkDir(dir, callback) {
 }
 
 
-function findAnimResources(resDir, consumer) {
+function findAnimResources(resDir: string, consumer: (obj: any) => void) {
     const animDir = path.join(resDir, 'animations')
     walkDir(animDir, filePath => {
         if (path.extname(filePath) != '.json') {
@@ -30,13 +28,7 @@ function findAnimResources(resDir, consumer) {
 }
 
 
-/**
- * 
- * @param {Record<string, string[]>} animMeta 
- * @param {Record<string, string>[]} timeline 
- * @returns 
- */
-function handleExtraData(animMeta, timeline) {
+function handleExtraData(animMeta: any, timeline: Record<string, string>) {
     if (!timeline) {
         return
     }
@@ -45,16 +37,16 @@ function handleExtraData(animMeta, timeline) {
     animMeta.extra = {}
     for (const [ time, expr ] of Object.entries(timeline)) {
         const notifies = []
-        const extra = {}
+        const extra = {} as any
         const exprStr = Array.isArray(expr) ? expr.join('') : expr
         for (const equalExpr of exprStr.slice(0, -1).replaceAll(' ', '').split(';')) {
-            const [ key, value ] = equalExpr.split('=')
+            const [ key, value ] = equalExpr.split('=') as [string, string]
             const variableName = key.replace('v.', '').replace('variable.', '')
             if (variableName.startsWith('notify_')) {
                 const notifyName = variableName.slice(7)
                 notifies.push({
                     name: notifyName,
-                    state: Math.round(value)
+                    state: Math.round(Number(value))
                 })
             }
             if (variableName.startsWith('data_')) {
@@ -79,8 +71,8 @@ function extractAnimations() {
         return
     }
 
-    const animMetaPath = path.join(__dirname, '../../assets/animMeta.py')
-    const animMetaInfos = {}
+    const animMetaPath = path.join(import.meta.dirname, '../../assets/animMeta.py')
+    const animMetaInfos = {} as any
 
     if (fs.existsSync(animMetaPath)) {
         const existedMeta = JSON.parse(
@@ -94,10 +86,10 @@ function extractAnimations() {
         }
     }
 
-    const animKeys = []
+    const animKeys = [] as any[]
 
     // Merge anim resources
-    findAnimResources(resDir, ({ animations }) => {
+    findAnimResources(resDir, ({ animations }: { animations: { loop: any, animation_length: any, timeline: any } }) => {
         for (const [ key, { loop, animation_length, timeline } ] of Object.entries(animations)) {
             const metaInfo = {
                 loop: loop ?? false,
