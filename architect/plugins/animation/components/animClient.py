@@ -6,7 +6,7 @@ from ....math.double import clamp, inf, epsilon
 from ..enum import AnimationEasingTypes, AnimationBlendingTypes, LoopType
 
 try:
-    from .....assets.animMeta import AnimMeta
+    from ......assets.animMeta import AnimMeta
 except:
     print('[ERROR] 未找到 AnimMeta, 请使用 architect/tools/animExtractor 提取动画元数据')
 
