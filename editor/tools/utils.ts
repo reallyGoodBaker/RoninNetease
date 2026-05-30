@@ -1,9 +1,10 @@
-const fs = require('fs')
-const path = require('path')
+import path from 'path'
+import * as fs from 'fs'
 
-const moduleDir = path.resolve(__dirname, '../../../../')
 
-function findResDir() {
+const moduleDir = path.resolve(import.meta.dirname, '../../../../')
+
+export function findResDir() {
     for (const dir of fs.readdirSync(moduleDir)) {
         const filePath = path.join(moduleDir, dir)
         if (fs.statSync(filePath).isDirectory()) {
@@ -15,7 +16,7 @@ function findResDir() {
     }
 }
 
-function findDataDir() {
+export function findDataDir() {
     for (const dir of fs.readdirSync(moduleDir)) {
         const filePath = path.join(moduleDir, dir)
         if (fs.statSync(filePath).isDirectory()) {
@@ -27,12 +28,8 @@ function findDataDir() {
     }
 }
 
-/**
- * @param {string} filePath 
- * @param {'resources'|'data'} moduleType 
- * @returns 
- */
-function findManifest(filePath, moduleType) {
+
+export function findManifest(filePath: string, moduleType: 'resources' | 'data') {
     const manifestPath = path.join(filePath, 'manifest.json')
     if (!fs.existsSync(manifestPath)) {
         return
@@ -44,9 +41,4 @@ function findManifest(filePath, moduleType) {
             return filePath
         }
     }
-}
-
-module.exports = {
-    findResDir,
-    findManifest,
 }
