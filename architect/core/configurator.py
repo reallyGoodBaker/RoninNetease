@@ -29,7 +29,7 @@ def modConf():
     from .. import conf
     engineConf = conf.__dict__ # type: dict[str, str | list[str]]
     try:
-        from ... import conf as mUserConf
+        from .... import conf as mUserConf
         userConf = mUserConf.__dict__ # type: dict[str, str | list[str]]
     except ImportError:
         raise ImportError('请在 {} 文件夹中创建 conf.py 文件，并定义 MOD_ENGINE_NAME 和 MOD_SYSTEM_NAME, 如果你已经有了conf文件夹, 请在 __init__.py 中定义以上两个常量'.format(__modname__))

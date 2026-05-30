@@ -77,7 +77,7 @@ class Aspects:
 
 
 try:
-    from .. import conf as userConf
+    from ... import conf as userConf
 except:
     userConf = object()
 vendorConf = globals()
