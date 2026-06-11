@@ -45,6 +45,7 @@ ol,ul{padding-left:1.5rem;margin:.75rem 0}
 li{margin:.35rem 0;line-height:1.75}
 strong{color:hsl(var(--f))}
 @media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -73,158 +74,158 @@ strong{color:hsl(var(--f))}
 └── server.py ← ServerStateTree（服务端）
 </code></pre>
 <h3>1.2 定义状态</h3>
-<pre><code class="language-python">from architect.fsm.stateTree.common import TreeState, Transition
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.stateTree.common <span class="hljs-keyword">import</span> TreeState, Transition
 
-class IdleState(TreeState):
-    def onEnter(self, entity_id):
-        &quot;&quot;&quot;进入状态&quot;&quot;&quot;
-        print(&#39;Entity %s entered Idle&#39; % entity_id)
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">IdleState</span>(<span class="hljs-title class_ inherited__">TreeState</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEnter</span>(<span class="hljs-params">self, entity_id</span>):
+        &amp;quot;&amp;quot;&amp;quot;进入状态&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Entity %s entered Idle&#x27;</span> % entity_id)
 
-    def onUpdate(self, entity_id, dt):
-        &quot;&quot;&quot;每帧更新&quot;&quot;&quot;
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, entity_id, dt</span>):
+        &amp;quot;&amp;quot;&amp;quot;每帧更新&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    def onExit(self, entity_id):
-        &quot;&quot;&quot;离开状态&quot;&quot;&quot;
-        print(&#39;Entity %s exited Idle&#39; % entity_id)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onExit</span>(<span class="hljs-params">self, entity_id</span>):
+        &amp;quot;&amp;quot;&amp;quot;离开状态&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Entity %s exited Idle&#x27;</span> % entity_id)
 
-class PatrolState(TreeState):
-    def onEnter(self, entity_id):
-        print(&#39;Entity %s started patrol&#39; % entity_id)
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">PatrolState</span>(<span class="hljs-title class_ inherited__">TreeState</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEnter</span>(<span class="hljs-params">self, entity_id</span>):
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Entity %s started patrol&#x27;</span> % entity_id)
 
-    def onUpdate(self, entity_id, dt):
-        # 巡逻逻辑
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, entity_id, dt</span>):
+        <span class="hljs-comment"># 巡逻逻辑</span>
+        <span class="hljs-keyword">pass</span>
 </code></pre>
 <h3>1.3 定义转换</h3>
-<pre><code class="language-python">from architect.fsm.stateTree.common import Transition
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.stateTree.common <span class="hljs-keyword">import</span> Transition
 
-# 转换条件
-def should_chase(entity_id):
-    # 检查是否有敌人在视野内
-    return has_enemy_in_range(entity_id)
+<span class="hljs-comment"># 转换条件</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">should_chase</span>(<span class="hljs-params">entity_id</span>):
+    <span class="hljs-comment"># 检查是否有敌人在视野内</span>
+    <span class="hljs-keyword">return</span> has_enemy_in_range(entity_id)
 
-# 转换定义：从 Idle 到 Chase，条件是 should_chase
+<span class="hljs-comment"># 转换定义：从 Idle 到 Chase，条件是 should_chase</span>
 idle_to_chase = Transition(
     from_state=IdleState,
     to_state=ChaseState,
     condition=should_chase
 )
 
-# 无条件转换（进入后立即执行）
+<span class="hljs-comment"># 无条件转换（进入后立即执行）</span>
 auto_to_patrol = Transition(
     from_state=IdleState,
     to_state=PatrolState
 )
 </code></pre>
 <h3>1.4 构建状态树</h3>
-<pre><code class="language-python">from architect.fsm.stateTree.server import ServerStateTree
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.stateTree.server <span class="hljs-keyword">import</span> ServerStateTree
 
-# 创建状态树
+<span class="hljs-comment"># 创建状态树</span>
 tree = ServerStateTree()
 
-# 添加状态
+<span class="hljs-comment"># 添加状态</span>
 tree.add_state(IdleState)
 tree.add_state(PatrolState)
 tree.add_state(ChaseState)
 tree.add_state(CombatState)
 
-# 添加转换
+<span class="hljs-comment"># 添加转换</span>
 tree.add_transition(Transition(IdleState, PatrolState))
 tree.add_transition(Transition(PatrolState, ChaseState, condition=should_chase))
 tree.add_transition(Transition(ChaseState, CombatState, condition=is_close_enough))
 tree.add_transition(Transition(CombatState, PatrolState, condition=no_enemy))
 
-# 启动状态机
+<span class="hljs-comment"># 启动状态机</span>
 tree.start(entity_id, IdleState)
 </code></pre>
 <h3>1.5 层级状态</h3>
-<pre><code class="language-python"># 父状态：Living
-class LivingState(TreeState):
-    # 可以包含子状态
-    pass
+<pre><code class="hljs language-python"><span class="hljs-comment"># 父状态：Living</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">LivingState</span>(<span class="hljs-title class_ inherited__">TreeState</span>):
+    <span class="hljs-comment"># 可以包含子状态</span>
+    <span class="hljs-keyword">pass</span>
 
-# 子状态
-class NormalState(TreeState):
-    parent = LivingState  # 指定父状态
+<span class="hljs-comment"># 子状态</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">NormalState</span>(<span class="hljs-title class_ inherited__">TreeState</span>):
+    parent = LivingState  <span class="hljs-comment"># 指定父状态</span>
 
-class InjuredState(TreeState):
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">InjuredState</span>(<span class="hljs-title class_ inherited__">TreeState</span>):
     parent = LivingState
 
-# 在 Living 状态下可以在 Normal/Injured 之间切换
-# 而 Living → Dead 是跨父状态的转换
+<span class="hljs-comment"># 在 Living 状态下可以在 Normal/Injured 之间切换</span>
+<span class="hljs-comment"># 而 Living → Dead 是跨父状态的转换</span>
 </code></pre>
 <h3>1.6 客户端状态树</h3>
-<pre><code class="language-python">from architect.fsm.stateTree.client import ClientStateTree
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.stateTree.client <span class="hljs-keyword">import</span> ClientStateTree
 
 tree = ClientStateTree()
 
-class ClientIdle(TreeState):
-    def onUpdate(self, entity_id, dt):
-        # 处理客户端动画
-        play_animation(entity_id, &#39;idle&#39;)
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ClientIdle</span>(<span class="hljs-title class_ inherited__">TreeState</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, entity_id, dt</span>):
+        <span class="hljs-comment"># 处理客户端动画</span>
+        play_animation(entity_id, <span class="hljs-string">&#x27;idle&#x27;</span>)
 
 tree.add_state(ClientIdle)
 tree.start(entity_id, ClientIdle)
 </code></pre>
 <h3>1.7 完整示例：NPC 行为</h3>
-<pre><code class="language-python">from architect.fsm.stateTree.server import ServerStateTree
-from architect.fsm.stateTree.common import TreeState, Transition
-from architect.core import ServerSubsystem, EventListener
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.stateTree.server <span class="hljs-keyword">import</span> ServerStateTree
+<span class="hljs-keyword">from</span> architect.fsm.stateTree.common <span class="hljs-keyword">import</span> TreeState, Transition
+<span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> ServerSubsystem, EventListener
 
-# === 定义状态 ===
+<span class="hljs-comment"># === 定义状态 ===</span>
 
-class Idle(TreeState):
-    def onEnter(self, entity_id):
-        print(&#39;[NPC] Idle&#39;)
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Idle</span>(<span class="hljs-title class_ inherited__">TreeState</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEnter</span>(<span class="hljs-params">self, entity_id</span>):
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[NPC] Idle&#x27;</span>)
 
-    def onUpdate(self, entity_id, dt):
-        self.timer += dt
-        if self.timer &gt; 5.0:
-            # 空闲 5 秒后开始巡逻
-            self.timer = 0
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, entity_id, dt</span>):
+        <span class="hljs-variable language_">self</span>.timer += dt
+        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.timer &amp;gt; <span class="hljs-number">5.0</span>:
+            <span class="hljs-comment"># 空闲 5 秒后开始巡逻</span>
+            <span class="hljs-variable language_">self</span>.timer = <span class="hljs-number">0</span>
 
-class Patrol(TreeState):
-    def __init__(self):
-        self.patrol_index = 0
-        self.waypoints = [(0, 64, 0), (10, 64, 0), (10, 64, 10), (0, 64, 10)]
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Patrol</span>(<span class="hljs-title class_ inherited__">TreeState</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.patrol_index = <span class="hljs-number">0</span>
+        <span class="hljs-variable language_">self</span>.waypoints = [(<span class="hljs-number">0</span>, <span class="hljs-number">64</span>, <span class="hljs-number">0</span>), (<span class="hljs-number">10</span>, <span class="hljs-number">64</span>, <span class="hljs-number">0</span>), (<span class="hljs-number">10</span>, <span class="hljs-number">64</span>, <span class="hljs-number">10</span>), (<span class="hljs-number">0</span>, <span class="hljs-number">64</span>, <span class="hljs-number">10</span>)]
 
-    def onEnter(self, entity_id):
-        self.move_to_next(entity_id)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEnter</span>(<span class="hljs-params">self, entity_id</span>):
+        <span class="hljs-variable language_">self</span>.move_to_next(entity_id)
 
-    def onUpdate(self, entity_id, dt):
-        if arrived_at_target(entity_id):
-            self.move_to_next(entity_id)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, entity_id, dt</span>):
+        <span class="hljs-keyword">if</span> arrived_at_target(entity_id):
+            <span class="hljs-variable language_">self</span>.move_to_next(entity_id)
 
-    def move_to_next(self, entity_id):
-        self.patrol_index = (self.patrol_index + 1) % len(self.waypoints)
-        move_entity_to(entity_id, self.waypoints[self.patrol_index])
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">move_to_next</span>(<span class="hljs-params">self, entity_id</span>):
+        <span class="hljs-variable language_">self</span>.patrol_index = (<span class="hljs-variable language_">self</span>.patrol_index + <span class="hljs-number">1</span>) % <span class="hljs-built_in">len</span>(<span class="hljs-variable language_">self</span>.waypoints)
+        move_entity_to(entity_id, <span class="hljs-variable language_">self</span>.waypoints[<span class="hljs-variable language_">self</span>.patrol_index])
 
-class Chase(TreeState):
-    target = None
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Chase</span>(<span class="hljs-title class_ inherited__">TreeState</span>):
+    target = <span class="hljs-literal">None</span>
 
-    def onEnter(self, entity_id):
-        self.target = find_nearest_enemy(entity_id)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEnter</span>(<span class="hljs-params">self, entity_id</span>):
+        <span class="hljs-variable language_">self</span>.target = find_nearest_enemy(entity_id)
 
-    def onUpdate(self, entity_id, dt):
-        if self.target:
-            move_entity_to(entity_id, get_position(self.target))
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, entity_id, dt</span>):
+        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.target:
+            move_entity_to(entity_id, get_position(<span class="hljs-variable language_">self</span>.target))
 
-class Attack(TreeState):
-    def onEnter(self, entity_id):
-        attack_entity(entity_id, self.parent.target)
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Attack</span>(<span class="hljs-title class_ inherited__">TreeState</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEnter</span>(<span class="hljs-params">self, entity_id</span>):
+        attack_entity(entity_id, <span class="hljs-variable language_">self</span>.parent.target)
 
-# === 定义转换 ===
+<span class="hljs-comment"># === 定义转换 ===</span>
 
-def enemy_in_range(entity_id):
-    return find_nearest_enemy(entity_id) is not None
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">enemy_in_range</span>(<span class="hljs-params">entity_id</span>):
+    <span class="hljs-keyword">return</span> find_nearest_enemy(entity_id) <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>
 
-def close_enough(entity_id):
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">close_enough</span>(<span class="hljs-params">entity_id</span>):
     enemy = find_nearest_enemy(entity_id)
-    return enemy and distance_to(entity_id, enemy) &lt; 2.0
+    <span class="hljs-keyword">return</span> enemy <span class="hljs-keyword">and</span> distance_to(entity_id, enemy) &amp;lt; <span class="hljs-number">2.0</span>
 
-def enemy_gone(entity_id):
-    return find_nearest_enemy(entity_id) is None
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">enemy_gone</span>(<span class="hljs-params">entity_id</span>):
+    <span class="hljs-keyword">return</span> find_nearest_enemy(entity_id) <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>
 
 transitions = [
     Transition(Idle, Patrol),
@@ -234,25 +235,25 @@ transitions = [
     Transition(Chase, Patrol, condition=enemy_gone),
 ]
 
-# === 使用 ===
+<span class="hljs-comment"># === 使用 ===</span>
 
-class NPCBehaviorSystem(ServerSubsystem):
-    canTick = True
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">NPCBehaviorSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
 
-    def onInit(self):
-        self.tree = ServerStateTree()
-        self.tree.add_state(Idle)
-        self.tree.add_state(Patrol)
-        self.tree.add_state(Chase)
-        self.tree.add_state(Attack)
-        for t in transitions:
-            self.tree.add_transition(t)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.tree = ServerStateTree()
+        <span class="hljs-variable language_">self</span>.tree.add_state(Idle)
+        <span class="hljs-variable language_">self</span>.tree.add_state(Patrol)
+        <span class="hljs-variable language_">self</span>.tree.add_state(Chase)
+        <span class="hljs-variable language_">self</span>.tree.add_state(Attack)
+        <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> transitions:
+            <span class="hljs-variable language_">self</span>.tree.add_transition(t)
 
-    def init_npc(self, entity_id):
-        self.tree.start(entity_id, Idle)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">init_npc</span>(<span class="hljs-params">self, entity_id</span>):
+        <span class="hljs-variable language_">self</span>.tree.start(entity_id, Idle)
 
-    def onUpdate(self, dt):
-        self.tree.update_all(dt)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        <span class="hljs-variable language_">self</span>.tree.update_all(dt)
 </code></pre>
 <hr>
 <h2 id="2-fsm">2. 古典 FSM（已弃用）</h2>
@@ -260,29 +261,29 @@ class NPCBehaviorSystem(ServerSubsystem):
 <p><strong>警告</strong>：此实现已弃用，不推荐在新项目中使用。建议迁移到 StateTree。</p>
 </blockquote>
 <h3>2.1 结构</h3>
-<pre><code class="language-python">from architect.fsm.deprecated import Fsm, State
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.deprecated <span class="hljs-keyword">import</span> Fsm, State
 
-class MyState(State):
-    def onEnter(self):
-        &quot;&quot;&quot;进入状态&quot;&quot;&quot;
-        pass
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyState</span>(<span class="hljs-title class_ inherited__">State</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEnter</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;进入状态&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    def onUpdate(self):
-        &quot;&quot;&quot;每帧更新&quot;&quot;&quot;
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;每帧更新&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    def onExit(self):
-        &quot;&quot;&quot;离开状态&quot;&quot;&quot;
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onExit</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;离开状态&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    def onEvent(self, event_type, event_data):
-        &quot;&quot;&quot;事件处理&quot;&quot;&quot;
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEvent</span>(<span class="hljs-params">self, event_type, event_data</span>):
+        &amp;quot;&amp;quot;&amp;quot;事件处理&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-class MyFsm(Fsm):
-    def onStart(self):
-        &quot;&quot;&quot;状态机启动&quot;&quot;&quot;
-        pass
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyFsm</span>(<span class="hljs-title class_ inherited__">Fsm</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onStart</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;状态机启动&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 </code></pre>
 <h3>2.2 <code>State</code> 基类</h3>
 <table>

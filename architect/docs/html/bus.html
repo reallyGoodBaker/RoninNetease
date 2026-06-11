@@ -45,6 +45,7 @@ ol,ul{padding-left:1.5rem;margin:.75rem 0}
 li{margin:.35rem 0;line-height:1.75}
 strong{color:hsl(var(--f))}
 @media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -98,10 +99,10 @@ strong{color:hsl(var(--f))}
 <hr>
 <h2 id="2-api">2. API</h2>
 <h3>2.1 获取实例</h3>
-<pre><code class="language-python">from architect.core.subsystem import SubsystemManager
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.subsystem <span class="hljs-keyword">import</span> SubsystemManager
 
 manager = SubsystemManager.getInstance()
-bus = manager.bus  # CommandBus 实例
+bus = manager.bus  <span class="hljs-comment"># CommandBus 实例</span>
 </code></pre>
 <h3>2.2 方法</h3>
 <table>
@@ -141,144 +142,144 @@ bus = manager.bus  # CommandBus 实例
 <hr>
 <h2 id="3">3. 使用示例</h2>
 <h3>3.1 服务端：注册处理器</h3>
-<pre><code class="language-python">from architect.core import SubsystemServer, ServerSubsystem
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> SubsystemServer, ServerSubsystem
 
-class SpawnSystem(ServerSubsystem):
-    def onInit(self):
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SpawnSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
         manager = SubsystemManager.getInstance()
 
-        # 注册命令处理器
-        self._unregister = manager.bus.register(&#39;spawn_npc&#39;, self.handle_spawn)
+        <span class="hljs-comment"># 注册命令处理器</span>
+        <span class="hljs-variable language_">self</span>._unregister = manager.bus.register(<span class="hljs-string">&#x27;spawn_npc&#x27;</span>, <span class="hljs-variable language_">self</span>.handle_spawn)
 
-    def handle_spawn(self, template, location, is_global=False):
-        &quot;&quot;&quot;处理生成 NPC 的命令&quot;&quot;&quot;
-        entity_id = self.spawnEntity(
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_spawn</span>(<span class="hljs-params">self, template, location, is_global=<span class="hljs-literal">False</span></span>):
+        &amp;quot;&amp;quot;&amp;quot;处理生成 NPC 的命令&amp;quot;&amp;quot;&amp;quot;
+        entity_id = <span class="hljs-variable language_">self</span>.spawnEntity(
             template,
             location,
-            (0, 0),
+            (<span class="hljs-number">0</span>, <span class="hljs-number">0</span>),
             isGlobal=is_global
         )
-        return entity_id
+        <span class="hljs-keyword">return</span> entity_id
 
-    def onDestroy(self):
-        # 清理：注销命令
-        if hasattr(self, &#39;_unregister&#39;):
-            self._unregister()
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onDestroy</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-comment"># 清理：注销命令</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-built_in">hasattr</span>(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;_unregister&#x27;</span>):
+            <span class="hljs-variable language_">self</span>._unregister()
 </code></pre>
 <h3>3.2 调用命令</h3>
-<pre><code class="language-python">class QuestSystem(ServerSubsystem):
-    def spawn_quest_npc(self):
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">QuestSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">spawn_quest_npc</span>(<span class="hljs-params">self</span>):
         manager = SubsystemManager.getInstance()
 
-        # 检查命令是否可用
-        if not manager.bus.hasCommand(&#39;spawn_npc&#39;):
-            print(&#39;[Quest] Spawn system not available&#39;)
-            return
+        <span class="hljs-comment"># 检查命令是否可用</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> manager.bus.hasCommand(<span class="hljs-string">&#x27;spawn_npc&#x27;</span>):
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[Quest] Spawn system not available&#x27;</span>)
+            <span class="hljs-keyword">return</span>
 
-        # 执行命令，收集返回值
+        <span class="hljs-comment"># 执行命令，收集返回值</span>
         results = manager.bus.execute(
-            &#39;spawn_npc&#39;,
-            &#39;minecraft:villager&#39;,
-            Location((100, 64, 200), 0),
-            is_global=False
+            <span class="hljs-string">&#x27;spawn_npc&#x27;</span>,
+            <span class="hljs-string">&#x27;minecraft:villager&#x27;</span>,
+            Location((<span class="hljs-number">100</span>, <span class="hljs-number">64</span>, <span class="hljs-number">200</span>), <span class="hljs-number">0</span>),
+            is_global=<span class="hljs-literal">False</span>
         )
 
-        # results = [&#39;entity_id_abc123&#39;]
-        if results:
-            print(&#39;[Quest] NPC spawned:&#39;, results[0])
+        <span class="hljs-comment"># results = [&#x27;entity_id_abc123&#x27;]</span>
+        <span class="hljs-keyword">if</span> results:
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[Quest] NPC spawned:&#x27;</span>, results[<span class="hljs-number">0</span>])
 </code></pre>
 <h3>3.3 多个处理器</h3>
-<pre><code class="language-python"># 两个系统都处理 &#39;on_player_death&#39; 命令
-class ScoreSystem(ServerSubsystem):
-    def onInit(self):
+<pre><code class="hljs language-python"><span class="hljs-comment"># 两个系统都处理 &#x27;on_player_death&#x27; 命令</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ScoreSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
         SubsystemManager.getInstance().bus.register(
-            &#39;on_player_death&#39;, self.decrease_score
+            <span class="hljs-string">&#x27;on_player_death&#x27;</span>, <span class="hljs-variable language_">self</span>.decrease_score
         )
 
-    def decrease_score(self, player_id, cause):
-        print(&#39;[Score] Player lost points&#39;)
-        return {&#39;score_updated&#39;: True}
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">decrease_score</span>(<span class="hljs-params">self, player_id, cause</span>):
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[Score] Player lost points&#x27;</span>)
+        <span class="hljs-keyword">return</span> {<span class="hljs-string">&#x27;score_updated&#x27;</span>: <span class="hljs-literal">True</span>}
 
-class LogSystem(ServerSubsystem):
-    def onInit(self):
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">LogSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
         SubsystemManager.getInstance().bus.register(
-            &#39;on_player_death&#39;, self.log_death
+            <span class="hljs-string">&#x27;on_player_death&#x27;</span>, <span class="hljs-variable language_">self</span>.log_death
         )
 
-    def log_death(self, player_id, cause):
-        print(&#39;[Log] Player %s died: %s&#39; % (player_id, cause))
-        return {&#39;logged&#39;: True}
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">log_death</span>(<span class="hljs-params">self, player_id, cause</span>):
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[Log] Player %s died: %s&#x27;</span> % (player_id, cause))
+        <span class="hljs-keyword">return</span> {<span class="hljs-string">&#x27;logged&#x27;</span>: <span class="hljs-literal">True</span>}
 
-# 执行命令 → 两个处理器都被调用
-results = bus.execute(&#39;on_player_death&#39;, &#39;player_1&#39;, &#39;fall&#39;)
-# results = [{&#39;score_updated&#39;: True}, {&#39;logged&#39;: True}]
+<span class="hljs-comment"># 执行命令 → 两个处理器都被调用</span>
+results = bus.execute(<span class="hljs-string">&#x27;on_player_death&#x27;</span>, <span class="hljs-string">&#x27;player_1&#x27;</span>, <span class="hljs-string">&#x27;fall&#x27;</span>)
+<span class="hljs-comment"># results = [{&#x27;score_updated&#x27;: True}, {&#x27;logged&#x27;: True}]</span>
 </code></pre>
 <h3>3.4 清理命令</h3>
-<pre><code class="language-python">manager = SubsystemManager.getInstance()
+<pre><code class="hljs language-python">manager = SubsystemManager.getInstance()
 
-# 移除特定命令的所有处理器
-manager.bus.clearCommand(&#39;spawn_npc&#39;)
+<span class="hljs-comment"># 移除特定命令的所有处理器</span>
+manager.bus.clearCommand(<span class="hljs-string">&#x27;spawn_npc&#x27;</span>)
 
-# 移除所有命令
+<span class="hljs-comment"># 移除所有命令</span>
 manager.bus.clearAll()
 </code></pre>
 <hr>
 <h2 id="4">4. 典型模式</h2>
 <h3>4.1 服务提供者模式</h3>
-<pre><code class="language-python">class DatabaseSystem(ServerSubsystem):
-    def onInit(self):
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">DatabaseSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
         bus = SubsystemManager.getInstance().bus
-        bus.register(&#39;db.save&#39;, self.save_data)
-        bus.register(&#39;db.load&#39;, self.load_data)
-        bus.register(&#39;db.delete&#39;, self.delete_data)
+        bus.register(<span class="hljs-string">&#x27;db.save&#x27;</span>, <span class="hljs-variable language_">self</span>.save_data)
+        bus.register(<span class="hljs-string">&#x27;db.load&#x27;</span>, <span class="hljs-variable language_">self</span>.load_data)
+        bus.register(<span class="hljs-string">&#x27;db.delete&#x27;</span>, <span class="hljs-variable language_">self</span>.delete_data)
 
-    def save_data(self, key, value):
-        # ... 保存到数据库
-        return True
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">save_data</span>(<span class="hljs-params">self, key, value</span>):
+        <span class="hljs-comment"># ... 保存到数据库</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
 
-    def load_data(self, key):
-        # ... 从数据库加载
-        return {&#39;stored_value&#39;}
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">load_data</span>(<span class="hljs-params">self, key</span>):
+        <span class="hljs-comment"># ... 从数据库加载</span>
+        <span class="hljs-keyword">return</span> {<span class="hljs-string">&#x27;stored_value&#x27;</span>}
 
-    def delete_data(self, key):
-        # ... 删除
-        return True
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">delete_data</span>(<span class="hljs-params">self, key</span>):
+        <span class="hljs-comment"># ... 删除</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
 </code></pre>
-<pre><code class="language-python">class AnySystem(ServerSubsystem):
-    def save_player_data(self):
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">AnySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">save_player_data</span>(<span class="hljs-params">self</span>):
         bus = SubsystemManager.getInstance().bus
-        bus.execute(&#39;db.save&#39;, &#39;player_1&#39;, {&#39;hp&#39;: 100})
+        bus.execute(<span class="hljs-string">&#x27;db.save&#x27;</span>, <span class="hljs-string">&#x27;player_1&#x27;</span>, {<span class="hljs-string">&#x27;hp&#x27;</span>: <span class="hljs-number">100</span>})
 </code></pre>
 <h3>4.2 请求-响应模式</h3>
-<pre><code class="language-python"># 提供者
-class ConfigSystem(ServerSubsystem):
-    def onInit(self):
+<pre><code class="hljs language-python"><span class="hljs-comment"># 提供者</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ConfigSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
         SubsystemManager.getInstance().bus.register(
-            &#39;config.get&#39;, self.get_config
+            <span class="hljs-string">&#x27;config.get&#x27;</span>, <span class="hljs-variable language_">self</span>.get_config
         )
 
-    def get_config(self, key):
-        return self.config.get(key, None)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">get_config</span>(<span class="hljs-params">self, key</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>.config.get(key, <span class="hljs-literal">None</span>)
 
-# 消费者
-class FeatureSystem(ServerSubsystem):
-    def onReady(self):
+<span class="hljs-comment"># 消费者</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">FeatureSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
         results = SubsystemManager.getInstance().bus.execute(
-            &#39;config.get&#39;, &#39;max_players&#39;
+            <span class="hljs-string">&#x27;config.get&#x27;</span>, <span class="hljs-string">&#x27;max_players&#x27;</span>
         )
-        self.max_players = results[0] if results else 10
+        <span class="hljs-variable language_">self</span>.max_players = results[<span class="hljs-number">0</span>] <span class="hljs-keyword">if</span> results <span class="hljs-keyword">else</span> <span class="hljs-number">10</span>
 </code></pre>
 <hr>
 <h2 id="5">5. 与事件系统的对比</h2>
-<pre><code class="language-python"># === CommandBus 方式 ===
-# 优点：有返回值，同步调用，适合&quot;请求-响应&quot;
-manager.bus.execute(&#39;get_player_stats&#39;, player_id)
-# → [{&#39;hp&#39;: 100, &#39;mana&#39;: 50}]
+<pre><code class="hljs language-python"><span class="hljs-comment"># === CommandBus 方式 ===</span>
+<span class="hljs-comment"># 优点：有返回值，同步调用，适合&amp;quot;请求-响应&amp;quot;</span>
+manager.bus.execute(<span class="hljs-string">&#x27;get_player_stats&#x27;</span>, player_id)
+<span class="hljs-comment"># → [{&#x27;hp&#x27;: 100, &#x27;mana&#x27;: 50}]</span>
 
-# === Event 方式 ===
-# 优点：广播通知，适合&quot;状态变化通知&quot;
-self.sendServer(&#39;PlayerStatsChanged&#39;, {&#39;player_id&#39;: player_id})
-# → 客户端异步接收
+<span class="hljs-comment"># === Event 方式 ===</span>
+<span class="hljs-comment"># 优点：广播通知，适合&amp;quot;状态变化通知&amp;quot;</span>
+<span class="hljs-variable language_">self</span>.sendServer(<span class="hljs-string">&#x27;PlayerStatsChanged&#x27;</span>, {<span class="hljs-string">&#x27;player_id&#x27;</span>: player_id})
+<span class="hljs-comment"># → 客户端异步接收</span>
 </code></pre>
 <p><strong>选择建议：</strong></p>
 <ul>

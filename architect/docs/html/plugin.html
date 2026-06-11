@@ -45,6 +45,7 @@ ol,ul{padding-left:1.5rem;margin:.75rem 0}
 li{margin:.35rem 0;line-height:1.75}
 strong{color:hsl(var(--f))}
 @media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -71,43 +72,43 @@ strong{color:hsl(var(--f))}
 <hr>
 <h2 id="2">2. 创建插件</h2>
 <h3>2.1 基本结构</h3>
-<pre><code class="language-python">from architect.core.loader import Plugin, PluginBase
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.loader <span class="hljs-keyword">import</span> Plugin, PluginBase
 
-@Plugin(
-    name=&#39;MyPlugin&#39;,
-    ver=[1, 0, 0],
-    author=&#39;You&#39;,
-    desc=&#39;My first plugin&#39;,
-    deps={&#39;OtherPlugin&#39;: &#39;&gt;=1.0.0&#39;}
-)
-class MyPlugin(PluginBase):
-    def onCreate(self):
-        &quot;&quot;&quot;插件实例创建时调用&quot;&quot;&quot;
-        pass
+<span class="hljs-meta">@Plugin(<span class="hljs-params">
+    name=<span class="hljs-string">&#x27;MyPlugin&#x27;</span>,
+    ver=[<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>],
+    author=<span class="hljs-string">&#x27;You&#x27;</span>,
+    desc=<span class="hljs-string">&#x27;My first plugin&#x27;</span>,
+    deps={<span class="hljs-string">&#x27;OtherPlugin&#x27;</span>: <span class="hljs-string">&#x27;&amp;gt;=1.0.0&#x27;</span>}
+</span>)</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyPlugin</span>(<span class="hljs-title class_ inherited__">PluginBase</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onCreate</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;插件实例创建时调用&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    def onAttach(self, manager):
-        &quot;&quot;&quot;插件附加到 SubsystemManager 时调用&quot;&quot;&quot;
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onAttach</span>(<span class="hljs-params">self, manager</span>):
+        &amp;quot;&amp;quot;&amp;quot;插件附加到 SubsystemManager 时调用&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    def onReady(self, manager):
-        &quot;&quot;&quot;所有子系统就绪后调用&quot;&quot;&quot;
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self, manager</span>):
+        &amp;quot;&amp;quot;&amp;quot;所有子系统就绪后调用&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    def onRegisterComponent(self, compCls):
-        &quot;&quot;&quot;组件注册到引擎时调用，compCls 为组件类型列表&quot;&quot;&quot;
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onRegisterComponent</span>(<span class="hljs-params">self, compCls</span>):
+        &amp;quot;&amp;quot;&amp;quot;组件注册到引擎时调用，compCls 为组件类型列表&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    def onAddSubsystem(self, subsystem):
-        &quot;&quot;&quot;有新子系统添加时调用&quot;&quot;&quot;
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onAddSubsystem</span>(<span class="hljs-params">self, subsystem</span>):
+        &amp;quot;&amp;quot;&amp;quot;有新子系统添加时调用&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    def onRemoveSubsystem(self, subsystem):
-        &quot;&quot;&quot;有子系统移除时调用&quot;&quot;&quot;
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onRemoveSubsystem</span>(<span class="hljs-params">self, subsystem</span>):
+        &amp;quot;&amp;quot;&amp;quot;有子系统移除时调用&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    def onDestroy(self):
-        &quot;&quot;&quot;插件销毁时调用&quot;&quot;&quot;
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onDestroy</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;插件销毁时调用&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 </code></pre>
 <h3>2.2 <code>@Plugin</code> 参数</h3>
 <table>
@@ -166,18 +167,18 @@ _PluginHost.load(manager)
 <hr>
 <h2 id="3">3. 插件依赖</h2>
 <h3>3.1 声明依赖</h3>
-<pre><code class="language-python">@Plugin(
-    name=&#39;MyCombatPlugin&#39;,
-    ver=[1, 0, 0],
-    author=&#39;You&#39;,
-    desc=&#39;Combat system&#39;,
+<pre><code class="hljs language-python"><span class="hljs-meta">@Plugin(<span class="hljs-params">
+    name=<span class="hljs-string">&#x27;MyCombatPlugin&#x27;</span>,
+    ver=[<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>],
+    author=<span class="hljs-string">&#x27;You&#x27;</span>,
+    desc=<span class="hljs-string">&#x27;Combat system&#x27;</span>,
     deps={
-        &#39;RoninAnimationEx&#39;: &#39;&gt;=1.0.0&#39;,
-        &#39;RoninInputEx&#39;: &#39;&gt;=1.0.0&#39;
+        <span class="hljs-string">&#x27;RoninAnimationEx&#x27;</span>: <span class="hljs-string">&#x27;&amp;gt;=1.0.0&#x27;</span>,
+        <span class="hljs-string">&#x27;RoninInputEx&#x27;</span>: <span class="hljs-string">&#x27;&amp;gt;=1.0.0&#x27;</span>
     }
-)
-class MyCombatPlugin(PluginBase):
-    pass
+</span>)</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyCombatPlugin</span>(<span class="hljs-title class_ inherited__">PluginBase</span>):
+    <span class="hljs-keyword">pass</span>
 </code></pre>
 <h3>3.2 拓扑排序加载</h3>
 <p>框架使用拓扑排序确保依赖插件先于依赖它们的插件加载：</p>
@@ -186,22 +187,22 @@ class MyCombatPlugin(PluginBase):
 </code></pre>
 <p>如果存在循环依赖，框架按注册顺序兜底加载，不会死循环。</p>
 <h3>3.3 获取其他插件</h3>
-<pre><code class="language-python">from architect.core.loader import getPlugin, hasPlugin
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.loader <span class="hljs-keyword">import</span> getPlugin, hasPlugin
 
-class MyPlugin(PluginBase):
-    def onReady(self, manager):
-        if hasPlugin(&#39;RoninAnimationEx&#39;):
-            anim_plugin = getPlugin(&#39;RoninAnimationEx&#39;)
-            # 使用动画插件的 API
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyPlugin</span>(<span class="hljs-title class_ inherited__">PluginBase</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self, manager</span>):
+        <span class="hljs-keyword">if</span> hasPlugin(<span class="hljs-string">&#x27;RoninAnimationEx&#x27;</span>):
+            anim_plugin = getPlugin(<span class="hljs-string">&#x27;RoninAnimationEx&#x27;</span>)
+            <span class="hljs-comment"># 使用动画插件的 API</span>
 </code></pre>
 <hr>
 <h2 id="4">4. 热升级</h2>
 <h3>4.1 版本比较</h3>
 <p>当 <code>@Plugin</code> 声明的版本号高于当前已注册的版本时，框架自动执行热升级：</p>
-<pre><code class="language-python"># v1.0.1 升级到 v1.1.0
-@Plugin(name=&#39;MyPlugin&#39;, ver=[1, 1, 0], author=&#39;You&#39;, desc=&#39;Upgraded&#39;)
-class MyPlugin(PluginBase):
-    pass
+<pre><code class="hljs language-python"><span class="hljs-comment"># v1.0.1 升级到 v1.1.0</span>
+<span class="hljs-meta">@Plugin(<span class="hljs-params">name=<span class="hljs-string">&#x27;MyPlugin&#x27;</span>, ver=[<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>], author=<span class="hljs-string">&#x27;You&#x27;</span>, desc=<span class="hljs-string">&#x27;Upgraded&#x27;</span></span>)</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyPlugin</span>(<span class="hljs-title class_ inherited__">PluginBase</span>):
+    <span class="hljs-keyword">pass</span>
 </code></pre>
 <h3>4.2 升级流程</h3>
 <ol>
@@ -214,37 +215,37 @@ class MyPlugin(PluginBase):
 <h2 id="5">5. 系统插件</h2>
 <h3>5.1 启用插件</h3>
 <p>在 <code>conf.py</code> 中：</p>
-<pre><code class="language-python">PLUGINS = [
-    &#39;$vendor.event&#39;,       # 事件系统
-    &#39;$vendor.animation&#39;,   # 动画扩展
-    &#39;$vendor.input&#39;,       # 输入系统
-    &#39;$vendor.squad&#39;,       # 小队系统
+<pre><code class="hljs language-python">PLUGINS = [
+    <span class="hljs-string">&#x27;$vendor.event&#x27;</span>,       <span class="hljs-comment"># 事件系统</span>
+    <span class="hljs-string">&#x27;$vendor.animation&#x27;</span>,   <span class="hljs-comment"># 动画扩展</span>
+    <span class="hljs-string">&#x27;$vendor.input&#x27;</span>,       <span class="hljs-comment"># 输入系统</span>
+    <span class="hljs-string">&#x27;$vendor.squad&#x27;</span>,       <span class="hljs-comment"># 小队系统</span>
 ]
 </code></pre>
 <h3>5.2 事件系统插件 (<code>$vendor.event</code>)</h3>
 <p>封装了事件的分发和管理，推荐始终启用。</p>
-<pre><code class="language-python"># architect/plugins/event/client.py
-class EventPlugin(PluginBase):
-    def onCreate(self):
-        # 初始化事件系统
-        pass
+<pre><code class="hljs language-python"><span class="hljs-comment"># architect/plugins/event/client.py</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">EventPlugin</span>(<span class="hljs-title class_ inherited__">PluginBase</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onCreate</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-comment"># 初始化事件系统</span>
+        <span class="hljs-keyword">pass</span>
 
-# architect/plugins/event/server.py
-class EventPluginServer(PluginBase):
-    def onCreate(self):
-        pass
+<span class="hljs-comment"># architect/plugins/event/server.py</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">EventPluginServer</span>(<span class="hljs-title class_ inherited__">PluginBase</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onCreate</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">pass</span>
 </code></pre>
 <h3>5.3 动画扩展插件 (<code>$vendor.animation</code>)</h3>
 <p><strong>客户端：</strong> <code>RoninAnimationEx</code></p>
 <p>提供动画序列和蒙太奇控制。用户通过实体变量控制动画：</p>
-<pre><code class="language-python"># 设置混合权重
-entity.set_attr(&#39;blendex.{anim_name}&#39;, 0.5)
+<pre><code class="hljs language-python"><span class="hljs-comment"># 设置混合权重</span>
+entity.set_attr(<span class="hljs-string">&#x27;blendex.{anim_name}&#x27;</span>, <span class="hljs-number">0.5</span>)
 
-# 设置动画时间
-entity.set_attr(&#39;anim_timeex.{anim_name}&#39;, 0.3)
+<span class="hljs-comment"># 设置动画时间</span>
+entity.set_attr(<span class="hljs-string">&#x27;anim_timeex.{anim_name}&#x27;</span>, <span class="hljs-number">0.3</span>)
 
-# 设置通知
-entity.set_attr(&#39;notify_{name}&#39;, 1)
+<span class="hljs-comment"># 设置通知</span>
+entity.set_attr(<span class="hljs-string">&#x27;notify_{name}&#x27;</span>, <span class="hljs-number">1</span>)
 </code></pre>
 <p><strong>服务端：</strong> <code>RoninAnimationExServer</code></p>
 <p>服务端动画同步插件。</p>
@@ -259,10 +260,10 @@ entity.set_attr(&#39;notify_{name}&#39;, 1)
 <li><code>InputExEnums</code> — 输入枚举</li>
 </ul>
 <p><strong>示例：</strong></p>
-<pre><code class="language-python"># 获取输入值
+<pre><code class="hljs language-python"><span class="hljs-comment"># 获取输入值</span>
 input_comp = getComponent(entity_id, InputExComponent)
-move_forward = input_comp.get(&#39;MoveForward&#39;)   # 0.0 ~ 1.0
-is_jumping = input_comp.get(&#39;Jump&#39;)            # True/False
+move_forward = input_comp.get(<span class="hljs-string">&#x27;MoveForward&#x27;</span>)   <span class="hljs-comment"># 0.0 ~ 1.0</span>
+is_jumping = input_comp.get(<span class="hljs-string">&#x27;Jump&#x27;</span>)            <span class="hljs-comment"># True/False</span>
 </code></pre>
 <h3>5.5 小队系统插件 (<code>$vendor.squad</code>)</h3>
 <p>实体分组管理，将实体加入/离开小队，支持小队内通信。</p>
@@ -277,18 +278,18 @@ is_jumping = input_comp.get(&#39;Jump&#39;)            # True/False
 </code></pre>
 <h3>6.2 启用用户插件</h3>
 <p>在 <code>conf.py</code> 中以 <code>$user.</code> 前缀引用：</p>
-<pre><code class="language-python">PLUGINS = [
-    &#39;$vendor.event&#39;,
-    &#39;$user.my_plugin&#39;,    # → {modname}.plugins.my_plugin
+<pre><code class="hljs language-python">PLUGINS = [
+    <span class="hljs-string">&#x27;$vendor.event&#x27;</span>,
+    <span class="hljs-string">&#x27;$user.my_plugin&#x27;</span>,    <span class="hljs-comment"># → {modname}.plugins.my_plugin</span>
 ]
 </code></pre>
 <h3>6.3 插件路径解析</h3>
-<pre><code class="language-python"># $vendor.{name} → architect.plugins.{name}
-# $user.{name}   → {modname}.plugins.{name}
+<pre><code class="hljs language-python"><span class="hljs-comment"># $vendor.{name} → architect.plugins.{name}</span>
+<span class="hljs-comment"># $user.{name}   → {modname}.plugins.{name}</span>
 
-# 示例
-&#39;$vendor.animation&#39; → &#39;architect.plugins.animation&#39;
-&#39;$user.combat&#39;      → &#39;my_mod.plugins.combat&#39;
+<span class="hljs-comment"># 示例</span>
+<span class="hljs-string">&#x27;$vendor.animation&#x27;</span> → <span class="hljs-string">&#x27;architect.plugins.animation&#x27;</span>
+<span class="hljs-string">&#x27;$user.combat&#x27;</span>      → <span class="hljs-string">&#x27;my_mod.plugins.combat&#x27;</span>
 </code></pre>
 <p>路径后自动追加 <code>.server</code> 或 <code>.client</code>：</p>
 <pre><code>architect.plugins.animation.client  (客户端)
@@ -298,25 +299,25 @@ architect.plugins.animation.server  (服务端)
 <h2 id="7">7. 插件与子系统交互</h2>
 <h3>7.1 捕获组件和子系统</h3>
 <p>当插件被导入时，框架使用 <code>ContextRecorder</code> 捕获其依赖的组件类型和子系统类型：</p>
-<pre><code class="language-python">class MyPlugin(PluginBase):
-    def onAttach(self, manager):
-        # manager 是 SubsystemManager 实例
-        # 可以访问所有已注册的子系统
-        my_system = manager.getSubsystemByName(&#39;MySystem&#39;)
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyPlugin</span>(<span class="hljs-title class_ inherited__">PluginBase</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onAttach</span>(<span class="hljs-params">self, manager</span>):
+        <span class="hljs-comment"># manager 是 SubsystemManager 实例</span>
+        <span class="hljs-comment"># 可以访问所有已注册的子系统</span>
+        my_system = manager.getSubsystemByName(<span class="hljs-string">&#x27;MySystem&#x27;</span>)
 
-    def onRegisterComponent(self, compCls):
-        # compCls 是组件类型列表
-        for cls in compCls:
-            print(&#39;Component registered:&#39;, cls.__name__)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onRegisterComponent</span>(<span class="hljs-params">self, compCls</span>):
+        <span class="hljs-comment"># compCls 是组件类型列表</span>
+        <span class="hljs-keyword">for</span> cls <span class="hljs-keyword">in</span> compCls:
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Component registered:&#x27;</span>, cls.__name__)
 
-    def onAddSubsystem(self, subsystem):
-        print(&#39;Subsystem added:&#39;, subsystem.__class__.__name__)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onAddSubsystem</span>(<span class="hljs-params">self, subsystem</span>):
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Subsystem added:&#x27;</span>, subsystem.__class__.__name__)
 </code></pre>
 <h3>7.2 注入依赖</h3>
 <p>插件在 <code>onAttach</code> 阶段可以通过 <code>SubsystemManager</code> 获取所需资源：</p>
-<pre><code class="language-python">class ConfigPlugin(PluginBase):
-    def onAttach(self, manager):
-        self.config = manager.bus.execute(&#39;get_config&#39;)
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ConfigPlugin</span>(<span class="hljs-title class_ inherited__">PluginBase</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onAttach</span>(<span class="hljs-params">self, manager</span>):
+        <span class="hljs-variable language_">self</span>.config = manager.bus.execute(<span class="hljs-string">&#x27;get_config&#x27;</span>)
 </code></pre>
 <hr>
 <h2 id="8">8. 插件加载流程详解</h2>

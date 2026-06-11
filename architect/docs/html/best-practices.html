@@ -45,6 +45,7 @@ ol,ul{padding-left:1.5rem;margin:.75rem 0}
 li{margin:.35rem 0;line-height:1.75}
 strong{color:hsl(var(--f))}
 @media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -62,42 +63,42 @@ strong{color:hsl(var(--f))}
 <h2 id="1">1. 子系统设计</h2>
 <h3>✅ 推荐</h3>
 <p><strong>单一职责：</strong> 每个子系统只负责一个领域。</p>
-<pre><code class="language-python"># 好：职责分离
-class CombatSystem(ServerSubsystem):    # 战斗逻辑
-    pass
+<pre><code class="hljs language-python"><span class="hljs-comment"># 好：职责分离</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">CombatSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):    <span class="hljs-comment"># 战斗逻辑</span>
+    <span class="hljs-keyword">pass</span>
 
-class InventorySystem(ServerSubsystem): # 物品管理
-    pass
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">InventorySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>): <span class="hljs-comment"># 物品管理</span>
+    <span class="hljs-keyword">pass</span>
 
-class SpawnSystem(ServerSubsystem):     # 实体生成
-    pass
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SpawnSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):     <span class="hljs-comment"># 实体生成</span>
+    <span class="hljs-keyword">pass</span>
 
-# 不好：一个系统做所有事情
-class GodSystem(ServerSubsystem):
-    def handle_combat(self): ...
-    def handle_inventory(self): ...
-    def handle_ai(self): ...
+<span class="hljs-comment"># 不好：一个系统做所有事情</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">GodSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_combat</span>(<span class="hljs-params">self</span>): ...
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_inventory</span>(<span class="hljs-params">self</span>): ...
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_ai</span>(<span class="hljs-params">self</span>): ...
 </code></pre>
 <p><strong>通过 <code>CommandBus</code> 解耦：</strong> 让子系统通过命令总线通信，而非直接引用。</p>
-<pre><code class="language-python"># 好：通过 CommandBus
-class QuestSystem(ServerSubsystem):
-    def onReady(self):
+<pre><code class="hljs language-python"><span class="hljs-comment"># 好：通过 CommandBus</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">QuestSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
         manager = SubsystemManager.getInstance()
-        self._unreg = manager.bus.register(&#39;quest.complete&#39;, self.on_quest_done)
+        <span class="hljs-variable language_">self</span>._unreg = manager.bus.register(<span class="hljs-string">&#x27;quest.complete&#x27;</span>, <span class="hljs-variable language_">self</span>.on_quest_done)
 
-# 不好：直接引用其他子系统
-class QuestSystem(ServerSubsystem):
-    def onReady(self):
-        self.reward_sys = SubsystemManager.getInstance().getSubsystem(RewardSystem)
+<span class="hljs-comment"># 不好：直接引用其他子系统</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">QuestSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.reward_sys = SubsystemManager.getInstance().getSubsystem(RewardSystem)
 </code></pre>
 <p><strong>在 <code>onReady</code> 中初始化跨系统依赖：</strong> <code>onInit</code> 只初始化自身，等所有系统创建完毕后再在 <code>onReady</code> 中建立连接。</p>
-<pre><code class="language-python">class MySystem(ServerSubsystem):
-    def onInit(self):
-        self.data = {}          # ✅ 初始化自身状态
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.data = {}          <span class="hljs-comment"># ✅ 初始化自身状态</span>
 
-    def onReady(self):
-        self.other = OtherSystem.getInstance()  # ✅ 获取其他系统
-        self.start_fixed()                      # ✅ 启动固定调度器
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.other = OtherSystem.getInstance()  <span class="hljs-comment"># ✅ 获取其他系统</span>
+        <span class="hljs-variable language_">self</span>.start_fixed()                      <span class="hljs-comment"># ✅ 启动固定调度器</span>
 </code></pre>
 <h3>❌ 避免</h3>
 <ul>
@@ -109,52 +110,52 @@ class QuestSystem(ServerSubsystem):
 <h2 id="2">2. 组件设计</h2>
 <h3>✅ 推荐</h3>
 <p><strong>纯数据容器：</strong> 组件只存储数据，不含业务逻辑。</p>
-<pre><code class="language-python"># 好
-class Health(Component):
-    hp = 100
-    maxHp = 100
+<pre><code class="hljs language-python"><span class="hljs-comment"># 好</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    hp = <span class="hljs-number">100</span>
+    maxHp = <span class="hljs-number">100</span>
 
-# 不好：组件里写逻辑
-class Health(Component):
-    hp = 100
-    maxHp = 100
+<span class="hljs-comment"># 不好：组件里写逻辑</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    hp = <span class="hljs-number">100</span>
+    maxHp = <span class="hljs-number">100</span>
 
-    def take_damage(self, amount):   # 逻辑应该放在 System 中
-        self.hp -= amount
-        if self.hp &lt;= 0:
-            self.on_death()
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">take_damage</span>(<span class="hljs-params">self, amount</span>):   <span class="hljs-comment"># 逻辑应该放在 System 中</span>
+        <span class="hljs-variable language_">self</span>.hp -= amount
+        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.hp &amp;lt;= <span class="hljs-number">0</span>:
+            <span class="hljs-variable language_">self</span>.on_death()
 </code></pre>
 <p><strong>细粒度组件：</strong> 拆分大组件为多个小组件，便于查询和复用。</p>
-<pre><code class="language-python"># 好：细粒度
-class Position(Component):
-    x = 0.0; y = 0.0; z = 0.0
+<pre><code class="hljs language-python"><span class="hljs-comment"># 好：细粒度</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Position</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    x = <span class="hljs-number">0.0</span>; y = <span class="hljs-number">0.0</span>; z = <span class="hljs-number">0.0</span>
 
-class Velocity(Component):
-    vx = 0.0; vy = 0.0; vz = 0.0
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Velocity</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    vx = <span class="hljs-number">0.0</span>; vy = <span class="hljs-number">0.0</span>; vz = <span class="hljs-number">0.0</span>
 
-class Health(Component):
-    hp = 100; maxHp = 100
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    hp = <span class="hljs-number">100</span>; maxHp = <span class="hljs-number">100</span>
 
-# 不好：大杂烩
-class EntityData(Component):
-    x = 0.0; y = 0.0; z = 0.0
-    vx = 0.0; vy = 0.0; vz = 0.0
-    hp = 100; maxHp = 100
+<span class="hljs-comment"># 不好：大杂烩</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">EntityData</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    x = <span class="hljs-number">0.0</span>; y = <span class="hljs-number">0.0</span>; z = <span class="hljs-number">0.0</span>
+    vx = <span class="hljs-number">0.0</span>; vy = <span class="hljs-number">0.0</span>; vz = <span class="hljs-number">0.0</span>
+    hp = <span class="hljs-number">100</span>; maxHp = <span class="hljs-number">100</span>
     inventory = []
     effects = {}
 </code></pre>
 <p><strong>使用 <code>@DefineFields</code> 做验证：</strong></p>
-<pre><code class="language-python">@DefineFields({
-    &#39;level&#39;: FieldSchema(default=1, validator=lambda v: v &gt;= 1),
-    &#39;xp&#39;: FieldSchema(default=0, validator=lambda v: v &gt;= 0),
-})
-class PlayerStats(Component):
-    pass
+<pre><code class="hljs language-python"><span class="hljs-meta">@DefineFields(<span class="hljs-params">{
+    <span class="hljs-string">&#x27;level&#x27;</span>: FieldSchema(<span class="hljs-params">default=<span class="hljs-number">1</span>, validator=<span class="hljs-keyword">lambda</span> v: v &amp;gt;= <span class="hljs-number">1</span></span>),
+    <span class="hljs-string">&#x27;xp&#x27;</span>: FieldSchema(<span class="hljs-params">default=<span class="hljs-number">0</span>, validator=<span class="hljs-keyword">lambda</span> v: v &amp;gt;= <span class="hljs-number">0</span></span>),
+}</span>)</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">PlayerStats</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    <span class="hljs-keyword">pass</span>
 </code></pre>
 <p><strong>标记持久化字段：</strong></p>
-<pre><code class="language-python">class Inventory(Component):
-    items = PersistKeys()   # 标记需要持久化的字段集
-    slots = [&#39;&#39;] * 36
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Inventory</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    items = PersistKeys()   <span class="hljs-comment"># 标记需要持久化的字段集</span>
+    slots = [<span class="hljs-string">&#x27;&#x27;</span>] * <span class="hljs-number">36</span>
 </code></pre>
 <h3>❌ 避免</h3>
 <ul>
@@ -166,23 +167,23 @@ class PlayerStats(Component):
 <h2 id="3">3. 查询模式</h2>
 <h3>✅ 推荐</h3>
 <p><strong>使用 <code>@Query(attach_query=True)</code> 自动注入：</strong></p>
-<pre><code class="language-python">@Query(target=&#39;{Health}&#39;, required=[&#39;{CombatStats}&#39;], attach_query=True)
-def damage_tick(self, entityId, Health, CombatStats=None):
-    Health.hp -= 1  # 直接使用组件实例
+<pre><code class="hljs language-python"><span class="hljs-meta">@Query(<span class="hljs-params">target=<span class="hljs-string">&#x27;{Health}&#x27;</span>, required=[<span class="hljs-string">&#x27;{CombatStats}&#x27;</span>], attach_query=<span class="hljs-literal">True</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">damage_tick</span>(<span class="hljs-params">self, entityId, Health, CombatStats=<span class="hljs-literal">None</span></span>):
+    Health.hp -= <span class="hljs-number">1</span>  <span class="hljs-comment"># 直接使用组件实例</span>
 </code></pre>
 <p><strong>在 <code>onUpdate</code> 中调用查询方法：</strong></p>
-<pre><code class="language-python">class DamageSystem(ServerSubsystem):
-    canTick = True
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">DamageSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
 
-    def onUpdate(self, dt):
-        self.damage_tick()  # 遍历所有匹配实体
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        <span class="hljs-variable language_">self</span>.damage_tick()  <span class="hljs-comment"># 遍历所有匹配实体</span>
 </code></pre>
 <p><strong>按需使用手动获取：</strong></p>
-<pre><code class="language-python">@Query(target=&#39;{Health}&#39;)
-def check_low_hp(self, entityId):
+<pre><code class="hljs language-python"><span class="hljs-meta">@Query(<span class="hljs-params">target=<span class="hljs-string">&#x27;{Health}&#x27;</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">check_low_hp</span>(<span class="hljs-params">self, entityId</span>):
     health = getComponent(entityId, Health)
-    if health and health.hp &lt; 20:
-        self.heal(entityId)
+    <span class="hljs-keyword">if</span> health <span class="hljs-keyword">and</span> health.hp &amp;lt; <span class="hljs-number">20</span>:
+        <span class="hljs-variable language_">self</span>.heal(entityId)
 </code></pre>
 <h3>❌ 避免</h3>
 <ul>
@@ -193,24 +194,24 @@ def check_low_hp(self, entityId):
 <h2 id="4">4. 事件系统</h2>
 <h3>✅ 推荐</h3>
 <p><strong>使用 <code>@EventListener</code> 装饰器：</strong></p>
-<pre><code class="language-python">@EventListener(&#39;EntityHurtEvent&#39;)
-def onEntityHurt(self, event):
-    entityId = event.id        # ✅ 使用属性访问
+<pre><code class="hljs language-python"><span class="hljs-meta">@EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self, event</span>):
+    entityId = event.<span class="hljs-built_in">id</span>        <span class="hljs-comment"># ✅ 使用属性访问</span>
     damage = event.damage
 </code></pre>
 <p><strong>在需要时中断事件流：</strong></p>
-<pre><code class="language-python">@EventListener(&#39;EntityHurtEvent&#39;)
-def onEntityHurt(self, event):
-    if event.id == self.god_player:
-        event.stop()           # 阻止后续监听器
-        event.setEvent(&#39;damage&#39;, 0)  # 修改伤害为 0
+<pre><code class="hljs language-python"><span class="hljs-meta">@EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self, event</span>):
+    <span class="hljs-keyword">if</span> event.<span class="hljs-built_in">id</span> == <span class="hljs-variable language_">self</span>.god_player:
+        event.stop()           <span class="hljs-comment"># 阻止后续监听器</span>
+        event.setEvent(<span class="hljs-string">&#x27;damage&#x27;</span>, <span class="hljs-number">0</span>)  <span class="hljs-comment"># 修改伤害为 0</span>
 </code></pre>
 <p><strong>区分引擎事件与自定义事件：</strong></p>
-<pre><code class="language-python">@EventListener(&#39;ServerPostInitEvent&#39;)   # 引擎事件 → isCustomEvent=False
-def onInit(self, event): ...
+<pre><code class="hljs language-python"><span class="hljs-meta">@EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;ServerPostInitEvent&#x27;</span></span>)   </span><span class="hljs-comment"># 引擎事件 → isCustomEvent=False</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self, event</span>): ...
 
-@CustomEvent(&#39;MyDataSyncEvent&#39;)          # 自定义事件 → isCustomEvent=True
-def onSync(self, event): ...
+<span class="hljs-meta">@CustomEvent(<span class="hljs-params"><span class="hljs-string">&#x27;MyDataSyncEvent&#x27;</span></span>)          </span><span class="hljs-comment"># 自定义事件 → isCustomEvent=True</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">onSync</span>(<span class="hljs-params">self, event</span>): ...
 </code></pre>
 <h3>❌ 避免</h3>
 <ul>
@@ -222,21 +223,21 @@ def onSync(self, event): ...
 <h2 id="5">5. 调度系统</h2>
 <h3>✅ 推荐</h3>
 <p><strong>利用多阶段调度：</strong></p>
-<pre><code class="language-python">@Sched.Tick(SchedUpdateFlags.BeforeUpdate)  # 输入收集
-def collect_input(self): ...
+<pre><code class="hljs language-python"><span class="hljs-meta">@Sched.Tick(<span class="hljs-params">SchedUpdateFlags.BeforeUpdate</span>)  </span><span class="hljs-comment"># 输入收集</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">collect_input</span>(<span class="hljs-params">self</span>): ...
 
-@Sched.Tick()                                # 逻辑更新
-def update_logic(self): ...
+<span class="hljs-meta">@Sched.Tick()                                </span><span class="hljs-comment"># 逻辑更新</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">update_logic</span>(<span class="hljs-params">self</span>): ...
 
-@Sched.Tick(SchedUpdateFlags.AfterUpdate)    # 状态同步
-def sync_state(self): ...
+<span class="hljs-meta">@Sched.Tick(<span class="hljs-params">SchedUpdateFlags.AfterUpdate</span>)    </span><span class="hljs-comment"># 状态同步</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">sync_state</span>(<span class="hljs-params">self</span>): ...
 </code></pre>
 <p><strong>固定调度器在 <code>onReady</code> 中启动：</strong></p>
-<pre><code class="language-python">@Sched.Fixed(&#39;save_scheduler&#39;)
-def auto_save(self): ...
+<pre><code class="hljs language-python"><span class="hljs-meta">@Sched.Fixed(<span class="hljs-params"><span class="hljs-string">&#x27;save_scheduler&#x27;</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">auto_save</span>(<span class="hljs-params">self</span>): ...
 
-def onReady(self):
-    self.scheduleFixed(&#39;save_scheduler&#39;, period=30.0)  # ✅ 在 onReady
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
+    <span class="hljs-variable language_">self</span>.scheduleFixed(<span class="hljs-string">&#x27;save_scheduler&#x27;</span>, period=<span class="hljs-number">30.0</span>)  <span class="hljs-comment"># ✅ 在 onReady</span>
 </code></pre>
 <h3>❌ 避免</h3>
 <ul>
@@ -248,23 +249,23 @@ def onReady(self):
 <h2 id="6">6. 性能诊断</h2>
 <h3>✅ 推荐</h3>
 <p><strong>关键路径计时：</strong></p>
-<pre><code class="language-python">def onUpdate(self, dt):
-    with profiler.record(&#39;Combat.damage_loop&#39;):
-        self.damage_tick()
+<pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+    <span class="hljs-keyword">with</span> profiler.record(<span class="hljs-string">&#x27;Combat.damage_loop&#x27;</span>):
+        <span class="hljs-variable language_">self</span>.damage_tick()
 
-    with profiler.record(&#39;Combat.heal_loop&#39;):
-        self.heal_tick()
+    <span class="hljs-keyword">with</span> profiler.record(<span class="hljs-string">&#x27;Combat.heal_loop&#x27;</span>):
+        <span class="hljs-variable language_">self</span>.heal_tick()
 </code></pre>
 <p><strong>周期性输出报告：</strong></p>
-<pre><code class="language-python">if self.ticks % 300 == 0:
+<pre><code class="hljs language-python"><span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.ticks % <span class="hljs-number">300</span> == <span class="hljs-number">0</span>:
     snap = profiler.flush()
-    for key, stats in snap.items():
-        if stats[&#39;avg_ms&#39;] &gt; 5.0:   # 只输出超过 5ms 的
-            print(&#39;[WARN] %s: avg=%.2fms max=%.2fms&#39; %
-                  (key, stats[&#39;avg_ms&#39;], stats[&#39;max_ms&#39;]))
+    <span class="hljs-keyword">for</span> key, stats <span class="hljs-keyword">in</span> snap.items():
+        <span class="hljs-keyword">if</span> stats[<span class="hljs-string">&#x27;avg_ms&#x27;</span>] &amp;gt; <span class="hljs-number">5.0</span>:   <span class="hljs-comment"># 只输出超过 5ms 的</span>
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[WARN] %s: avg=%.2fms max=%.2fms&#x27;</span> %
+                  (key, stats[<span class="hljs-string">&#x27;avg_ms&#x27;</span>], stats[<span class="hljs-string">&#x27;max_ms&#x27;</span>]))
 </code></pre>
 <p><strong>生产环境禁用：</strong></p>
-<pre><code class="language-python">profiler.disable()  # 发布时关闭
+<pre><code class="hljs language-python">profiler.disable()  <span class="hljs-comment"># 发布时关闭</span>
 </code></pre>
 <h3>❌ 避免</h3>
 <ul>
@@ -276,26 +277,26 @@ def onReady(self):
 <h2 id="7">7. 插件设计</h2>
 <h3>✅ 推荐</h3>
 <p><strong>插件只做功能扩展，不承载核心业务逻辑：</strong></p>
-<pre><code class="language-python"># 好：插件提供基础设施
-@Plugin(name=&#39;DatabasePlugin&#39;, ver=[1, 0, 0])
-class DatabasePlugin(PluginBase):
-    def onAttach(self, manager):
-        manager.bus.register(&#39;db.save&#39;, self.save)
-        manager.bus.register(&#39;db.load&#39;, self.load)
+<pre><code class="hljs language-python"><span class="hljs-comment"># 好：插件提供基础设施</span>
+<span class="hljs-meta">@Plugin(<span class="hljs-params">name=<span class="hljs-string">&#x27;DatabasePlugin&#x27;</span>, ver=[<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>]</span>)</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">DatabasePlugin</span>(<span class="hljs-title class_ inherited__">PluginBase</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onAttach</span>(<span class="hljs-params">self, manager</span>):
+        manager.bus.register(<span class="hljs-string">&#x27;db.save&#x27;</span>, <span class="hljs-variable language_">self</span>.save)
+        manager.bus.register(<span class="hljs-string">&#x27;db.load&#x27;</span>, <span class="hljs-variable language_">self</span>.load)
 
-# 子系统使用插件提供的基础设施
-class PlayerSystem(ServerSubsystem):
-    def save_player(self):
-        SubsystemManager.getInstance().bus.execute(&#39;db.save&#39;, &#39;player_1&#39;, data)
+<span class="hljs-comment"># 子系统使用插件提供的基础设施</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">PlayerSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">save_player</span>(<span class="hljs-params">self</span>):
+        SubsystemManager.getInstance().bus.execute(<span class="hljs-string">&#x27;db.save&#x27;</span>, <span class="hljs-string">&#x27;player_1&#x27;</span>, data)
 </code></pre>
 <p><strong>声明正确的依赖：</strong></p>
-<pre><code class="language-python">@Plugin(
-    name=&#39;MyCombatPlugin&#39;,
+<pre><code class="hljs language-python"><span class="hljs-meta">@Plugin(<span class="hljs-params">
+    name=<span class="hljs-string">&#x27;MyCombatPlugin&#x27;</span>,
     deps={
-        &#39;RoninAnimationEx&#39;: &#39;&gt;=1.0.0&#39;,   # 需要动画插件
-        &#39;RoninInputEx&#39;: &#39;&gt;=1.0.0&#39;        # 需要输入插件
+        <span class="hljs-string">&#x27;RoninAnimationEx&#x27;</span>: <span class="hljs-string">&#x27;&amp;gt;=1.0.0&#x27;</span>,   <span class="hljs-comment"># 需要动画插件</span>
+        <span class="hljs-string">&#x27;RoninInputEx&#x27;</span>: <span class="hljs-string">&#x27;&amp;gt;=1.0.0&#x27;</span>        <span class="hljs-comment"># 需要输入插件</span>
     }
-)
+</span>)</span>
 </code></pre>
 <h3>❌ 避免</h3>
 <ul>
@@ -306,31 +307,31 @@ class PlayerSystem(ServerSubsystem):
 <hr>
 <h2 id="8">8. 常见陷阱</h2>
 <h3>8.1 可变默认值</h3>
-<pre><code class="language-python"># ❌ 错误：所有 Health 实例共享同一个 effects 列表
-class Health(Component):
+<pre><code class="hljs language-python"><span class="hljs-comment"># ❌ 错误：所有 Health 实例共享同一个 effects 列表</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
     effects = []
 
-# ✅ 正确：定义类属性作为默认值
-class Health(Component):
-    hp = 100
-    maxHp = 100
-    # effects 在创建时设置
+<span class="hljs-comment"># ✅ 正确：定义类属性作为默认值</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    hp = <span class="hljs-number">100</span>
+    maxHp = <span class="hljs-number">100</span>
+    <span class="hljs-comment"># effects 在创建时设置</span>
 </code></pre>
 <p>组件的类属性用作默认值。对于需要实例独立值的字段，在 <code>createComponent</code> 后初始化。</p>
 <h3>8.2 装饰器注册顺序</h3>
-<pre><code class="language-python"># ❌ 先 @SubsystemServer 后定义类会报错
-@SubsystemServer  # ← Manager 此时可能未创建
-class MySystem(ServerSubsystem): ...
+<pre><code class="hljs language-python"><span class="hljs-comment"># ❌ 先 @SubsystemServer 后定义类会报错</span>
+<span class="hljs-meta">@SubsystemServer  </span><span class="hljs-comment"># ← Manager 此时可能未创建</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>): ...
 
-# ✅ 正常流程下没问题（modMain.py → createServer() → 导入模块 → 装饰器执行）
+<span class="hljs-comment"># ✅ 正常流程下没问题（modMain.py → createServer() → 导入模块 → 装饰器执行）</span>
 </code></pre>
 <p>确保 <code>modMain.py</code> 中先调用 <code>createServer()</code> / <code>createClient()</code>，再让模块被导入。</p>
 <h3>8.3 组件注册时机</h3>
-<pre><code class="language-python"># ❌ 在 Manager 未完成初始化时创建组件
-createComponent(entity_id, Health)  # → 组件未注册到引擎
+<pre><code class="hljs language-python"><span class="hljs-comment"># ❌ 在 Manager 未完成初始化时创建组件</span>
+createComponent(entity_id, Health)  <span class="hljs-comment"># → 组件未注册到引擎</span>
 
-# ✅ 在 onReady 或 Tick 中创建
-def onReady(self):
+<span class="hljs-comment"># ✅ 在 onReady 或 Tick 中创建</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
     createComponent(entity_id, Health)
 </code></pre>
 <hr>

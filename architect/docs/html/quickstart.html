@@ -45,6 +45,7 @@ ol,ul{padding-left:1.5rem;margin:.75rem 0}
 li{margin:.35rem 0;line-height:1.75}
 strong{color:hsl(var(--f))}
 @media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -82,13 +83,13 @@ strong{color:hsl(var(--f))}
 <hr>
 <h2 id="3-modmain-py">3. 入口文件 — <code>modMain.py</code></h2>
 <p>框架的启动入口，只需要调用 <code>createClient()</code> 和 <code>createServer()</code>：</p>
-<pre><code class="language-python"># coding=utf-8
-from architect.startup import createClient, createServer
+<pre><code class="hljs language-python"><span class="hljs-comment"># coding=utf-8</span>
+<span class="hljs-keyword">from</span> architect.startup <span class="hljs-keyword">import</span> createClient, createServer
 
-# 服务端启动
+<span class="hljs-comment"># 服务端启动</span>
 createServer()
 
-# 客户端启动
+<span class="hljs-comment"># 客户端启动</span>
 createClient()
 </code></pre>
 <p><code>createServer()</code> 和 <code>createClient()</code> 会自动完成：</p>
@@ -104,30 +105,30 @@ createClient()
 <hr>
 <h2 id="4-conf-py">4. 配置文件 — <code>conf.py</code></h2>
 <p>在模组根目录创建 <code>conf.py</code> 来覆盖框架默认配置：</p>
-<pre><code class="language-python"># coding=utf-8
-# 基础信息
-MOD_NAME = &#39;MyMod&#39;
-MOD_VERSION = &#39;1.0.0&#39;
-MOD_ENGINE_NAME = &#39;MyModEngine&#39;   # 引擎系统名
-MOD_SYSTEM_NAME = &#39;MyModSystem&#39;   # 子系统名
+<pre><code class="hljs language-python"><span class="hljs-comment"># coding=utf-8</span>
+<span class="hljs-comment"># 基础信息</span>
+MOD_NAME = <span class="hljs-string">&#x27;MyMod&#x27;</span>
+MOD_VERSION = <span class="hljs-string">&#x27;1.0.0&#x27;</span>
+MOD_ENGINE_NAME = <span class="hljs-string">&#x27;MyModEngine&#x27;</span>   <span class="hljs-comment"># 引擎系统名</span>
+MOD_SYSTEM_NAME = <span class="hljs-string">&#x27;MyModSystem&#x27;</span>   <span class="hljs-comment"># 子系统名</span>
 
-# 需要导入的模块（相对于模组根目录的路径）
+<span class="hljs-comment"># 需要导入的模块（相对于模组根目录的路径）</span>
 MOD_SERVER_MODULES = [
-    &#39;subsystems.my_system&#39;,
+    <span class="hljs-string">&#x27;subsystems.my_system&#x27;</span>,
 ]
 MOD_CLIENT_MODULES = [
-    &#39;subsystems.my_system&#39;,
+    <span class="hljs-string">&#x27;subsystems.my_system&#x27;</span>,
 ]
 
-# 启用的插件列表
+<span class="hljs-comment"># 启用的插件列表</span>
 PLUGINS = [
-    &#39;$vendor.event&#39;,      # 事件系统插件（推荐启用）
+    <span class="hljs-string">&#x27;$vendor.event&#x27;</span>,      <span class="hljs-comment"># 事件系统插件（推荐启用）</span>
 ]
 
-# 热更配置白名单
+<span class="hljs-comment"># 热更配置白名单</span>
 HOT_RELOADABLE = {
-    &#39;MAX_PLAYERS&#39;,
-    &#39;DEBUG_MODE&#39;,
+    <span class="hljs-string">&#x27;MAX_PLAYERS&#x27;</span>,
+    <span class="hljs-string">&#x27;DEBUG_MODE&#x27;</span>,
 }
 </code></pre>
 <p><strong>配置覆盖规则：</strong></p>
@@ -139,156 +140,156 @@ HOT_RELOADABLE = {
 <hr>
 <h2 id="5">5. 创建第一个子系统</h2>
 <h3>5.1 服务端子系统</h3>
-<pre><code class="language-python"># subsystems/my_system.py
-from architect.core import SubsystemServer, ServerSubsystem, Sched
-from architect.core import EventListener, CustomEvent
-from architect.core import Internal
+<pre><code class="hljs language-python"><span class="hljs-comment"># subsystems/my_system.py</span>
+<span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> SubsystemServer, ServerSubsystem, Sched
+<span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> EventListener, CustomEvent
+<span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> Internal
 
-class MyServerSystem(ServerSubsystem):
-    canTick = True  # 启用 onUpdate
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyServerSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>  <span class="hljs-comment"># 启用 onUpdate</span>
 
-    def onInit(self):
-        &quot;&quot;&quot;当前子系统创建完毕后调用&quot;&quot;&quot;
-        print(&#39;[MySystem] Server initialized&#39;)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;当前子系统创建完毕后调用&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[MySystem] Server initialized&#x27;</span>)
 
-    def onReady(self):
-        &quot;&quot;&quot;所有子系统初始化完毕后调用，此时可获取其他子系统&quot;&quot;&quot;
-        print(&#39;[MySystem] Server ready&#39;)
-        # other = self.getManager().getSubsystem(AnotherSystem)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;所有子系统初始化完毕后调用，此时可获取其他子系统&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[MySystem] Server ready&#x27;</span>)
+        <span class="hljs-comment"># other = self.getManager().getSubsystem(AnotherSystem)</span>
 
-    def onUpdate(self, dt):
-        &quot;&quot;&quot;每 Tick 调用（每游戏帧）&quot;&quot;&quot;
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        &amp;quot;&amp;quot;&amp;quot;每 Tick 调用（每游戏帧）&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    def onDestroy(self):
-        &quot;&quot;&quot;子系统销毁时调用&quot;&quot;&quot;
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onDestroy</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;子系统销毁时调用&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    # 注册引擎事件监听
-    @EventListener(&#39;ServerPostInitEvent&#39;)
-    def onServerPostInit(self, event):
-        print(&#39;[MySystem] Server post init:&#39;, event)
+    <span class="hljs-comment"># 注册引擎事件监听</span>
+<span class="hljs-meta">    @EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;ServerPostInitEvent&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onServerPostInit</span>(<span class="hljs-params">self, event</span>):
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[MySystem] Server post init:&#x27;</span>, event)
 
-    # 注册自定义事件监听
-    @CustomEvent(&#39;MyCustomEvent&#39;)
-    def onMyCustomEvent(self, event):
-        print(&#39;[MySystem] Custom event received:&#39;, event)
+    <span class="hljs-comment"># 注册自定义事件监听</span>
+<span class="hljs-meta">    @CustomEvent(<span class="hljs-params"><span class="hljs-string">&#x27;MyCustomEvent&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onMyCustomEvent</span>(<span class="hljs-params">self, event</span>):
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[MySystem] Custom event received:&#x27;</span>, event)
 
-    # 调度到 Tick 更新前
-    @Sched.Tick(Sched.Tick.BeforeUpdate)
-    def beforeTick(self):
-        pass
+    <span class="hljs-comment"># 调度到 Tick 更新前</span>
+<span class="hljs-meta">    @Sched.Tick(<span class="hljs-params">Sched.Tick.BeforeUpdate</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">beforeTick</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">pass</span>
 
-    # 广播事件到所有客户端
-    def broadcast_message(self, msg):
-        self.sendAllClients(&#39;OnMessage&#39;, {&#39;text&#39;: msg})
+    <span class="hljs-comment"># 广播事件到所有客户端</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">broadcast_message</span>(<span class="hljs-params">self, msg</span>):
+        <span class="hljs-variable language_">self</span>.sendAllClients(<span class="hljs-string">&#x27;OnMessage&#x27;</span>, {<span class="hljs-string">&#x27;text&#x27;</span>: msg})
 
-    # 生成实体
-    def spawn_npc(self, template, pos, dim=0):
-        from architect.core import Location
+    <span class="hljs-comment"># 生成实体</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">spawn_npc</span>(<span class="hljs-params">self, template, pos, dim=<span class="hljs-number">0</span></span>):
+        <span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> Location
         loc = Location(pos, dim)
-        return self.spawnEntity(template, loc, (0, 0))
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>.spawnEntity(template, loc, (<span class="hljs-number">0</span>, <span class="hljs-number">0</span>))
 </code></pre>
 <h3>5.2 客户端子系统</h3>
-<pre><code class="language-python"># subsystems/my_client_system.py
-from architect.core import SubsystemClient, ClientSubsystem
-from architect.core import Sched, EventListener
+<pre><code class="hljs language-python"><span class="hljs-comment"># subsystems/my_client_system.py</span>
+<span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> SubsystemClient, ClientSubsystem
+<span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> Sched, EventListener
 
-class MyClientSystem(ClientSubsystem):
-    canTick = True
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyClientSystem</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
 
-    def onInit(self):
-        print(&#39;[MySystem] Client initialized&#39;)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[MySystem] Client initialized&#x27;</span>)
 
-    def onUpdate(self, dt):
-        &quot;&quot;&quot;每 Tick 调用&quot;&quot;&quot;
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        &amp;quot;&amp;quot;&amp;quot;每 Tick 调用&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    def onRender(self, dt):
-        &quot;&quot;&quot;每渲染帧调用（仅客户端）&quot;&quot;&quot;
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onRender</span>(<span class="hljs-params">self, dt</span>):
+        &amp;quot;&amp;quot;&amp;quot;每渲染帧调用（仅客户端）&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    @EventListener(&#39;OnMessage&#39;)
-    def onMessage(self, event):
-        print(&#39;[Client] Received:&#39;, event)
+<span class="hljs-meta">    @EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;OnMessage&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onMessage</span>(<span class="hljs-params">self, event</span>):
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[Client] Received:&#x27;</span>, event)
 </code></pre>
 <hr>
 <h2 id="6">6. 使用装饰器注册子系统</h2>
 <p>框架支持两种注册子系统的模式：</p>
 <h3>模式 1：装饰器注册（推荐）</h3>
-<pre><code class="language-python">from architect.core import SubsystemServer, ServerSubsystem
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> SubsystemServer, ServerSubsystem
 
-@SubsystemServer  # 自动注册到 SubsystemManager
-class MySystem(ServerSubsystem):
-    canTick = True
+<span class="hljs-meta">@SubsystemServer  </span><span class="hljs-comment"># 自动注册到 SubsystemManager</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
 </code></pre>
 <h3>模式 2：手动注册模块导入</h3>
 <p>服务端在 <code>MOD_SERVER_MODULES</code> 中声明了 <code>&#39;subsystems.my_system&#39;</code> 后，该模块会被 Import。子系统的 <code>@SubsystemServer</code> 装饰器会在此时自动调用。</p>
 <hr>
 <h2 id="7-component">7. 组件（Component）系统</h2>
 <h3>7.1 定义组件</h3>
-<pre><code class="language-python">from architect.component import Component, PersistKeys
-from architect.component.schema import DefineFields, FieldSchema
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> Component, PersistKeys
+<span class="hljs-keyword">from</span> architect.component.schema <span class="hljs-keyword">import</span> DefineFields, FieldSchema
 
-# 简单组件
-class Health(Component):
-    hp = 100
-    maxHp = 100
+<span class="hljs-comment"># 简单组件</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    hp = <span class="hljs-number">100</span>
+    maxHp = <span class="hljs-number">100</span>
 
-# 带持久化的组件
-class Inventory(Component):
-    items = PersistKeys()          # 持久化字段列表
-    slots = [&#39;&#39;] * 36
+<span class="hljs-comment"># 带持久化的组件</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Inventory</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    items = PersistKeys()          <span class="hljs-comment"># 持久化字段列表</span>
+    slots = [<span class="hljs-string">&#x27;&#x27;</span>] * <span class="hljs-number">36</span>
 
-# 带字段验证的组件
-@DefineFields({
-    &#39;level&#39;: FieldSchema(default=1),
-    &#39;xp&#39;: FieldSchema(default=0,
-                       validator=lambda v: v &gt;= 0)
-})
-class PlayerStats(Component):
-    pass
+<span class="hljs-comment"># 带字段验证的组件</span>
+<span class="hljs-meta">@DefineFields(<span class="hljs-params">{
+    <span class="hljs-string">&#x27;level&#x27;</span>: FieldSchema(<span class="hljs-params">default=<span class="hljs-number">1</span></span>),
+    <span class="hljs-string">&#x27;xp&#x27;</span>: FieldSchema(<span class="hljs-params">default=<span class="hljs-number">0</span>,
+                       validator=<span class="hljs-keyword">lambda</span> v: v &amp;gt;= <span class="hljs-number">0</span></span>)
+}</span>)</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">PlayerStats</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    <span class="hljs-keyword">pass</span>
 </code></pre>
 <h3>7.2 创建和获取组件</h3>
-<pre><code class="language-python">from architect.component import createComponent, getOrCreateComponent
-from architect.component import hasComponent, destroyComponent
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> createComponent, getOrCreateComponent
+<span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> hasComponent, destroyComponent
 
-# 创建组件
+<span class="hljs-comment"># 创建组件</span>
 health = createComponent(entityId, Health)
 
-# 获取已有组件
+<span class="hljs-comment"># 获取已有组件</span>
 health = getOrCreateComponent(entityId, Health)
-health.hp -= 10
+health.hp -= <span class="hljs-number">10</span>
 
-# 检查组件是否存在
-if hasComponent(entityId, Health):
-    print(&#39;Entity has health&#39;)
+<span class="hljs-comment"># 检查组件是否存在</span>
+<span class="hljs-keyword">if</span> hasComponent(entityId, Health):
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Entity has health&#x27;</span>)
 
-# 销毁组件
+<span class="hljs-comment"># 销毁组件</span>
 destroyComponent(entityId, Health)
 </code></pre>
 <h3>7.3 查询组件 — <code>@Query</code> 装饰器</h3>
-<pre><code class="language-python">from architect.component import Query, EntityId, getComponent
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> Query, EntityId, getComponent
 
-class PlayerDamageSystem(ServerSubsystem):
-    canTick = True
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">PlayerDamageSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
 
-    @Query(
-        target=&#39;{Health}&#39;,          # 需要 Health 组件
-        required=[&#39;{PlayerStats}&#39;], # 可选加载 PlayerStats
-        attach_query=True           # 将查询结果传入参数
-    )
-    def damage_player(self, entityId, Health, PlayerStats=None):
-        # entityId: 实体 ID (str)
-        # Health: Health 组件实例
-        # PlayerStats: PlayerStats 组件实例（可能为 None）
-        Health.hp = max(0, Health.hp - 5)
-        if PlayerStats:
-            PlayerStats.xp += 1
+<span class="hljs-meta">    @Query(<span class="hljs-params">
+        target=<span class="hljs-string">&#x27;{Health}&#x27;</span>,          <span class="hljs-comment"># 需要 Health 组件</span>
+        required=[<span class="hljs-string">&#x27;{PlayerStats}&#x27;</span>], <span class="hljs-comment"># 可选加载 PlayerStats</span>
+        attach_query=<span class="hljs-literal">True</span>           <span class="hljs-comment"># 将查询结果传入参数</span>
+    </span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">damage_player</span>(<span class="hljs-params">self, entityId, Health, PlayerStats=<span class="hljs-literal">None</span></span>):
+        <span class="hljs-comment"># entityId: 实体 ID (str)</span>
+        <span class="hljs-comment"># Health: Health 组件实例</span>
+        <span class="hljs-comment"># PlayerStats: PlayerStats 组件实例（可能为 None）</span>
+        Health.hp = <span class="hljs-built_in">max</span>(<span class="hljs-number">0</span>, Health.hp - <span class="hljs-number">5</span>)
+        <span class="hljs-keyword">if</span> PlayerStats:
+            PlayerStats.xp += <span class="hljs-number">1</span>
 
-    def onUpdate(self, dt):
-        # 对所有拥有 Health 和 PlayerStats 的实体造成伤害
-        self.damage_player()
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        <span class="hljs-comment"># 对所有拥有 Health 和 PlayerStats 的实体造成伤害</span>
+        <span class="hljs-variable language_">self</span>.damage_player()
 </code></pre>
 <p><code>@Query</code> 的参数：</p>
 <ul>
@@ -299,39 +300,39 @@ class PlayerDamageSystem(ServerSubsystem):
 <hr>
 <h2 id="8">8. 事件系统</h2>
 <h3>8.1 监听引擎事件</h3>
-<pre><code class="language-python">from architect.core import EventListener
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> EventListener
 
-class MySystem(ServerSubsystem):
-    @EventListener(&#39;ServerPostInitEvent&#39;)
-    def onServerPostInit(self, event):
-        pass
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+<span class="hljs-meta">    @EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;ServerPostInitEvent&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onServerPostInit</span>(<span class="hljs-params">self, event</span>):
+        <span class="hljs-keyword">pass</span>
 
-    @EventListener(&#39;EntityHurtEvent&#39;)
-    def onEntityHurt(self, event):
-        entityId = event[&#39;id&#39;]
-        cause = event[&#39;cause&#39;]
-        damage = event[&#39;damage&#39;]
+<span class="hljs-meta">    @EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self, event</span>):
+        entityId = event[<span class="hljs-string">&#x27;id&#x27;</span>]
+        cause = event[<span class="hljs-string">&#x27;cause&#x27;</span>]
+        damage = event[<span class="hljs-string">&#x27;damage&#x27;</span>]
 </code></pre>
 <h3>8.2 自定义事件</h3>
-<pre><code class="language-python">from architect.core import CustomEvent
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> CustomEvent
 
-class MySystem(ClientSubsystem):
-    @CustomEvent(&#39;MyDataSyncEvent&#39;)
-    def onDataSync(self, event):
-        data = event[&#39;data&#39;]
-        print(&#39;Received:&#39;, data)
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+<span class="hljs-meta">    @CustomEvent(<span class="hljs-params"><span class="hljs-string">&#x27;MyDataSyncEvent&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onDataSync</span>(<span class="hljs-params">self, event</span>):
+        data = event[<span class="hljs-string">&#x27;data&#x27;</span>]
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Received:&#x27;</span>, data)
 </code></pre>
 <h3>8.3 事件链 — <code>ChainedEvent</code></h3>
 <p>事件监听器接收一个 <code>ChainedEvent</code> 对象，可以用它来中断事件流或修改事件数据：</p>
-<pre><code class="language-python">@EventListener(&#39;EntityHurtEvent&#39;)
-def onEntityHurt(self, event):
-    # event 是 ChainedEvent 实例
-    entityId = event.id          # 属性访问 → 等价于 event[&#39;id&#39;]
+<pre><code class="hljs language-python"><span class="hljs-meta">@EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self, event</span>):
+    <span class="hljs-comment"># event 是 ChainedEvent 实例</span>
+    entityId = event.<span class="hljs-built_in">id</span>          <span class="hljs-comment"># 属性访问 → 等价于 event[&#x27;id&#x27;]</span>
     damage = event.damage
 
-    if entityId == self.admin_id:
-        event.stop()             # 停止事件继续传递
-        event.setEvent(&#39;damage&#39;, 0)  # 修改事件数据
+    <span class="hljs-keyword">if</span> entityId == <span class="hljs-variable language_">self</span>.admin_id:
+        event.stop()             <span class="hljs-comment"># 停止事件继续传递</span>
+        event.setEvent(<span class="hljs-string">&#x27;damage&#x27;</span>, <span class="hljs-number">0</span>)  <span class="hljs-comment"># 修改事件数据</span>
 </code></pre>
 <h3>8.4 <code>ChainedEvent</code> API</h3>
 <table>
@@ -372,70 +373,70 @@ def onEntityHurt(self, event):
 </tbody></table>
 <hr>
 <h2 id="9-sched">9. 调度系统 — <code>@Sched</code></h2>
-<pre><code class="language-python">from architect.core import Sched, SchedUpdateFlags
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> Sched, SchedUpdateFlags
 
-class MySystem(ServerSubsystem):
-    # === Tick 调度（随游戏帧调度） ===
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-comment"># === Tick 调度（随游戏帧调度） ===</span>
 
-    @Sched.Tick()  # 默认在 Update 阶段
-    def onTickUpdate(self):
-        pass
+<span class="hljs-meta">    @Sched.Tick()  </span><span class="hljs-comment"># 默认在 Update 阶段</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onTickUpdate</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">pass</span>
 
-    @Sched.Tick(SchedUpdateFlags.BeforeUpdate)
-    def beforeTick(self):
-        pass
+<span class="hljs-meta">    @Sched.Tick(<span class="hljs-params">SchedUpdateFlags.BeforeUpdate</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">beforeTick</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">pass</span>
 
-    @Sched.Tick(SchedUpdateFlags.AfterUpdate)
-    def afterTick(self):
-        pass
+<span class="hljs-meta">    @Sched.Tick(<span class="hljs-params">SchedUpdateFlags.AfterUpdate</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">afterTick</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">pass</span>
 
-    # === 渲染帧调度（仅客户端） ===
+    <span class="hljs-comment"># === 渲染帧调度（仅客户端） ===</span>
 
-    @Sched.Render()
-    def onRender(self):
-        pass
+<span class="hljs-meta">    @Sched.Render()</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onRender</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">pass</span>
 
-    # === 固定频率调度 ===
+    <span class="hljs-comment"># === 固定频率调度 ===</span>
 
-    @Sched.Fixed(&#39;MyFixedSched&#39;)
-    def onFixedUpdate(self):
-        pass
+<span class="hljs-meta">    @Sched.Fixed(<span class="hljs-params"><span class="hljs-string">&#x27;MyFixedSched&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onFixedUpdate</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">pass</span>
 
-    def onReady(self):
-        # 在 onReady 中启动固定调度器（不要在 onInit 中调用）
-        sched = self.scheduleFixed(&#39;MyFixedSched&#39;, period=0.5)  # 0.5 秒
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-comment"># 在 onReady 中启动固定调度器（不要在 onInit 中调用）</span>
+        sched = <span class="hljs-variable language_">self</span>.scheduleFixed(<span class="hljs-string">&#x27;MyFixedSched&#x27;</span>, period=<span class="hljs-number">0.5</span>)  <span class="hljs-comment"># 0.5 秒</span>
 
-    # === 事件调度 ===
+    <span class="hljs-comment"># === 事件调度 ===</span>
 
-    @Sched.Event(&#39;EntityHurtEvent&#39;, isCustom=False)
-    def onEntityHurt(self):
-        pass
+<span class="hljs-meta">    @Sched.Event(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span>, isCustom=<span class="hljs-literal">False</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">pass</span>
 </code></pre>
 <hr>
 <h2 id="10-ui">10. UI 系统</h2>
-<pre><code class="language-python">from architect.ui.client import UiSubsystem, UiDef, Sink, AutoCreate
-from architect.ui.client import signal, Screen, Ui
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.ui.client <span class="hljs-keyword">import</span> UiSubsystem, UiDef, Sink, AutoCreate
+<span class="hljs-keyword">from</span> architect.ui.client <span class="hljs-keyword">import</span> signal, Screen, Ui
 
-class MyHUD(UiSubsystem):
-    canTick = True
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyHUD</span>(<span class="hljs-title class_ inherited__">UiSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
 
-    @signal
-    def hp(self):
-        return self.health.hp  # 自动追踪 health.hp 的变化
+<span class="hljs-meta">    @signal</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">hp</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>.health.hp  <span class="hljs-comment"># 自动追踪 health.hp 的变化</span>
 
-    @UiDef(&#39;my_hud&#39;)  # UI JSON 中的命名空间
-    @Screen(&#39;hud_screen&#39;)  # UI 屏幕名
-    @AutoCreate
-    def initHUD(self, ui: Ui):
-        &quot;&quot;&quot;UI 首次创建时调用&quot;&quot;&quot;
-        self.hud = ui
-        # 绑定 UI 控件数据
-        self.hud.bind(&#39;hp_text&#39;, &#39;text&#39;, self.hp_signal)
+<span class="hljs-meta">    @UiDef(<span class="hljs-params"><span class="hljs-string">&#x27;my_hud&#x27;</span></span>)  </span><span class="hljs-comment"># UI JSON 中的命名空间</span>
+<span class="hljs-meta">    @Screen(<span class="hljs-params"><span class="hljs-string">&#x27;hud_screen&#x27;</span></span>)  </span><span class="hljs-comment"># UI 屏幕名</span>
+<span class="hljs-meta">    @AutoCreate</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">initHUD</span>(<span class="hljs-params">self, ui: Ui</span>):
+        &amp;quot;&amp;quot;&amp;quot;UI 首次创建时调用&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-variable language_">self</span>.hud = ui
+        <span class="hljs-comment"># 绑定 UI 控件数据</span>
+        <span class="hljs-variable language_">self</span>.hud.bind(<span class="hljs-string">&#x27;hp_text&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>, <span class="hljs-variable language_">self</span>.hp_signal)
 
-    def onUpdate(self, dt):
-        if self.hp_value != self.last_hp:
-            self.last_hp = self.hp_value
-            # signal 自动触发 UI 刷新
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.hp_value != <span class="hljs-variable language_">self</span>.last_hp:
+            <span class="hljs-variable language_">self</span>.last_hp = <span class="hljs-variable language_">self</span>.hp_value
+            <span class="hljs-comment"># signal 自动触发 UI 刷新</span>
 </code></pre>
 <hr>
 <h2 id="11">11. 插件系统</h2>
@@ -472,146 +473,146 @@ class MyHUD(UiSubsystem):
 </tbody></table>
 <h3>11.2 启用插件</h3>
 <p>在 <code>conf.py</code> 中：</p>
-<pre><code class="language-python">PLUGINS = [
-    &#39;$vendor.event&#39;,
-    &#39;$vendor.animation&#39;,
+<pre><code class="hljs language-python">PLUGINS = [
+    <span class="hljs-string">&#x27;$vendor.event&#x27;</span>,
+    <span class="hljs-string">&#x27;$vendor.animation&#x27;</span>,
 ]
 </code></pre>
 <h3>11.3 创建自定义插件</h3>
-<pre><code class="language-python"># plugins/my_plugin.py
-from architect.core.loader import Plugin, PluginBase
+<pre><code class="hljs language-python"><span class="hljs-comment"># plugins/my_plugin.py</span>
+<span class="hljs-keyword">from</span> architect.core.loader <span class="hljs-keyword">import</span> Plugin, PluginBase
 
-@Plugin(
-    name=&#39;MyPlugin&#39;,
-    ver=[1, 0, 0],
-    author=&#39;You&#39;,
-    desc=&#39;My first plugin&#39;,
-    deps={&#39;RoninAnimationEx&#39;: &#39;&gt;=1.0.0&#39;}  # 依赖其他插件
-)
-class MyPlugin(PluginBase):
-    def onCreate(self):
-        &quot;&quot;&quot;插件实例创建时调用&quot;&quot;&quot;
-        print(&#39;[MyPlugin] Created&#39;)
+<span class="hljs-meta">@Plugin(<span class="hljs-params">
+    name=<span class="hljs-string">&#x27;MyPlugin&#x27;</span>,
+    ver=[<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>],
+    author=<span class="hljs-string">&#x27;You&#x27;</span>,
+    desc=<span class="hljs-string">&#x27;My first plugin&#x27;</span>,
+    deps={<span class="hljs-string">&#x27;RoninAnimationEx&#x27;</span>: <span class="hljs-string">&#x27;&amp;gt;=1.0.0&#x27;</span>}  <span class="hljs-comment"># 依赖其他插件</span>
+</span>)</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyPlugin</span>(<span class="hljs-title class_ inherited__">PluginBase</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onCreate</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;插件实例创建时调用&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[MyPlugin] Created&#x27;</span>)
 
-    def onAttach(self, manager):
-        &quot;&quot;&quot;插件附加到 SubsystemManager 时调用&quot;&quot;&quot;
-        print(&#39;[MyPlugin] Attached&#39;)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onAttach</span>(<span class="hljs-params">self, manager</span>):
+        &amp;quot;&amp;quot;&amp;quot;插件附加到 SubsystemManager 时调用&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[MyPlugin] Attached&#x27;</span>)
 
-    def onReady(self, manager):
-        &quot;&quot;&quot;所有插件加载完毕后调用&quot;&quot;&quot;
-        print(&#39;[MyPlugin] Ready&#39;)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self, manager</span>):
+        &amp;quot;&amp;quot;&amp;quot;所有插件加载完毕后调用&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[MyPlugin] Ready&#x27;</span>)
 
-    def onDestroy(self):
-        &quot;&quot;&quot;插件销毁时调用&quot;&quot;&quot;
-        print(&#39;[MyPlugin] Destroyed&#39;)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onDestroy</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;插件销毁时调用&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[MyPlugin] Destroyed&#x27;</span>)
 </code></pre>
 <p>在 <code>conf.py</code> 中启用：</p>
-<pre><code class="language-python">PLUGINS = [
-    &#39;$vendor.event&#39;,
-    &#39;$user.my_plugin&#39;,   # 用户插件路径: {modname}.plugins.my_plugin
+<pre><code class="hljs language-python">PLUGINS = [
+    <span class="hljs-string">&#x27;$vendor.event&#x27;</span>,
+    <span class="hljs-string">&#x27;$user.my_plugin&#x27;</span>,   <span class="hljs-comment"># 用户插件路径: {modname}.plugins.my_plugin</span>
 ]
 </code></pre>
 <hr>
 <h2 id="12-rpc">12. 远程调用 (RPC)</h2>
-<pre><code class="language-python">from architect.remote.common import Remote, callRemote
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.remote.common <span class="hljs-keyword">import</span> Remote, callRemote
 
-class SyncSystem(ServerSubsystem):
-    @Remote
-    def sync_player_data(self, target_id=None, data=None):
-        &quot;&quot;&quot;可被客户端远程调用的方法&quot;&quot;&quot;
-        # ... 处理逻辑
-        return {&#39;status&#39;: &#39;ok&#39;}
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SyncSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+<span class="hljs-meta">    @Remote</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">sync_player_data</span>(<span class="hljs-params">self, target_id=<span class="hljs-literal">None</span>, data=<span class="hljs-literal">None</span></span>):
+        &amp;quot;&amp;quot;&amp;quot;可被客户端远程调用的方法&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-comment"># ... 处理逻辑</span>
+        <span class="hljs-keyword">return</span> {<span class="hljs-string">&#x27;status&#x27;</span>: <span class="hljs-string">&#x27;ok&#x27;</span>}
 
-class ClientCaller(ClientSubsystem):
-    def onReady(self):
-        # 调用服务端的 Remote 方法
-        fut = callRemote(&#39;SyncSystem.sync_player_data&#39;,
-                          target_id=&#39;player123&#39;,
-                          data={&#39;hp&#39;: 100})
-        fut.done(lambda result: print(&#39;Success:&#39;, result))
-        fut.expected(lambda err: print(&#39;Failed:&#39;, err))
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ClientCaller</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-comment"># 调用服务端的 Remote 方法</span>
+        fut = callRemote(<span class="hljs-string">&#x27;SyncSystem.sync_player_data&#x27;</span>,
+                          target_id=<span class="hljs-string">&#x27;player123&#x27;</span>,
+                          data={<span class="hljs-string">&#x27;hp&#x27;</span>: <span class="hljs-number">100</span>})
+        fut.done(<span class="hljs-keyword">lambda</span> result: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Success:&#x27;</span>, result))
+        fut.expected(<span class="hljs-keyword">lambda</span> err: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Failed:&#x27;</span>, err))
 </code></pre>
 <hr>
 <h2 id="13-aspect">13. Aspect 面向切面编程</h2>
-<pre><code class="language-python">from architect.core.aspect import Before, After, AfterReturning, AfterThrowing, Replace
-from architect.core.aspect import Aspect
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.aspect <span class="hljs-keyword">import</span> Before, After, AfterReturning, AfterThrowing, Replace
+<span class="hljs-keyword">from</span> architect.core.aspect <span class="hljs-keyword">import</span> Aspect
 
-@Aspect(SomeTargetClass)  # 将切面绑定到目标类
-class MyAspect:
-    @Before(&#39;someMethod&#39;)
-    def beforeMethod(self, targetInst, args, kwargs):
-        &quot;&quot;&quot;方法调用前执行&quot;&quot;&quot;
-        print(&#39;Before:&#39;, args)
+<span class="hljs-meta">@Aspect(<span class="hljs-params">SomeTargetClass</span>)  </span><span class="hljs-comment"># 将切面绑定到目标类</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyAspect</span>:
+<span class="hljs-meta">    @Before(<span class="hljs-params"><span class="hljs-string">&#x27;someMethod&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">beforeMethod</span>(<span class="hljs-params">self, targetInst, args, kwargs</span>):
+        &amp;quot;&amp;quot;&amp;quot;方法调用前执行&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Before:&#x27;</span>, args)
 
-    @After(&#39;someMethod&#39;)
-    def afterMethod(self, targetInst, args, kwargs):
-        &quot;&quot;&quot;方法调用后执行&quot;&quot;&quot;
-        print(&#39;After:&#39;, args)
+<span class="hljs-meta">    @After(<span class="hljs-params"><span class="hljs-string">&#x27;someMethod&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">afterMethod</span>(<span class="hljs-params">self, targetInst, args, kwargs</span>):
+        &amp;quot;&amp;quot;&amp;quot;方法调用后执行&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;After:&#x27;</span>, args)
 
-    @AfterReturning(&#39;someMethod&#39;)
-    def afterReturning(self, targetInst, returnVal, args, kwargs):
-        &quot;&quot;&quot;方法成功返回后执行&quot;&quot;&quot;
-        print(&#39;Returned:&#39;, returnVal)
+<span class="hljs-meta">    @AfterReturning(<span class="hljs-params"><span class="hljs-string">&#x27;someMethod&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">afterReturning</span>(<span class="hljs-params">self, targetInst, returnVal, args, kwargs</span>):
+        &amp;quot;&amp;quot;&amp;quot;方法成功返回后执行&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Returned:&#x27;</span>, returnVal)
 
-    @AfterThrowing(&#39;someMethod&#39;)
-    def afterThrowing(self, targetInst, e, args, kwargs):
-        &quot;&quot;&quot;方法抛出异常后执行&quot;&quot;&quot;
-        print(&#39;Error:&#39;, e)
+<span class="hljs-meta">    @AfterThrowing(<span class="hljs-params"><span class="hljs-string">&#x27;someMethod&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">afterThrowing</span>(<span class="hljs-params">self, targetInst, e, args, kwargs</span>):
+        &amp;quot;&amp;quot;&amp;quot;方法抛出异常后执行&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Error:&#x27;</span>, e)
 
-    @Replace(&#39;someMethod&#39;)
-    def replaceMethod(self, targetInst, targetMethod, args, kwargs):
-        &quot;&quot;&quot;完全替换原方法&quot;&quot;&quot;
-        print(&#39;Intercepted!&#39;)
-        return targetMethod(targetInst, *args, **kwargs)
+<span class="hljs-meta">    @Replace(<span class="hljs-params"><span class="hljs-string">&#x27;someMethod&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">replaceMethod</span>(<span class="hljs-params">self, targetInst, targetMethod, args, kwargs</span>):
+        &amp;quot;&amp;quot;&amp;quot;完全替换原方法&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Intercepted!&#x27;</span>)
+        <span class="hljs-keyword">return</span> targetMethod(targetInst, *args, **kwargs)
 </code></pre>
 <hr>
 <h2 id="14-commandbus">14. CommandBus — 命令总线</h2>
-<pre><code class="language-python">from architect.core.subsystem import SubsystemManager
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.subsystem <span class="hljs-keyword">import</span> SubsystemManager
 
 manager = SubsystemManager.getInstance()
 
-# 注册命令处理器
-def handle_spawn(template, location):
-    print(&#39;Spawning:&#39;, template, &#39;at&#39;, location)
-    return template
+<span class="hljs-comment"># 注册命令处理器</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_spawn</span>(<span class="hljs-params">template, location</span>):
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Spawning:&#x27;</span>, template, <span class="hljs-string">&#x27;at&#x27;</span>, location)
+    <span class="hljs-keyword">return</span> template
 
-unreg = manager.bus.register(&#39;spawn_npc&#39;, handle_spawn)
+unreg = manager.bus.register(<span class="hljs-string">&#x27;spawn_npc&#x27;</span>, handle_spawn)
 
-# 执行命令（同步调用所有已注册的处理器）
-results = manager.bus.execute(&#39;spawn_npc&#39;, &#39;zombie&#39;, (0, 64, 0))
-# results = [&#39;zombie&#39;]
+<span class="hljs-comment"># 执行命令（同步调用所有已注册的处理器）</span>
+results = manager.bus.execute(<span class="hljs-string">&#x27;spawn_npc&#x27;</span>, <span class="hljs-string">&#x27;zombie&#x27;</span>, (<span class="hljs-number">0</span>, <span class="hljs-number">64</span>, <span class="hljs-number">0</span>))
+<span class="hljs-comment"># results = [&#x27;zombie&#x27;]</span>
 
-# 注销
+<span class="hljs-comment"># 注销</span>
 unreg()
 </code></pre>
 <hr>
 <h2 id="15-profiler">15. Profiler 性能诊断</h2>
-<pre><code class="language-python">from architect.core.profiler import profiler
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.profiler <span class="hljs-keyword">import</span> profiler
 
-with profiler.record(&#39;my_operation&#39;):
+<span class="hljs-keyword">with</span> profiler.record(<span class="hljs-string">&#x27;my_operation&#x27;</span>):
     do_heavy_work()
 
-# 获取快照（不重置）
+<span class="hljs-comment"># 获取快照（不重置）</span>
 snap = profiler.snapshot()
-# {&#39;my_operation&#39;: {&#39;avg_ms&#39;: 1.2, &#39;max_ms&#39;: 3.4, &#39;count&#39;: 60}}
+<span class="hljs-comment"># {&#x27;my_operation&#x27;: {&#x27;avg_ms&#x27;: 1.2, &#x27;max_ms&#x27;: 3.4, &#x27;count&#x27;: 60}}</span>
 
-# 获取快照并重置
+<span class="hljs-comment"># 获取快照并重置</span>
 snap = profiler.flush()
 </code></pre>
 <hr>
 <h2 id="16-architect-compact">16. 统一导入入口 — <code>architect.compact</code></h2>
-<pre><code class="language-python">from architect.compact import *
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.compact <span class="hljs-keyword">import</span> *
 
-# 即可使用所有核心 API：
-# - SubsystemServer, SubsystemClient, ServerSubsystem, ClientSubsystem
-# - Sched, Future, Async, EventListener, CustomEvent
-# - Query, EntityId
-# - createComponent, getComponent, hasComponent
-# - vec3, mat4, Vec3Utils
-# - LevelClient, LevelServer
-# - UiDef, Sink, signal, Screen
-# - AnnotationHelper
-# - Remote, callRemote
+<span class="hljs-comment"># 即可使用所有核心 API：</span>
+<span class="hljs-comment"># - SubsystemServer, SubsystemClient, ServerSubsystem, ClientSubsystem</span>
+<span class="hljs-comment"># - Sched, Future, Async, EventListener, CustomEvent</span>
+<span class="hljs-comment"># - Query, EntityId</span>
+<span class="hljs-comment"># - createComponent, getComponent, hasComponent</span>
+<span class="hljs-comment"># - vec3, mat4, Vec3Utils</span>
+<span class="hljs-comment"># - LevelClient, LevelServer</span>
+<span class="hljs-comment"># - UiDef, Sink, signal, Screen</span>
+<span class="hljs-comment"># - AnnotationHelper</span>
+<span class="hljs-comment"># - Remote, callRemote</span>
 </code></pre>
 <hr>
 <h2 id="">下一步</h2>

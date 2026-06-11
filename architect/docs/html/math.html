@@ -45,6 +45,7 @@ ol,ul{padding-left:1.5rem;margin:.75rem 0}
 li{margin:.35rem 0;line-height:1.75}
 strong{color:hsl(var(--f))}
 @media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -98,74 +99,74 @@ strong{color:hsl(var(--f))}
 </tr>
 </tbody></table>
 <h3>2.2 构造与基本操作</h3>
-<pre><code class="language-python">from architect.math.vec3 import Vec3
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> Vec3
 
-# 构造
-v = Vec3(1.0, 2.0, 3.0)
-zero = Vec3.zero()          # (0, 0, 0)
-one = Vec3.one()            # (1, 1, 1)
-up = Vec3.up()              # (0, 1, 0)
-forward = Vec3.forward()    # (0, 0, 1)
+<span class="hljs-comment"># 构造</span>
+v = Vec3(<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span>)
+zero = Vec3.zero()          <span class="hljs-comment"># (0, 0, 0)</span>
+one = Vec3.one()            <span class="hljs-comment"># (1, 1, 1)</span>
+up = Vec3.up()              <span class="hljs-comment"># (0, 1, 0)</span>
+forward = Vec3.forward()    <span class="hljs-comment"># (0, 0, 1)</span>
 
-# 读写
+<span class="hljs-comment"># 读写</span>
 x = v.x
-v.x = 10.0
+v.x = <span class="hljs-number">10.0</span>
 
-# 运算
-v3 = v + Vec3(1, 2, 3)     # 加法
-v3 = v - Vec3(1, 2, 3)     # 减法
-v3 = v * 2.0                # 标量乘
-v3 = v / 2.0                # 标量除
+<span class="hljs-comment"># 运算</span>
+v3 = v + Vec3(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>)     <span class="hljs-comment"># 加法</span>
+v3 = v - Vec3(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>)     <span class="hljs-comment"># 减法</span>
+v3 = v * <span class="hljs-number">2.0</span>                <span class="hljs-comment"># 标量乘</span>
+v3 = v / <span class="hljs-number">2.0</span>                <span class="hljs-comment"># 标量除</span>
 </code></pre>
 <h3>2.3 Vec3Utils — 客户端</h3>
-<pre><code class="language-python">from architect.math.utils import Vec3Utils
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> Vec3Utils
 
-# 距离
-dist = Vec3Utils.distance(v1, v2)           # 两点距离
-sqr_dist = Vec3Utils.distance_squared(v1, v2) # 距离平方
+<span class="hljs-comment"># 距离</span>
+dist = Vec3Utils.distance(v1, v2)           <span class="hljs-comment"># 两点距离</span>
+sqr_dist = Vec3Utils.distance_squared(v1, v2) <span class="hljs-comment"># 距离平方</span>
 
-# 方向与角度
-direction = Vec3Utils.direction(v1, v2)     # 单位方向向量
-angle = Vec3Utils.angle(v1, v2)            # 两向量夹角（弧度）
-angle_deg = Vec3Utils.angle_degrees(v1, v2) # 两向量夹角（度）
+<span class="hljs-comment"># 方向与角度</span>
+direction = Vec3Utils.direction(v1, v2)     <span class="hljs-comment"># 单位方向向量</span>
+angle = Vec3Utils.angle(v1, v2)            <span class="hljs-comment"># 两向量夹角（弧度）</span>
+angle_deg = Vec3Utils.angle_degrees(v1, v2) <span class="hljs-comment"># 两向量夹角（度）</span>
 
-# 单位化与长度
-norm = Vec3Utils.normalize(v)               # 单位化
-length = Vec3Utils.magnitude(v)             # 向量长度
-sqr_len = Vec3Utils.magnitude_squared(v)    # 长度平方
+<span class="hljs-comment"># 单位化与长度</span>
+norm = Vec3Utils.normalize(v)               <span class="hljs-comment"># 单位化</span>
+length = Vec3Utils.magnitude(v)             <span class="hljs-comment"># 向量长度</span>
+sqr_len = Vec3Utils.magnitude_squared(v)    <span class="hljs-comment"># 长度平方</span>
 
-# 线性插值
-lerped = Vec3Utils.lerp(v1, v2, t)         # 线性插值 t ∈ [0, 1]
+<span class="hljs-comment"># 线性插值</span>
+lerped = Vec3Utils.lerp(v1, v2, t)         <span class="hljs-comment"># 线性插值 t ∈ [0, 1]</span>
 
-# 点积与叉积
-dot = Vec3Utils.dot(v1, v2)                # 点积
-cross = Vec3Utils.cross(v1, v2)            # 叉积
+<span class="hljs-comment"># 点积与叉积</span>
+dot = Vec3Utils.dot(v1, v2)                <span class="hljs-comment"># 点积</span>
+cross = Vec3Utils.cross(v1, v2)            <span class="hljs-comment"># 叉积</span>
 
-# 旋转
-rotated = Vec3Utils.rotate(v, axis, angle)  # 绕轴旋转
+<span class="hljs-comment"># 旋转</span>
+rotated = Vec3Utils.rotate(v, axis, angle)  <span class="hljs-comment"># 绕轴旋转</span>
 
-# 投影
-proj = Vec3Utils.project(v, onto)           # 投影到 onto 方向
-rej = Vec3Utils.reject(v, onto)             # 正交于 onto 的分量
+<span class="hljs-comment"># 投影</span>
+proj = Vec3Utils.project(v, onto)           <span class="hljs-comment"># 投影到 onto 方向</span>
+rej = Vec3Utils.reject(v, onto)             <span class="hljs-comment"># 正交于 onto 的分量</span>
 
-# 反射
-reflected = Vec3Utils.reflect(v, normal)     # 反射向量
+<span class="hljs-comment"># 反射</span>
+reflected = Vec3Utils.reflect(v, normal)     <span class="hljs-comment"># 反射向量</span>
 </code></pre>
 <h3>2.4 服务端</h3>
-<pre><code class="language-python">from architect.math.utilsServer import Vec3UtilsServer
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utilsServer <span class="hljs-keyword">import</span> Vec3UtilsServer
 
-# 服务端也有类似的 Vec3 工具集
+<span class="hljs-comment"># 服务端也有类似的 Vec3 工具集</span>
 </code></pre>
 <hr>
 <h2 id="3-vec4">3. Vec4 — 四维向量</h2>
-<pre><code class="language-python">from architect.math.vec4 import Vec4
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec4 <span class="hljs-keyword">import</span> Vec4
 
-v = Vec4(1.0, 2.0, 3.0, 1.0)
+v = Vec4(<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span>, <span class="hljs-number">1.0</span>)
 
-x = v.x     # 1.0
-y = v.y     # 2.0
-z = v.z     # 3.0
-w = v.w     # 1.0
+x = v.x     <span class="hljs-comment"># 1.0</span>
+y = v.y     <span class="hljs-comment"># 2.0</span>
+z = v.z     <span class="hljs-comment"># 3.0</span>
+w = v.w     <span class="hljs-comment"># 1.0</span>
 </code></pre>
 <p>常用于：</p>
 <ul>
@@ -175,40 +176,40 @@ w = v.w     # 1.0
 </ul>
 <hr>
 <h2 id="4-mat4-4-4">4. Mat4 — 4×4 变换矩阵</h2>
-<pre><code class="language-python">from architect.math.mat4 import Mat4
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> Mat4
 
-# 构造
-identity = Mat4.identity()              # 单位矩阵
-translation = Mat4.translation(v3)      # 平移矩阵
-rotation = Mat4.rotation(axis, angle)   # 旋转矩阵
-scale = Mat4.scale(v3)                  # 缩放矩阵
+<span class="hljs-comment"># 构造</span>
+identity = Mat4.identity()              <span class="hljs-comment"># 单位矩阵</span>
+translation = Mat4.translation(v3)      <span class="hljs-comment"># 平移矩阵</span>
+rotation = Mat4.rotation(axis, angle)   <span class="hljs-comment"># 旋转矩阵</span>
+scale = Mat4.scale(v3)                  <span class="hljs-comment"># 缩放矩阵</span>
 
-# 组合变换
+<span class="hljs-comment"># 组合变换</span>
 transform = translation * rotation * scale
 
-# 矩阵-向量乘法
-result_vec4 = transform * Vec4(1, 0, 0, 1)
-result_vec3 = transform * Vec3(1, 0, 0)  # 结果自动除 w
+<span class="hljs-comment"># 矩阵-向量乘法</span>
+result_vec4 = transform * Vec4(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>)
+result_vec3 = transform * Vec3(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>)  <span class="hljs-comment"># 结果自动除 w</span>
 </code></pre>
 <hr>
 <h2 id="5-double">5. Double — 高精度浮点数</h2>
-<pre><code class="language-python">from architect.math.double import Double
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.double <span class="hljs-keyword">import</span> Double
 
-# 构造
-d = Double(3.14159265358979)
-d = Double.long_value(314159265358979)
-d = Double.int_value(3)
+<span class="hljs-comment"># 构造</span>
+d = Double(<span class="hljs-number">3.14159265358979</span>)
+d = Double.long_value(<span class="hljs-number">314159265358979</span>)
+d = Double.int_value(<span class="hljs-number">3</span>)
 
-# 运算
-sum_d = d + Double(1.0)
-diff = d - Double(0.5)
-prod = d * Double(2.0)
-quot = d / Double(2.0)
+<span class="hljs-comment"># 运算</span>
+sum_d = d + Double(<span class="hljs-number">1.0</span>)
+diff = d - Double(<span class="hljs-number">0.5</span>)
+prod = d * Double(<span class="hljs-number">2.0</span>)
+quot = d / Double(<span class="hljs-number">2.0</span>)
 </code></pre>
 <p><code>Double</code> 封装了底层的高精度定点数运算，用于需要精确计算的场景（如经济系统、物理模拟）。</p>
 <hr>
 <h2 id="6-math-common-py">6. 通用工具函数 — <code>math/common.py</code></h2>
-<pre><code class="language-python">from architect.math.common import (
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.common <span class="hljs-keyword">import</span> (
     distance, distance_sq,
     lerp, lerp_vec3,
     clamp, clamp01,
@@ -216,63 +217,63 @@ quot = d / Double(2.0)
     get_rotation_from_direction
 )
 
-# 距离
-d = distance(v1, v2)            # float
-d2 = distance_sq(v1, v2)       # 距离平方
+<span class="hljs-comment"># 距离</span>
+d = distance(v1, v2)            <span class="hljs-comment"># float</span>
+d2 = distance_sq(v1, v2)       <span class="hljs-comment"># 距离平方</span>
 
-# 插值
-val = lerp(0.0, 1.0, t)        # 标量插值
-vec = lerp_vec3(v1, v2, t)     # Vec3 插值
+<span class="hljs-comment"># 插值</span>
+val = lerp(<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, t)        <span class="hljs-comment"># 标量插值</span>
+vec = lerp_vec3(v1, v2, t)     <span class="hljs-comment"># Vec3 插值</span>
 
-# 截断
-x = clamp(value, 0, 100)       # 限制在 [min, max]
-x = clamp01(value)              # 限制在 [0, 1]
+<span class="hljs-comment"># 截断</span>
+x = clamp(value, <span class="hljs-number">0</span>, <span class="hljs-number">100</span>)       <span class="hljs-comment"># 限制在 [min, max]</span>
+x = clamp01(value)              <span class="hljs-comment"># 限制在 [0, 1]</span>
 
-# 渐进移动
+<span class="hljs-comment"># 渐进移动</span>
 pos = move_towards(current, target, max_delta)
 angle = move_towards_angle(current, target, max_delta)
 
-# 方向转旋转
+<span class="hljs-comment"># 方向转旋转</span>
 rot = get_rotation_from_direction(direction_vec3)
 </code></pre>
 <hr>
 <h2 id="7-unit">7. Unit — 单位转换</h2>
-<pre><code class="language-python">from architect.math.unit import (
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.unit <span class="hljs-keyword">import</span> (
     degrees_to_radians,
     radians_to_degrees
 )
 
-rad = degrees_to_radians(90)    # π/2
-deg = radians_to_degrees(3.14)  # ~180°
+rad = degrees_to_radians(<span class="hljs-number">90</span>)    <span class="hljs-comment"># π/2</span>
+deg = radians_to_degrees(<span class="hljs-number">3.14</span>)  <span class="hljs-comment"># ~180°</span>
 </code></pre>
 <hr>
 <h2 id="8">8. 完整示例</h2>
-<pre><code class="language-python">from architect.math.vec3 import Vec3
-from architect.math.mat4 import Mat4
-from architect.math.utils import Vec3Utils
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> Vec3
+<span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> Mat4
+<span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> Vec3Utils
 
-# 玩家朝向计算
-player_pos = Vec3(0, 64, 0)
-target_pos = Vec3(10, 64, 10)
+<span class="hljs-comment"># 玩家朝向计算</span>
+player_pos = Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">64</span>, <span class="hljs-number">0</span>)
+target_pos = Vec3(<span class="hljs-number">10</span>, <span class="hljs-number">64</span>, <span class="hljs-number">10</span>)
 
-# 计算方向
+<span class="hljs-comment"># 计算方向</span>
 direction = Vec3Utils.direction(player_pos, target_pos)
-# 结果近似: Vec3(0.707, 0, 0.707)
+<span class="hljs-comment"># 结果近似: Vec3(0.707, 0, 0.707)</span>
 
-# 计算距离
+<span class="hljs-comment"># 计算距离</span>
 dist = Vec3Utils.distance(player_pos, target_pos)
-# 结果: ~14.14
+<span class="hljs-comment"># 结果: ~14.14</span>
 
-# 创建变换矩阵
+<span class="hljs-comment"># 创建变换矩阵</span>
 transform = Mat4.translation(player_pos) * \
             Mat4.rotation(Vec3.up(), Vec3Utils.angle(Vec3.forward(), direction))
 
-# 插值相机平滑跟随
-camera_pos = Vec3Utils.lerp(current_cam, target_cam, 0.1)
+<span class="hljs-comment"># 插值相机平滑跟随</span>
+camera_pos = Vec3Utils.lerp(current_cam, target_cam, <span class="hljs-number">0.1</span>)
 
-# 反射弹道
-bullet_dir = Vec3(1, 0, 0)
-surface_normal = Vec3(-1, 1, 0)
+<span class="hljs-comment"># 反射弹道</span>
+bullet_dir = Vec3(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>)
+surface_normal = Vec3(-<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>)
 reflected = Vec3Utils.reflect(bullet_dir, Vec3Utils.normalize(surface_normal))
 </code></pre>
 <hr>

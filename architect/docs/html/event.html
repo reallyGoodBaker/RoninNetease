@@ -45,6 +45,7 @@ ol,ul{padding-left:1.5rem;margin:.75rem 0}
 li{margin:.35rem 0;line-height:1.75}
 strong{color:hsl(var(--f))}
 @media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -83,48 +84,48 @@ strong{color:hsl(var(--f))}
 <h2 id="2">2. 核心类</h2>
 <h3>2.1 <code>ChainedEvent</code> — 事件对象</h3>
 <p>框架对引擎原生事件的包装，提供了统一的访问和中断接口：</p>
-<pre><code class="language-python">class ChainedEvent(object):
-    def __init__(self, eventType, data={}, interruptRef=Ref(None))
-    def stop()           # 停止事件传递
-    def prevent()        # 取消默认行为（设置 cancel=True, ret=True）
-    def setEvent(key, value)   # 修改事件字段
-    def updateEvent(dict)      # 批量更新字段
-    def dict()           # 获取内部 dict
-    def clone()          # 克隆事件副本
-    def __getattr__(name)  # 属性访问 → data[name]
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ChainedEvent</span>(<span class="hljs-title class_ inherited__">object</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, eventType, data={}, interruptRef=Ref(<span class="hljs-params"><span class="hljs-literal">None</span></span>)</span>)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">stop</span>()           <span class="hljs-comment"># 停止事件传递</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">prevent</span>()        <span class="hljs-comment"># 取消默认行为（设置 cancel=True, ret=True）</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">setEvent</span>(<span class="hljs-params">key, value</span>)   <span class="hljs-comment"># 修改事件字段</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">updateEvent</span>(<span class="hljs-params"><span class="hljs-built_in">dict</span></span>)      <span class="hljs-comment"># 批量更新字段</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">dict</span>()           <span class="hljs-comment"># 获取内部 dict</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">clone</span>()          <span class="hljs-comment"># 克隆事件副本</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getattr__</span>(<span class="hljs-params">name</span>)  <span class="hljs-comment"># 属性访问 → data[name]</span>
 </code></pre>
 <p><strong>使用示例：</strong></p>
-<pre><code class="language-python">class MySystem(ServerSubsystem):
-    @EventListener(&#39;EntityHurtEvent&#39;)
-    def onEntityHurt(self, event):
-        # 属性式访问
-        entityId = event.id
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+<span class="hljs-meta">    @EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self, event</span>):
+        <span class="hljs-comment"># 属性式访问</span>
+        entityId = event.<span class="hljs-built_in">id</span>
         damage = event.damage
         source = event.srcId
 
-        # 修改事件
-        event.setEvent(&#39;damage&#39;, 0)
+        <span class="hljs-comment"># 修改事件</span>
+        event.setEvent(<span class="hljs-string">&#x27;damage&#x27;</span>, <span class="hljs-number">0</span>)
 
-        # 停止传递
-        if entityId == self.protected_id:
+        <span class="hljs-comment"># 停止传递</span>
+        <span class="hljs-keyword">if</span> entityId == <span class="hljs-variable language_">self</span>.protected_id:
             event.stop()
 
-        # 取消默认行为
+        <span class="hljs-comment"># 取消默认行为</span>
         event.prevent()
 
-        # 获取原始 dict
-        raw = event.dict()
+        <span class="hljs-comment"># 获取原始 dict</span>
+        raw = event.<span class="hljs-built_in">dict</span>()
 </code></pre>
 <h3>2.2 <code>EventChain</code> — 事件链（责任链模式）</h3>
-<pre><code class="language-python">class EventChain(Unreliable):
-    evType: str              # 事件类型名
-    guarded: bool = True     # 是否保护模式（前序监听器异常则中断）
-    useCapture: bool = False # 是否使用捕获模式
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">EventChain</span>(<span class="hljs-title class_ inherited__">Unreliable</span>):
+    evType: <span class="hljs-built_in">str</span>              <span class="hljs-comment"># 事件类型名</span>
+    guarded: <span class="hljs-built_in">bool</span> = <span class="hljs-literal">True</span>     <span class="hljs-comment"># 是否保护模式（前序监听器异常则中断）</span>
+    useCapture: <span class="hljs-built_in">bool</span> = <span class="hljs-literal">False</span> <span class="hljs-comment"># 是否使用捕获模式</span>
 
-    def capture(fn)          # 添加捕获阶段监听器（先添加先执行）
-    def addListener(fn)      # 添加冒泡阶段监听器（先添加后执行）
-    def removeListener(fn)   # 移除监听器
-    def dispatch(_ev)        # 分发事件
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">capture</span>(<span class="hljs-params">fn</span>)          <span class="hljs-comment"># 添加捕获阶段监听器（先添加先执行）</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">addListener</span>(<span class="hljs-params">fn</span>)      <span class="hljs-comment"># 添加冒泡阶段监听器（先添加后执行）</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">removeListener</span>(<span class="hljs-params">fn</span>)   <span class="hljs-comment"># 移除监听器</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">dispatch</span>(<span class="hljs-params">_ev</span>)        <span class="hljs-comment"># 分发事件</span>
 </code></pre>
 <p><strong>执行顺序：</strong></p>
 <ul>
@@ -133,48 +134,48 @@ strong{color:hsl(var(--f))}
 <li><code>guarded=True</code>（默认）→ 任何 handler 抛异常，跳过后续 handler</li>
 </ul>
 <h3>2.3 <code>EventSignal</code> — 信号（观察者模式）</h3>
-<pre><code class="language-python">class EventSignal(Unreliable):
-    def on(fn)           # 注册处理器
-    def off(fn)          # 注销处理器
-    def emit(*args)      # 触发所有处理器
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">EventSignal</span>(<span class="hljs-title class_ inherited__">Unreliable</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">on</span>(<span class="hljs-params">fn</span>)           <span class="hljs-comment"># 注册处理器</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">off</span>(<span class="hljs-params">fn</span>)          <span class="hljs-comment"># 注销处理器</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">emit</span>(<span class="hljs-params">*args</span>)      <span class="hljs-comment"># 触发所有处理器</span>
 </code></pre>
 <p>用于框架内部生命周期信号（<code>INITIALIZED</code>、<code>PRELOADED</code>）以及 Marker 的 <code>onEntityCreated</code>/<code>onEntityDestroyed</code>。</p>
 <h3>2.4 <code>Delegate</code> — 单回调委托</h3>
-<pre><code class="language-python">class Delegate(Unreliable):
-    def bind(fn)         # 绑定函数
-    def call(*args)      # 调用
-    def unbind()         # 解绑
-    def __call__(*args)  # 可直接调用
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Delegate</span>(<span class="hljs-title class_ inherited__">Unreliable</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">bind</span>(<span class="hljs-params">fn</span>)         <span class="hljs-comment"># 绑定函数</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">call</span>(<span class="hljs-params">*args</span>)      <span class="hljs-comment"># 调用</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">unbind</span>()         <span class="hljs-comment"># 解绑</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__call__</span>(<span class="hljs-params">*args</span>)  <span class="hljs-comment"># 可直接调用</span>
 </code></pre>
 <h3>2.5 <code>EventTarget</code> — 命名事件目标</h3>
-<pre><code class="language-python">class EventTarget(object):
-    def addListener(event, fn)    # 添加监听
-    def removeListener(event, fn) # 移除
-    def removeAllListener()       # 全部移除
-    def dispatch(event, *args)    # 触发事件
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">EventTarget</span>(<span class="hljs-title class_ inherited__">object</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">addListener</span>(<span class="hljs-params">event, fn</span>)    <span class="hljs-comment"># 添加监听</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">removeListener</span>(<span class="hljs-params">event, fn</span>) <span class="hljs-comment"># 移除</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">removeAllListener</span>()       <span class="hljs-comment"># 全部移除</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">dispatch</span>(<span class="hljs-params">event, *args</span>)    <span class="hljs-comment"># 触发事件</span>
 </code></pre>
 <hr>
 <h2 id="3">3. 事件注册方式</h2>
 <h3>3.1 <code>@EventListener</code> 装饰器（引擎事件）</h3>
-<pre><code class="language-python">from architect.core import EventListener
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> EventListener
 
-class MySystem(ServerSubsystem):
-    @EventListener(&#39;ServerPostInitEvent&#39;)
-    def onServerPostInit(self, event):
-        &quot;&quot;&quot;引擎事件，event 为 ChainedEvent&quot;&quot;&quot;
-        pass
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+<span class="hljs-meta">    @EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;ServerPostInitEvent&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onServerPostInit</span>(<span class="hljs-params">self, event</span>):
+        &amp;quot;&amp;quot;&amp;quot;引擎事件，event 为 ChainedEvent&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    @EventListener(&#39;EntityHurtEvent&#39;)
-    def onEntityHurt(self, event):
-        entityId = event.id
+<span class="hljs-meta">    @EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self, event</span>):
+        entityId = event.<span class="hljs-built_in">id</span>
         damage = event.damage
 </code></pre>
 <p><strong>装饰器签名：</strong></p>
-<pre><code class="language-python">def EventListener(eventType=None, isCustomEvent=False):
-    &quot;&quot;&quot;
-    :param eventType: 事件类型字符串，None 则从默认事件类推断
-    :param isCustomEvent: True 时为自定义事件，注册到自定义事件通道
-    &quot;&quot;&quot;
+<pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">EventListener</span>(<span class="hljs-params">eventType=<span class="hljs-literal">None</span>, isCustomEvent=<span class="hljs-literal">False</span></span>):
+    &amp;quot;&amp;quot;&amp;quot;
+    :param eventType: 事件类型字符串，<span class="hljs-literal">None</span> 则从默认事件类推断
+    :param isCustomEvent: <span class="hljs-literal">True</span> 时为自定义事件，注册到自定义事件通道
+    &amp;quot;&amp;quot;&amp;quot;
 </code></pre>
 <p>注册流程：</p>
 <ol>
@@ -183,40 +184,40 @@ class MySystem(ServerSubsystem):
 <li>通过 <code>Subsystem._addListener()</code> 注册到引擎事件系统</li>
 </ol>
 <h3>3.2 <code>@CustomEvent</code> 装饰器（自定义事件）</h3>
-<pre><code class="language-python">from architect.core import CustomEvent
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> CustomEvent
 
-class MySystem(ClientSubsystem):
-    @CustomEvent(&#39;MyDataSyncEvent&#39;)
-    def onDataSync(self, event):
-        data = event[&#39;data&#39;]
-        print(&#39;Received:&#39;, data)
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+<span class="hljs-meta">    @CustomEvent(<span class="hljs-params"><span class="hljs-string">&#x27;MyDataSyncEvent&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onDataSync</span>(<span class="hljs-params">self, event</span>):
+        data = event[<span class="hljs-string">&#x27;data&#x27;</span>]
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Received:&#x27;</span>, data)
 </code></pre>
 <p><code>@CustomEvent</code> 是 <code>@EventListener(eventType, isCustomEvent=True)</code> 的别名。</p>
 <h3>3.3 编程式注册</h3>
-<pre><code class="language-python">class MySystem(ServerSubsystem):
-    def onInit(self):
-        # 自定义事件
-        self.on(&#39;MyEvent&#39;, self.onMyEvent, isCustomEvent=True)
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-comment"># 自定义事件</span>
+        <span class="hljs-variable language_">self</span>.on(<span class="hljs-string">&#x27;MyEvent&#x27;</span>, <span class="hljs-variable language_">self</span>.onMyEvent, isCustomEvent=<span class="hljs-literal">True</span>)
 
-        # 引擎事件
-        self.listen(&#39;EntityHurtEvent&#39;, self.onEntityHurt)
+        <span class="hljs-comment"># 引擎事件</span>
+        <span class="hljs-variable language_">self</span>.listen(<span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span>, <span class="hljs-variable language_">self</span>.onEntityHurt)
 
-    def onMyEvent(self, event):
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onMyEvent</span>(<span class="hljs-params">self, event</span>):
+        <span class="hljs-keyword">pass</span>
 
-    def onDestroy(self):
-        # 注销
-        self.off(&#39;MyEvent&#39;, self.onMyEvent, isCustomEvent=True)
-        self.unlisten(&#39;EntityHurtEvent&#39;, self.onEntityHurt)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onDestroy</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-comment"># 注销</span>
+        <span class="hljs-variable language_">self</span>.off(<span class="hljs-string">&#x27;MyEvent&#x27;</span>, <span class="hljs-variable language_">self</span>.onMyEvent, isCustomEvent=<span class="hljs-literal">True</span>)
+        <span class="hljs-variable language_">self</span>.unlisten(<span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span>, <span class="hljs-variable language_">self</span>.onEntityHurt)
 </code></pre>
 <hr>
 <h2 id="4-architect-event-client-architect-event-server">4. 事件注册表 — <code>architect.event.client</code> / <code>architect.event.server</code></h2>
 <p>框架为每种引擎事件类型维护了 <code>EventChain</code> 单例：</p>
-<pre><code class="language-python">from architect.event import event as eventClient  # 客户端
-from architect.event import event as eventServer  # 服务端
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.event <span class="hljs-keyword">import</span> event <span class="hljs-keyword">as</span> eventClient  <span class="hljs-comment"># 客户端</span>
+<span class="hljs-keyword">from</span> architect.event <span class="hljs-keyword">import</span> event <span class="hljs-keyword">as</span> eventServer  <span class="hljs-comment"># 服务端</span>
 
-# event 是 __getattr__ 拦截器，返回对应事件类型的 EventChain
-chain = eventClient(&#39;EntityHurtEvent&#39;, isCustom=False)
+<span class="hljs-comment"># event 是 __getattr__ 拦截器，返回对应事件类型的 EventChain</span>
+chain = eventClient(<span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span>, isCustom=<span class="hljs-literal">False</span>)
 chain.addListener(my_handler)
 </code></pre>
 <p><strong><code>event</code> 对象的行为：</strong></p>
@@ -227,19 +228,19 @@ chain.addListener(my_handler)
 </ul>
 <h3>事件类型自动生成（可选）</h3>
 <p>框架在 <code>architect/event/events/</code> 下提供了预定义事件类文件，每个文件定义事件类型类：</p>
-<pre><code class="language-python"># architect/event/events/player.py
-class ServerPlayerDieEvent:
-    &quot;&quot;&quot;玩家死亡事件&quot;&quot;&quot;
-    pass
+<pre><code class="hljs language-python"><span class="hljs-comment"># architect/event/events/player.py</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ServerPlayerDieEvent</span>:
+    &amp;quot;&amp;quot;&amp;quot;玩家死亡事件&amp;quot;&amp;quot;&amp;quot;
+    <span class="hljs-keyword">pass</span>
 
-class EntityHurtEvent:
-    &quot;&quot;&quot;实体受伤事件&quot;&quot;&quot;
-    pass
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">EntityHurtEvent</span>:
+    &amp;quot;&amp;quot;&amp;quot;实体受伤事件&amp;quot;&amp;quot;&amp;quot;
+    <span class="hljs-keyword">pass</span>
 </code></pre>
 <p>这些类可以通过 <code>EventListener</code> 的默认行为使用：</p>
-<pre><code class="language-python">@EventListener  # 不传 eventType，从默认参数的事件类推断
-def onEntityHurt(self, event):
-    pass
+<pre><code class="hljs language-python"><span class="hljs-meta">@EventListener  </span><span class="hljs-comment"># 不传 eventType，从默认参数的事件类推断</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self, event</span>):
+    <span class="hljs-keyword">pass</span>
 </code></pre>
 <hr>
 <h2 id="5">5. 事件分发流程</h2>
@@ -263,17 +264,17 @@ EventChain.dispatch(eventData)
 </code></pre>
 <hr>
 <h2 id="6-eventsignal">6. <code>EventSignal</code> 使用（生命周期信号）</h2>
-<pre><code class="language-python">from architect.core.subsystem import SubsystemManager
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.subsystem <span class="hljs-keyword">import</span> SubsystemManager
 
 manager = SubsystemManager.getInstance()
 
-# 监听初始化完成
-manager.INITIALIZED.on(lambda: print(&#39;Plugins loaded&#39;))
+<span class="hljs-comment"># 监听初始化完成</span>
+manager.INITIALIZED.on(<span class="hljs-keyword">lambda</span>: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Plugins loaded&#x27;</span>))
 
-# 监听预加载完成
-manager.PRELOADED.on(lambda: print(&#39;All subsystems ready&#39;))
+<span class="hljs-comment"># 监听预加载完成</span>
+manager.PRELOADED.on(<span class="hljs-keyword">lambda</span>: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;All subsystems ready&#x27;</span>))
 
-# 注销
+<span class="hljs-comment"># 注销</span>
 manager.INITIALIZED.off(callback)
 </code></pre>
 <hr>
@@ -282,25 +283,25 @@ manager.INITIALIZED.off(callback)
 <li><code>@EventListener</code> / <code>@CustomEvent</code> — 替换 <code>onUpdate</code> 等钩子，在事件发生时执行回调，回调接收 <code>ChainedEvent</code> 参数</li>
 <li><code>@Sched.Event</code> — 调度器事件，在事件发生时将方法加入调度队列执行，<strong>不接收</strong>事件参数（事件数据通过 <code>EventReader</code> 组件获取）</li>
 </ul>
-<pre><code class="language-python"># 事件监听器（接收 ChainedEvent）
-@EventListener(&#39;EntityHurtEvent&#39;)
-def onHurt(self, event):
-    target = event.id
+<pre><code class="hljs language-python"><span class="hljs-comment"># 事件监听器（接收 ChainedEvent）</span>
+<span class="hljs-meta">@EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">onHurt</span>(<span class="hljs-params">self, event</span>):
+    target = event.<span class="hljs-built_in">id</span>
     damage = event.damage
 
-# 事件调度器（不接收参数，通过 EventReader 获取）
-@Sched.Event(&#39;EntityHurtEvent&#39;)
-def onHurtSched(self):
-    reader = getComponent(self.entityId, EventReader)
+<span class="hljs-comment"># 事件调度器（不接收参数，通过 EventReader 获取）</span>
+<span class="hljs-meta">@Sched.Event(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">onHurtSched</span>(<span class="hljs-params">self</span>):
+    reader = getComponent(<span class="hljs-variable language_">self</span>.entityId, EventReader)
     event = reader.ev
-    target = event[&#39;id&#39;]
+    target = event[<span class="hljs-string">&#x27;id&#x27;</span>]
 </code></pre>
 <hr>
 <h2 id="8">8. 最佳实践</h2>
 <ol>
 <li><strong>使用装饰器注册</strong>，避免在 <code>onInit</code> 中手动调用 <code>self.on()</code></li>
-<li><strong>使用 <code>ChainedEvent</code> 属性访问</strong>，它比 dict 访问更易读：<pre><code class="language-python">event.id  # 推荐
-event[&#39;id&#39;]  # 也支持
+<li><strong>使用 <code>ChainedEvent</code> 属性访问</strong>，它比 dict 访问更易读：<pre><code class="hljs language-python">event.<span class="hljs-built_in">id</span>  <span class="hljs-comment"># 推荐</span>
+event[<span class="hljs-string">&#x27;id&#x27;</span>]  <span class="hljs-comment"># 也支持</span>
 </code></pre>
 </li>
 <li><strong>在不需要中断事件流时不要调用 <code>stop()</code> 或 <code>prevent()</code></strong></li>

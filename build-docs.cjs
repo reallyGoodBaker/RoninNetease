@@ -1,6 +1,34 @@
 #!/usr/bin/env node
 const fs = require('fs'), path = require('path'), { marked } = require('marked'), hljs = require('highlight.js');
-marked.setOptions({ highlight: (c, l) => l && hljs.getLanguage(l) ? hljs.highlight(c, { language: l }).value : hljs.highlightAuto(c).value, breaks: !0, gfm: !0 });
+
+const hljsCSS = fs.readFileSync(
+  path.join(__dirname, 'node_modules', 'highlight.js', 'styles', 'atom-one-dark.min.css'),
+  'utf-8'
+).trim().replace(/background:#282c34/g, 'background:#0a0a0a');
+
+/**
+ * 对 HTML 中的代码块进行后处理高亮
+ * marked v18 的 setOptions highlight 回调已废弃
+ */
+function highlightCodeBlocks(html) {
+  return html.replace(/<pre><code class="language-(\w+)">([\s\S]*?)<\/code><\/pre>/g, function(m, lang, code) {
+    var decoded = code
+      .replace(/&/g, '&')
+      .replace(/</g, '<')
+      .replace(/>/g, '>')
+      .replace(/"/g, '"')
+      .replace(/&#39;/g, "'");
+    var highlighted;
+    try {
+      highlighted = hljs.getLanguage(lang)
+        ? hljs.highlight(decoded, { language: lang, ignoreIllegals: true }).value
+        : hljs.highlightAuto(decoded).value;
+    } catch(e) {
+      highlighted = decoded;
+    }
+    return '<pre><code class="hljs language-' + lang + '">' + highlighted + '</code></pre>';
+  });
+}
 
 const src = 'architect/docs', out = path.join(src, 'html');
 fs.mkdirSync(out, { recursive: !0 });
@@ -81,10 +109,11 @@ ol,ul{padding-left:1.5rem;margin:.75rem 0}
 li{margin:.35rem 0;line-height:1.75}
 strong{color:hsl(var(--f))}
 @media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+${hljsCSS}
 </style>`;
 
 for (const [name, md] of Object.entries(docs)) {
-  const body = anchors(marked.parse(md));
+  const body = anchors(highlightCodeBlocks(marked.parse(md, { breaks: !0, gfm: !0 })));
   const html = '<!DOCTYPE html>\n<html lang="zh">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1.0">\n<title>' + name + ' - RoninNetease v1.1.0</title>\n' + CSS + '\n</head>\n<body>\n<nav>\n<div class="logo">Ronin<span>Netease</span></div>\n<div class="pages">\n' + navHtml(name) + '\n</div>\n</nav>\n<main>\n<article>\n' + body + '\n</article>\n</main>\n<script>(function(){var p=document.querySelector(".pages");var k="rns";var y=sessionStorage.getItem(k);if(y){p.scrollTop=parseInt(y,10)||0};p.addEventListener("scroll",function(){sessionStorage.setItem(k,p.scrollTop)});var as=document.querySelectorAll("nav a");for(var i=0;i<as.length;i++){as[i].addEventListener("click",function(){sessionStorage.setItem(k,p.scrollTop)})}})()</script>\n</body>\n</html>';
   fs.writeFileSync(path.join(out, name + '.html'), html, 'utf-8');
   console.log('✔ ' + name);

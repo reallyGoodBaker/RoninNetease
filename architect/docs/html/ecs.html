@@ -45,6 +45,7 @@ ol,ul{padding-left:1.5rem;margin:.75rem 0}
 li{margin:.35rem 0;line-height:1.75}
 strong{color:hsl(var(--f))}
 @media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -87,43 +88,43 @@ strong{color:hsl(var(--f))}
 <hr>
 <h2 id="2">2. 定义组件</h2>
 <h3>2.1 基本组件</h3>
-<pre><code class="language-python">from architect.component import Component
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> Component
 
-class Health(Component):
-    hp = 100
-    maxHp = 100
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    hp = <span class="hljs-number">100</span>
+    maxHp = <span class="hljs-number">100</span>
 
-class Transform(Component):
-    x = 0.0
-    y = 0.0
-    z = 0.0
-    yaw = 0.0
-    pitch = 0.0
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Transform</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    x = <span class="hljs-number">0.0</span>
+    y = <span class="hljs-number">0.0</span>
+    z = <span class="hljs-number">0.0</span>
+    yaw = <span class="hljs-number">0.0</span>
+    pitch = <span class="hljs-number">0.0</span>
 </code></pre>
 <p><code>Component</code> 是所有自定义组件的基类。类属性会作为实例的默认值。</p>
 <h3>2.2 持久化组件</h3>
-<pre><code class="language-python">from architect.component import Component, PersistKeys
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> Component, PersistKeys
 
-class Inventory(Component):
-    items = PersistKeys()      # 标记需要持久化的字段集
-    slots = [&#39;&#39;] * 36
-    selected = 0
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Inventory</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    items = PersistKeys()      <span class="hljs-comment"># 标记需要持久化的字段集</span>
+    slots = [<span class="hljs-string">&#x27;&#x27;</span>] * <span class="hljs-number">36</span>
+    selected = <span class="hljs-number">0</span>
 </code></pre>
 <p><code>PersistKeys()</code> 创建一个特殊的描述符，用来标记组件中需要持久化存储的字段。标记后，这些字段的值会在实体卸载/重载时自动保存和恢复。</p>
 <h3>2.3 带字段验证的组件 — <code>@DefineFields</code></h3>
-<pre><code class="language-python">from architect.component.schema import DefineFields, FieldSchema
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component.schema <span class="hljs-keyword">import</span> DefineFields, FieldSchema
 
-@DefineFields({
-    &#39;level&#39;: FieldSchema(default=1,
-                         validator=lambda v: v &gt;= 1),
-    &#39;xp&#39;: FieldSchema(default=0,
-                      validator=lambda v: v &gt;= 0),
-    &#39;health&#39;: FieldSchema(default=100.0,
-                          validator=lambda v: 0.0 &lt;= v &lt;= 1000.0),
-    &#39;name&#39;: FieldSchema(default=&#39;Unknown&#39;)
-})
-class PlayerStats(Component):
-    pass
+<span class="hljs-meta">@DefineFields(<span class="hljs-params">{
+    <span class="hljs-string">&#x27;level&#x27;</span>: FieldSchema(<span class="hljs-params">default=<span class="hljs-number">1</span>,
+                         validator=<span class="hljs-keyword">lambda</span> v: v &amp;gt;= <span class="hljs-number">1</span></span>),
+    <span class="hljs-string">&#x27;xp&#x27;</span>: FieldSchema(<span class="hljs-params">default=<span class="hljs-number">0</span>,
+                      validator=<span class="hljs-keyword">lambda</span> v: v &amp;gt;= <span class="hljs-number">0</span></span>),
+    <span class="hljs-string">&#x27;health&#x27;</span>: FieldSchema(<span class="hljs-params">default=<span class="hljs-number">100.0</span>,
+                          validator=<span class="hljs-keyword">lambda</span> v: <span class="hljs-number">0.0</span> &amp;lt;= v &amp;lt;= <span class="hljs-number">1000.0</span></span>),
+    <span class="hljs-string">&#x27;name&#x27;</span>: FieldSchema(<span class="hljs-params">default=<span class="hljs-string">&#x27;Unknown&#x27;</span></span>)
+}</span>)</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">PlayerStats</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    <span class="hljs-keyword">pass</span>
 </code></pre>
 <p><code>FieldSchema(default, validator)</code> 参数：</p>
 <ul>
@@ -189,66 +190,66 @@ class PlayerStats(Component):
 </tr>
 </tbody></table>
 <h3>3.2 示例</h3>
-<pre><code class="language-python">from architect.component import (
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> (
     createComponent, getOrCreateComponent, getComponent,
     hasComponent, destroyComponent, getEntities
 )
 
-# 创建
-health = createComponent(&#39;entity_abc&#39;, Health)
+<span class="hljs-comment"># 创建</span>
+health = createComponent(<span class="hljs-string">&#x27;entity_abc&#x27;</span>, Health)
 
-# 获取或创建
-health = getOrCreateComponent(&#39;entity_abc&#39;, Health)
-health.hp = max(0, health.hp - 10)
+<span class="hljs-comment"># 获取或创建</span>
+health = getOrCreateComponent(<span class="hljs-string">&#x27;entity_abc&#x27;</span>, Health)
+health.hp = <span class="hljs-built_in">max</span>(<span class="hljs-number">0</span>, health.hp - <span class="hljs-number">10</span>)
 
-# 检查
-if not hasComponent(&#39;entity_abc&#39;, Armor):
-    createComponent(&#39;entity_abc&#39;, Armor)
+<span class="hljs-comment"># 检查</span>
+<span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> hasComponent(<span class="hljs-string">&#x27;entity_abc&#x27;</span>, Armor):
+    createComponent(<span class="hljs-string">&#x27;entity_abc&#x27;</span>, Armor)
 
-# 查询所有拥有 Health 组件的实体
-all_entities = getEntities(Health)  # {&#39;entity_abc&#39;, &#39;entity_xyz&#39;, ...}
+<span class="hljs-comment"># 查询所有拥有 Health 组件的实体</span>
+all_entities = getEntities(Health)  <span class="hljs-comment"># {&#x27;entity_abc&#x27;, &#x27;entity_xyz&#x27;, ...}</span>
 
-# 销毁
-destroyComponent(&#39;entity_abc&#39;, Health)
+<span class="hljs-comment"># 销毁</span>
+destroyComponent(<span class="hljs-string">&#x27;entity_abc&#x27;</span>, Health)
 </code></pre>
 <h3>3.3 单例组件</h3>
 <p>某些组件每个实体只应该有一个实例（如 <code>EventReader</code>），框架提供了单例风格的 API：</p>
-<pre><code class="language-python">from architect.component import (
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> (
     getOrCreateSingletonComponent,
     getOneSingletonComponent,
     destroySingletonComponent
 )
 
-# 获取或创建
-reader = getOrCreateSingletonComponent(&#39;EventReader&#39;)
+<span class="hljs-comment"># 获取或创建</span>
+reader = getOrCreateSingletonComponent(<span class="hljs-string">&#x27;EventReader&#x27;</span>)
 
-# 销毁
-destroySingletonComponent(&#39;EventReader&#39;)
+<span class="hljs-comment"># 销毁</span>
+destroySingletonComponent(<span class="hljs-string">&#x27;EventReader&#x27;</span>)
 </code></pre>
 <hr>
 <h2 id="4-query">4. 查询实体 — <code>@Query</code></h2>
 <h3>4.1 基本用法</h3>
-<pre><code class="language-python">from architect.component import Query, EntityId
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> Query, EntityId
 
-class DamageSystem(ServerSubsystem):
-    canTick = True
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">DamageSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
 
-    @Query(
-        target=&#39;{Health,Transform}&#39;,       # 必须同时存在
-        required=[&#39;{PlayerStats}&#39;],         # 可选
-        attach_query=True                   # 注入参数
-    )
-    def process(self, entityId, Health, Transform, PlayerStats=None):
-        # entityId: str
-        # Health: Health 实例
-        # Transform: Transform 实例
-        # PlayerStats: PlayerStats 实例 或 None
-        Health.hp -= 1
-        if PlayerStats:
-            PlayerStats.xp += 1
+<span class="hljs-meta">    @Query(<span class="hljs-params">
+        target=<span class="hljs-string">&#x27;{Health,Transform}&#x27;</span>,       <span class="hljs-comment"># 必须同时存在</span>
+        required=[<span class="hljs-string">&#x27;{PlayerStats}&#x27;</span>],         <span class="hljs-comment"># 可选</span>
+        attach_query=<span class="hljs-literal">True</span>                   <span class="hljs-comment"># 注入参数</span>
+    </span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">process</span>(<span class="hljs-params">self, entityId, Health, Transform, PlayerStats=<span class="hljs-literal">None</span></span>):
+        <span class="hljs-comment"># entityId: str</span>
+        <span class="hljs-comment"># Health: Health 实例</span>
+        <span class="hljs-comment"># Transform: Transform 实例</span>
+        <span class="hljs-comment"># PlayerStats: PlayerStats 实例 或 None</span>
+        Health.hp -= <span class="hljs-number">1</span>
+        <span class="hljs-keyword">if</span> PlayerStats:
+            PlayerStats.xp += <span class="hljs-number">1</span>
 
-    def onUpdate(self, dt):
-        self.process()  # 遍历所有匹配实体
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        <span class="hljs-variable language_">self</span>.process()  <span class="hljs-comment"># 遍历所有匹配实体</span>
 </code></pre>
 <h3>4.2 <code>@Query</code> 参数详解</h3>
 <table>
@@ -276,14 +277,14 @@ class DamageSystem(ServerSubsystem):
 </tr>
 </tbody></table>
 <h3>4.3 非自动注入模式</h3>
-<pre><code class="language-python">from architect.component import getComponent
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> getComponent
 
-@Query(target=&#39;{Health}&#39;)
-def check_low_hp(self, entityId):
-    # attach_query=False（或不设置）时，需要手动获取
+<span class="hljs-meta">@Query(<span class="hljs-params">target=<span class="hljs-string">&#x27;{Health}&#x27;</span></span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">check_low_hp</span>(<span class="hljs-params">self, entityId</span>):
+    <span class="hljs-comment"># attach_query=False（或不设置）时，需要手动获取</span>
     health = getComponent(entityId, Health)
-    if health and health.hp &lt; 20:
-        self.heal(entityId)
+    <span class="hljs-keyword">if</span> health <span class="hljs-keyword">and</span> health.hp &amp;lt; <span class="hljs-number">20</span>:
+        <span class="hljs-variable language_">self</span>.heal(entityId)
 </code></pre>
 <h3>4.4 查询装饰器内部机制</h3>
 <p><code>@Query</code> 装饰器修改被装饰方法的行为：</p>
@@ -291,11 +292,11 @@ def check_low_hp(self, entityId):
 <li>不带参数调用时 → 遍历所有匹配实体，注入参数后调用</li>
 <li>带 <code>entityId</code> 参数调用时 → 只处理指定实体</li>
 </ol>
-<pre><code class="language-python"># 处理所有匹配实体
-self.process()
+<pre><code class="hljs language-python"><span class="hljs-comment"># 处理所有匹配实体</span>
+<span class="hljs-variable language_">self</span>.process()
 
-# 处理单个实体
-self.process(&#39;entity_123&#39;)
+<span class="hljs-comment"># 处理单个实体</span>
+<span class="hljs-variable language_">self</span>.process(<span class="hljs-string">&#x27;entity_123&#x27;</span>)
 </code></pre>
 <hr>
 <h2 id="5-compindex">5. CompIndex 缓存</h2>
@@ -314,110 +315,110 @@ self.process(&#39;entity_123&#39;)
 <hr>
 <h2 id="6-marker">6. Marker — 实体标记组件</h2>
 <p><code>Marker</code> 是一个特殊的生命周期标记组件，用于追踪实体的创建和销毁：</p>
-<pre><code class="language-python">from architect.component import createComponent, destroyComponent
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> createComponent, destroyComponent
 
-# 创建 Marker（自动追踪实体创建）
+<span class="hljs-comment"># 创建 Marker（自动追踪实体创建）</span>
 marker = createComponent(entity_id, Marker)
 
-# 销毁 Marker（自动追踪实体销毁）
+<span class="hljs-comment"># 销毁 Marker（自动追踪实体销毁）</span>
 destroyComponent(entity_id, Marker)
 </code></pre>
 <p>从 v1.1.0 开始，<code>Marker</code> 暴露了两个 <code>EventSignal</code>：</p>
-<pre><code class="language-python">from architect.component import Marker
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> Marker
 
-# 实体首次标记时
-Marker.onEntityCreated.on(lambda entityId: print(&#39;Created:&#39;, entityId))
+<span class="hljs-comment"># 实体首次标记时</span>
+Marker.onEntityCreated.on(<span class="hljs-keyword">lambda</span> entityId: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Created:&#x27;</span>, entityId))
 
-# 实体最终取消标记时
-Marker.onEntityDestroyed.on(lambda entityId: print(&#39;Destroyed:&#39;, entityId))
+<span class="hljs-comment"># 实体最终取消标记时</span>
+Marker.onEntityDestroyed.on(<span class="hljs-keyword">lambda</span> entityId: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Destroyed:&#x27;</span>, entityId))
 </code></pre>
 <hr>
 <h2 id="7">7. 原生组件访问</h2>
 <p>框架提供了对网易引擎原生组件的简化访问：</p>
-<pre><code class="language-python">from architect.component import NeC, NeS
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> NeC, NeS
 
-# 获取引擎原生组件
-player_comp = NeC.Player          # &#39;#Player&#39;（客户端原生组件）
-item_comp = NeS.Item              # &#39;#Item&#39;（服务端原生组件）
+<span class="hljs-comment"># 获取引擎原生组件</span>
+player_comp = NeC.Player          <span class="hljs-comment"># &#x27;#Player&#x27;（客户端原生组件）</span>
+item_comp = NeS.Item              <span class="hljs-comment"># &#x27;#Item&#x27;（服务端原生组件）</span>
 </code></pre>
 <p><code>NeC</code> 和 <code>NeS</code> 是常量类，列出了约 50 个常用的客户端和 40 个常用的服务端原生组件名称。</p>
 <hr>
 <h2 id="8">8. 完整示例：战斗系统</h2>
-<pre><code class="language-python"># components/combat.py
-from architect.component import Component, PersistKeys
-from architect.component.schema import DefineFields, FieldSchema
+<pre><code class="hljs language-python"><span class="hljs-comment"># components/combat.py</span>
+<span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> Component, PersistKeys
+<span class="hljs-keyword">from</span> architect.component.schema <span class="hljs-keyword">import</span> DefineFields, FieldSchema
 
-class Health(Component):
-    hp = 100
-    maxHp = 100
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    hp = <span class="hljs-number">100</span>
+    maxHp = <span class="hljs-number">100</span>
 
-@DefineFields({
-    &#39;attack&#39;: FieldSchema(default=10, validator=lambda v: v &gt;= 0),
-    &#39;defense&#39;: FieldSchema(default=5, validator=lambda v: v &gt;= 0),
-})
-class CombatStats(Component):
-    pass
+<span class="hljs-meta">@DefineFields(<span class="hljs-params">{
+    <span class="hljs-string">&#x27;attack&#x27;</span>: FieldSchema(<span class="hljs-params">default=<span class="hljs-number">10</span>, validator=<span class="hljs-keyword">lambda</span> v: v &amp;gt;= <span class="hljs-number">0</span></span>),
+    <span class="hljs-string">&#x27;defense&#x27;</span>: FieldSchema(<span class="hljs-params">default=<span class="hljs-number">5</span>, validator=<span class="hljs-keyword">lambda</span> v: v &amp;gt;= <span class="hljs-number">0</span></span>),
+}</span>)</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">CombatStats</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    <span class="hljs-keyword">pass</span>
 
-# subsystems/combat_system.py
-from architect.core import SubsystemServer, ServerSubsystem, EventListener
-from architect.component import Query, EntityId, createComponent, getComponent
+<span class="hljs-comment"># subsystems/combat_system.py</span>
+<span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> SubsystemServer, ServerSubsystem, EventListener
+<span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> Query, EntityId, createComponent, getComponent
 
-class ServerCombatSystem(ServerSubsystem):
-    canTick = True
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ServerCombatSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
 
-    @EventListener(&#39;EntityHurtEvent&#39;)
-    def onEntityHurt(self, event):
+<span class="hljs-meta">    @EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self, event</span>):
         source_id = event.srcId
-        target_id = event.id
+        target_id = event.<span class="hljs-built_in">id</span>
         raw_damage = event.damage
 
-        # 获取攻击方属性
+        <span class="hljs-comment"># 获取攻击方属性</span>
         attacker = getComponent(source_id, CombatStats)
-        atk = attacker.attack if attacker else 5
+        atk = attacker.attack <span class="hljs-keyword">if</span> attacker <span class="hljs-keyword">else</span> <span class="hljs-number">5</span>
 
-        # 获取防御方属性
+        <span class="hljs-comment"># 获取防御方属性</span>
         defender = getComponent(target_id, CombatStats)
-        defense = defender.defense if defender else 0
+        defense = defender.defense <span class="hljs-keyword">if</span> defender <span class="hljs-keyword">else</span> <span class="hljs-number">0</span>
 
-        # 计算最终伤害
-        final_damage = max(1, atk - defense)
+        <span class="hljs-comment"># 计算最终伤害</span>
+        final_damage = <span class="hljs-built_in">max</span>(<span class="hljs-number">1</span>, atk - defense)
 
-        # 应用伤害
+        <span class="hljs-comment"># 应用伤害</span>
         health = getComponent(target_id, Health)
-        if health:
-            health.hp = max(0, health.hp - final_damage)
-            event.setEvent(&#39;damage&#39;, final_damage)
+        <span class="hljs-keyword">if</span> health:
+            health.hp = <span class="hljs-built_in">max</span>(<span class="hljs-number">0</span>, health.hp - final_damage)
+            event.setEvent(<span class="hljs-string">&#x27;damage&#x27;</span>, final_damage)
 
-            if health.hp &lt;= 0:
-                self.handle_death(target_id)
+            <span class="hljs-keyword">if</span> health.hp &amp;lt;= <span class="hljs-number">0</span>:
+                <span class="hljs-variable language_">self</span>.handle_death(target_id)
 
-    def handle_death(self, entity_id):
-        # 死亡处理
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_death</span>(<span class="hljs-params">self, entity_id</span>):
+        <span class="hljs-comment"># 死亡处理</span>
+        <span class="hljs-keyword">pass</span>
 </code></pre>
-<pre><code class="language-python"># subsystems/combat_client.py
-from architect.core import SubsystemClient, ClientSubsystem
-from architect.component import Query, EntityId
+<pre><code class="hljs language-python"><span class="hljs-comment"># subsystems/combat_client.py</span>
+<span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> SubsystemClient, ClientSubsystem
+<span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> Query, EntityId
 
-class ClientCombatSystem(ClientSubsystem):
-    canTick = True
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ClientCombatSystem</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
 
-    @Query(
-        target=&#39;{Health}&#39;,
-        required=[&#39;{CombatStats}&#39;],
-        attach_query=True
-    )
-    def update_health_bars(self, entityId, Health, CombatStats=None):
-        # 更新血条 UI
-        hp_pct = Health.hp / max(1, Health.maxHp)
-        self.show_health_bar(entityId, min(1.0, hp_pct))
+<span class="hljs-meta">    @Query(<span class="hljs-params">
+        target=<span class="hljs-string">&#x27;{Health}&#x27;</span>,
+        required=[<span class="hljs-string">&#x27;{CombatStats}&#x27;</span>],
+        attach_query=<span class="hljs-literal">True</span>
+    </span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update_health_bars</span>(<span class="hljs-params">self, entityId, Health, CombatStats=<span class="hljs-literal">None</span></span>):
+        <span class="hljs-comment"># 更新血条 UI</span>
+        hp_pct = Health.hp / <span class="hljs-built_in">max</span>(<span class="hljs-number">1</span>, Health.maxHp)
+        <span class="hljs-variable language_">self</span>.show_health_bar(entityId, <span class="hljs-built_in">min</span>(<span class="hljs-number">1.0</span>, hp_pct))
 
-    def onUpdate(self, dt):
-        self.update_health_bars()
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        <span class="hljs-variable language_">self</span>.update_health_bars()
 
-    def show_health_bar(self, entity_id, pct):
-        # UI 更新逻辑
-        pass
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">show_health_bar</span>(<span class="hljs-params">self, entity_id, pct</span>):
+        <span class="hljs-comment"># UI 更新逻辑</span>
+        <span class="hljs-keyword">pass</span>
 </code></pre>
 <hr>
 <h2 id="">下一步</h2>

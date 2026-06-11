@@ -45,6 +45,7 @@ ol,ul{padding-left:1.5rem;margin:.75rem 0}
 li{margin:.35rem 0;line-height:1.75}
 strong{color:hsl(var(--f))}
 @media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -109,75 +110,75 @@ strong{color:hsl(var(--f))}
 </tbody></table>
 <hr>
 <h2 id="3-uisubsystem-ui">3. <code>UiSubsystem</code> — UI 子系统基类</h2>
-<pre><code class="language-python">from architect.ui.client import UiSubsystem, UiDef, Sink, AutoCreate
-from architect.ui.client import signal, Screen, Ui
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.ui.client <span class="hljs-keyword">import</span> UiSubsystem, UiDef, Sink, AutoCreate
+<span class="hljs-keyword">from</span> architect.ui.client <span class="hljs-keyword">import</span> signal, Screen, Ui
 
-class MyHUD(UiSubsystem):
-    canTick = True
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyHUD</span>(<span class="hljs-title class_ inherited__">UiSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
 
-    # === 3.1 声明 UI ===
+    <span class="hljs-comment"># === 3.1 声明 UI ===</span>
 
-    @UiDef(&#39;my_hud&#39;)      # UI JSON 中的 namespace
-    @Screen(&#39;hud_screen&#39;) # UI 屏幕名称
-    @AutoCreate           # 首次加载时自动创建
-    def initHUD(self, ui: Ui):
-        &quot;&quot;&quot;
+<span class="hljs-meta">    @UiDef(<span class="hljs-params"><span class="hljs-string">&#x27;my_hud&#x27;</span></span>)      </span><span class="hljs-comment"># UI JSON 中的 namespace</span>
+<span class="hljs-meta">    @Screen(<span class="hljs-params"><span class="hljs-string">&#x27;hud_screen&#x27;</span></span>) </span><span class="hljs-comment"># UI 屏幕名称</span>
+<span class="hljs-meta">    @AutoCreate           </span><span class="hljs-comment"># 首次加载时自动创建</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">initHUD</span>(<span class="hljs-params">self, ui: Ui</span>):
+        &amp;quot;&amp;quot;&amp;quot;
         UI 创建时调用。
         ui 是一个 Ui 对象，封装了底层引擎 UI 功能。
-        &quot;&quot;&quot;
-        self.hud = ui
+        &amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-variable language_">self</span>.hud = ui
 
-    # === 3.2 响应式数据 ===
+    <span class="hljs-comment"># === 3.2 响应式数据 ===</span>
 
-    @signal
-    def hp(self):
-        &quot;&quot;&quot;signal 属性：返回当前 HP 值&quot;&quot;&quot;
-        return self.player_health
+<span class="hljs-meta">    @signal</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">hp</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;signal 属性：返回当前 HP 值&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>.player_health
 
-    hp_signal = hp  # signal 的描述符对象
+    hp_signal = hp  <span class="hljs-comment"># signal 的描述符对象</span>
 
-    # === 3.3 响应式 UI 更新 ===
+    <span class="hljs-comment"># === 3.3 响应式 UI 更新 ===</span>
 
-    @Sink(initiator=hp)
-    def updateHpBar(self):
-        &quot;&quot;&quot;当 hp 值变化时自动触发&quot;&quot;&quot;
-        if hasattr(self, &#39;hud&#39;):
-            self.hud.set_text(&#39;hp_label&#39;, str(self.hp_value))
-            self.hud.set_bar(&#39;hp_bar&#39;, self.hp_value / self.max_hp)
+<span class="hljs-meta">    @Sink(<span class="hljs-params">initiator=hp</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">updateHpBar</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;当 hp 值变化时自动触发&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">if</span> <span class="hljs-built_in">hasattr</span>(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;hud&#x27;</span>):
+            <span class="hljs-variable language_">self</span>.hud.set_text(<span class="hljs-string">&#x27;hp_label&#x27;</span>, <span class="hljs-built_in">str</span>(<span class="hljs-variable language_">self</span>.hp_value))
+            <span class="hljs-variable language_">self</span>.hud.set_bar(<span class="hljs-string">&#x27;hp_bar&#x27;</span>, <span class="hljs-variable language_">self</span>.hp_value / <span class="hljs-variable language_">self</span>.max_hp)
 
-    # === 3.4 Tick 更新 ===
+    <span class="hljs-comment"># === 3.4 Tick 更新 ===</span>
 
-    def onUpdate(self, dt):
-        &quot;&quot;&quot;每帧检查数据变化&quot;&quot;&quot;
-        if self.hp_value != self.last_hp:
-            self.last_hp = self.hp_value
-            # signal 机制会自动触发 @Sink 方法
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        &amp;quot;&amp;quot;&amp;quot;每帧检查数据变化&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.hp_value != <span class="hljs-variable language_">self</span>.last_hp:
+            <span class="hljs-variable language_">self</span>.last_hp = <span class="hljs-variable language_">self</span>.hp_value
+            <span class="hljs-comment"># signal 机制会自动触发 @Sink 方法</span>
 </code></pre>
 <hr>
 <h2 id="4">4. 响应式数据绑定</h2>
 <h3>4.1 <code>@signal</code> — 信号属性</h3>
 <p><code>@signal</code> 将方法转换为信号属性。它内部使用描述符协议（<code>__get__</code> / <code>__set__</code>）：</p>
-<pre><code class="language-python">class MyHUD(UiSubsystem):
-    @signal
-    def hp(self):
-        return self._hp
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyHUD</span>(<span class="hljs-title class_ inherited__">UiSubsystem</span>):
+<span class="hljs-meta">    @signal</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">hp</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>._hp
 
-    @signal
-    def mana(self):
-        return self._mana
+<span class="hljs-meta">    @signal</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">mana</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>._mana
 
-    def onUpdate(self, dt):
-        # 读取信号值（触发追踪）
-        current_hp = self.hp_value    # 获取 current value
-        current_mana = self.mana_value
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        <span class="hljs-comment"># 读取信号值（触发追踪）</span>
+        current_hp = <span class="hljs-variable language_">self</span>.hp_value    <span class="hljs-comment"># 获取 current value</span>
+        current_mana = <span class="hljs-variable language_">self</span>.mana_value
 </code></pre>
 <p><code>@signal</code> 装饰的方法必须返回一个值。框架会将其转换为一个<strong>可追踪的观察点</strong>。</p>
 <h3>4.2 <code>@Sink</code> — 响应回调</h3>
 <p><code>@Sink(initiator=signal_prop)</code> 将方法绑定到某个信号。当信号值变化时，方法被自动调用：</p>
-<pre><code class="language-python">@Sink(initiator=hp)  # hp 是 @signal 定义的描述符
-def refreshUI(self):
-    &quot;&quot;&quot;hp 值变化时自动调用&quot;&quot;&quot;
-    self.hud.set_text(&#39;hp_display&#39;, str(self.hp_value))
+<pre><code class="hljs language-python"><span class="hljs-meta">@Sink(<span class="hljs-params">initiator=hp</span>)  </span><span class="hljs-comment"># hp 是 @signal 定义的描述符</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">refreshUI</span>(<span class="hljs-params">self</span>):
+    &amp;quot;&amp;quot;&amp;quot;hp 值变化时自动调用&amp;quot;&amp;quot;&amp;quot;
+    <span class="hljs-variable language_">self</span>.hud.set_text(<span class="hljs-string">&#x27;hp_display&#x27;</span>, <span class="hljs-built_in">str</span>(<span class="hljs-variable language_">self</span>.hp_value))
 </code></pre>
 <p><strong>SinkContext 依赖追踪：</strong></p>
 <p>框架使用 <code>SinkContext</code> 上下文管理器追踪 <code>@Sink</code> 方法执行期间访问了哪些信号的当前值。这实现了细粒度的依赖追踪，只在真正依赖的数据变化时才触发更新。</p>
@@ -194,55 +195,55 @@ def updateUI(self):
 <hr>
 <h2 id="5-ui">5. <code>Ui</code> 对象</h2>
 <p><code>Ui</code> 是底层引擎 UI 对象的封装，提供以下功能：</p>
-<pre><code class="language-python">class Ui:
-    def bind(control_path, property_name, signal_or_value)
-    def set_text(control_path, text)
-    def set_visible(control_path, visible)
-    def set_enable(control_path, enable)
-    def get_control(control_path)
-    def send_event(event_name, data)
-    # ... 更多代理方法
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Ui</span>:
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">bind</span>(<span class="hljs-params">control_path, property_name, signal_or_value</span>)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">set_text</span>(<span class="hljs-params">control_path, text</span>)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">set_visible</span>(<span class="hljs-params">control_path, visible</span>)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">set_enable</span>(<span class="hljs-params">control_path, enable</span>)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">get_control</span>(<span class="hljs-params">control_path</span>)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">send_event</span>(<span class="hljs-params">event_name, data</span>)
+    <span class="hljs-comment"># ... 更多代理方法</span>
 </code></pre>
 <p><strong>示例：</strong></p>
-<pre><code class="language-python">class MyHUD(UiSubsystem):
-    @UiDef(&#39;main_hud&#39;)
-    @Screen(&#39;hud_screen&#39;)
-    @AutoCreate
-    def createUI(self, ui: Ui):
-        # 设置文本
-        ui.set_text(&#39;player_name&#39;, &#39;Steve&#39;)
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyHUD</span>(<span class="hljs-title class_ inherited__">UiSubsystem</span>):
+<span class="hljs-meta">    @UiDef(<span class="hljs-params"><span class="hljs-string">&#x27;main_hud&#x27;</span></span>)</span>
+<span class="hljs-meta">    @Screen(<span class="hljs-params"><span class="hljs-string">&#x27;hud_screen&#x27;</span></span>)</span>
+<span class="hljs-meta">    @AutoCreate</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">createUI</span>(<span class="hljs-params">self, ui: Ui</span>):
+        <span class="hljs-comment"># 设置文本</span>
+        ui.set_text(<span class="hljs-string">&#x27;player_name&#x27;</span>, <span class="hljs-string">&#x27;Steve&#x27;</span>)
 
-        # 控制显示
-        ui.set_visible(&#39;damage_overlay&#39;, False)
+        <span class="hljs-comment"># 控制显示</span>
+        ui.set_visible(<span class="hljs-string">&#x27;damage_overlay&#x27;</span>, <span class="hljs-literal">False</span>)
 
-        # 启用/禁用
-        ui.set_enable(&#39;attack_button&#39;, True)
+        <span class="hljs-comment"># 启用/禁用</span>
+        ui.set_enable(<span class="hljs-string">&#x27;attack_button&#x27;</span>, <span class="hljs-literal">True</span>)
 
-        # 绑定信号
-        ui.bind(&#39;hp_text&#39;, &#39;text&#39;, self.hp_signal)
+        <span class="hljs-comment"># 绑定信号</span>
+        ui.bind(<span class="hljs-string">&#x27;hp_text&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>, <span class="hljs-variable language_">self</span>.hp_signal)
 </code></pre>
 <hr>
 <h2 id="6-touch">6. 触摸手势 — <code>Touch</code></h2>
-<pre><code class="language-python">from architect.ui.gesture import Touch
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.ui.gesture <span class="hljs-keyword">import</span> Touch
 
-class GestureHandler(UiSubsystem):
-    def onInit(self):
-        self.touch = Touch(self.system)
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">GestureHandler</span>(<span class="hljs-title class_ inherited__">UiSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.touch = Touch(<span class="hljs-variable language_">self</span>.system)
 
-    @Sched.Tick()
-    def handle_touch(self):
-        # 检测长按
-        if self.touch.is_long_press(&#39;area_button&#39;, duration=0.5):
-            print(&#39;Long press detected!&#39;)
+<span class="hljs-meta">    @Sched.Tick()</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_touch</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-comment"># 检测长按</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.touch.is_long_press(<span class="hljs-string">&#x27;area_button&#x27;</span>, duration=<span class="hljs-number">0.5</span>):
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Long press detected!&#x27;</span>)
 
-        # 检测滑动
-        direction = self.touch.get_swipe_direction(&#39;drag_area&#39;)
-        if direction == &#39;left&#39;:
-            print(&#39;Swiped left!&#39;)
+        <span class="hljs-comment"># 检测滑动</span>
+        direction = <span class="hljs-variable language_">self</span>.touch.get_swipe_direction(<span class="hljs-string">&#x27;drag_area&#x27;</span>)
+        <span class="hljs-keyword">if</span> direction == <span class="hljs-string">&#x27;left&#x27;</span>:
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Swiped left!&#x27;</span>)
 
-        # 检测点击
-        if self.touch.is_tap(&#39;click_button&#39;):
-            print(&#39;Button tapped!&#39;)
+        <span class="hljs-comment"># 检测点击</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.touch.is_tap(<span class="hljs-string">&#x27;click_button&#x27;</span>):
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Button tapped!&#x27;</span>)
 </code></pre>
 <p><code>Touch</code> 类提供：</p>
 <ul>
@@ -263,88 +264,88 @@ class GestureHandler(UiSubsystem):
 </ol>
 <hr>
 <h2 id="8-hud">8. 完整示例：HUD 系统</h2>
-<pre><code class="language-python">from architect.ui.client import (
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.ui.client <span class="hljs-keyword">import</span> (
     UiSubsystem, UiDef, Sink, AutoCreate, signal, Screen, Ui
 )
-from architect.core import SubsystemClient, Sched
+<span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> SubsystemClient, Sched
 
-class PlayerHUD(UiSubsystem):
-    canTick = True
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">PlayerHUD</span>(<span class="hljs-title class_ inherited__">UiSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
 
-    def onInit(self):
-        self.player_name = &#39;Steve&#39;
-        self._hp = 100
-        self._max_hp = 100
-        self._mana = 50
-        self._max_mana = 100
-        self._gold = 0
-        self.hud = None  # type: Ui
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.player_name = <span class="hljs-string">&#x27;Steve&#x27;</span>
+        <span class="hljs-variable language_">self</span>._hp = <span class="hljs-number">100</span>
+        <span class="hljs-variable language_">self</span>._max_hp = <span class="hljs-number">100</span>
+        <span class="hljs-variable language_">self</span>._mana = <span class="hljs-number">50</span>
+        <span class="hljs-variable language_">self</span>._max_mana = <span class="hljs-number">100</span>
+        <span class="hljs-variable language_">self</span>._gold = <span class="hljs-number">0</span>
+        <span class="hljs-variable language_">self</span>.hud = <span class="hljs-literal">None</span>  <span class="hljs-comment"># type: Ui</span>
 
-    # === Signals ===
+    <span class="hljs-comment"># === Signals ===</span>
 
-    @signal
-    def hp(self):
-        return self._hp / max(1, self._max_hp)
+<span class="hljs-meta">    @signal</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">hp</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>._hp / <span class="hljs-built_in">max</span>(<span class="hljs-number">1</span>, <span class="hljs-variable language_">self</span>._max_hp)
 
-    @signal
-    def mana(self):
-        return self._mana / max(1, self._max_mana)
+<span class="hljs-meta">    @signal</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">mana</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>._mana / <span class="hljs-built_in">max</span>(<span class="hljs-number">1</span>, <span class="hljs-variable language_">self</span>._max_mana)
 
-    @signal
-    def gold(self):
-        return self._gold
+<span class="hljs-meta">    @signal</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">gold</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>._gold
 
-    # === UI Definition ===
+    <span class="hljs-comment"># === UI Definition ===</span>
 
-    @UiDef(&#39;player_hud&#39;)
-    @Screen(&#39;game_hud&#39;)
-    @AutoCreate
-    def createHUD(self, ui: Ui):
-        self.hud = ui
-        ui.set_text(&#39;player_name&#39;, self.player_name)
+<span class="hljs-meta">    @UiDef(<span class="hljs-params"><span class="hljs-string">&#x27;player_hud&#x27;</span></span>)</span>
+<span class="hljs-meta">    @Screen(<span class="hljs-params"><span class="hljs-string">&#x27;game_hud&#x27;</span></span>)</span>
+<span class="hljs-meta">    @AutoCreate</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">createHUD</span>(<span class="hljs-params">self, ui: Ui</span>):
+        <span class="hljs-variable language_">self</span>.hud = ui
+        ui.set_text(<span class="hljs-string">&#x27;player_name&#x27;</span>, <span class="hljs-variable language_">self</span>.player_name)
 
-    # === Reactive Bindings ===
+    <span class="hljs-comment"># === Reactive Bindings ===</span>
 
-    @Sink(initiator=hp)
-    def refresh_hp(self):
-        if self.hud:
-            self.hud.set_bar(&#39;hp_bar&#39;, self.hp_value * 100)
+<span class="hljs-meta">    @Sink(<span class="hljs-params">initiator=hp</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">refresh_hp</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.hud:
+            <span class="hljs-variable language_">self</span>.hud.set_bar(<span class="hljs-string">&#x27;hp_bar&#x27;</span>, <span class="hljs-variable language_">self</span>.hp_value * <span class="hljs-number">100</span>)
 
-    @Sink(initiator=mana)
-    def refresh_mana(self):
-        if self.hud:
-            self.hud.set_bar(&#39;mana_bar&#39;, self.mana_value * 100)
+<span class="hljs-meta">    @Sink(<span class="hljs-params">initiator=mana</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">refresh_mana</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.hud:
+            <span class="hljs-variable language_">self</span>.hud.set_bar(<span class="hljs-string">&#x27;mana_bar&#x27;</span>, <span class="hljs-variable language_">self</span>.mana_value * <span class="hljs-number">100</span>)
 
-    @Sink(initiator=gold)
-    def refresh_gold(self):
-        if self.hud:
-            self.hud.set_text(&#39;gold_text&#39;, str(self.gold_value))
+<span class="hljs-meta">    @Sink(<span class="hljs-params">initiator=gold</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">refresh_gold</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.hud:
+            <span class="hljs-variable language_">self</span>.hud.set_text(<span class="hljs-string">&#x27;gold_text&#x27;</span>, <span class="hljs-built_in">str</span>(<span class="hljs-variable language_">self</span>.gold_value))
 
-    # === Game Logic ===
+    <span class="hljs-comment"># === Game Logic ===</span>
 
-    def set_health(self, hp, max_hp):
-        self._hp = hp
-        self._max_hp = max_hp
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">set_health</span>(<span class="hljs-params">self, hp, max_hp</span>):
+        <span class="hljs-variable language_">self</span>._hp = hp
+        <span class="hljs-variable language_">self</span>._max_hp = max_hp
 
-    def set_mana(self, mana, max_mana):
-        self._mana = mana
-        self._max_mana = max_mana
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">set_mana</span>(<span class="hljs-params">self, mana, max_mana</span>):
+        <span class="hljs-variable language_">self</span>._mana = mana
+        <span class="hljs-variable language_">self</span>._max_mana = max_mana
 
-    def add_gold(self, amount):
-        self._gold += amount
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">add_gold</span>(<span class="hljs-params">self, amount</span>):
+        <span class="hljs-variable language_">self</span>._gold += amount
 
-    def onDestroy(self):
-        self.hud = None
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onDestroy</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.hud = <span class="hljs-literal">None</span>
 </code></pre>
 <hr>
 <h2 id="9">9. 配置常量</h2>
 <p>框架在 <code>conf.py</code> 中定义了 UI 相关的注解键：</p>
-<pre><code class="language-python">UI_NAMESPACE = &#39;xxx_roninUi_xxx&#39;    # UI 命名空间前缀
-UI_DEF = &#39;_ui_def&#39;                   # @UiDef 注解键
-UI_SINK = &#39;_ui_binder&#39;              # @Sink 注解键
-UI_SCREEN = &#39;_ui_screen&#39;            # @Screen 注解键
-UI_HUD = &#39;_ui_hud&#39;                  # HUD 标记
-UI_GESTURE = &#39;_ui_gesture&#39;          # 手势类型标记
+<pre><code class="hljs language-python">UI_NAMESPACE = <span class="hljs-string">&#x27;xxx_roninUi_xxx&#x27;</span>    <span class="hljs-comment"># UI 命名空间前缀</span>
+UI_DEF = <span class="hljs-string">&#x27;_ui_def&#x27;</span>                   <span class="hljs-comment"># @UiDef 注解键</span>
+UI_SINK = <span class="hljs-string">&#x27;_ui_binder&#x27;</span>              <span class="hljs-comment"># @Sink 注解键</span>
+UI_SCREEN = <span class="hljs-string">&#x27;_ui_screen&#x27;</span>            <span class="hljs-comment"># @Screen 注解键</span>
+UI_HUD = <span class="hljs-string">&#x27;_ui_hud&#x27;</span>                  <span class="hljs-comment"># HUD 标记</span>
+UI_GESTURE = <span class="hljs-string">&#x27;_ui_gesture&#x27;</span>          <span class="hljs-comment"># 手势类型标记</span>
 </code></pre>
 <hr>
 <h2 id="">下一步</h2>

@@ -45,6 +45,7 @@ ol,ul{padding-left:1.5rem;margin:.75rem 0}
 li{margin:.35rem 0;line-height:1.75}
 strong{color:hsl(var(--f))}
 @media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -121,65 +122,65 @@ strong{color:hsl(var(--f))}
 </tr>
 </tbody></table>
 <h3>2.2 任务类型</h3>
-<pre><code class="language-python">class Task:
-    id: int
-    fn: function           # 普通可调用对象
-    finished: bool
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Task</span>:
+    <span class="hljs-built_in">id</span>: <span class="hljs-built_in">int</span>
+    fn: function           <span class="hljs-comment"># 普通可调用对象</span>
+    finished: <span class="hljs-built_in">bool</span>
 
-class SuspendableTask(Task):
-    fn: generator          # 生成器函数
-    gen: generator         # 生成器实例
-    callOnce()             # 单步推进，StopIteration 后完成
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SuspendableTask</span>(<span class="hljs-title class_ inherited__">Task</span>):
+    fn: generator          <span class="hljs-comment"># 生成器函数</span>
+    gen: generator         <span class="hljs-comment"># 生成器实例</span>
+    callOnce()             <span class="hljs-comment"># 单步推进，StopIteration 后完成</span>
 </code></pre>
 <hr>
 <h2 id="3-sched">3. <code>@Sched</code> 装饰器</h2>
 <h3>3.1 Tick 调度</h3>
-<pre><code class="language-python">from architect.core import Sched, SchedUpdateFlags
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> Sched, SchedUpdateFlags
 
-class MySystem(ServerSubsystem):
-    canTick = True
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
 
-    @Sched.Tick()                          # 默认 Update 阶段
-    def onUpdate(self):
-        pass
+<span class="hljs-meta">    @Sched.Tick()                          </span><span class="hljs-comment"># 默认 Update 阶段</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">pass</span>
 
-    @Sched.Tick(SchedUpdateFlags.BeforeUpdate)
-    def beforeUpdate(self):
-        &quot;&quot;&quot;在子系统的 onUpdate 之前执行&quot;&quot;&quot;
-        pass
+<span class="hljs-meta">    @Sched.Tick(<span class="hljs-params">SchedUpdateFlags.BeforeUpdate</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">beforeUpdate</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;在子系统的 onUpdate 之前执行&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    @Sched.Tick(SchedUpdateFlags.AfterUpdate)
-    def afterUpdate(self):
-        &quot;&quot;&quot;在子系统的 onUpdate 之后执行&quot;&quot;&quot;
-        pass
+<span class="hljs-meta">    @Sched.Tick(<span class="hljs-params">SchedUpdateFlags.AfterUpdate</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">afterUpdate</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;在子系统的 onUpdate 之后执行&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 </code></pre>
 <p><strong>执行顺序</strong>（每帧）：</p>
 <pre><code>子系统 onUpdate(dt) → BeforeUpdate 任务 → Update 任务 → AfterUpdate 任务
 </code></pre>
 <h3>3.2 Render 调度（仅客户端）</h3>
-<pre><code class="language-python">@Sched.Render()                          # 默认 Update 阶段
-def onRender(self):
-    pass
+<pre><code class="hljs language-python"><span class="hljs-meta">@Sched.Render()                          </span><span class="hljs-comment"># 默认 Update 阶段</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">onRender</span>(<span class="hljs-params">self</span>):
+    <span class="hljs-keyword">pass</span>
 
-@Sched.Render(SchedUpdateFlags.BeforeUpdate)
-def beforeRender(self):
-    pass
+<span class="hljs-meta">@Sched.Render(<span class="hljs-params">SchedUpdateFlags.BeforeUpdate</span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">beforeRender</span>(<span class="hljs-params">self</span>):
+    <span class="hljs-keyword">pass</span>
 </code></pre>
 <p>Render 调度在 <code>GameRenderTickEvent</code> 触发时执行，独立于 Tick 调度。</p>
 <h3>3.3 Fixed 调度（固定频率）</h3>
-<pre><code class="language-python">class MySystem(ServerSubsystem):
-    @Sched.Fixed(&#39;my_fixed_sched&#39;)  # 声明固定调度器名称
-    def onFixedUpdate(self):
-        &quot;&quot;&quot;每 0.5 秒执行一次&quot;&quot;&quot;
-        print(&#39;Fixed tick!&#39;)
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+<span class="hljs-meta">    @Sched.Fixed(<span class="hljs-params"><span class="hljs-string">&#x27;my_fixed_sched&#x27;</span></span>)  </span><span class="hljs-comment"># 声明固定调度器名称</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onFixedUpdate</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;每 <span class="hljs-number">0.5</span> 秒执行一次&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Fixed tick!&#x27;</span>)
 
-    def onReady(self):
-        # 在 onReady 中启动调度器
-        sched = self.scheduleFixed(&#39;my_fixed_sched&#39;, period=0.5)
-        # sched 是 SimpleFixedScheduler 实例
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-comment"># 在 onReady 中启动调度器</span>
+        sched = <span class="hljs-variable language_">self</span>.scheduleFixed(<span class="hljs-string">&#x27;my_fixed_sched&#x27;</span>, period=<span class="hljs-number">0.5</span>)
+        <span class="hljs-comment"># sched 是 SimpleFixedScheduler 实例</span>
 
-    def onDestroy(self):
-        self.stopFixed(&#39;my_fixed_sched&#39;)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onDestroy</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.stopFixed(<span class="hljs-string">&#x27;my_fixed_sched&#x27;</span>)
 </code></pre>
 <p><code>scheduleFixed(name, period)</code>：</p>
 <ul>
@@ -188,18 +189,18 @@ def beforeRender(self):
 <li><strong>必须</strong>在 <code>onReady()</code> 中调用，不能在 <code>onInit()</code> 中调用（引擎未初始化）</li>
 </ul>
 <h3>3.4 Event 调度（事件驱动）</h3>
-<pre><code class="language-python">class MySystem(ServerSubsystem):
-    @Sched.Event(&#39;EntityHurtEvent&#39;, isCustom=False)
-    def onEntityHurtSched(self):
-        &quot;&quot;&quot;EntityHurtEvent 触发时执行&quot;&quot;&quot;
-        # 注意：不接收事件参数！
-        pass
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+<span class="hljs-meta">    @Sched.Event(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span>, isCustom=<span class="hljs-literal">False</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurtSched</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;EntityHurtEvent 触发时执行&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-comment"># 注意：不接收事件参数！</span>
+        <span class="hljs-keyword">pass</span>
 
-    @Sched.Event(&#39;EntityHurtEvent&#39;, isCustom=False,
-                  scheduleFlag=SchedEventFlags.AfterEvent)
-    def afterEntityHurt(self):
-        &quot;&quot;&quot;EntityHurtEvent 触发后执行（AfterEvent 阶段）&quot;&quot;&quot;
-        pass
+<span class="hljs-meta">    @Sched.Event(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span>, isCustom=<span class="hljs-literal">False</span>,
+                  scheduleFlag=SchedEventFlags.AfterEvent</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">afterEntityHurt</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;EntityHurtEvent 触发后执行（AfterEvent 阶段）&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 </code></pre>
 <p>关键点：</p>
 <ul>
@@ -209,57 +210,57 @@ def beforeRender(self):
 <hr>
 <h2 id="4-suspendabletask">4. 可暂停任务 — <code>SuspendableTask</code></h2>
 <p>基于 Python 生成器的可暂停任务，每次 <code>callOnce()</code> 推进一个 <code>yield</code> 步：</p>
-<pre><code class="language-python">from architect.core import Scheduler
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> Scheduler
 
 sched = Scheduler()
 
-def my_generator():
-    print(&#39;Step 1&#39;)
-    yield
-    print(&#39;Step 2&#39;)
-    yield
-    print(&#39;Step 3 - done&#39;)
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">my_generator</span>():
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Step 1&#x27;</span>)
+    <span class="hljs-keyword">yield</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Step 2&#x27;</span>)
+    <span class="hljs-keyword">yield</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Step 3 - done&#x27;</span>)
 
-task_id = sched.addSuspendableTask(&#39;Update&#39;, my_generator)
+task_id = sched.addSuspendableTask(<span class="hljs-string">&#x27;Update&#x27;</span>, my_generator)
 
-# 每次 execute(&#39;Update&#39;) 执行一步
-sched.execute(&#39;Update&#39;)  # 打印 Step 1
-sched.execute(&#39;Update&#39;)  # 打印 Step 2
-sched.execute(&#39;Update&#39;)  # 打印 Step 3 - done，任务完成
+<span class="hljs-comment"># 每次 execute(&#x27;Update&#x27;) 执行一步</span>
+sched.execute(<span class="hljs-string">&#x27;Update&#x27;</span>)  <span class="hljs-comment"># 打印 Step 1</span>
+sched.execute(<span class="hljs-string">&#x27;Update&#x27;</span>)  <span class="hljs-comment"># 打印 Step 2</span>
+sched.execute(<span class="hljs-string">&#x27;Update&#x27;</span>)  <span class="hljs-comment"># 打印 Step 3 - done，任务完成</span>
 </code></pre>
 <hr>
 <h2 id="5">5. 定时任务</h2>
 <h3>5.1 周期性任务</h3>
-<pre><code class="language-python">from architect.core.scheduler import Scheduler
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.scheduler <span class="hljs-keyword">import</span> Scheduler
 
 sched = Scheduler()
 
-# 每 tick 执行
+<span class="hljs-comment"># 每 tick 执行</span>
 sched.run(fn)
 
-# 周期性执行（每 ticks 帧）
-sched.runInterval(fn, ticks=10)
+<span class="hljs-comment"># 周期性执行（每 ticks 帧）</span>
+sched.runInterval(fn, ticks=<span class="hljs-number">10</span>)
 
-# 超时执行（仅一次）
-sched.runTimeout(fn, ticks=60)
+<span class="hljs-comment"># 超时执行（仅一次）</span>
+sched.runTimeout(fn, ticks=<span class="hljs-number">60</span>)
 </code></pre>
 <h3>5.2 <code>TimerAdapter</code> — 引擎定时器</h3>
-<pre><code class="language-python">from architect.core.scheduler import TimerAdapter
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.scheduler <span class="hljs-keyword">import</span> TimerAdapter
 
-def on_timer():
-    print(&#39;Engine timer tick!&#39;)
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">on_timer</span>():
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Engine timer tick!&#x27;</span>)
 
-timer = TimerAdapter(0.5, on_timer)  # 0.5 秒间隔
+timer = TimerAdapter(<span class="hljs-number">0.5</span>, on_timer)  <span class="hljs-comment"># 0.5 秒间隔</span>
 timer.start()
 timer.cancel()
 </code></pre>
 <p><code>TimerAdapter</code> 封装了引擎的 <code>AddRepeatedTimer</code> / <code>CancelTimer</code> API。</p>
 <hr>
 <h2 id="6-simplefixedscheduler">6. <code>SimpleFixedScheduler</code> — 简易固定调度器</h2>
-<pre><code class="language-python">from architect.core.scheduler import SimpleFixedScheduler
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.scheduler <span class="hljs-keyword">import</span> SimpleFixedScheduler
 
-sched = SimpleFixedScheduler(0.5)  # 0.5 秒间隔
-sched.scheduler.addTask(&#39;Update&#39;, my_task)
+sched = SimpleFixedScheduler(<span class="hljs-number">0.5</span>)  <span class="hljs-comment"># 0.5 秒间隔</span>
+sched.scheduler.addTask(<span class="hljs-string">&#x27;Update&#x27;</span>, my_task)
 sched.start()
 sched.cancel()
 </code></pre>
@@ -269,16 +270,16 @@ sched.cancel()
 </ul>
 <hr>
 <h2 id="7-future-promise">7. <code>Future</code> — 异步 Promise</h2>
-<pre><code class="language-python">from architect.core.scheduler import Future
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.scheduler <span class="hljs-keyword">import</span> Future
 
-# 手动创建
-def my_executor(resolve, reject):
-    # 异步操作完成后调用 resolve 或 reject
-    resolve(&#39;done&#39;)
+<span class="hljs-comment"># 手动创建</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">my_executor</span>(<span class="hljs-params">resolve, reject</span>):
+    <span class="hljs-comment"># 异步操作完成后调用 resolve 或 reject</span>
+    resolve(<span class="hljs-string">&#x27;done&#x27;</span>)
 
 future = Future(my_executor)
-future.done(lambda result: print(&#39;Success:&#39;, result))
-future.expected(lambda error: print(&#39;Failed:&#39;, error))
+future.done(<span class="hljs-keyword">lambda</span> result: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Success:&#x27;</span>, result))
+future.expected(<span class="hljs-keyword">lambda</span> error: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Failed:&#x27;</span>, error))
 </code></pre>
 <p><strong>状态：</strong></p>
 <ul>
@@ -287,98 +288,98 @@ future.expected(lambda error: print(&#39;Failed:&#39;, error))
 <li><code>Future.REJECTED</code> (2) — 已拒绝</li>
 </ul>
 <p><strong>静态工厂：</strong></p>
-<pre><code class="language-python">future, resolve, reject = Future.resolvers()
-# 外部控制 resolve/reject
-resolve(&#39;success&#39;)
+<pre><code class="hljs language-python">future, resolve, reject = Future.resolvers()
+<span class="hljs-comment"># 外部控制 resolve/reject</span>
+resolve(<span class="hljs-string">&#x27;success&#x27;</span>)
 </code></pre>
 <hr>
 <h2 id="8-async">8. <code>@Async</code> — 协程装饰器</h2>
 <p>将生成器函数转换为返回 <code>Future</code> 的异步函数：</p>
-<pre><code class="language-python">from architect.core.scheduler import Async, Future
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.scheduler <span class="hljs-keyword">import</span> Async, Future
 
-def fetch_data():
-    &quot;&quot;&quot;模拟异步操作，返回 Future&quot;&quot;&quot;
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">fetch_data</span>():
+    &amp;quot;&amp;quot;&amp;quot;模拟异步操作，返回 Future&amp;quot;&amp;quot;&amp;quot;
     ft, res, rej = Future.resolvers()
-    # ... 异步请求
-    res({&#39;hp&#39;: 100})
-    return ft
+    <span class="hljs-comment"># ... 异步请求</span>
+    res({<span class="hljs-string">&#x27;hp&#x27;</span>: <span class="hljs-number">100</span>})
+    <span class="hljs-keyword">return</span> ft
 
-@Async
-def load_player_data():
-    data = yield fetch_data()
-    print(&#39;Received:&#39;, data)
-    return data[&#39;hp&#39;]
+<span class="hljs-meta">@Async</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">load_player_data</span>():
+    data = <span class="hljs-keyword">yield</span> fetch_data()
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Received:&#x27;</span>, data)
+    <span class="hljs-keyword">return</span> data[<span class="hljs-string">&#x27;hp&#x27;</span>]
 
-# 调用
+<span class="hljs-comment"># 调用</span>
 result = load_player_data()
-result.done(lambda hp: print(&#39;HP:&#39;, hp))
+result.done(<span class="hljs-keyword">lambda</span> hp: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;HP:&#x27;</span>, hp))
 </code></pre>
 <p><code>@Async</code> 内部驱动生成器执行，自动等待 <code>yield</code> 出的 <code>Future</code> 完成后再推进下一步。</p>
 <hr>
 <h2 id="9">9. 调度阶段常量</h2>
-<pre><code class="language-python">class SchedUpdateFlags:
-    BeforeUpdate = &#39;BeforeUpdate&#39;
-    AfterUpdate = &#39;AfterUpdate&#39;
-    Update = &#39;Update&#39;
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SchedUpdateFlags</span>:
+    BeforeUpdate = <span class="hljs-string">&#x27;BeforeUpdate&#x27;</span>
+    AfterUpdate = <span class="hljs-string">&#x27;AfterUpdate&#x27;</span>
+    Update = <span class="hljs-string">&#x27;Update&#x27;</span>
 
-class SchedEventFlags:
-    Event = &#39;Event&#39;
-    AfterEvent = &#39;AfterEvent&#39;
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SchedEventFlags</span>:
+    Event = <span class="hljs-string">&#x27;Event&#x27;</span>
+    AfterEvent = <span class="hljs-string">&#x27;AfterEvent&#x27;</span>
 </code></pre>
 <hr>
 <h2 id="10">10. 完整示例</h2>
-<pre><code class="language-python">from architect.core import SubsystemServer, ServerSubsystem
-from architect.core import Sched, SchedUpdateFlags, SchedEventFlags
-from architect.core.scheduler import Future
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> SubsystemServer, ServerSubsystem
+<span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> Sched, SchedUpdateFlags, SchedEventFlags
+<span class="hljs-keyword">from</span> architect.core.scheduler <span class="hljs-keyword">import</span> Future
 
-class GameplayScheduler(ServerSubsystem):
-    canTick = True
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">GameplayScheduler</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
 
-    # === Tick 调度 ===
+    <span class="hljs-comment"># === Tick 调度 ===</span>
 
-    @Sched.Tick(SchedUpdateFlags.BeforeUpdate)
-    def collect_input(self):
-        &quot;&quot;&quot;每帧最先执行：收集输入&quot;&quot;&quot;
-        pass
+<span class="hljs-meta">    @Sched.Tick(<span class="hljs-params">SchedUpdateFlags.BeforeUpdate</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">collect_input</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;每帧最先执行：收集输入&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    @Sched.Tick()
-    def update_physics(self):
-        &quot;&quot;&quot;Update 阶段：物理模拟&quot;&quot;&quot;
-        pass
+<span class="hljs-meta">    @Sched.Tick()</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update_physics</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;Update 阶段：物理模拟&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    @Sched.Tick(SchedUpdateFlags.AfterUpdate)
-    def sync_state(self):
-        &quot;&quot;&quot;最后执行：同步状态&quot;&quot;&quot;
-        pass
+<span class="hljs-meta">    @Sched.Tick(<span class="hljs-params">SchedUpdateFlags.AfterUpdate</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">sync_state</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;最后执行：同步状态&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    # === 固定频率 ===
+    <span class="hljs-comment"># === 固定频率 ===</span>
 
-    @Sched.Fixed(&#39;auto_save&#39;)
-    def auto_save(self):
-        &quot;&quot;&quot;每 30 秒自动保存&quot;&quot;&quot;
-        print(&#39;[Save] Auto saving...&#39;)
+<span class="hljs-meta">    @Sched.Fixed(<span class="hljs-params"><span class="hljs-string">&#x27;auto_save&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">auto_save</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;每 <span class="hljs-number">30</span> 秒自动保存&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[Save] Auto saving...&#x27;</span>)
 
-    def onReady(self):
-        self.scheduleFixed(&#39;auto_save&#39;, period=30.0)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.scheduleFixed(<span class="hljs-string">&#x27;auto_save&#x27;</span>, period=<span class="hljs-number">30.0</span>)
 
-    # === 事件驱动 ===
+    <span class="hljs-comment"># === 事件驱动 ===</span>
 
-    @Sched.Event(&#39;EntityHurtEvent&#39;)
-    def onEntityHurt(self):
-        &quot;&quot;&quot;实体受伤时执行&quot;&quot;&quot;
-        pass
+<span class="hljs-meta">    @Sched.Event(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self</span>):
+        &amp;quot;&amp;quot;&amp;quot;实体受伤时执行&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-keyword">pass</span>
 
-    # === 异步 ===
+    <span class="hljs-comment"># === 异步 ===</span>
 
-    def load_remote_data(self, url):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">load_remote_data</span>(<span class="hljs-params">self, url</span>):
         ft, res, rej = Future.resolvers()
-        # 模拟网络请求
-        res({&#39;data&#39;: &#39;loaded&#39;})
-        return ft
+        <span class="hljs-comment"># 模拟网络请求</span>
+        res({<span class="hljs-string">&#x27;data&#x27;</span>: <span class="hljs-string">&#x27;loaded&#x27;</span>})
+        <span class="hljs-keyword">return</span> ft
 
-    def onReady(self):
-        fut = self.load_remote_data(&#39;config_url&#39;)
-        fut.done(lambda data: print(&#39;Config loaded:&#39;, data))
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
+        fut = <span class="hljs-variable language_">self</span>.load_remote_data(<span class="hljs-string">&#x27;config_url&#x27;</span>)
+        fut.done(<span class="hljs-keyword">lambda</span> data: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Config loaded:&#x27;</span>, data))
 </code></pre>
 <hr>
 <h2 id="">下一步</h2>

@@ -45,6 +45,7 @@ ol,ul{padding-left:1.5rem;margin:.75rem 0}
 li{margin:.35rem 0;line-height:1.75}
 strong{color:hsl(var(--f))}
 @media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -331,14 +332,14 @@ executeSequence()
 <h2 id="7">7. 关键接口</h2>
 <h3>7.1 SubsystemManager</h3>
 <p><code>SubsystemManager</code> 是框架的中枢，通过单例模式管理：</p>
-<pre><code class="language-python">manager = SubsystemManager.getInstance()  # 获取当前端实例
-manager.bus                                 # CommandBus
-manager.getSubsystem(MySystem)             # 按类获取子系统
-manager.getSubsystemByName(&#39;MySystem&#39;)     # 按名获取子系统
-manager.tickSched                           # Tick 调度器
-manager.renderSched                         # Render 调度器
-manager.INITIALIZED                         # 初始化完成信号
-manager.PRELOADED                           # 预加载完成信号
+<pre><code class="hljs language-python">manager = SubsystemManager.getInstance()  <span class="hljs-comment"># 获取当前端实例</span>
+manager.bus                                 <span class="hljs-comment"># CommandBus</span>
+manager.getSubsystem(MySystem)             <span class="hljs-comment"># 按类获取子系统</span>
+manager.getSubsystemByName(<span class="hljs-string">&#x27;MySystem&#x27;</span>)     <span class="hljs-comment"># 按名获取子系统</span>
+manager.tickSched                           <span class="hljs-comment"># Tick 调度器</span>
+manager.renderSched                         <span class="hljs-comment"># Render 调度器</span>
+manager.INITIALIZED                         <span class="hljs-comment"># 初始化完成信号</span>
+manager.PRELOADED                           <span class="hljs-comment"># 预加载完成信号</span>
 </code></pre>
 <h3>7.2 Subsystem 生命周期</h3>
 <pre><code>实例化 → _init() → onInit() → onReady() → onUpdate(dt) [每帧] → onDestroy()

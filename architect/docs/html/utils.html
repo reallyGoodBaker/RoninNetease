@@ -45,6 +45,7 @@ ol,ul{padding-left:1.5rem;margin:.75rem 0}
 li{margin:.35rem 0;line-height:1.75}
 strong{color:hsl(var(--f))}
 @media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -83,191 +84,191 @@ strong{color:hsl(var(--f))}
 <hr>
 <h2 id="2-device">2. 设备信息 — <code>device/</code></h2>
 <h3>2.1 客户端</h3>
-<pre><code class="language-python">from architect.utils.device.client import DeviceClient
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.utils.device.client <span class="hljs-keyword">import</span> DeviceClient
 
-# 获取设备信息
+<span class="hljs-comment"># 获取设备信息</span>
 info = DeviceClient.get_device_info()
-# 返回包含设备型号、操作系统等的字典
+<span class="hljs-comment"># 返回包含设备型号、操作系统等的字典</span>
 </code></pre>
 <h3>2.2 服务端</h3>
-<pre><code class="language-python">from architect.utils.device.server import DeviceServer
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.utils.device.server <span class="hljs-keyword">import</span> DeviceServer
 </code></pre>
 <hr>
 <h2 id="3-molang-molang">3. Molang 表达式 — <code>molang/</code></h2>
 <p>Molang 是 Minecraft 内置的表达式语言，用于动画、渲染和粒子效果。</p>
 <h3>3.1 类型</h3>
-<pre><code class="language-python">from architect.utils.molang.types import (
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.utils.molang.types <span class="hljs-keyword">import</span> (
     MolangNumber,
     MolangString,
     MolangVariable,
     MolangExpression
 )
 
-# Molang 数值
-val = MolangNumber(&#39;query.health / query.max_health&#39;)
+<span class="hljs-comment"># Molang 数值</span>
+val = MolangNumber(<span class="hljs-string">&#x27;query.health / query.max_health&#x27;</span>)
 
-# Molang 变量
-var = MolangVariable(&#39;variable.is_running&#39;)
+<span class="hljs-comment"># Molang 变量</span>
+var = MolangVariable(<span class="hljs-string">&#x27;variable.is_running&#x27;</span>)
 </code></pre>
 <h3>3.2 客户端</h3>
-<pre><code class="language-python">from architect.utils.molang.client import MolangClient
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.utils.molang.client <span class="hljs-keyword">import</span> MolangClient
 
-# 设置 Molang 变量
-MolangClient.set_variable(entity_id, &#39;variable.speed&#39;, 1.5)
+<span class="hljs-comment"># 设置 Molang 变量</span>
+MolangClient.set_variable(entity_id, <span class="hljs-string">&#x27;variable.speed&#x27;</span>, <span class="hljs-number">1.5</span>)
 
-# 获取 Molang 变量
-value = MolangClient.get_variable(entity_id, &#39;variable.speed&#39;)
+<span class="hljs-comment"># 获取 Molang 变量</span>
+value = MolangClient.get_variable(entity_id, <span class="hljs-string">&#x27;variable.speed&#x27;</span>)
 </code></pre>
 <h3>3.3 服务端</h3>
-<pre><code class="language-python">from architect.utils.molang.server import MolangServer
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.utils.molang.server <span class="hljs-keyword">import</span> MolangServer
 
-# 服务端 Molang 操作
+<span class="hljs-comment"># 服务端 Molang 操作</span>
 </code></pre>
 <h3>3.4 通用工具</h3>
-<pre><code class="language-python">from architect.utils.molang.common import (
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.utils.molang.common <span class="hljs-keyword">import</span> (
     molang_lerp,
     molang_clamp,
     molang_if_else
 )
 
-# Molang 条件表达式
+<span class="hljs-comment"># Molang 条件表达式</span>
 expr = molang_if_else(
-    &#39;query.is_sprinting&#39;,
-    &#39;1.5&#39;,      # 冲刺时速度
-    &#39;1.0&#39;       # 默认速度
+    <span class="hljs-string">&#x27;query.is_sprinting&#x27;</span>,
+    <span class="hljs-string">&#x27;1.5&#x27;</span>,      <span class="hljs-comment"># 冲刺时速度</span>
+    <span class="hljs-string">&#x27;1.0&#x27;</span>       <span class="hljs-comment"># 默认速度</span>
 )
 
-# Molang 插值
-blend = molang_lerp(&#39;0.0&#39;, &#39;1.0&#39;, &#39;variable.blend_factor&#39;)
+<span class="hljs-comment"># Molang 插值</span>
+blend = molang_lerp(<span class="hljs-string">&#x27;0.0&#x27;</span>, <span class="hljs-string">&#x27;1.0&#x27;</span>, <span class="hljs-string">&#x27;variable.blend_factor&#x27;</span>)
 </code></pre>
 <hr>
 <h2 id="4-persona-persona">4. Persona 渲染覆盖 — <code>persona/</code></h2>
 <p>Persona 系统允许修改玩家的渲染外观（皮肤、模型覆盖）。</p>
 <h3>4.1 客户端</h3>
-<pre><code class="language-python">from architect.utils.persona.client import PersonaRendererComponent, PersonaEventsSubsystem
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.utils.persona.client <span class="hljs-keyword">import</span> PersonaRendererComponent, PersonaEventsSubsystem
 
-class MyPersonaSystem(ClientSubsystem):
-    def onInit(self):
-        # 获取 Persona 渲染组件
-        self.renderer = PersonaRendererComponent.get()
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyPersonaSystem</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-comment"># 获取 Persona 渲染组件</span>
+        <span class="hljs-variable language_">self</span>.renderer = PersonaRendererComponent.get()
 
-    def change_skin(self, player_id):
-        # 覆盖玩家渲染
-        self.renderer.override_skin(player_id, &#39;custom:textures/skin.png&#39;)
-        self.renderer.override_model(player_id, &#39;custom:models/armor.geo&#39;)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">change_skin</span>(<span class="hljs-params">self, player_id</span>):
+        <span class="hljs-comment"># 覆盖玩家渲染</span>
+        <span class="hljs-variable language_">self</span>.renderer.override_skin(player_id, <span class="hljs-string">&#x27;custom:textures/skin.png&#x27;</span>)
+        <span class="hljs-variable language_">self</span>.renderer.override_model(player_id, <span class="hljs-string">&#x27;custom:models/armor.geo&#x27;</span>)
 
-    def reset_skin(self, player_id):
-        # 重置为默认
-        self.renderer.reset(player_id)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">reset_skin</span>(<span class="hljs-params">self, player_id</span>):
+        <span class="hljs-comment"># 重置为默认</span>
+        <span class="hljs-variable language_">self</span>.renderer.reset(player_id)
 </code></pre>
 <h3>4.2 服务端</h3>
-<pre><code class="language-python">from architect.utils.persona.server import PersonaServer
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.utils.persona.server <span class="hljs-keyword">import</span> PersonaServer
 
-class MyPersonaServer(ServerSubsystem):
-    def onInit(self):
-        self.persona = PersonaServer()
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyPersonaServer</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.persona = PersonaServer()
 
-    def sync_skin_to_client(self, player_id, skin_path):
-        # 通知客户端切换皮肤
-        self.sendClient(player_id, &#39;OnPersonaChange&#39;, {
-            &#39;skin&#39;: skin_path
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">sync_skin_to_client</span>(<span class="hljs-params">self, player_id, skin_path</span>):
+        <span class="hljs-comment"># 通知客户端切换皮肤</span>
+        <span class="hljs-variable language_">self</span>.sendClient(player_id, <span class="hljs-string">&#x27;OnPersonaChange&#x27;</span>, {
+            <span class="hljs-string">&#x27;skin&#x27;</span>: skin_path
         })
 </code></pre>
 <hr>
 <h2 id="5-enhance">5. 增强函数 — <code>enhance/</code></h2>
 <h3>5.1 <code>fn.py</code></h3>
-<pre><code class="language-python">from architect.utils.enhance.fn import (
-    compVer,      # 版本号比较
-    deep_merge,   # 深度合并字典
-    safe_get      # 安全的嵌套访问
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.utils.enhance.fn <span class="hljs-keyword">import</span> (
+    compVer,      <span class="hljs-comment"># 版本号比较</span>
+    deep_merge,   <span class="hljs-comment"># 深度合并字典</span>
+    safe_get      <span class="hljs-comment"># 安全的嵌套访问</span>
 )
 
-# 版本比较
-# compVer([1, 1, 0], [1, 0, 0]) &gt; 0  → True
-result = compVer([1, 1, 0], [1, 0, 0])
-if result &gt; 0:
-    print(&#39;Newer version&#39;)
+<span class="hljs-comment"># 版本比较</span>
+<span class="hljs-comment"># compVer([1, 1, 0], [1, 0, 0]) &amp;gt; 0  → True</span>
+result = compVer([<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>], [<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>])
+<span class="hljs-keyword">if</span> result &amp;gt; <span class="hljs-number">0</span>:
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Newer version&#x27;</span>)
 
-# 深度合并
-base = {&#39;a&#39;: {&#39;b&#39;: 1}}
-override = {&#39;a&#39;: {&#39;c&#39;: 2}}
+<span class="hljs-comment"># 深度合并</span>
+base = {<span class="hljs-string">&#x27;a&#x27;</span>: {<span class="hljs-string">&#x27;b&#x27;</span>: <span class="hljs-number">1</span>}}
+override = {<span class="hljs-string">&#x27;a&#x27;</span>: {<span class="hljs-string">&#x27;c&#x27;</span>: <span class="hljs-number">2</span>}}
 merged = deep_merge(base, override)
-# → {&#39;a&#39;: {&#39;b&#39;: 1, &#39;c&#39;: 2}}
+<span class="hljs-comment"># → {&#x27;a&#x27;: {&#x27;b&#x27;: 1, &#x27;c&#x27;: 2}}</span>
 
-# 安全访问
-value = safe_get(deep_dict, &#39;a.b.c&#39;, default=None)
+<span class="hljs-comment"># 安全访问</span>
+value = safe_get(deep_dict, <span class="hljs-string">&#x27;a.b.c&#x27;</span>, default=<span class="hljs-literal">None</span>)
 </code></pre>
 <h3>5.2 <code>list.py</code></h3>
-<pre><code class="language-python">from architect.utils.enhance.list import (
-    chunked,       # 列表分块
-    flatten,       # 展平嵌套列表
-    unique,        # 去重
-    group_by       # 按 key 分组
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.utils.enhance.<span class="hljs-built_in">list</span> <span class="hljs-keyword">import</span> (
+    chunked,       <span class="hljs-comment"># 列表分块</span>
+    flatten,       <span class="hljs-comment"># 展平嵌套列表</span>
+    unique,        <span class="hljs-comment"># 去重</span>
+    group_by       <span class="hljs-comment"># 按 key 分组</span>
 )
 
-# 分块
-for batch in chunked(range(100), 10):
-    process(batch)  # [0..9], [10..19], ...
+<span class="hljs-comment"># 分块</span>
+<span class="hljs-keyword">for</span> batch <span class="hljs-keyword">in</span> chunked(<span class="hljs-built_in">range</span>(<span class="hljs-number">100</span>), <span class="hljs-number">10</span>):
+    process(batch)  <span class="hljs-comment"># [0..9], [10..19], ...</span>
 
-# 展平
-flat = flatten([[1, 2], [3, 4], [5]])
-# → [1, 2, 3, 4, 5]
+<span class="hljs-comment"># 展平</span>
+flat = flatten([[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>], [<span class="hljs-number">3</span>, <span class="hljs-number">4</span>], [<span class="hljs-number">5</span>]])
+<span class="hljs-comment"># → [1, 2, 3, 4, 5]</span>
 
-# 去重
-uniq = unique([1, 2, 2, 3, 1])
-# → [1, 2, 3]
+<span class="hljs-comment"># 去重</span>
+uniq = unique([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">1</span>])
+<span class="hljs-comment"># → [1, 2, 3]</span>
 
-# 分组
-data = [{&#39;type&#39;: &#39;A&#39;, &#39;val&#39;: 1}, {&#39;type&#39;: &#39;B&#39;, &#39;val&#39;: 2}, {&#39;type&#39;: &#39;A&#39;, &#39;val&#39;: 3}]
-grouped = group_by(data, lambda x: x[&#39;type&#39;])
-# → {&#39;A&#39;: [{&#39;type&#39;:&#39;A&#39;,&#39;val&#39;:1}, {&#39;type&#39;:&#39;A&#39;,&#39;val&#39;:3}], &#39;B&#39;: [{&#39;type&#39;:&#39;B&#39;,&#39;val&#39;:2}]}
+<span class="hljs-comment"># 分组</span>
+data = [{<span class="hljs-string">&#x27;type&#x27;</span>: <span class="hljs-string">&#x27;A&#x27;</span>, <span class="hljs-string">&#x27;val&#x27;</span>: <span class="hljs-number">1</span>}, {<span class="hljs-string">&#x27;type&#x27;</span>: <span class="hljs-string">&#x27;B&#x27;</span>, <span class="hljs-string">&#x27;val&#x27;</span>: <span class="hljs-number">2</span>}, {<span class="hljs-string">&#x27;type&#x27;</span>: <span class="hljs-string">&#x27;A&#x27;</span>, <span class="hljs-string">&#x27;val&#x27;</span>: <span class="hljs-number">3</span>}]
+grouped = group_by(data, <span class="hljs-keyword">lambda</span> x: x[<span class="hljs-string">&#x27;type&#x27;</span>])
+<span class="hljs-comment"># → {&#x27;A&#x27;: [{&#x27;type&#x27;:&#x27;A&#x27;,&#x27;val&#x27;:1}, {&#x27;type&#x27;:&#x27;A&#x27;,&#x27;val&#x27;:3}], &#x27;B&#x27;: [{&#x27;type&#x27;:&#x27;B&#x27;,&#x27;val&#x27;:2}]}</span>
 </code></pre>
 <hr>
 <h2 id="6-drawing-py">6. 绘图 — <code>drawing.py</code></h2>
-<pre><code class="language-python">from architect.utils.drawing import Drawing
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.utils.drawing <span class="hljs-keyword">import</span> Drawing
 
-# 在客户端世界绘制
+<span class="hljs-comment"># 在客户端世界绘制</span>
 drawing = Drawing()
 
-# 绘制粒子圆圈
-drawing.circle(pos=Vec3(0, 64, 0), radius=5, color=(1, 0, 0), duration=1.0)
+<span class="hljs-comment"># 绘制粒子圆圈</span>
+drawing.circle(pos=Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">64</span>, <span class="hljs-number">0</span>), radius=<span class="hljs-number">5</span>, color=(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>), duration=<span class="hljs-number">1.0</span>)
 
-# 绘制线段
-drawing.line(start=Vec3(0, 64, 0), end=Vec3(10, 64, 0), color=(0, 1, 0))
+<span class="hljs-comment"># 绘制线段</span>
+drawing.line(start=Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">64</span>, <span class="hljs-number">0</span>), end=Vec3(<span class="hljs-number">10</span>, <span class="hljs-number">64</span>, <span class="hljs-number">0</span>), color=(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>))
 
-# 绘制矩形
-drawing.rect(center=Vec3(0, 64, 0), size=(2, 3), color=(0, 0, 1))
+<span class="hljs-comment"># 绘制矩形</span>
+drawing.rect(center=Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">64</span>, <span class="hljs-number">0</span>), size=(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>), color=(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>))
 </code></pre>
 <p><code>Drawing</code> 利用客户端粒子效果在世界上绘制临时图形，常用于调试和技能特效。</p>
 <hr>
 <h2 id="7">7. 客户端/服务端工具</h2>
 <h3>7.1 客户端</h3>
-<pre><code class="language-python">from architect.utils.client import ClientUtils
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.utils.client <span class="hljs-keyword">import</span> ClientUtils
 
-# 客户端专用工具函数
+<span class="hljs-comment"># 客户端专用工具函数</span>
 </code></pre>
 <h3>7.2 服务端</h3>
-<pre><code class="language-python">from architect.utils.server import ServerUtils
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.utils.server <span class="hljs-keyword">import</span> ServerUtils
 
-# 服务端专用工具函数
+<span class="hljs-comment"># 服务端专用工具函数</span>
 </code></pre>
 <hr>
 <h2 id="8">8. 工具集导出清单</h2>
 <p><code>architect/utils/export.py</code> 统一导出所有工具模块：</p>
-<pre><code class="language-python">from architect.utils.export import *
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.utils.export <span class="hljs-keyword">import</span> *
 
-# 导出内容：
-# - DeviceClient, DeviceServer
-# - MolangClient, MolangServer
-# - Drawing
-# - 所有 enhance 函数
-# - ClientUtils, ServerUtils
+<span class="hljs-comment"># 导出内容：</span>
+<span class="hljs-comment"># - DeviceClient, DeviceServer</span>
+<span class="hljs-comment"># - MolangClient, MolangServer</span>
+<span class="hljs-comment"># - Drawing</span>
+<span class="hljs-comment"># - 所有 enhance 函数</span>
+<span class="hljs-comment"># - ClientUtils, ServerUtils</span>
 </code></pre>
 <hr>
 <h2 id="9-editor-tools">9. 编辑器工具 — <code>editor/tools/</code></h2>
 <p>框架提供了开发阶段使用的 Node.js 工具（TypeScript 编写）：</p>
 <h3>9.1 <code>initProject.ts</code></h3>
-<pre><code class="language-bash">npx ts-node editor/tools/initProject.ts --name MyMod
+<pre><code class="hljs language-bash">npx ts-node editor/tools/initProject.ts --name MyMod
 </code></pre>
 <p>功能：</p>
 <ul>
@@ -277,7 +278,7 @@ drawing.rect(center=Vec3(0, 64, 0), size=(2, 3), color=(0, 0, 1))
 <li>创建推荐的目录结构（<code>subsystems/</code>、<code>components/</code>、<code>plugins/</code>）</li>
 </ul>
 <h3>9.2 <code>animExtractor.ts</code></h3>
-<pre><code class="language-bash">npx ts-node editor/tools/animExtractor.ts --input resources/animations/
+<pre><code class="hljs language-bash">npx ts-node editor/tools/animExtractor.ts --input resources/animations/
 </code></pre>
 <p>功能：</p>
 <ul>
