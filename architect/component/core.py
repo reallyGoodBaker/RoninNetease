@@ -87,11 +87,82 @@ class Marker:
         return entityId in self.marked
 
 
+class CompIndex:
+    """
+    组件名 -> 持有该组件的实体 ID 集合的反向索引
+    增删组件时同步维护, Query 时取交集避免全量实体遍历
+    """
+    def __init__(self):
+        self._index = {}  # type: dict[str, set[str]]
+
+    def add(self, entityId, compName):
+        # type: (str, str) -> None
+        if compName not in self._index:
+            self._index[compName] = set()
+        self._index[compName].add(entityId)
+
+    def remove(self, entityId, compName):
+        # type: (str, str) -> None
+        entitySet = self._index.get(compName)
+        if entitySet:
+            entitySet.discard(entityId)
+            if not entitySet:
+                del self._index[compName]
+
+    def getEntitiesWith(self, compName):
+        # type: (str) -> set[str]
+        return self._index.get(compName, set())
+
+    def queryEntities(self, targets, required, excluded):
+        # type: (list, list, list) -> list[str]
+        """
+        返回同时拥有所有 targets + required、
+        且不包含任何 excluded 的实体 ID 列表
+        """
+        # 收集所有需要求交集的集合
+        allSets = []  # type: list[set[str]]
+
+        for comp in targets + required:
+            name = comp if type(comp) == str else comp.__name__
+            entitySet = self._index.get(name)
+            if entitySet is None:
+                return []  # 速败: 没有任何实体持有此组件
+            allSets.append(entitySet)
+
+        if not allSets:
+            # 没有 targets 也没有 required: 退化为全量遍历
+            return list(_getEntityMarker().getMarkedEntities())
+
+        # 按集合大小升序排列 (从最小的集合开始, 加速交集)
+        allSets.sort(key=len)
+
+        # 多集合交集
+        result = set(allSets[0])
+        for s in allSets[1:]:
+            result &= s
+
+        # 减去 excluded
+        for comp in excluded:
+            name = comp if type(comp) == str else comp.__name__
+            excludeSet = self._index.get(name)
+            if excludeSet:
+                result -= excludeSet
+
+        return list(result)
+
+
 entitiesServer = Marker()
 entitiesClient = Marker()
 
+_compIndexServer = CompIndex()
+_compIndexClient = CompIndex()
+
 def _getEntityMarker():
     return entitiesServer if isServer() else entitiesClient
+
+def _getCompIndex():
+    # type: () -> CompIndex
+    return _compIndexServer if isServer() else _compIndexClient
 
 
 def createSingletonComponent(cls):
@@ -140,6 +211,7 @@ def createComponent(entityId, cls):
         comp.onCreate(entityId) # type: ignore
 
     _getEntityMarker().mark(entityId)
+    _getCompIndex().add(entityId, compKey)
     return comp
 
 
@@ -164,6 +236,7 @@ def destroyComponent(entityId, cls):
         del components[key]
         done = True
     _getEntityMarker().unmark(entityId)
+    _getCompIndex().remove(entityId, compKey)
     return done
 
 

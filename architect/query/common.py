@@ -1,5 +1,5 @@
 from ..component import getComponent, getComponentWithQuery, getEntities
-from ..component.core import components, _findNamedComp, singletonId
+from ..component.core import components, _findNamedComp, singletonId, _getCompIndex
 from ..core.basic import serverApi, clientApi, isServer
 from ..core.annotation import AnnotationHelper
 from ..conf import COMPONENT_TAG
@@ -107,6 +107,12 @@ def Query(*compCls, **options):
     excluded = options.get('excluded', [])
     def decorator(fn):
         isAllSingleton = _isCompAllSingleton(compCls) # type: ignore
+        # 提取真实组件名 (过滤掉 EntityId 等伪组件), 用于索引查询
+        _targetNames = [
+            c if type(c) == str else c.__name__
+            for c in compCls
+            if c not in FakeComponents
+        ]
         def wrapper(inst, *args, **kwargs):
             _compList = list(compCls)
             if isAllSingleton:
@@ -114,7 +120,11 @@ def Query(*compCls, **options):
                 if args:
                     fn(inst, *args)
             else:
-                for entityId in getEntities():
+                # 从组件反向索引获取候选实体, 避免全量遍历
+                candidateEntities = _getCompIndex().queryEntities(
+                    _targetNames, required, excluded
+                )
+                for entityId in candidateEntities:
                     if not entityId:
                         continue
                     comps = _getQueryArgs(entityId, _compList, required, excluded, args, kwargs) # type: ignore
