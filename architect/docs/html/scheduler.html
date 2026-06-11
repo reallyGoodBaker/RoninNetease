@@ -4,49 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>scheduler - RoninNetease v1.1.0</title>
-<style>
-:root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}
-*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
-body{font-family:Inter,-apple-system,system-ui,sans-serif;background:hsl(var(--b));color:hsl(var(--f));line-height:1.7;font-size:15px}
-nav{position:fixed;top:0;left:0;bottom:0;width:260px;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}
-nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}
-nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
-nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}
-.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}
-nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}
-nav a:hover,nav a.active{color:hsl(var(--f));background:hsl(var(--s) / .5);border-left-color:hsl(var(--p))}
-nav a.active{font-weight:600}
-nav a.sub{padding:.22rem 1.25rem .22rem 2.2rem;font-size:.76rem;opacity:.6}
-nav a.sub:hover{opacity:1}
-nav::-webkit-scrollbar,.pages::-webkit-scrollbar{width:4px}
-nav::-webkit-scrollbar-track,.pages::-webkit-scrollbar-track{background:transparent}
-nav::-webkit-scrollbar-thumb,.pages::-webkit-scrollbar-thumb{background:hsl(0 0% 25%);border-radius:4px}
-nav::-webkit-scrollbar-thumb:hover,.pages::-webkit-scrollbar-thumb:hover{background:hsl(0 0% 35%)}
-nav,.pages{scrollbar-width:thin;scrollbar-color:hsl(0 0% 25%) transparent}
-main{margin-left:260px;display:flex;justify-content:center;padding:2rem 2.5rem}
-article{background:hsl(var(--c));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:2.5rem 3rem;max-width:860px;width:100%}
-h1{font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid hsl(0 0% 14%)}
-h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.35rem;border-bottom:1px solid hsl(0 0% 14%)}
-h3{font-size:1.1rem;font-weight:600;margin-top:2rem;margin-bottom:.5rem}
-h4{font-size:1rem;font-weight:600;margin-top:1.5rem;margin-bottom:.4rem;color:hsl(var(--m))}
-p{margin:.8rem 0;line-height:1.75}
-a:not(nav a){color:hsl(var(--p));text-decoration:underline}
-code{background:hsl(var(--s) / .5);padding:.12em .35em;border-radius:3px;font-size:.87em;font-family:"JetBrains Mono",monospace}
-pre{background:hsl(var(--b));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:1rem 1.25rem;overflow-x:auto;margin:1.25rem 0}
-pre code{background:0 0;padding:0;font-size:.83rem;line-height:1.6}
-table{border-collapse:collapse;width:100%;margin:1.5rem 0}
-td,th{border:1px solid hsl(0 0% 14%);padding:.55rem .85rem;text-align:left;font-size:.9rem}
-th{background:hsl(var(--s) / .5);font-weight:600}
-tr:nth-child(even){background:hsl(0 0% 7%)}
-blockquote{border-left:3px solid hsl(var(--p));padding:.5rem 1.1rem;margin:1.25rem 0;background:hsl(267 100% 70% / .04);border-radius:0 var(--r) var(--r) 0;font-size:.92rem;color:hsl(var(--m))}
-hr{border:0;border-top:1px solid hsl(0 0% 14%);margin:2rem 0}
-ol,ul{padding-left:1.5rem;margin:.75rem 0}
-li{margin:.35rem 0;line-height:1.75}
-strong{color:hsl(var(--f))}
-@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
-pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
-</style>
+<style>:root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}body{font-family:"Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR",Inter,-apple-system,system-ui,sans-serif;background:hsl(var(--b));color:hsl(var(--f));line-height:1.7;font-size:15px;zoom:1.25}nav{position:fixed;top:0;left:0;bottom:0;width:17rem;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}nav a:hover,nav a.active{color:hsl(var(--f));background:hsl(var(--s) / .5);border-left-color:hsl(var(--p))}nav a.active{font-weight:600}nav a.sub{padding:.22rem 1.25rem .22rem 2.2rem;font-size:.76rem;opacity:.6}nav a.sub:hover{opacity:1}nav::-webkit-scrollbar,.pages::-webkit-scrollbar{width:4px}nav::-webkit-scrollbar-track,.pages::-webkit-scrollbar-track{background:transparent}nav::-webkit-scrollbar-thumb,.pages::-webkit-scrollbar-thumb{background:hsl(0 0% 25%);border-radius:4px}nav::-webkit-scrollbar-thumb:hover,.pages::-webkit-scrollbar-thumb:hover{background:hsl(0 0% 35%)}nav,.pages{scrollbar-width:thin;scrollbar-color:hsl(0 0% 25%) transparent}main{margin-left:17rem;display:flex;justify-content:center;padding:2rem 2.5rem}article{background:hsl(var(--c));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:2.5rem 3rem;max-width:860px;width:100%}h1{font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid hsl(0 0% 14%)}h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.35rem;border-bottom:1px solid hsl(0 0% 14%)}h3{font-size:1.1rem;font-weight:600;margin-top:2rem;margin-bottom:.5rem}h4{font-size:1rem;font-weight:600;margin-top:1.5rem;margin-bottom:.4rem;color:hsl(var(--m))}p{margin:.8rem 0;line-height:1.75}a:not(nav a){color:hsl(var(--p));text-decoration:underline}code{background:hsl(var(--s) / .5);padding:.12em .35em;border-radius:3px;font-size:.87em;font-family:"Noto Sans Mono","JetBrains Mono","Fira Code",Consolas,monospace}pre{background:hsl(var(--b));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:1rem 1.25rem;overflow-x:auto;margin:1.25rem 0}pre code{background:0 0;padding:0;font-size:.83rem;line-height:1.6}table{border-collapse:collapse;width:100%;margin:1.5rem 0}td,th{border:1px solid hsl(0 0% 14%);padding:.55rem .85rem;text-align:left;font-size:.9rem}th{background:hsl(var(--s) / .5);font-weight:600}tr:nth-child(even){background:hsl(0 0% 7%)}blockquote{border-left:3px solid hsl(var(--p));padding:.5rem 1.1rem;margin:1.25rem 0;background:hsl(267 100% 70% / .04);border-radius:0 var(--r) var(--r) 0;font-size:.92rem;color:hsl(var(--m))}hr{border:0;border-top:1px solid hsl(0 0% 14%);margin:2rem 0}ol,ul{padding-left:1.5rem;margin:.75rem 0}li{margin:.35rem 0;line-height:1.75}strong{color:hsl(var(--f))}@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}</style>
 </head>
 <body>
 <nav>
@@ -146,12 +104,12 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 
 <span class="hljs-meta">    @Sched.Tick(<span class="hljs-params">SchedUpdateFlags.BeforeUpdate</span>)</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">beforeUpdate</span>(<span class="hljs-params">self</span>):
-        &amp;quot;&amp;quot;&amp;quot;在子系统的 onUpdate 之前执行&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-string">&quot;&quot;&quot;在子系统的 onUpdate 之前执行&quot;&quot;&quot;</span>
         <span class="hljs-keyword">pass</span>
 
 <span class="hljs-meta">    @Sched.Tick(<span class="hljs-params">SchedUpdateFlags.AfterUpdate</span>)</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">afterUpdate</span>(<span class="hljs-params">self</span>):
-        &amp;quot;&amp;quot;&amp;quot;在子系统的 onUpdate 之后执行&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-string">&quot;&quot;&quot;在子系统的 onUpdate 之后执行&quot;&quot;&quot;</span>
         <span class="hljs-keyword">pass</span>
 </code></pre>
 <p><strong>执行顺序</strong>（每帧）：</p>
@@ -171,7 +129,7 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 <pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
 <span class="hljs-meta">    @Sched.Fixed(<span class="hljs-params"><span class="hljs-string">&#x27;my_fixed_sched&#x27;</span></span>)  </span><span class="hljs-comment"># 声明固定调度器名称</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">onFixedUpdate</span>(<span class="hljs-params">self</span>):
-        &amp;quot;&amp;quot;&amp;quot;每 <span class="hljs-number">0.5</span> 秒执行一次&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-string">&quot;&quot;&quot;每 0.5 秒执行一次&quot;&quot;&quot;</span>
         <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Fixed tick!&#x27;</span>)
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
@@ -192,14 +150,14 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 <pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
 <span class="hljs-meta">    @Sched.Event(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span>, isCustom=<span class="hljs-literal">False</span></span>)</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurtSched</span>(<span class="hljs-params">self</span>):
-        &amp;quot;&amp;quot;&amp;quot;EntityHurtEvent 触发时执行&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-string">&quot;&quot;&quot;EntityHurtEvent 触发时执行&quot;&quot;&quot;</span>
         <span class="hljs-comment"># 注意：不接收事件参数！</span>
         <span class="hljs-keyword">pass</span>
 
 <span class="hljs-meta">    @Sched.Event(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span>, isCustom=<span class="hljs-literal">False</span>,
                   scheduleFlag=SchedEventFlags.AfterEvent</span>)</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">afterEntityHurt</span>(<span class="hljs-params">self</span>):
-        &amp;quot;&amp;quot;&amp;quot;EntityHurtEvent 触发后执行（AfterEvent 阶段）&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-string">&quot;&quot;&quot;EntityHurtEvent 触发后执行（AfterEvent 阶段）&quot;&quot;&quot;</span>
         <span class="hljs-keyword">pass</span>
 </code></pre>
 <p>关键点：</p>
@@ -298,7 +256,7 @@ resolve(<span class="hljs-string">&#x27;success&#x27;</span>)
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.scheduler <span class="hljs-keyword">import</span> Async, Future
 
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">fetch_data</span>():
-    &amp;quot;&amp;quot;&amp;quot;模拟异步操作，返回 Future&amp;quot;&amp;quot;&amp;quot;
+    <span class="hljs-string">&quot;&quot;&quot;模拟异步操作，返回 Future&quot;&quot;&quot;</span>
     ft, res, rej = Future.resolvers()
     <span class="hljs-comment"># ... 异步请求</span>
     res({<span class="hljs-string">&#x27;hp&#x27;</span>: <span class="hljs-number">100</span>})
@@ -339,24 +297,24 @@ result.done(<span class="hljs-keyword">lambda</span> hp: <span class="hljs-built
 
 <span class="hljs-meta">    @Sched.Tick(<span class="hljs-params">SchedUpdateFlags.BeforeUpdate</span>)</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">collect_input</span>(<span class="hljs-params">self</span>):
-        &amp;quot;&amp;quot;&amp;quot;每帧最先执行：收集输入&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-string">&quot;&quot;&quot;每帧最先执行：收集输入&quot;&quot;&quot;</span>
         <span class="hljs-keyword">pass</span>
 
 <span class="hljs-meta">    @Sched.Tick()</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">update_physics</span>(<span class="hljs-params">self</span>):
-        &amp;quot;&amp;quot;&amp;quot;Update 阶段：物理模拟&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-string">&quot;&quot;&quot;Update 阶段：物理模拟&quot;&quot;&quot;</span>
         <span class="hljs-keyword">pass</span>
 
 <span class="hljs-meta">    @Sched.Tick(<span class="hljs-params">SchedUpdateFlags.AfterUpdate</span>)</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">sync_state</span>(<span class="hljs-params">self</span>):
-        &amp;quot;&amp;quot;&amp;quot;最后执行：同步状态&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-string">&quot;&quot;&quot;最后执行：同步状态&quot;&quot;&quot;</span>
         <span class="hljs-keyword">pass</span>
 
     <span class="hljs-comment"># === 固定频率 ===</span>
 
 <span class="hljs-meta">    @Sched.Fixed(<span class="hljs-params"><span class="hljs-string">&#x27;auto_save&#x27;</span></span>)</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">auto_save</span>(<span class="hljs-params">self</span>):
-        &amp;quot;&amp;quot;&amp;quot;每 <span class="hljs-number">30</span> 秒自动保存&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-string">&quot;&quot;&quot;每 30 秒自动保存&quot;&quot;&quot;</span>
         <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[Save] Auto saving...&#x27;</span>)
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
@@ -366,7 +324,7 @@ result.done(<span class="hljs-keyword">lambda</span> hp: <span class="hljs-built
 
 <span class="hljs-meta">    @Sched.Event(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span></span>)</span>
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self</span>):
-        &amp;quot;&amp;quot;&amp;quot;实体受伤时执行&amp;quot;&amp;quot;&amp;quot;
+        <span class="hljs-string">&quot;&quot;&quot;实体受伤时执行&quot;&quot;&quot;</span>
         <span class="hljs-keyword">pass</span>
 
     <span class="hljs-comment"># === 异步 ===</span>
