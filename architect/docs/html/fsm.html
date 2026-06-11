@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>fsm - RoninNetease v1.1.0</title>
+<style>
+:root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}
+*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:Inter,-apple-system,system-ui,sans-serif;background:hsl(var(--b));color:hsl(var(--f));line-height:1.7;font-size:15px}
+nav{position:fixed;top:0;left:0;bottom:0;width:260px;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}
+nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}
+nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}
+.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}
+nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}
+nav a:hover,nav a.active{color:hsl(var(--f));background:hsl(var(--s) / .5);border-left-color:hsl(var(--p))}
+nav a.active{font-weight:600}
+nav a.sub{padding:.22rem 1.25rem .22rem 2.2rem;font-size:.76rem;opacity:.6}
+nav a.sub:hover{opacity:1}
+nav::-webkit-scrollbar,.pages::-webkit-scrollbar{width:4px}
+nav::-webkit-scrollbar-track,.pages::-webkit-scrollbar-track{background:transparent}
+nav::-webkit-scrollbar-thumb,.pages::-webkit-scrollbar-thumb{background:hsl(0 0% 25%);border-radius:4px}
+nav::-webkit-scrollbar-thumb:hover,.pages::-webkit-scrollbar-thumb:hover{background:hsl(0 0% 35%)}
+nav,.pages{scrollbar-width:thin;scrollbar-color:hsl(0 0% 25%) transparent}
+main{margin-left:260px;display:flex;justify-content:center;padding:2rem 2.5rem}
+article{background:hsl(var(--c));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:2.5rem 3rem;max-width:860px;width:100%}
+h1{font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid hsl(0 0% 14%)}
+h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.35rem;border-bottom:1px solid hsl(0 0% 14%)}
+h3{font-size:1.1rem;font-weight:600;margin-top:2rem;margin-bottom:.5rem}
+h4{font-size:1rem;font-weight:600;margin-top:1.5rem;margin-bottom:.4rem;color:hsl(var(--m))}
+p{margin:.8rem 0;line-height:1.75}
+a:not(nav a){color:hsl(var(--p));text-decoration:underline}
+code{background:hsl(var(--s) / .5);padding:.12em .35em;border-radius:3px;font-size:.87em;font-family:"JetBrains Mono",monospace}
+pre{background:hsl(var(--b));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:1rem 1.25rem;overflow-x:auto;margin:1.25rem 0}
+pre code{background:0 0;padding:0;font-size:.83rem;line-height:1.6}
+table{border-collapse:collapse;width:100%;margin:1.5rem 0}
+td,th{border:1px solid hsl(0 0% 14%);padding:.55rem .85rem;text-align:left;font-size:.9rem}
+th{background:hsl(var(--s) / .5);font-weight:600}
+tr:nth-child(even){background:hsl(0 0% 7%)}
+blockquote{border-left:3px solid hsl(var(--p));padding:.5rem 1.1rem;margin:1.25rem 0;background:hsl(267 100% 70% / .04);border-radius:0 var(--r) var(--r) 0;font-size:.92rem;color:hsl(var(--m))}
+hr{border:0;border-top:1px solid hsl(0 0% 14%);margin:2rem 0}
+ol,ul{padding-left:1.5rem;margin:.75rem 0}
+li{margin:.35rem 0;line-height:1.75}
+strong{color:hsl(var(--f))}
+@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+</style>
+</head>
+<body>
+<nav>
+<div class="logo">Ronin<span>Netease</span></div>
+<div class="pages">
+<div class="group">Getting Started</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">Core Systems</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">Advanced</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5-ui" class="sub">5. Ui 对象</a><a href="ui.html#6-touch" class="sub">6. 触摸手势 — Touch</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><div class="group">Reference</div><a href="math.html">Math — 数学库</a><a href="math.html#1" class="sub">1. 概述</a><a href="math.html#2-vec3" class="sub">2. Vec3 — 三维向量</a><a href="math.html#3-vec4" class="sub">3. Vec4 — 四维向量</a><a href="math.html#4-mat4-4-4" class="sub">4. Mat4 — 4×4 变换矩阵</a><a href="math.html#5-double" class="sub">5. Double — 高精度浮点数</a><a href="math.html#6-math-common-py" class="sub">6. 通用工具函数 — math/common.py</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang" class="sub">3. Molang 表达式 — molang/</a><a href="utils.html#4-persona-persona" class="sub">4. Persona 渲染覆盖 — persona/</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a><a href="fsm.html" class="active">FSM — 有限状态机</a><a href="fsm.html#1-statetree" class="sub">1. StateTree — 树形状态机（推荐）</a><a href="fsm.html#2-fsm" class="sub">2. 古典 FSM（已弃用）</a><a href="fsm.html#3-statetree-vs-fsm" class="sub">3. StateTree vs 古典 FSM 对比</a><a href="fsm.html#" class="sub">下一步</a>
+</div>
+</nav>
+<main>
+<article>
+<h1>FSM — 有限状态机</h1>
+<p>RoninNetease 提供两种状态机实现：<strong>StateTree（推荐）</strong> 和 <strong>古典 FSM（已弃用）</strong>。</p>
+<hr>
+<h2 id="1-statetree">1. StateTree — 树形状态机（推荐）</h2>
+<p><code>StateTree</code> 是一种树形结构的状态机，支持：</p>
+<ul>
+<li><strong>分层状态</strong>：父状态可以包含子状态，形成状态树</li>
+<li><strong>状态过渡</strong>：定义状态间的转换条件和动作</li>
+<li><strong>客户端/服务端分离</strong>：每端有独立的状态树管理</li>
+</ul>
+<h3>1.1 架构</h3>
+<pre><code>architect.fsm.stateTree
+├── common.py ← TreeState, Transition, StateTree（通用）
+├── client.py ← ClientStateTree（客户端）
+└── server.py ← ServerStateTree（服务端）
+</code></pre>
+<h3>1.2 定义状态</h3>
+<pre><code class="language-python">from architect.fsm.stateTree.common import TreeState, Transition
+
+class IdleState(TreeState):
+    def onEnter(self, entity_id):
+        &quot;&quot;&quot;进入状态&quot;&quot;&quot;
+        print(&#39;Entity %s entered Idle&#39; % entity_id)
+
+    def onUpdate(self, entity_id, dt):
+        &quot;&quot;&quot;每帧更新&quot;&quot;&quot;
+        pass
+
+    def onExit(self, entity_id):
+        &quot;&quot;&quot;离开状态&quot;&quot;&quot;
+        print(&#39;Entity %s exited Idle&#39; % entity_id)
+
+class PatrolState(TreeState):
+    def onEnter(self, entity_id):
+        print(&#39;Entity %s started patrol&#39; % entity_id)
+
+    def onUpdate(self, entity_id, dt):
+        # 巡逻逻辑
+        pass
+</code></pre>
+<h3>1.3 定义转换</h3>
+<pre><code class="language-python">from architect.fsm.stateTree.common import Transition
+
+# 转换条件
+def should_chase(entity_id):
+    # 检查是否有敌人在视野内
+    return has_enemy_in_range(entity_id)
+
+# 转换定义：从 Idle 到 Chase，条件是 should_chase
+idle_to_chase = Transition(
+    from_state=IdleState,
+    to_state=ChaseState,
+    condition=should_chase
+)
+
+# 无条件转换（进入后立即执行）
+auto_to_patrol = Transition(
+    from_state=IdleState,
+    to_state=PatrolState
+)
+</code></pre>
+<h3>1.4 构建状态树</h3>
+<pre><code class="language-python">from architect.fsm.stateTree.server import ServerStateTree
+
+# 创建状态树
+tree = ServerStateTree()
+
+# 添加状态
+tree.add_state(IdleState)
+tree.add_state(PatrolState)
+tree.add_state(ChaseState)
+tree.add_state(CombatState)
+
+# 添加转换
+tree.add_transition(Transition(IdleState, PatrolState))
+tree.add_transition(Transition(PatrolState, ChaseState, condition=should_chase))
+tree.add_transition(Transition(ChaseState, CombatState, condition=is_close_enough))
+tree.add_transition(Transition(CombatState, PatrolState, condition=no_enemy))
+
+# 启动状态机
+tree.start(entity_id, IdleState)
+</code></pre>
+<h3>1.5 层级状态</h3>
+<pre><code class="language-python"># 父状态：Living
+class LivingState(TreeState):
+    # 可以包含子状态
+    pass
+
+# 子状态
+class NormalState(TreeState):
+    parent = LivingState  # 指定父状态
+
+class InjuredState(TreeState):
+    parent = LivingState
+
+# 在 Living 状态下可以在 Normal/Injured 之间切换
+# 而 Living → Dead 是跨父状态的转换
+</code></pre>
+<h3>1.6 客户端状态树</h3>
+<pre><code class="language-python">from architect.fsm.stateTree.client import ClientStateTree
+
+tree = ClientStateTree()
+
+class ClientIdle(TreeState):
+    def onUpdate(self, entity_id, dt):
+        # 处理客户端动画
+        play_animation(entity_id, &#39;idle&#39;)
+
+tree.add_state(ClientIdle)
+tree.start(entity_id, ClientIdle)
+</code></pre>
+<h3>1.7 完整示例：NPC 行为</h3>
+<pre><code class="language-python">from architect.fsm.stateTree.server import ServerStateTree
+from architect.fsm.stateTree.common import TreeState, Transition
+from architect.core import ServerSubsystem, EventListener
+
+# === 定义状态 ===
+
+class Idle(TreeState):
+    def onEnter(self, entity_id):
+        print(&#39;[NPC] Idle&#39;)
+
+    def onUpdate(self, entity_id, dt):
+        self.timer += dt
+        if self.timer &gt; 5.0:
+            # 空闲 5 秒后开始巡逻
+            self.timer = 0
+
+class Patrol(TreeState):
+    def __init__(self):
+        self.patrol_index = 0
+        self.waypoints = [(0, 64, 0), (10, 64, 0), (10, 64, 10), (0, 64, 10)]
+
+    def onEnter(self, entity_id):
+        self.move_to_next(entity_id)
+
+    def onUpdate(self, entity_id, dt):
+        if arrived_at_target(entity_id):
+            self.move_to_next(entity_id)
+
+    def move_to_next(self, entity_id):
+        self.patrol_index = (self.patrol_index + 1) % len(self.waypoints)
+        move_entity_to(entity_id, self.waypoints[self.patrol_index])
+
+class Chase(TreeState):
+    target = None
+
+    def onEnter(self, entity_id):
+        self.target = find_nearest_enemy(entity_id)
+
+    def onUpdate(self, entity_id, dt):
+        if self.target:
+            move_entity_to(entity_id, get_position(self.target))
+
+class Attack(TreeState):
+    def onEnter(self, entity_id):
+        attack_entity(entity_id, self.parent.target)
+
+# === 定义转换 ===
+
+def enemy_in_range(entity_id):
+    return find_nearest_enemy(entity_id) is not None
+
+def close_enough(entity_id):
+    enemy = find_nearest_enemy(entity_id)
+    return enemy and distance_to(entity_id, enemy) &lt; 2.0
+
+def enemy_gone(entity_id):
+    return find_nearest_enemy(entity_id) is None
+
+transitions = [
+    Transition(Idle, Patrol),
+    Transition(Patrol, Chase, condition=enemy_in_range),
+    Transition(Chase, Attack, condition=close_enough),
+    Transition(Attack, Patrol, condition=enemy_gone),
+    Transition(Chase, Patrol, condition=enemy_gone),
+]
+
+# === 使用 ===
+
+class NPCBehaviorSystem(ServerSubsystem):
+    canTick = True
+
+    def onInit(self):
+        self.tree = ServerStateTree()
+        self.tree.add_state(Idle)
+        self.tree.add_state(Patrol)
+        self.tree.add_state(Chase)
+        self.tree.add_state(Attack)
+        for t in transitions:
+            self.tree.add_transition(t)
+
+    def init_npc(self, entity_id):
+        self.tree.start(entity_id, Idle)
+
+    def onUpdate(self, dt):
+        self.tree.update_all(dt)
+</code></pre>
+<hr>
+<h2 id="2-fsm">2. 古典 FSM（已弃用）</h2>
+<blockquote>
+<p><strong>警告</strong>：此实现已弃用，不推荐在新项目中使用。建议迁移到 StateTree。</p>
+</blockquote>
+<h3>2.1 结构</h3>
+<pre><code class="language-python">from architect.fsm.deprecated import Fsm, State
+
+class MyState(State):
+    def onEnter(self):
+        &quot;&quot;&quot;进入状态&quot;&quot;&quot;
+        pass
+
+    def onUpdate(self):
+        &quot;&quot;&quot;每帧更新&quot;&quot;&quot;
+        pass
+
+    def onExit(self):
+        &quot;&quot;&quot;离开状态&quot;&quot;&quot;
+        pass
+
+    def onEvent(self, event_type, event_data):
+        &quot;&quot;&quot;事件处理&quot;&quot;&quot;
+        pass
+
+class MyFsm(Fsm):
+    def onStart(self):
+        &quot;&quot;&quot;状态机启动&quot;&quot;&quot;
+        pass
+</code></pre>
+<h3>2.2 <code>State</code> 基类</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>onEnter()</code></td>
+<td>进入状态时</td>
+</tr>
+<tr>
+<td><code>onExit()</code></td>
+<td>离开状态时</td>
+</tr>
+<tr>
+<td><code>onUpdate()</code></td>
+<td>每 Tick</td>
+</tr>
+<tr>
+<td><code>onEvent(type, data)</code></td>
+<td>事件处理</td>
+</tr>
+<tr>
+<td><code>getFsm()</code></td>
+<td>获取所属 FSM 实例</td>
+</tr>
+<tr>
+<td><code>markVariant(value)</code></td>
+<td>设置实体 MarkVariant</td>
+</tr>
+<tr>
+<td><code>playSound(name)</code></td>
+<td>播放音效（服务端）</td>
+</tr>
+<tr>
+<td><code>movement(enabled)</code></td>
+<td>控制移动（服务端）</td>
+</tr>
+<tr>
+<td><code>camera(enabled)</code></td>
+<td>控制摄像机（服务端）</td>
+</tr>
+</tbody></table>
+<h3>2.3 为什么弃用？</h3>
+<p>古典 FSM 存在以下问题：</p>
+<ul>
+<li>不支持分层状态，复杂行为需要大量状态枚举</li>
+<li>不适合嵌入 ECS 架构</li>
+<li>难以与 <code>@Query</code> 等装饰器语法兼容</li>
+</ul>
+<p><strong>迁移建议</strong>：将古典 FSM 的状态逻辑重构为 <code>TreeState</code> 子类。</p>
+<hr>
+<h2 id="3-statetree-vs-fsm">3. StateTree vs 古典 FSM 对比</h2>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>StateTree</th>
+<th>古典 FSM</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>层级状态</td>
+<td>✅ 支持</td>
+<td>❌ 不支持</td>
+</tr>
+<tr>
+<td>ECS 兼容</td>
+<td>✅ 适合</td>
+<td>❌ 不推荐</td>
+</tr>
+<tr>
+<td>转换条件</td>
+<td>函数式条件</td>
+<td>命令式切换</td>
+</tr>
+<tr>
+<td>多端支持</td>
+<td>✅ client/server</td>
+<td>基础支持</td>
+</tr>
+<tr>
+<td>维护状态</td>
+<td>✅ 活跃开发</td>
+<td>❌ 已弃用</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="">下一步</h2>
+<ul>
+<li><a href="ecs.md">组件系统 (ecs.md)</a> — ECS 组件</li>
+<li><a href="subsystem.md">子系统 (subsystem.md)</a> — 子系统 API</li>
+<li><a href="best-practices.md">最佳实践 (best-practices.md)</a> — 状态机设计建议</li>
+</ul>
+
+</article>
+</main>
+</body>
+</html>

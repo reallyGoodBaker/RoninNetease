@@ -2,13 +2,21 @@
   "name": "tools",
   "version": "1.0.0",
   "description": "",
-  "scripts": {},
+  "scripts": {
+    "docs:dev": "vitepress dev architect/docs",
+    "docs:build": "vitepress build architect/docs"
+  },
   "keywords": [],
   "author": "",
   "type": "module",
   "license": "MIT",
   "packageManager": "pnpm@10.32.1",
   "devDependencies": {
-    "@types/node": "^25.9.1"
+    "@types/node": "^25.9.1",
+    "docsify-cli": "^4.4.4",
+    "github-markdown-css": "^5.9.0",
+    "highlight.js": "^11.11.1",
+    "marked": "^18.0.5",
+    "vitepress": "^1.6.4"
   }
 }

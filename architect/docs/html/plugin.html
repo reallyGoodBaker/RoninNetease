@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>plugin - RoninNetease v1.1.0</title>
+<style>
+:root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}
+*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:Inter,-apple-system,system-ui,sans-serif;background:hsl(var(--b));color:hsl(var(--f));line-height:1.7;font-size:15px}
+nav{position:fixed;top:0;left:0;bottom:0;width:260px;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}
+nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}
+nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}
+.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}
+nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}
+nav a:hover,nav a.active{color:hsl(var(--f));background:hsl(var(--s) / .5);border-left-color:hsl(var(--p))}
+nav a.active{font-weight:600}
+nav a.sub{padding:.22rem 1.25rem .22rem 2.2rem;font-size:.76rem;opacity:.6}
+nav a.sub:hover{opacity:1}
+nav::-webkit-scrollbar,.pages::-webkit-scrollbar{width:4px}
+nav::-webkit-scrollbar-track,.pages::-webkit-scrollbar-track{background:transparent}
+nav::-webkit-scrollbar-thumb,.pages::-webkit-scrollbar-thumb{background:hsl(0 0% 25%);border-radius:4px}
+nav::-webkit-scrollbar-thumb:hover,.pages::-webkit-scrollbar-thumb:hover{background:hsl(0 0% 35%)}
+nav,.pages{scrollbar-width:thin;scrollbar-color:hsl(0 0% 25%) transparent}
+main{margin-left:260px;display:flex;justify-content:center;padding:2rem 2.5rem}
+article{background:hsl(var(--c));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:2.5rem 3rem;max-width:860px;width:100%}
+h1{font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid hsl(0 0% 14%)}
+h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.35rem;border-bottom:1px solid hsl(0 0% 14%)}
+h3{font-size:1.1rem;font-weight:600;margin-top:2rem;margin-bottom:.5rem}
+h4{font-size:1rem;font-weight:600;margin-top:1.5rem;margin-bottom:.4rem;color:hsl(var(--m))}
+p{margin:.8rem 0;line-height:1.75}
+a:not(nav a){color:hsl(var(--p));text-decoration:underline}
+code{background:hsl(var(--s) / .5);padding:.12em .35em;border-radius:3px;font-size:.87em;font-family:"JetBrains Mono",monospace}
+pre{background:hsl(var(--b));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:1rem 1.25rem;overflow-x:auto;margin:1.25rem 0}
+pre code{background:0 0;padding:0;font-size:.83rem;line-height:1.6}
+table{border-collapse:collapse;width:100%;margin:1.5rem 0}
+td,th{border:1px solid hsl(0 0% 14%);padding:.55rem .85rem;text-align:left;font-size:.9rem}
+th{background:hsl(var(--s) / .5);font-weight:600}
+tr:nth-child(even){background:hsl(0 0% 7%)}
+blockquote{border-left:3px solid hsl(var(--p));padding:.5rem 1.1rem;margin:1.25rem 0;background:hsl(267 100% 70% / .04);border-radius:0 var(--r) var(--r) 0;font-size:.92rem;color:hsl(var(--m))}
+hr{border:0;border-top:1px solid hsl(0 0% 14%);margin:2rem 0}
+ol,ul{padding-left:1.5rem;margin:.75rem 0}
+li{margin:.35rem 0;line-height:1.75}
+strong{color:hsl(var(--f))}
+@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+</style>
+</head>
+<body>
+<nav>
+<div class="logo">Ronin<span>Netease</span></div>
+<div class="pages">
+<div class="group">Getting Started</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">Core Systems</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">Advanced</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5-ui" class="sub">5. Ui 对象</a><a href="ui.html#6-touch" class="sub">6. 触摸手势 — Touch</a><a href="plugin.html" class="active">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><div class="group">Reference</div><a href="math.html">Math — 数学库</a><a href="math.html#1" class="sub">1. 概述</a><a href="math.html#2-vec3" class="sub">2. Vec3 — 三维向量</a><a href="math.html#3-vec4" class="sub">3. Vec4 — 四维向量</a><a href="math.html#4-mat4-4-4" class="sub">4. Mat4 — 4×4 变换矩阵</a><a href="math.html#5-double" class="sub">5. Double — 高精度浮点数</a><a href="math.html#6-math-common-py" class="sub">6. 通用工具函数 — math/common.py</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang" class="sub">3. Molang 表达式 — molang/</a><a href="utils.html#4-persona-persona" class="sub">4. Persona 渲染覆盖 — persona/</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a><a href="fsm.html">FSM — 有限状态机</a><a href="fsm.html#1-statetree" class="sub">1. StateTree — 树形状态机（推荐）</a><a href="fsm.html#2-fsm" class="sub">2. 古典 FSM（已弃用）</a><a href="fsm.html#3-statetree-vs-fsm" class="sub">3. StateTree vs 古典 FSM 对比</a><a href="fsm.html#" class="sub">下一步</a>
+</div>
+</nav>
+<main>
+<article>
+<h1>Plugin — 插件系统</h1>
+<p>插件系统提供了模块化的功能扩展机制，支持拓扑依赖排序、热升级和完整的生命周期钩子。</p>
+<hr>
+<h2 id="1">1. 架构</h2>
+<pre><code>PluginBase (基类)
+    ├── 用户自定义插件
+    └── 系统插件（$vendor.*）
+        ├── event        ← 事件系统封装
+        ├── animation    ← 动画扩展（序列/蒙太奇）
+        ├── input        ← 输入系统（键盘/鼠标映射）
+        └── squad        ← 小队系统（实体分组管理）
+</code></pre>
+<hr>
+<h2 id="2">2. 创建插件</h2>
+<h3>2.1 基本结构</h3>
+<pre><code class="language-python">from architect.core.loader import Plugin, PluginBase
+
+@Plugin(
+    name=&#39;MyPlugin&#39;,
+    ver=[1, 0, 0],
+    author=&#39;You&#39;,
+    desc=&#39;My first plugin&#39;,
+    deps={&#39;OtherPlugin&#39;: &#39;&gt;=1.0.0&#39;}
+)
+class MyPlugin(PluginBase):
+    def onCreate(self):
+        &quot;&quot;&quot;插件实例创建时调用&quot;&quot;&quot;
+        pass
+
+    def onAttach(self, manager):
+        &quot;&quot;&quot;插件附加到 SubsystemManager 时调用&quot;&quot;&quot;
+        pass
+
+    def onReady(self, manager):
+        &quot;&quot;&quot;所有子系统就绪后调用&quot;&quot;&quot;
+        pass
+
+    def onRegisterComponent(self, compCls):
+        &quot;&quot;&quot;组件注册到引擎时调用，compCls 为组件类型列表&quot;&quot;&quot;
+        pass
+
+    def onAddSubsystem(self, subsystem):
+        &quot;&quot;&quot;有新子系统添加时调用&quot;&quot;&quot;
+        pass
+
+    def onRemoveSubsystem(self, subsystem):
+        &quot;&quot;&quot;有子系统移除时调用&quot;&quot;&quot;
+        pass
+
+    def onDestroy(self):
+        &quot;&quot;&quot;插件销毁时调用&quot;&quot;&quot;
+        pass
+</code></pre>
+<h3>2.2 <code>@Plugin</code> 参数</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td><code>str</code></td>
+<td>插件名称（唯一标识）</td>
+</tr>
+<tr>
+<td><code>ver</code></td>
+<td><code>list[int]</code></td>
+<td>版本号 <code>[major, minor, patch]</code>，如 <code>[1, 0, 0]</code></td>
+</tr>
+<tr>
+<td><code>author</code></td>
+<td><code>str</code></td>
+<td>作者名</td>
+</tr>
+<tr>
+<td><code>desc</code></td>
+<td><code>str</code></td>
+<td>插件描述</td>
+</tr>
+<tr>
+<td><code>deps</code></td>
+<td><code>dict | None</code></td>
+<td>依赖的其他插件，格式 <code>{&#39;PluginName&#39;: &#39;&gt;=version&#39;}</code></td>
+</tr>
+</tbody></table>
+<h3>2.3 生命周期</h3>
+<pre><code>@Plugin 装饰 → 创建 _PluginHost
+    │
+    ├── _PluginHost.create()
+    │   └── plugin.onCreate()
+    │
+    ▼
+_topologicalOrder(registerList) → 按依赖排序
+    │
+    ▼
+_PluginHost.load(manager)
+    └── plugin.onAttach(manager)
+    │
+    ▼
+子系统就绪 → plugin.onReady(manager)
+    │
+    ▼
+销毁 → plugin.onDestroy()
+</code></pre>
+<hr>
+<h2 id="3">3. 插件依赖</h2>
+<h3>3.1 声明依赖</h3>
+<pre><code class="language-python">@Plugin(
+    name=&#39;MyCombatPlugin&#39;,
+    ver=[1, 0, 0],
+    author=&#39;You&#39;,
+    desc=&#39;Combat system&#39;,
+    deps={
+        &#39;RoninAnimationEx&#39;: &#39;&gt;=1.0.0&#39;,
+        &#39;RoninInputEx&#39;: &#39;&gt;=1.0.0&#39;
+    }
+)
+class MyCombatPlugin(PluginBase):
+    pass
+</code></pre>
+<h3>3.2 拓扑排序加载</h3>
+<p>框架使用拓扑排序确保依赖插件先于依赖它们的插件加载：</p>
+<pre><code>依赖图: CombatPlugin → AnimationEx, InputEx
+加载顺序: AnimationEx → InputEx → CombatPlugin
+</code></pre>
+<p>如果存在循环依赖，框架按注册顺序兜底加载，不会死循环。</p>
+<h3>3.3 获取其他插件</h3>
+<pre><code class="language-python">from architect.core.loader import getPlugin, hasPlugin
+
+class MyPlugin(PluginBase):
+    def onReady(self, manager):
+        if hasPlugin(&#39;RoninAnimationEx&#39;):
+            anim_plugin = getPlugin(&#39;RoninAnimationEx&#39;)
+            # 使用动画插件的 API
+</code></pre>
+<hr>
+<h2 id="4">4. 热升级</h2>
+<h3>4.1 版本比较</h3>
+<p>当 <code>@Plugin</code> 声明的版本号高于当前已注册的版本时，框架自动执行热升级：</p>
+<pre><code class="language-python"># v1.0.1 升级到 v1.1.0
+@Plugin(name=&#39;MyPlugin&#39;, ver=[1, 1, 0], author=&#39;You&#39;, desc=&#39;Upgraded&#39;)
+class MyPlugin(PluginBase):
+    pass
+</code></pre>
+<h3>4.2 升级流程</h3>
+<ol>
+<li>比较新版本号与已注册版本号（<code>compVer</code> 比较）</li>
+<li>若新版本更高 → 销毁旧实例（<code>onDestroy()</code>）</li>
+<li>创建新实例（<code>onCreate()</code>）</li>
+<li>重新附加到管理器（<code>onAttach()</code>）</li>
+</ol>
+<hr>
+<h2 id="5">5. 系统插件</h2>
+<h3>5.1 启用插件</h3>
+<p>在 <code>conf.py</code> 中：</p>
+<pre><code class="language-python">PLUGINS = [
+    &#39;$vendor.event&#39;,       # 事件系统
+    &#39;$vendor.animation&#39;,   # 动画扩展
+    &#39;$vendor.input&#39;,       # 输入系统
+    &#39;$vendor.squad&#39;,       # 小队系统
+]
+</code></pre>
+<h3>5.2 事件系统插件 (<code>$vendor.event</code>)</h3>
+<p>封装了事件的分发和管理，推荐始终启用。</p>
+<pre><code class="language-python"># architect/plugins/event/client.py
+class EventPlugin(PluginBase):
+    def onCreate(self):
+        # 初始化事件系统
+        pass
+
+# architect/plugins/event/server.py
+class EventPluginServer(PluginBase):
+    def onCreate(self):
+        pass
+</code></pre>
+<h3>5.3 动画扩展插件 (<code>$vendor.animation</code>)</h3>
+<p><strong>客户端：</strong> <code>RoninAnimationEx</code></p>
+<p>提供动画序列和蒙太奇控制。用户通过实体变量控制动画：</p>
+<pre><code class="language-python"># 设置混合权重
+entity.set_attr(&#39;blendex.{anim_name}&#39;, 0.5)
+
+# 设置动画时间
+entity.set_attr(&#39;anim_timeex.{anim_name}&#39;, 0.3)
+
+# 设置通知
+entity.set_attr(&#39;notify_{name}&#39;, 1)
+</code></pre>
+<p><strong>服务端：</strong> <code>RoninAnimationExServer</code></p>
+<p>服务端动画同步插件。</p>
+<h3>5.4 输入系统插件 (<code>$vendor.input</code>)</h3>
+<p><strong><code>RoninInputEx</code></strong> — 扩展的键盘/鼠标输入映射系统。</p>
+<p>提供以下组件：</p>
+<ul>
+<li><code>InputExComponent</code> — 输入状态组件</li>
+<li><code>InputAction</code>, <code>InputValue</code> — 输入动作和值</li>
+<li><code>MappingContext</code> — 输入映射上下文</li>
+<li><code>Modifier</code>, <code>Trigger</code> — 修饰键和触发器</li>
+<li><code>InputExEnums</code> — 输入枚举</li>
+</ul>
+<p><strong>示例：</strong></p>
+<pre><code class="language-python"># 获取输入值
+input_comp = getComponent(entity_id, InputExComponent)
+move_forward = input_comp.get(&#39;MoveForward&#39;)   # 0.0 ~ 1.0
+is_jumping = input_comp.get(&#39;Jump&#39;)            # True/False
+</code></pre>
+<h3>5.5 小队系统插件 (<code>$vendor.squad</code>)</h3>
+<p>实体分组管理，将实体加入/离开小队，支持小队内通信。</p>
+<hr>
+<h2 id="6">6. 用户插件</h2>
+<h3>6.1 创建用户插件</h3>
+<p>用户插件位于模组根目录下的 <code>plugins/</code> 目录：</p>
+<pre><code>your_mod/
+└── plugins/
+    ├── __init__.py
+    └── my_plugin.py
+</code></pre>
+<h3>6.2 启用用户插件</h3>
+<p>在 <code>conf.py</code> 中以 <code>$user.</code> 前缀引用：</p>
+<pre><code class="language-python">PLUGINS = [
+    &#39;$vendor.event&#39;,
+    &#39;$user.my_plugin&#39;,    # → {modname}.plugins.my_plugin
+]
+</code></pre>
+<h3>6.3 插件路径解析</h3>
+<pre><code class="language-python"># $vendor.{name} → architect.plugins.{name}
+# $user.{name}   → {modname}.plugins.{name}
+
+# 示例
+&#39;$vendor.animation&#39; → &#39;architect.plugins.animation&#39;
+&#39;$user.combat&#39;      → &#39;my_mod.plugins.combat&#39;
+</code></pre>
+<p>路径后自动追加 <code>.server</code> 或 <code>.client</code>：</p>
+<pre><code>architect.plugins.animation.client  (客户端)
+architect.plugins.animation.server  (服务端)
+</code></pre>
+<hr>
+<h2 id="7">7. 插件与子系统交互</h2>
+<h3>7.1 捕获组件和子系统</h3>
+<p>当插件被导入时，框架使用 <code>ContextRecorder</code> 捕获其依赖的组件类型和子系统类型：</p>
+<pre><code class="language-python">class MyPlugin(PluginBase):
+    def onAttach(self, manager):
+        # manager 是 SubsystemManager 实例
+        # 可以访问所有已注册的子系统
+        my_system = manager.getSubsystemByName(&#39;MySystem&#39;)
+
+    def onRegisterComponent(self, compCls):
+        # compCls 是组件类型列表
+        for cls in compCls:
+            print(&#39;Component registered:&#39;, cls.__name__)
+
+    def onAddSubsystem(self, subsystem):
+        print(&#39;Subsystem added:&#39;, subsystem.__class__.__name__)
+</code></pre>
+<h3>7.2 注入依赖</h3>
+<p>插件在 <code>onAttach</code> 阶段可以通过 <code>SubsystemManager</code> 获取所需资源：</p>
+<pre><code class="language-python">class ConfigPlugin(PluginBase):
+    def onAttach(self, manager):
+        self.config = manager.bus.execute(&#39;get_config&#39;)
+</code></pre>
+<hr>
+<h2 id="8">8. 插件加载流程详解</h2>
+<pre><code>createServer() / createClient()
+    │
+    ▼
+manager.INITIALIZED.on(lambda: _loadPlugins(manager, isHost))
+    │
+    ├── _scanPlugins(isHost)
+    │   └── 遍历 PLUGINS 列表
+    │       ├── 解析路径 ($vendor → architect.plugins, $user → {mod}.plugins)
+    │       ├── 追加 .server 或 .client
+    │       └── ImportModule(path)
+    │           └── 模块导入触发 @Plugin 装饰器
+    │               └── 创建 _PluginHost 并调用 onCreate()
+    │
+    └── _topologicalOrder(registerList)
+        └── 按依赖排序后的顺序调用 host.load(manager)
+            └── plugin.onAttach(manager)
+
+manager.PRELOADED.on(lambda: _readyPlugins(manager))
+    └── 每个插件调用 onReady(manager)
+</code></pre>
+<hr>
+<h2 id="">下一步</h2>
+<ul>
+<li><a href="architecture.md">架构设计 (architecture.md)</a> — 整体架构理解</li>
+<li><a href="subsystem.md">子系统 (subsystem.md)</a> — 子系统 API</li>
+<li><a href="best-practices.md">最佳实践 (best-practices.md)</a> — 插件设计建议</li>
+</ul>
+
+</article>
+</main>
+</body>
+</html>

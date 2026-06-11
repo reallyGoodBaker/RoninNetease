@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>architecture - RoninNetease v1.1.0</title>
+<style>
+:root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}
+*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:Inter,-apple-system,system-ui,sans-serif;background:hsl(var(--b));color:hsl(var(--f));line-height:1.7;font-size:15px}
+nav{position:fixed;top:0;left:0;bottom:0;width:260px;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}
+nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}
+nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}
+.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}
+nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}
+nav a:hover,nav a.active{color:hsl(var(--f));background:hsl(var(--s) / .5);border-left-color:hsl(var(--p))}
+nav a.active{font-weight:600}
+nav a.sub{padding:.22rem 1.25rem .22rem 2.2rem;font-size:.76rem;opacity:.6}
+nav a.sub:hover{opacity:1}
+nav::-webkit-scrollbar,.pages::-webkit-scrollbar{width:4px}
+nav::-webkit-scrollbar-track,.pages::-webkit-scrollbar-track{background:transparent}
+nav::-webkit-scrollbar-thumb,.pages::-webkit-scrollbar-thumb{background:hsl(0 0% 25%);border-radius:4px}
+nav::-webkit-scrollbar-thumb:hover,.pages::-webkit-scrollbar-thumb:hover{background:hsl(0 0% 35%)}
+nav,.pages{scrollbar-width:thin;scrollbar-color:hsl(0 0% 25%) transparent}
+main{margin-left:260px;display:flex;justify-content:center;padding:2rem 2.5rem}
+article{background:hsl(var(--c));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:2.5rem 3rem;max-width:860px;width:100%}
+h1{font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid hsl(0 0% 14%)}
+h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.35rem;border-bottom:1px solid hsl(0 0% 14%)}
+h3{font-size:1.1rem;font-weight:600;margin-top:2rem;margin-bottom:.5rem}
+h4{font-size:1rem;font-weight:600;margin-top:1.5rem;margin-bottom:.4rem;color:hsl(var(--m))}
+p{margin:.8rem 0;line-height:1.75}
+a:not(nav a){color:hsl(var(--p));text-decoration:underline}
+code{background:hsl(var(--s) / .5);padding:.12em .35em;border-radius:3px;font-size:.87em;font-family:"JetBrains Mono",monospace}
+pre{background:hsl(var(--b));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:1rem 1.25rem;overflow-x:auto;margin:1.25rem 0}
+pre code{background:0 0;padding:0;font-size:.83rem;line-height:1.6}
+table{border-collapse:collapse;width:100%;margin:1.5rem 0}
+td,th{border:1px solid hsl(0 0% 14%);padding:.55rem .85rem;text-align:left;font-size:.9rem}
+th{background:hsl(var(--s) / .5);font-weight:600}
+tr:nth-child(even){background:hsl(0 0% 7%)}
+blockquote{border-left:3px solid hsl(var(--p));padding:.5rem 1.1rem;margin:1.25rem 0;background:hsl(267 100% 70% / .04);border-radius:0 var(--r) var(--r) 0;font-size:.92rem;color:hsl(var(--m))}
+hr{border:0;border-top:1px solid hsl(0 0% 14%);margin:2rem 0}
+ol,ul{padding-left:1.5rem;margin:.75rem 0}
+li{margin:.35rem 0;line-height:1.75}
+strong{color:hsl(var(--f))}
+@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+</style>
+</head>
+<body>
+<nav>
+<div class="logo">Ronin<span>Netease</span></div>
+<div class="pages">
+<div class="group">Getting Started</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html" class="active">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">Core Systems</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">Advanced</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5-ui" class="sub">5. Ui 对象</a><a href="ui.html#6-touch" class="sub">6. 触摸手势 — Touch</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><div class="group">Reference</div><a href="math.html">Math — 数学库</a><a href="math.html#1" class="sub">1. 概述</a><a href="math.html#2-vec3" class="sub">2. Vec3 — 三维向量</a><a href="math.html#3-vec4" class="sub">3. Vec4 — 四维向量</a><a href="math.html#4-mat4-4-4" class="sub">4. Mat4 — 4×4 变换矩阵</a><a href="math.html#5-double" class="sub">5. Double — 高精度浮点数</a><a href="math.html#6-math-common-py" class="sub">6. 通用工具函数 — math/common.py</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang" class="sub">3. Molang 表达式 — molang/</a><a href="utils.html#4-persona-persona" class="sub">4. Persona 渲染覆盖 — persona/</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a><a href="fsm.html">FSM — 有限状态机</a><a href="fsm.html#1-statetree" class="sub">1. StateTree — 树形状态机（推荐）</a><a href="fsm.html#2-fsm" class="sub">2. 古典 FSM（已弃用）</a><a href="fsm.html#3-statetree-vs-fsm" class="sub">3. StateTree vs 古典 FSM 对比</a><a href="fsm.html#" class="sub">下一步</a>
+</div>
+</nav>
+<main>
+<article>
+<h1>Architecture — 架构设计</h1>
+<p>RoninNetease 是一个专为网易版《我的世界》设计的 ECS（Entity-Component-System）模组框架。本文档详细介绍其分层架构、核心设计决策和数据流。</p>
+<hr>
+<h2 id="1">1. 整体分层</h2>
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│                    用户代码层                              │
+│  subsystems/  components/  plugins/  conf.py  modMain.py │
+├─────────────────────────────────────────────────────────┤
+│                    Compact 入口层                         │
+│              architect.compact (统一导出)                  │
+├──────────┬──────────┬──────────┬──────────┬─────────────┤
+│   UI     │  Event   │  Query   │ Remote   │   Aspect    │
+│  系统     │  系统    │  系统    │  系统     │   系统      │
+├──────────┼──────────┼──────────┼──────────┼─────────────┤
+│              SubsystemManager (核心管理器)                 │
+│  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────────┐ ┌───────────┐ │
+│  │ Tick │ │Render│ │Fixed │ │CommandBus│ │ Profiler  │ │
+│  │Sched │ │Sched │ │Sched │ │          │ │           │ │
+│  └──────┘ └──────┘ └──────┘ └──────────┘ └───────────┘ │
+├─────────────────────────────────────────────────────────┤
+│                  引擎抽象层 (architect.core)               │
+│  loader  │ basic │annotation│ configurator │ unreliable  │
+├─────────────────────────────────────────────────────────┤
+│                 网易 MC 引擎 API 层                        │
+│   mod.client.extraClientApi / mod.server.extraServerApi   │
+├─────────────────────────────────────────────────────────┤
+│                    系统插件层                              │
+│    event  │ animation │ input │ squad                    │
+└─────────────────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2 id="2">2. 模块职责矩阵</h2>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>core</strong></td>
+<td><code>architect/core/</code></td>
+<td>核心基础设施：加载器、子系统管理器、调度器、命令总线、Profiler、Ref、AOP</td>
+</tr>
+<tr>
+<td><strong>component</strong></td>
+<td><code>architect/component/</code></td>
+<td>ECS 组件系统：组件创建/销毁/查询、CompIndex 反向索引、持久化</td>
+</tr>
+<tr>
+<td><strong>event</strong></td>
+<td><code>architect/event/</code></td>
+<td>事件系统：EventChain 责任链、ChainedEvent、EventSignal、引擎事件枚举</td>
+</tr>
+<tr>
+<td><strong>ui</strong></td>
+<td><code>architect/ui/</code></td>
+<td>UI 系统：UiSubsystem、Signal/Sink 响应式绑定、UiDef 声明式 UI、手势</td>
+</tr>
+<tr>
+<td><strong>math</strong></td>
+<td><code>architect/math/</code></td>
+<td>数学库：vec3、vec4、mat4、Double、Vec3Utils</td>
+</tr>
+<tr>
+<td><strong>level</strong></td>
+<td><code>architect/level/</code></td>
+<td>关卡工具：LevelClient、LevelServer</td>
+</tr>
+<tr>
+<td><strong>persistent</strong></td>
+<td><code>architect/persistent/</code></td>
+<td>持久化数据管理</td>
+</tr>
+<tr>
+<td><strong>remote</strong></td>
+<td><code>architect/remote/</code></td>
+<td>跨端 RPC：Remote 装饰器、callRemote、Future 异步</td>
+</tr>
+<tr>
+<td><strong>fsm</strong></td>
+<td><code>architect/fsm/</code></td>
+<td>有限状态机：StateTree 树形状态机（推荐）、deprecated Classic FSM</td>
+</tr>
+<tr>
+<td><strong>query</strong></td>
+<td><code>architect/query/</code></td>
+<td>实体查询：Query 装饰器、CompIndex 缓存、QueryClient/QueryServer</td>
+</tr>
+<tr>
+<td><strong>command</strong></td>
+<td><code>architect/command/</code></td>
+<td>命令注册与管理</td>
+</tr>
+<tr>
+<td><strong>attr</strong></td>
+<td><code>architect/attr/</code></td>
+<td>实体属性读写封装（客户端/服务端）</td>
+</tr>
+<tr>
+<td><strong>utils</strong></td>
+<td><code>architect/utils/</code></td>
+<td>工具集：设备信息、Molang、Persona、绘图、增强列表/函数</td>
+</tr>
+<tr>
+<td><strong>plugins</strong></td>
+<td><code>architect/plugins/</code></td>
+<td>系统插件：事件、动画扩展、输入系统、小队系统</td>
+</tr>
+<tr>
+<td><strong>compact</strong></td>
+<td><code>architect/compact.py</code></td>
+<td>统一导出入口，简化 import</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="3">3. 核心设计决策</h2>
+<h3>3.1 装饰器 vs 注册表</h3>
+<p>框架大量使用 Python 装饰器进行声明式注册，而非显式注册表调用。</p>
+<p><strong>原因：</strong></p>
+<ul>
+<li>减少样板代码，代码即文档</li>
+<li>注册时机由框架控制，避免手动注册顺序错误</li>
+<li>注解（annotation）机制统一管理元数据</li>
+</ul>
+<p><strong>实现机制：</strong><br>框架通过 <code>AnnotationHelper</code> 在目标（类或方法）上以 <code>_annotation</code> 属性存储元数据字典。装饰器如 <code>@EventListener</code>、<code>@Sched.Tick</code>、<code>@Remote</code> 等通过 <code>AnnotationHelper.addAnnotation()</code> 标记目标，框架在合适时机（如子系统 <code>_init</code>）统一扫描并注册。</p>
+<pre><code>@EventListener(&#39;SomeEvent&#39;)     → 标记方法 → Subsystem._init() 扫描并注册
+@Sched.Tick()                   → 标记方法 → Subsystem._init() 添加到 Scheduler
+@Remote                         → 标记方法 → Subsystem._init() 注册到远程调用表
+</code></pre>
+<h3>3.2 CompIndex 反向索引（vs Archetype）</h3>
+<p>ECS 的组件存储采用 <strong>CompIndex（组件索引）</strong> 模式：</p>
+<ul>
+<li>每个组件类型维护一个 <code>{entityId: componentInstance}</code> 字典</li>
+<li>查询时通过 CompIndex 缓存集合交集快速定位实体</li>
+<li>相比 Archetype 模式（按组件组合排列实体），CompIndex 在组件种类多、实体数中等时更灵活且内存友好</li>
+</ul>
+<p><strong>查询流程：</strong></p>
+<ol>
+<li><code>@Query(target=&#39;{Health,Transform}&#39;)</code> 被调用</li>
+<li>查询装饰器从 CompIndex 缓存获取 <code>Health</code> 的实体集合和 <code>Transform</code> 的实体集合</li>
+<li>取交集得到候选实体列表</li>
+<li>遍历候选实体，注入组件实例到方法参数</li>
+</ol>
+<h3>3.3 重入保护</h3>
+<p><code>Scheduler</code> 实现了简单的重入保护机制：</p>
+<ul>
+<li><code>executeSequence()</code> 在执行期间检查 <code>_sequenceExecuting</code> 标志</li>
+<li>如果检测到重入（上一帧尚未完成），则递增 <code>_skippedUpdates</code> 计数器并跳过</li>
+<li>这防止了因游戏帧率波动导致的任务堆积</li>
+</ul>
+<h3>3.4 Python 2.7 兼容策略</h3>
+<p>由于网易 MC 引擎运行在 Python 2.7 上，框架采取了以下策略：</p>
+<ul>
+<li>所有源文件添加 <code># coding=utf-8</code> 声明</li>
+<li>使用 <code>FunctionType</code> / <code>GeneratorType</code> 代替 Python 3 的 <code>Callable</code> / <code>Iterator</code></li>
+<li>使用 <code>StopIteration</code> 的 <code>args[0]</code> 获取返回值（Py2 没有 <code>value</code> 属性）</li>
+<li>不在源码中使用 semicolon</li>
+</ul>
+<hr>
+<h2 id="4">4. 启动流程</h2>
+<pre><code>createServer() / createClient()
+        │
+        ▼
+LoaderUtils.createManager()
+        │
+        ├── 获取/注册引擎 System 实例
+        ├── 创建 SubsystemManager(system, engine, sysName)
+        │       ├── 初始化 CommandBus
+        │       ├── 初始化 TickScheduler
+        │       ├── 初始化 RenderScheduler（仅客户端）
+        │       └── 注册 Remote 调用接收器
+        │
+        ├── manager.createServer() / manager.createClient()
+        │       │
+        │       ├── [Server] 监听 LoadServerAddonScriptsAfter 事件
+        │       │       └── 触发 → _initManager(isHost=True)
+        │       │
+        │       └── [Client] 直接调用 _initManager(isHost=False)
+        │
+        ▼
+_initManager(isHost)
+        ├── _importModules(isHost)     ← 导入 MOD_SERVER_MODULES / MOD_CLIENT_MODULES
+        ├── INITIALIZED.emit()
+        │       └── → _loadPlugins(manager, isHost)
+        │               ├── _scanPlugins() 扫描并导入插件
+        │               └── _topologicalOrder() 拓扑排序后调用 plugin.onAttach()
+        │
+        ├── _registerCompsIntoGame()    ← 注册所有 Component 到引擎
+        ├── _addAnnotatedSubsystems()   ← 实例化 @SubsystemServer/@SubsystemClient 类
+        │       └── 每个子系统调用 _init()
+        │               ├── _addListeners()      注册事件监听
+        │               ├── _addSchedMethods()   注册调度任务
+        │               ├── _registerRemoteFuncs() 注册远程方法
+        │               └── onInit()             用户初始化钩子
+        │
+        ├── _callReady(isHost)
+        │       ├── 所有子系统调用 onReady()
+        │       ├── 所有插件调用 onReady()
+        │       └── PRELOADED.emit()
+        │
+        └── startTicking(isHost)
+                ├── 监听 OnScriptTickServer / OnScriptTickClient
+                └── 监听 GameRenderTickEvent（仅客户端）
+</code></pre>
+<hr>
+<h2 id="5-tick">5. Tick 循环</h2>
+<pre><code>OnScriptTickServer / OnScriptTickClient 事件触发
+        │
+        ▼
+SubsystemManager.tickSubsystem()
+        ├── 遍历 subsystems，调用 onUpdate(dt)（canTick=True 的子系统）
+        └── tickSched.executeSequence()
+                ├── 执行 TIMER_TASK（超时/间隔任务）
+                ├── 执行 BeforeUpdate 阶段任务
+                ├── 执行 Update 阶段任务
+                └── 执行 AfterUpdate 阶段任务
+                        └── 返回 (deltaTime, skippedUpdates)
+
+GameRenderTickEvent 触发（仅客户端）
+        │
+        ▼
+SubsystemManager.tickRender()
+        ├── 遍历 subsystems，调用 onRender(dt)
+        └── renderSched.executeSequence()
+</code></pre>
+<hr>
+<h2 id="6">6. 数据流</h2>
+<h3>6.1 配置流</h3>
+<pre><code>architect/conf.py (引擎默认配置)
+        +
+用户 conf.py (覆盖)
+        │
+        ▼
+modConf() 合并函数
+        ├── MOD_NAME / MOD_VERSION → 用户优先
+        ├── PLUGINS / MOD_SERVER_MODULES → 取并集
+        └── 其他 → 用户优先，HOT_RELOADABLE 白名单控制运行时修改
+</code></pre>
+<h3>6.2 事件流</h3>
+<pre><code>引擎事件 (OnScriptTickServer 等)
+        │
+        ▼
+SubsystemManager.addListener() / Subsystem.on()
+        │  通过 system.ListenForEvent 注册到引擎
+        │
+        ▼
+引擎触发时 → EventChain.dispatch(event_data)
+        ├── 创建 ChainedEvent(eventType, data, interruptRef)
+        ├── 按 capture/bubble 顺序遍历 handlers
+        │       └── handler(ChainedEvent)
+        │               ├── event.stop() 设置 interruptRef → 停止传递
+        │               └── event.prevent() 设置 cancel → 阻止默认
+        └── guarded=True 时，handler 抛异常则跳过后续 handler
+</code></pre>
+<h3>6.3 调度流</h3>
+<pre><code>Scheduler._scheduleQueues = {
+    &#39;TimerTask&#39;:       [Task1, Task2, ...],
+    &#39;BeforeUpdate&#39;:    [Task3, ...],
+    &#39;Update&#39;:          [Task4, ...],
+    &#39;AfterUpdate&#39;:     [Task5, ...],
+}
+        │
+        ▼
+executeSequence()
+        ├── 执行 TIMER_TASK
+        ├── 执行 BeforeUpdate
+        ├── 执行 Update
+        └── 执行 AfterUpdate
+</code></pre>
+<hr>
+<h2 id="7">7. 关键接口</h2>
+<h3>7.1 SubsystemManager</h3>
+<p><code>SubsystemManager</code> 是框架的中枢，通过单例模式管理：</p>
+<pre><code class="language-python">manager = SubsystemManager.getInstance()  # 获取当前端实例
+manager.bus                                 # CommandBus
+manager.getSubsystem(MySystem)             # 按类获取子系统
+manager.getSubsystemByName(&#39;MySystem&#39;)     # 按名获取子系统
+manager.tickSched                           # Tick 调度器
+manager.renderSched                         # Render 调度器
+manager.INITIALIZED                         # 初始化完成信号
+manager.PRELOADED                           # 预加载完成信号
+</code></pre>
+<h3>7.2 Subsystem 生命周期</h3>
+<pre><code>实例化 → _init() → onInit() → onReady() → onUpdate(dt) [每帧] → onDestroy()
+                                          → onRender(dt) [每帧, 客户端]
+</code></pre>
+<h3>7.3 Plugin 生命周期</h3>
+<pre><code>@Plugin 装饰 → 创建 _PluginHost
+    → onCreate()          实例创建
+    → onAttach(manager)   附加到管理器（拓扑排序后按顺序）
+    → onReady(manager)    所有子系统就绪后
+    → onDestroy()         销毁时
+</code></pre>
+<hr>
+<h2 id="8">8. 扩展点</h2>
+<table>
+<thead>
+<tr>
+<th>扩展方式</th>
+<th>机制</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>自定义组件</td>
+<td>继承 <code>Component</code>，用 <code>@DefineFields</code> 声明字段</td>
+</tr>
+<tr>
+<td>自定义子系统</td>
+<td>继承 <code>ServerSubsystem</code> / <code>ClientSubsystem</code>，用 <code>@SubsystemServer</code> / <code>@SubsystemClient</code> 注册</td>
+</tr>
+<tr>
+<td>自定义插件</td>
+<td>继承 <code>PluginBase</code>，用 <code>@Plugin</code> 装饰，通过 <code>PLUGINS</code> 配置启用</td>
+</tr>
+<tr>
+<td>AOP 切面</td>
+<td>用 <code>@Aspect(TargetClass)</code> + <code>@Before/@After</code> 等装饰器</td>
+</tr>
+<tr>
+<td>自定义调度器</td>
+<td>使用 <code>SimpleFixedScheduler(period)</code> 或直接操作 <code>Scheduler</code></td>
+</tr>
+<tr>
+<td>预设事件类型</td>
+<td>在 <code>architect/event/events/</code> 下定义事件类</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="">下一步</h2>
+<ul>
+<li><a href="subsystem.md">子系统 (subsystem.md)</a> — 深入子系统 API</li>
+<li><a href="ecs.md">组件系统 (ecs.md)</a> — 完整的 ECS 参考</li>
+<li><a href="event.md">事件系统 (event.md)</a> — 事件系统详解</li>
+<li><a href="scheduler.md">调度系统 (scheduler.md)</a> — 调度器完整 API</li>
+</ul>
+
+</article>
+</main>
+</body>
+</html>

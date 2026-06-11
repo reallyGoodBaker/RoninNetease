@@ -1,169 +1,298 @@
-# RoninNetease 架构设计
+# Architecture — 架构设计
 
-## 为什么存在这个框架
+RoninNetease 是一个专为网易版《我的世界》设计的 ECS（Entity-Component-System）模组框架。本文档详细介绍其分层架构、核心设计决策和数据流。
 
-网易基岩版《我的世界》模组 SDK（`mod.client.extraClientApi` / `mod.server.extraServerApi`）提供了一个底层的事件驱动的 API，但没有提供任何业务逻辑组织方式。
+---
 
-典型原始开发的代码结构：
-
-```python
-# 所有逻辑平铺在 listen/import 回调中
-def on_tick():
-    for entityId in global_entity_list:
-        comp = api.CreateComponent(entityId, 'xxx', 'Health')
-        if comp and comp.value <= 0:
-            api.DestroyEntity(entityId)
-```
-
-随着模组规模增长（实体类型增多、子系统间依赖复杂），这种模式迅速退化为**面条式代码**——状态散落在全局字典中、生命周期失控、实体遍历每次都全量扫描 O(n)、子系统间硬引用耦合。
-
-RoninNetease 的目标是将这些痛点一一解决，同时保持 Python 2 兼容性。
-
-## 分层设计
+## 1. 整体分层
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│                 compact.py  (统一入口)                     │
-├──────────────────────────────────────────────────────────┤
-│  UI Layer      │  FSM       │  Remote (RPC)               │
-│  Signal/Sink   │  StateTree │  DataTable serialization    │
-├──────────────────────────────────────────────────────────┤
-│  Query Layer   │  Event Layer                             │
-│  @Query        │  EventChain / EventSignal / EventTarget │
-│  CompIndex     │  @EventListener / ChainedEvent           │
-├──────────────────────────────────────────────────────────┤
-│  Component Layer │  Scheduler Layer                       │
-│  CRUD / Marker   │  Tick / Render / Fixed / Event        │
-│  Schema / Persist│  Future / Async                        │
-├──────────────────────────────────────────────────────────┤
-│  SubsystemManager  │  Plugin Loader  │  CommandBus         │
-│  Lifecycle / Tick  │  Dep Topology   │  Subsystem decouple │
-├──────────────────────────────────────────────────────────┤
-│  Annotation System │  Profiler  │  Config (HOT_RELOADABLE) │
-├──────────────────────────────────────────────────────────┤
-│  NetEase SDK (mod.client.extraClientApi / mod.server)     │
-└──────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│                    用户代码层                              │
+│  subsystems/  components/  plugins/  conf.py  modMain.py │
+├─────────────────────────────────────────────────────────┤
+│                    Compact 入口层                         │
+│              architect.compact (统一导出)                  │
+├──────────┬──────────┬──────────┬──────────┬─────────────┤
+│   UI     │  Event   │  Query   │ Remote   │   Aspect    │
+│  系统     │  系统    │  系统    │  系统     │   系统      │
+├──────────┼──────────┼──────────┼──────────┼─────────────┤
+│              SubsystemManager (核心管理器)                 │
+│  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────────┐ ┌───────────┐ │
+│  │ Tick │ │Render│ │Fixed │ │CommandBus│ │ Profiler  │ │
+│  │Sched │ │Sched │ │Sched │ │          │ │           │ │
+│  └──────┘ └──────┘ └──────┘ └──────────┘ └───────────┘ │
+├─────────────────────────────────────────────────────────┤
+│                  引擎抽象层 (architect.core)               │
+│  loader  │ basic │annotation│ configurator │ unreliable  │
+├─────────────────────────────────────────────────────────┤
+│                 网易 MC 引擎 API 层                        │
+│   mod.client.extraClientApi / mod.server.extraServerApi   │
+├─────────────────────────────────────────────────────────┤
+│                    系统插件层                              │
+│    event  │ animation │ input │ squad                    │
+└─────────────────────────────────────────────────────────┘
 ```
 
-## 核心设计决策
+---
 
-### 1. 装饰器驱动 vs 显式注册
+## 2. 模块职责矩阵
 
-**选择**：装饰器驱动。
+| 模块 | 路径 | 职责 |
+|---|---|---|
+| **core** | `architect/core/` | 核心基础设施：加载器、子系统管理器、调度器、命令总线、Profiler、Ref、AOP |
+| **component** | `architect/component/` | ECS 组件系统：组件创建/销毁/查询、CompIndex 反向索引、持久化 |
+| **event** | `architect/event/` | 事件系统：EventChain 责任链、ChainedEvent、EventSignal、引擎事件枚举 |
+| **ui** | `architect/ui/` | UI 系统：UiSubsystem、Signal/Sink 响应式绑定、UiDef 声明式 UI、手势 |
+| **math** | `architect/math/` | 数学库：vec3、vec4、mat4、Double、Vec3Utils |
+| **level** | `architect/level/` | 关卡工具：LevelClient、LevelServer |
+| **persistent** | `architect/persistent/` | 持久化数据管理 |
+| **remote** | `architect/remote/` | 跨端 RPC：Remote 装饰器、callRemote、Future 异步 |
+| **fsm** | `architect/fsm/` | 有限状态机：StateTree 树形状态机（推荐）、deprecated Classic FSM |
+| **query** | `architect/query/` | 实体查询：Query 装饰器、CompIndex 缓存、QueryClient/QueryServer |
+| **command** | `architect/command/` | 命令注册与管理 |
+| **attr** | `architect/attr/` | 实体属性读写封装（客户端/服务端） |
+| **utils** | `architect/utils/` | 工具集：设备信息、Molang、Persona、绘图、增强列表/函数 |
+| **plugins** | `architect/plugins/` | 系统插件：事件、动画扩展、输入系统、小队系统 |
+| **compact** | `architect/compact.py` | 统一导出入口，简化 import |
 
-```python
-# 框架方式
-@Sched.Tick()
-@Query(EntityId, HealthComponent)
-def handle(self, entityId, health):
-    ...
+---
 
-# 对比显式注册方式
-manager.tickScheduler.register('update', lambda dt: handle(dt))
-manager.queryEngine.register(HealthComponent, handle)
-```
+## 3. 核心设计决策
 
-**原因**：
-- 网易模组开发者的主力 IDE（PyCharm + MC Dev Kit）对装饰器的代码补全和跳转支持良好
-- 声明式代码在阅读时比注册式代码更容易理解「这个方法在何时被调用」
-- `@Query` 的参数在装饰时就能做静态检查（组件是否存在）
+### 3.1 装饰器 vs 注册表
 
-**代价**：隐式行为增多，调用栈中包含多层 wrapper，调试时需理解注解系统的工作原理。
+框架大量使用 Python 装饰器进行声明式注册，而非显式注册表调用。
 
-### 2. CompIndex 反向索引 vs Archetype
+**原因：**
+- 减少样板代码，代码即文档
+- 注册时机由框架控制，避免手动注册顺序错误
+- 注解（annotation）机制统一管理元数据
 
-**选择**：组件名 → 实体 ID 集合的反向索引，Query 时求交集。
-
-**原因**：
-- 网易 SDK 的组件存储在 C++ 引擎侧，框架只能通过字符串名称创建/销毁组件，无法在 Python 侧控制组件的内存布局（Archetype 的前提不成立）
-- 集合交集 O(min(m,n)) 的性能在实际模组中（通常实体持有 5-15 个组件）远优于全量遍历 O(n)
-- 按集合大小升序排列后逐级裁剪，充分利用了「稀有组件」的过滤效果
-
-### 3. SubsystemManager + subsystem 双接口
-
-**选择**：`SubsystemManager`（实例）负责生命周期管理，`subsystem`（静态类）提供快捷访问。
-
-**原因**：
-- 大部分模组只有一个主导子系统（Server 端一个，Client 端一个），`subsystem.sendServer()` 比 `SubsystemManager.getInstance().getSubsystem(MySystem).sendServer()` 简洁得多
-- 当需要多子系统协作时，`SubsystemManager.getSubsystem()` 提供精确控制
-- `subsystem` 类代理第一个注册的子系统，这是一个「80% 场景的便捷层」
-
-### 4. 调度器重入保护
-
-**选择**：跳过而非排队。
-
-```python
-if self._sequenceExecuting:
-    self._skippedUpdates += 1
-    return  # 直接跳过
-```
-
-**原因**：
-- 网易 SDK 的 Tick 回调是单线程同步调用，不存在真正并发的重入
-- 跳过而非排队的理由是：如果上一次 `executeSequence` 还未完成，说明某任务耗时超过了一个 Tick 周期。此时排队会导致任务堆积并延迟越来越大，跳过反而是止损
-- 跳过的帧数通过 `getSkippedUpdates()` 暴露给 Profiler，开发者可以从诊断快照中感知到性能瓶颈
-
-### 5. Python 2 兼容性策略
-
-**选择**：`# type:` 注释 + `if 1 > 2` hack。
-
-**原因**：
-- Python 2 没有 PEP 484 类型注解语法
-- `# type:` 是 PyCharm/VS Code 等 IDE 支持的非标准类型标注方式
-- `if 1 > 2: return cls()` 利用死代码分支让类型检查器推断返回值类型为 `cls`，否则返回 `None` 会导致所有调用处报类型警告
-- 这些代码在有类型注解的 Python 3 中是冗余的，但在 Py2 + IDE 类型检查的组合中是不可或缺的
-
-## 数据流
+**实现机制：**
+框架通过 `AnnotationHelper` 在目标（类或方法）上以 `_annotation` 属性存储元数据字典。装饰器如 `@EventListener`、`@Sched.Tick`、`@Remote` 等通过 `AnnotationHelper.addAnnotation()` 标记目标，框架在合适时机（如子系统 `_init`）统一扫描并注册。
 
 ```
-游戏引擎 Tick / Render 事件
+@EventListener('SomeEvent')     → 标记方法 → Subsystem._init() 扫描并注册
+@Sched.Tick()                   → 标记方法 → Subsystem._init() 添加到 Scheduler
+@Remote                         → 标记方法 → Subsystem._init() 注册到远程调用表
+```
+
+### 3.2 CompIndex 反向索引（vs Archetype）
+
+ECS 的组件存储采用 **CompIndex（组件索引）** 模式：
+
+- 每个组件类型维护一个 `{entityId: componentInstance}` 字典
+- 查询时通过 CompIndex 缓存集合交集快速定位实体
+- 相比 Archetype 模式（按组件组合排列实体），CompIndex 在组件种类多、实体数中等时更灵活且内存友好
+
+**查询流程：**
+1. `@Query(target='{Health,Transform}')` 被调用
+2. 查询装饰器从 CompIndex 缓存获取 `Health` 的实体集合和 `Transform` 的实体集合
+3. 取交集得到候选实体列表
+4. 遍历候选实体，注入组件实例到方法参数
+
+### 3.3 重入保护
+
+`Scheduler` 实现了简单的重入保护机制：
+
+- `executeSequence()` 在执行期间检查 `_sequenceExecuting` 标志
+- 如果检测到重入（上一帧尚未完成），则递增 `_skippedUpdates` 计数器并跳过
+- 这防止了因游戏帧率波动导致的任务堆积
+
+### 3.4 Python 2.7 兼容策略
+
+由于网易 MC 引擎运行在 Python 2.7 上，框架采取了以下策略：
+
+- 所有源文件添加 `# coding=utf-8` 声明
+- 使用 `FunctionType` / `GeneratorType` 代替 Python 3 的 `Callable` / `Iterator`
+- 使用 `StopIteration` 的 `args[0]` 获取返回值（Py2 没有 `value` 属性）
+- 不在源码中使用 semicolon
+
+---
+
+## 4. 启动流程
+
+```
+createServer() / createClient()
         │
         ▼
-  SubsystemManager.tickSubsystem()
+LoaderUtils.createManager()
         │
-        ├─► 遍历 subsystems, 调用 onUpdate(dt)
+        ├── 获取/注册引擎 System 实例
+        ├── 创建 SubsystemManager(system, engine, sysName)
+        │       ├── 初始化 CommandBus
+        │       ├── 初始化 TickScheduler
+        │       ├── 初始化 RenderScheduler（仅客户端）
+        │       └── 注册 Remote 调用接收器
+        │
+        ├── manager.createServer() / manager.createClient()
         │       │
-        │       └─► Profiler.record('XxxSystem.onUpdate')
+        │       ├── [Server] 监听 LoadServerAddonScriptsAfter 事件
+        │       │       └── 触发 → _initManager(isHost=True)
+        │       │
+        │       └── [Client] 直接调用 _initManager(isHost=False)
         │
-        └─► tickSched.executeSequence()
-                │
-                ├─► TimerTask 队列
-                ├─► BeforeUpdate 队列
-                ├─► Update 队列       ← @Sched.Tick() 方法在此执行
-                │       │
-                │       └─► @Query 装饰器
-                │               │
-                │               └─► CompIndex.queryEntities()
-                │                       │
-                │                       └─► 集合交集 → 候选 entityId 列表
-                │                               │
-                │                               └─► getComponentWithQuery()
-                │                                       │
-                │                                       └─► 检查 required/excluded
-                │                                               │
-                │                                               └─► 注入参数, 调用 fn()
-                │
-                └─► AfterUpdate 队列
-
-Profiler.flush() → {
-    'HealthSystem.onUpdate': {'avg_ms': 1.2, 'max_ms': 3.4, 'count': 60},
-    'scheduler.tickSkipped': {'avg_ms': 0.0, 'max_ms': 0.0, 'count': 60},
-}
+        ▼
+_initManager(isHost)
+        ├── _importModules(isHost)     ← 导入 MOD_SERVER_MODULES / MOD_CLIENT_MODULES
+        ├── INITIALIZED.emit()
+        │       └── → _loadPlugins(manager, isHost)
+        │               ├── _scanPlugins() 扫描并导入插件
+        │               └── _topologicalOrder() 拓扑排序后调用 plugin.onAttach()
+        │
+        ├── _registerCompsIntoGame()    ← 注册所有 Component 到引擎
+        ├── _addAnnotatedSubsystems()   ← 实例化 @SubsystemServer/@SubsystemClient 类
+        │       └── 每个子系统调用 _init()
+        │               ├── _addListeners()      注册事件监听
+        │               ├── _addSchedMethods()   注册调度任务
+        │               ├── _registerRemoteFuncs() 注册远程方法
+        │               └── onInit()             用户初始化钩子
+        │
+        ├── _callReady(isHost)
+        │       ├── 所有子系统调用 onReady()
+        │       ├── 所有插件调用 onReady()
+        │       └── PRELOADED.emit()
+        │
+        └── startTicking(isHost)
+                ├── 监听 OnScriptTickServer / OnScriptTickClient
+                └── 监听 GameRenderTickEvent（仅客户端）
 ```
 
-## 模块职责矩阵
+---
 
-| 模块 | 职责 | 依赖 |
-|------|------|------|
-| `core/subsystem.py` | 生命周期管理、Tick 驱动 | event, scheduler, component, remote |
-| `core/scheduler.py` | 四类调度执行 | basic, conf |
-| `core/loader.py` | 插件发现/依赖排序/加载 | subsystem, configurator |
-| `core/bus.py` | 子系统间同步通信 | 无 |
-| `core/profiler.py` | 性能诊断 | 无 |
-| `core/configurator.py` | 配置读取 + 热更新 | basic |
-| `component/core.py` | ECS CRUD + CompIndex | annotation, event, schema |
-| `component/schema.py` | 组件字段声明与验证 | 无 |
-| `query/common.py` | @Query 注入 + CompIndex 查询 | component |
-| `event/core.py` | EventSignal, EventChain, ChainedEvent | unreliable |
-| `remote/common.py` | 跨端 RPC + Future | scheduler, subsystem |
-| `ui/client.py` | 响应式 UI (Signal/Sink) | event, subsystem |
+## 5. Tick 循环
+
+```
+OnScriptTickServer / OnScriptTickClient 事件触发
+        │
+        ▼
+SubsystemManager.tickSubsystem()
+        ├── 遍历 subsystems，调用 onUpdate(dt)（canTick=True 的子系统）
+        └── tickSched.executeSequence()
+                ├── 执行 TIMER_TASK（超时/间隔任务）
+                ├── 执行 BeforeUpdate 阶段任务
+                ├── 执行 Update 阶段任务
+                └── 执行 AfterUpdate 阶段任务
+                        └── 返回 (deltaTime, skippedUpdates)
+
+GameRenderTickEvent 触发（仅客户端）
+        │
+        ▼
+SubsystemManager.tickRender()
+        ├── 遍历 subsystems，调用 onRender(dt)
+        └── renderSched.executeSequence()
+```
+
+---
+
+## 6. 数据流
+
+### 6.1 配置流
+
+```
+architect/conf.py (引擎默认配置)
+        +
+用户 conf.py (覆盖)
+        │
+        ▼
+modConf() 合并函数
+        ├── MOD_NAME / MOD_VERSION → 用户优先
+        ├── PLUGINS / MOD_SERVER_MODULES → 取并集
+        └── 其他 → 用户优先，HOT_RELOADABLE 白名单控制运行时修改
+```
+
+### 6.2 事件流
+
+```
+引擎事件 (OnScriptTickServer 等)
+        │
+        ▼
+SubsystemManager.addListener() / Subsystem.on()
+        │  通过 system.ListenForEvent 注册到引擎
+        │
+        ▼
+引擎触发时 → EventChain.dispatch(event_data)
+        ├── 创建 ChainedEvent(eventType, data, interruptRef)
+        ├── 按 capture/bubble 顺序遍历 handlers
+        │       └── handler(ChainedEvent)
+        │               ├── event.stop() 设置 interruptRef → 停止传递
+        │               └── event.prevent() 设置 cancel → 阻止默认
+        └── guarded=True 时，handler 抛异常则跳过后续 handler
+```
+
+### 6.3 调度流
+
+```
+Scheduler._scheduleQueues = {
+    'TimerTask':       [Task1, Task2, ...],
+    'BeforeUpdate':    [Task3, ...],
+    'Update':          [Task4, ...],
+    'AfterUpdate':     [Task5, ...],
+}
+        │
+        ▼
+executeSequence()
+        ├── 执行 TIMER_TASK
+        ├── 执行 BeforeUpdate
+        ├── 执行 Update
+        └── 执行 AfterUpdate
+```
+
+---
+
+## 7. 关键接口
+
+### 7.1 SubsystemManager
+
+`SubsystemManager` 是框架的中枢，通过单例模式管理：
+
+```python
+manager = SubsystemManager.getInstance()  # 获取当前端实例
+manager.bus                                 # CommandBus
+manager.getSubsystem(MySystem)             # 按类获取子系统
+manager.getSubsystemByName('MySystem')     # 按名获取子系统
+manager.tickSched                           # Tick 调度器
+manager.renderSched                         # Render 调度器
+manager.INITIALIZED                         # 初始化完成信号
+manager.PRELOADED                           # 预加载完成信号
+```
+
+### 7.2 Subsystem 生命周期
+
+```
+实例化 → _init() → onInit() → onReady() → onUpdate(dt) [每帧] → onDestroy()
+                                          → onRender(dt) [每帧, 客户端]
+```
+
+### 7.3 Plugin 生命周期
+
+```
+@Plugin 装饰 → 创建 _PluginHost
+    → onCreate()          实例创建
+    → onAttach(manager)   附加到管理器（拓扑排序后按顺序）
+    → onReady(manager)    所有子系统就绪后
+    → onDestroy()         销毁时
+```
+
+---
+
+## 8. 扩展点
+
+| 扩展方式 | 机制 |
+|---|---|
+| 自定义组件 | 继承 `Component`，用 `@DefineFields` 声明字段 |
+| 自定义子系统 | 继承 `ServerSubsystem` / `ClientSubsystem`，用 `@SubsystemServer` / `@SubsystemClient` 注册 |
+| 自定义插件 | 继承 `PluginBase`，用 `@Plugin` 装饰，通过 `PLUGINS` 配置启用 |
+| AOP 切面 | 用 `@Aspect(TargetClass)` + `@Before/@After` 等装饰器 |
+| 自定义调度器 | 使用 `SimpleFixedScheduler(period)` 或直接操作 `Scheduler` |
+| 预设事件类型 | 在 `architect/event/events/` 下定义事件类 |
+
+---
+
+## 下一步
+
+- [子系统 (subsystem.md)](subsystem.md) — 深入子系统 API
+- [组件系统 (ecs.md)](ecs.md) — 完整的 ECS 参考
+- [事件系统 (event.md)](event.md) — 事件系统详解
+- [调度系统 (scheduler.md)](scheduler.md) — 调度器完整 API

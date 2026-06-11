@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>best-practices - RoninNetease v1.1.0</title>
+<style>
+:root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}
+*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:Inter,-apple-system,system-ui,sans-serif;background:hsl(var(--b));color:hsl(var(--f));line-height:1.7;font-size:15px}
+nav{position:fixed;top:0;left:0;bottom:0;width:260px;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}
+nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}
+nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}
+.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}
+nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}
+nav a:hover,nav a.active{color:hsl(var(--f));background:hsl(var(--s) / .5);border-left-color:hsl(var(--p))}
+nav a.active{font-weight:600}
+nav a.sub{padding:.22rem 1.25rem .22rem 2.2rem;font-size:.76rem;opacity:.6}
+nav a.sub:hover{opacity:1}
+nav::-webkit-scrollbar,.pages::-webkit-scrollbar{width:4px}
+nav::-webkit-scrollbar-track,.pages::-webkit-scrollbar-track{background:transparent}
+nav::-webkit-scrollbar-thumb,.pages::-webkit-scrollbar-thumb{background:hsl(0 0% 25%);border-radius:4px}
+nav::-webkit-scrollbar-thumb:hover,.pages::-webkit-scrollbar-thumb:hover{background:hsl(0 0% 35%)}
+nav,.pages{scrollbar-width:thin;scrollbar-color:hsl(0 0% 25%) transparent}
+main{margin-left:260px;display:flex;justify-content:center;padding:2rem 2.5rem}
+article{background:hsl(var(--c));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:2.5rem 3rem;max-width:860px;width:100%}
+h1{font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid hsl(0 0% 14%)}
+h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.35rem;border-bottom:1px solid hsl(0 0% 14%)}
+h3{font-size:1.1rem;font-weight:600;margin-top:2rem;margin-bottom:.5rem}
+h4{font-size:1rem;font-weight:600;margin-top:1.5rem;margin-bottom:.4rem;color:hsl(var(--m))}
+p{margin:.8rem 0;line-height:1.75}
+a:not(nav a){color:hsl(var(--p));text-decoration:underline}
+code{background:hsl(var(--s) / .5);padding:.12em .35em;border-radius:3px;font-size:.87em;font-family:"JetBrains Mono",monospace}
+pre{background:hsl(var(--b));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:1rem 1.25rem;overflow-x:auto;margin:1.25rem 0}
+pre code{background:0 0;padding:0;font-size:.83rem;line-height:1.6}
+table{border-collapse:collapse;width:100%;margin:1.5rem 0}
+td,th{border:1px solid hsl(0 0% 14%);padding:.55rem .85rem;text-align:left;font-size:.9rem}
+th{background:hsl(var(--s) / .5);font-weight:600}
+tr:nth-child(even){background:hsl(0 0% 7%)}
+blockquote{border-left:3px solid hsl(var(--p));padding:.5rem 1.1rem;margin:1.25rem 0;background:hsl(267 100% 70% / .04);border-radius:0 var(--r) var(--r) 0;font-size:.92rem;color:hsl(var(--m))}
+hr{border:0;border-top:1px solid hsl(0 0% 14%);margin:2rem 0}
+ol,ul{padding-left:1.5rem;margin:.75rem 0}
+li{margin:.35rem 0;line-height:1.75}
+strong{color:hsl(var(--f))}
+@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+</style>
+</head>
+<body>
+<nav>
+<div class="logo">Ronin<span>Netease</span></div>
+<div class="pages">
+<div class="group">Getting Started</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html" class="active">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">Core Systems</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">Advanced</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5-ui" class="sub">5. Ui 对象</a><a href="ui.html#6-touch" class="sub">6. 触摸手势 — Touch</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><div class="group">Reference</div><a href="math.html">Math — 数学库</a><a href="math.html#1" class="sub">1. 概述</a><a href="math.html#2-vec3" class="sub">2. Vec3 — 三维向量</a><a href="math.html#3-vec4" class="sub">3. Vec4 — 四维向量</a><a href="math.html#4-mat4-4-4" class="sub">4. Mat4 — 4×4 变换矩阵</a><a href="math.html#5-double" class="sub">5. Double — 高精度浮点数</a><a href="math.html#6-math-common-py" class="sub">6. 通用工具函数 — math/common.py</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang" class="sub">3. Molang 表达式 — molang/</a><a href="utils.html#4-persona-persona" class="sub">4. Persona 渲染覆盖 — persona/</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a><a href="fsm.html">FSM — 有限状态机</a><a href="fsm.html#1-statetree" class="sub">1. StateTree — 树形状态机（推荐）</a><a href="fsm.html#2-fsm" class="sub">2. 古典 FSM（已弃用）</a><a href="fsm.html#3-statetree-vs-fsm" class="sub">3. StateTree vs 古典 FSM 对比</a><a href="fsm.html#" class="sub">下一步</a>
+</div>
+</nav>
+<main>
+<article>
+<h1>Best Practices — 最佳实践</h1>
+<p>本文档汇总了使用 RoninNetease 框架时的推荐模式、设计决策和常见陷阱。</p>
+<hr>
+<h2 id="1">1. 子系统设计</h2>
+<h3>✅ 推荐</h3>
+<p><strong>单一职责：</strong> 每个子系统只负责一个领域。</p>
+<pre><code class="language-python"># 好：职责分离
+class CombatSystem(ServerSubsystem):    # 战斗逻辑
+    pass
+
+class InventorySystem(ServerSubsystem): # 物品管理
+    pass
+
+class SpawnSystem(ServerSubsystem):     # 实体生成
+    pass
+
+# 不好：一个系统做所有事情
+class GodSystem(ServerSubsystem):
+    def handle_combat(self): ...
+    def handle_inventory(self): ...
+    def handle_ai(self): ...
+</code></pre>
+<p><strong>通过 <code>CommandBus</code> 解耦：</strong> 让子系统通过命令总线通信，而非直接引用。</p>
+<pre><code class="language-python"># 好：通过 CommandBus
+class QuestSystem(ServerSubsystem):
+    def onReady(self):
+        manager = SubsystemManager.getInstance()
+        self._unreg = manager.bus.register(&#39;quest.complete&#39;, self.on_quest_done)
+
+# 不好：直接引用其他子系统
+class QuestSystem(ServerSubsystem):
+    def onReady(self):
+        self.reward_sys = SubsystemManager.getInstance().getSubsystem(RewardSystem)
+</code></pre>
+<p><strong>在 <code>onReady</code> 中初始化跨系统依赖：</strong> <code>onInit</code> 只初始化自身，等所有系统创建完毕后再在 <code>onReady</code> 中建立连接。</p>
+<pre><code class="language-python">class MySystem(ServerSubsystem):
+    def onInit(self):
+        self.data = {}          # ✅ 初始化自身状态
+
+    def onReady(self):
+        self.other = OtherSystem.getInstance()  # ✅ 获取其他系统
+        self.start_fixed()                      # ✅ 启动固定调度器
+</code></pre>
+<h3>❌ 避免</h3>
+<ul>
+<li>在 <code>onInit</code> 中调用 <code>serveFixed()</code> — 此时引擎未初始化</li>
+<li>在 <code>onInit</code> 中通过 <code>getSubsystem()</code> 获取其他系统</li>
+<li>忘记设置 <code>canTick = True</code> 导致 <code>onUpdate</code> 不执行</li>
+</ul>
+<hr>
+<h2 id="2">2. 组件设计</h2>
+<h3>✅ 推荐</h3>
+<p><strong>纯数据容器：</strong> 组件只存储数据，不含业务逻辑。</p>
+<pre><code class="language-python"># 好
+class Health(Component):
+    hp = 100
+    maxHp = 100
+
+# 不好：组件里写逻辑
+class Health(Component):
+    hp = 100
+    maxHp = 100
+
+    def take_damage(self, amount):   # 逻辑应该放在 System 中
+        self.hp -= amount
+        if self.hp &lt;= 0:
+            self.on_death()
+</code></pre>
+<p><strong>细粒度组件：</strong> 拆分大组件为多个小组件，便于查询和复用。</p>
+<pre><code class="language-python"># 好：细粒度
+class Position(Component):
+    x = 0.0; y = 0.0; z = 0.0
+
+class Velocity(Component):
+    vx = 0.0; vy = 0.0; vz = 0.0
+
+class Health(Component):
+    hp = 100; maxHp = 100
+
+# 不好：大杂烩
+class EntityData(Component):
+    x = 0.0; y = 0.0; z = 0.0
+    vx = 0.0; vy = 0.0; vz = 0.0
+    hp = 100; maxHp = 100
+    inventory = []
+    effects = {}
+</code></pre>
+<p><strong>使用 <code>@DefineFields</code> 做验证：</strong></p>
+<pre><code class="language-python">@DefineFields({
+    &#39;level&#39;: FieldSchema(default=1, validator=lambda v: v &gt;= 1),
+    &#39;xp&#39;: FieldSchema(default=0, validator=lambda v: v &gt;= 0),
+})
+class PlayerStats(Component):
+    pass
+</code></pre>
+<p><strong>标记持久化字段：</strong></p>
+<pre><code class="language-python">class Inventory(Component):
+    items = PersistKeys()   # 标记需要持久化的字段集
+    slots = [&#39;&#39;] * 36
+</code></pre>
+<h3>❌ 避免</h3>
+<ul>
+<li>在组件中编写带副作用的逻辑</li>
+<li>组件的类属性使用可变默认值（如 <code>items = []</code>）— 所有实例共享同一个列表</li>
+<li>忘记在需要持久化的组件上使用 <code>PersistKeys()</code></li>
+</ul>
+<hr>
+<h2 id="3">3. 查询模式</h2>
+<h3>✅ 推荐</h3>
+<p><strong>使用 <code>@Query(attach_query=True)</code> 自动注入：</strong></p>
+<pre><code class="language-python">@Query(target=&#39;{Health}&#39;, required=[&#39;{CombatStats}&#39;], attach_query=True)
+def damage_tick(self, entityId, Health, CombatStats=None):
+    Health.hp -= 1  # 直接使用组件实例
+</code></pre>
+<p><strong>在 <code>onUpdate</code> 中调用查询方法：</strong></p>
+<pre><code class="language-python">class DamageSystem(ServerSubsystem):
+    canTick = True
+
+    def onUpdate(self, dt):
+        self.damage_tick()  # 遍历所有匹配实体
+</code></pre>
+<p><strong>按需使用手动获取：</strong></p>
+<pre><code class="language-python">@Query(target=&#39;{Health}&#39;)
+def check_low_hp(self, entityId):
+    health = getComponent(entityId, Health)
+    if health and health.hp &lt; 20:
+        self.heal(entityId)
+</code></pre>
+<h3>❌ 避免</h3>
+<ul>
+<li>在 <code>@Query</code> 方法内遍历实体再调用 <code>getComponent()</code> — 这是反模式</li>
+<li>对频繁变化的组件使用大范围的 <code>target</code> 查询 — 用 <code>required</code> 代替</li>
+</ul>
+<hr>
+<h2 id="4">4. 事件系统</h2>
+<h3>✅ 推荐</h3>
+<p><strong>使用 <code>@EventListener</code> 装饰器：</strong></p>
+<pre><code class="language-python">@EventListener(&#39;EntityHurtEvent&#39;)
+def onEntityHurt(self, event):
+    entityId = event.id        # ✅ 使用属性访问
+    damage = event.damage
+</code></pre>
+<p><strong>在需要时中断事件流：</strong></p>
+<pre><code class="language-python">@EventListener(&#39;EntityHurtEvent&#39;)
+def onEntityHurt(self, event):
+    if event.id == self.god_player:
+        event.stop()           # 阻止后续监听器
+        event.setEvent(&#39;damage&#39;, 0)  # 修改伤害为 0
+</code></pre>
+<p><strong>区分引擎事件与自定义事件：</strong></p>
+<pre><code class="language-python">@EventListener(&#39;ServerPostInitEvent&#39;)   # 引擎事件 → isCustomEvent=False
+def onInit(self, event): ...
+
+@CustomEvent(&#39;MyDataSyncEvent&#39;)          # 自定义事件 → isCustomEvent=True
+def onSync(self, event): ...
+</code></pre>
+<h3>❌ 避免</h3>
+<ul>
+<li>在事件处理中执行耗时操作 — 考虑用 <code>@Sched.Event</code> 延迟处理</li>
+<li>忘记 <code>event.stop()</code> 后仍需返回值或清理状态</li>
+<li>混淆 <code>event.prevent()</code>（取消默认）和 <code>event.stop()</code>（停止传递）</li>
+</ul>
+<hr>
+<h2 id="5">5. 调度系统</h2>
+<h3>✅ 推荐</h3>
+<p><strong>利用多阶段调度：</strong></p>
+<pre><code class="language-python">@Sched.Tick(SchedUpdateFlags.BeforeUpdate)  # 输入收集
+def collect_input(self): ...
+
+@Sched.Tick()                                # 逻辑更新
+def update_logic(self): ...
+
+@Sched.Tick(SchedUpdateFlags.AfterUpdate)    # 状态同步
+def sync_state(self): ...
+</code></pre>
+<p><strong>固定调度器在 <code>onReady</code> 中启动：</strong></p>
+<pre><code class="language-python">@Sched.Fixed(&#39;save_scheduler&#39;)
+def auto_save(self): ...
+
+def onReady(self):
+    self.scheduleFixed(&#39;save_scheduler&#39;, period=30.0)  # ✅ 在 onReady
+</code></pre>
+<h3>❌ 避免</h3>
+<ul>
+<li>在 <code>onInit</code> 中调用 <code>serveFixed()</code> — 引擎未就绪</li>
+<li>在 <code>@Sched.Event</code> 中尝试访问事件参数 — 应使用 <code>EventReader</code> 组件</li>
+<li>创建过多固定频率调度器 — 合并到少数调度器中</li>
+</ul>
+<hr>
+<h2 id="6">6. 性能诊断</h2>
+<h3>✅ 推荐</h3>
+<p><strong>关键路径计时：</strong></p>
+<pre><code class="language-python">def onUpdate(self, dt):
+    with profiler.record(&#39;Combat.damage_loop&#39;):
+        self.damage_tick()
+
+    with profiler.record(&#39;Combat.heal_loop&#39;):
+        self.heal_tick()
+</code></pre>
+<p><strong>周期性输出报告：</strong></p>
+<pre><code class="language-python">if self.ticks % 300 == 0:
+    snap = profiler.flush()
+    for key, stats in snap.items():
+        if stats[&#39;avg_ms&#39;] &gt; 5.0:   # 只输出超过 5ms 的
+            print(&#39;[WARN] %s: avg=%.2fms max=%.2fms&#39; %
+                  (key, stats[&#39;avg_ms&#39;], stats[&#39;max_ms&#39;]))
+</code></pre>
+<p><strong>生产环境禁用：</strong></p>
+<pre><code class="language-python">profiler.disable()  # 发布时关闭
+</code></pre>
+<h3>❌ 避免</h3>
+<ul>
+<li>每帧都 <code>flush()</code> — 开销大且输出过多</li>
+<li>用过细的 key 导致统计数据过于分散</li>
+<li>在 profiler 开启时记录快速路径（&lt; 0.1ms）— 几乎没有诊断价值</li>
+</ul>
+<hr>
+<h2 id="7">7. 插件设计</h2>
+<h3>✅ 推荐</h3>
+<p><strong>插件只做功能扩展，不承载核心业务逻辑：</strong></p>
+<pre><code class="language-python"># 好：插件提供基础设施
+@Plugin(name=&#39;DatabasePlugin&#39;, ver=[1, 0, 0])
+class DatabasePlugin(PluginBase):
+    def onAttach(self, manager):
+        manager.bus.register(&#39;db.save&#39;, self.save)
+        manager.bus.register(&#39;db.load&#39;, self.load)
+
+# 子系统使用插件提供的基础设施
+class PlayerSystem(ServerSubsystem):
+    def save_player(self):
+        SubsystemManager.getInstance().bus.execute(&#39;db.save&#39;, &#39;player_1&#39;, data)
+</code></pre>
+<p><strong>声明正确的依赖：</strong></p>
+<pre><code class="language-python">@Plugin(
+    name=&#39;MyCombatPlugin&#39;,
+    deps={
+        &#39;RoninAnimationEx&#39;: &#39;&gt;=1.0.0&#39;,   # 需要动画插件
+        &#39;RoninInputEx&#39;: &#39;&gt;=1.0.0&#39;        # 需要输入插件
+    }
+)
+</code></pre>
+<h3>❌ 避免</h3>
+<ul>
+<li>插件之间循环依赖</li>
+<li>在插件中直接实例化子系统 — 应通过 <code>registerSubsystem</code></li>
+<li>插件做太多事情 — 一个插件一个关注点</li>
+</ul>
+<hr>
+<h2 id="8">8. 常见陷阱</h2>
+<h3>8.1 可变默认值</h3>
+<pre><code class="language-python"># ❌ 错误：所有 Health 实例共享同一个 effects 列表
+class Health(Component):
+    effects = []
+
+# ✅ 正确：定义类属性作为默认值
+class Health(Component):
+    hp = 100
+    maxHp = 100
+    # effects 在创建时设置
+</code></pre>
+<p>组件的类属性用作默认值。对于需要实例独立值的字段，在 <code>createComponent</code> 后初始化。</p>
+<h3>8.2 装饰器注册顺序</h3>
+<pre><code class="language-python"># ❌ 先 @SubsystemServer 后定义类会报错
+@SubsystemServer  # ← Manager 此时可能未创建
+class MySystem(ServerSubsystem): ...
+
+# ✅ 正常流程下没问题（modMain.py → createServer() → 导入模块 → 装饰器执行）
+</code></pre>
+<p>确保 <code>modMain.py</code> 中先调用 <code>createServer()</code> / <code>createClient()</code>，再让模块被导入。</p>
+<h3>8.3 组件注册时机</h3>
+<pre><code class="language-python"># ❌ 在 Manager 未完成初始化时创建组件
+createComponent(entity_id, Health)  # → 组件未注册到引擎
+
+# ✅ 在 onReady 或 Tick 中创建
+def onReady(self):
+    createComponent(entity_id, Health)
+</code></pre>
+<hr>
+<h2 id="9">9. 目录结构建议</h2>
+<pre><code>your_mod/
+├── modMain.py               # 入口
+├── conf.py                  # 配置
+├── subsystems/              # 子系统（按领域分）
+│   ├── combat/
+│   │   ├── __init__.py
+│   │   ├── server.py       # 服务端战斗系统
+│   │   └── client.py       # 客户端战斗系统
+│   ├── inventory/
+│   └── quest/
+├── components/              # 组件（按数据域分）
+│   ├── combat.py           # Health, CombatStats
+│   ├── inventory.py        # Inventory
+│   └── player.py           # PlayerStats
+├── plugins/                 # 用户插件
+│   └── my_plugin.py
+├── events/                  # 自定义事件定义（可选）
+│   └── custom_events.py
+└── utils/                   # 工具函数
+    └── helpers.py
+</code></pre>
+<hr>
+<h2 id="10-python-2-7">10. Python 2.7 注意事项</h2>
+<ul>
+<li>使用 <code># coding=utf-8</code> 声明文件编码</li>
+<li><code>print</code> 是语句，不是函数（<code>print &#39;hello&#39;</code>）</li>
+<li><code>dict.items()</code> 返回 list，不是 view</li>
+<li>字符串格式使用 <code>%</code> 或 <code>.format()</code>，没有 f-string</li>
+<li>生成器返回值通过 <code>StopIteration</code> 异常传递</li>
+<li>不要使用 <code>async</code> / <code>await</code> 关键字</li>
+<li>类定义使用 <code>class Foo(object):</code> 显式继承 object</li>
+</ul>
+<hr>
+<h2 id="">下一步</h2>
+<ul>
+<li><a href="quickstart.md">快速开始 (quickstart.md)</a> — 返回入门教程</li>
+<li><a href="architecture.md">架构设计 (architecture.md)</a> — 理解设计决策</li>
+<li><a href="subsystem.md">子系统 (subsystem.md)</a> — 子系统 API 参考</li>
+</ul>
+
+</article>
+</main>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>bus - RoninNetease v1.1.0</title>
+<style>
+:root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}
+*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:Inter,-apple-system,system-ui,sans-serif;background:hsl(var(--b));color:hsl(var(--f));line-height:1.7;font-size:15px}
+nav{position:fixed;top:0;left:0;bottom:0;width:260px;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}
+nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}
+nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}
+.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}
+nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}
+nav a:hover,nav a.active{color:hsl(var(--f));background:hsl(var(--s) / .5);border-left-color:hsl(var(--p))}
+nav a.active{font-weight:600}
+nav a.sub{padding:.22rem 1.25rem .22rem 2.2rem;font-size:.76rem;opacity:.6}
+nav a.sub:hover{opacity:1}
+nav::-webkit-scrollbar,.pages::-webkit-scrollbar{width:4px}
+nav::-webkit-scrollbar-track,.pages::-webkit-scrollbar-track{background:transparent}
+nav::-webkit-scrollbar-thumb,.pages::-webkit-scrollbar-thumb{background:hsl(0 0% 25%);border-radius:4px}
+nav::-webkit-scrollbar-thumb:hover,.pages::-webkit-scrollbar-thumb:hover{background:hsl(0 0% 35%)}
+nav,.pages{scrollbar-width:thin;scrollbar-color:hsl(0 0% 25%) transparent}
+main{margin-left:260px;display:flex;justify-content:center;padding:2rem 2.5rem}
+article{background:hsl(var(--c));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:2.5rem 3rem;max-width:860px;width:100%}
+h1{font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid hsl(0 0% 14%)}
+h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.35rem;border-bottom:1px solid hsl(0 0% 14%)}
+h3{font-size:1.1rem;font-weight:600;margin-top:2rem;margin-bottom:.5rem}
+h4{font-size:1rem;font-weight:600;margin-top:1.5rem;margin-bottom:.4rem;color:hsl(var(--m))}
+p{margin:.8rem 0;line-height:1.75}
+a:not(nav a){color:hsl(var(--p));text-decoration:underline}
+code{background:hsl(var(--s) / .5);padding:.12em .35em;border-radius:3px;font-size:.87em;font-family:"JetBrains Mono",monospace}
+pre{background:hsl(var(--b));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:1rem 1.25rem;overflow-x:auto;margin:1.25rem 0}
+pre code{background:0 0;padding:0;font-size:.83rem;line-height:1.6}
+table{border-collapse:collapse;width:100%;margin:1.5rem 0}
+td,th{border:1px solid hsl(0 0% 14%);padding:.55rem .85rem;text-align:left;font-size:.9rem}
+th{background:hsl(var(--s) / .5);font-weight:600}
+tr:nth-child(even){background:hsl(0 0% 7%)}
+blockquote{border-left:3px solid hsl(var(--p));padding:.5rem 1.1rem;margin:1.25rem 0;background:hsl(267 100% 70% / .04);border-radius:0 var(--r) var(--r) 0;font-size:.92rem;color:hsl(var(--m))}
+hr{border:0;border-top:1px solid hsl(0 0% 14%);margin:2rem 0}
+ol,ul{padding-left:1.5rem;margin:.75rem 0}
+li{margin:.35rem 0;line-height:1.75}
+strong{color:hsl(var(--f))}
+@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}
+</style>
+</head>
+<body>
+<nav>
+<div class="logo">Ronin<span>Netease</span></div>
+<div class="pages">
+<div class="group">Getting Started</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">Core Systems</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">Advanced</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5-ui" class="sub">5. Ui 对象</a><a href="ui.html#6-touch" class="sub">6. 触摸手势 — Touch</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="bus.html" class="active">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><div class="group">Reference</div><a href="math.html">Math — 数学库</a><a href="math.html#1" class="sub">1. 概述</a><a href="math.html#2-vec3" class="sub">2. Vec3 — 三维向量</a><a href="math.html#3-vec4" class="sub">3. Vec4 — 四维向量</a><a href="math.html#4-mat4-4-4" class="sub">4. Mat4 — 4×4 变换矩阵</a><a href="math.html#5-double" class="sub">5. Double — 高精度浮点数</a><a href="math.html#6-math-common-py" class="sub">6. 通用工具函数 — math/common.py</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang" class="sub">3. Molang 表达式 — molang/</a><a href="utils.html#4-persona-persona" class="sub">4. Persona 渲染覆盖 — persona/</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a><a href="fsm.html">FSM — 有限状态机</a><a href="fsm.html#1-statetree" class="sub">1. StateTree — 树形状态机（推荐）</a><a href="fsm.html#2-fsm" class="sub">2. 古典 FSM（已弃用）</a><a href="fsm.html#3-statetree-vs-fsm" class="sub">3. StateTree vs 古典 FSM 对比</a><a href="fsm.html#" class="sub">下一步</a>
+</div>
+</nav>
+<main>
+<article>
+<h1>CommandBus — 命令总线</h1>
+<p><code>CommandBus</code> 是一个本地同步命令总线，用于解耦子系统之间的通信。子系统通过命令名注册处理器，其他模块通过命令名调用，无需直接引用目标子系统实例。</p>
+<hr>
+<h2 id="1">1. 概述</h2>
+<p><code>CommandBus</code> 提供了一种<strong>服务定位式</strong>的模块间通信模式：</p>
+<ul>
+<li><strong>发布者</strong>通过命令名发布任务，不关心谁处理</li>
+<li><strong>处理者</strong>注册到特定命令名下，独立处理请求</li>
+<li>一个命令名可以注册<strong>多个处理器</strong>，按注册顺序依次执行</li>
+</ul>
+<p>与事件系统和 RPC 的对比：</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>CommandBus</th>
+<th>Event</th>
+<th>Remote RPC</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>通信方向</td>
+<td>同步调用</td>
+<td>异步广播</td>
+<td>跨端异步</td>
+</tr>
+<tr>
+<td>返回值</td>
+<td>收集所有处理器返回值</td>
+<td>通过事件对象传递</td>
+<td>Future 回调</td>
+</tr>
+<tr>
+<td>使用场景</td>
+<td>模块间服务调用</td>
+<td>状态变化通知</td>
+<td>客户端↔服务端</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="2-api">2. API</h2>
+<h3>2.1 获取实例</h3>
+<pre><code class="language-python">from architect.core.subsystem import SubsystemManager
+
+manager = SubsystemManager.getInstance()
+bus = manager.bus  # CommandBus 实例
+</code></pre>
+<h3>2.2 方法</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>register</code></td>
+<td><code>(command_name: str, handler: callable) -&gt; callable</code></td>
+<td>注册处理器，返回注销函数</td>
+</tr>
+<tr>
+<td><code>execute</code></td>
+<td><code>(command_name: str, *args, **kwargs) -&gt; list</code></td>
+<td>执行命令，返回所有处理器返回值列表</td>
+</tr>
+<tr>
+<td><code>hasCommand</code></td>
+<td><code>(command_name: str) -&gt; bool</code></td>
+<td>检查是否有处理器注册</td>
+</tr>
+<tr>
+<td><code>clearCommand</code></td>
+<td><code>(command_name: str) -&gt; None</code></td>
+<td>移除指定命令的所有处理器</td>
+</tr>
+<tr>
+<td><code>clearAll</code></td>
+<td><code>() -&gt; None</code></td>
+<td>移除所有已注册的命令</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="3">3. 使用示例</h2>
+<h3>3.1 服务端：注册处理器</h3>
+<pre><code class="language-python">from architect.core import SubsystemServer, ServerSubsystem
+
+class SpawnSystem(ServerSubsystem):
+    def onInit(self):
+        manager = SubsystemManager.getInstance()
+
+        # 注册命令处理器
+        self._unregister = manager.bus.register(&#39;spawn_npc&#39;, self.handle_spawn)
+
+    def handle_spawn(self, template, location, is_global=False):
+        &quot;&quot;&quot;处理生成 NPC 的命令&quot;&quot;&quot;
+        entity_id = self.spawnEntity(
+            template,
+            location,
+            (0, 0),
+            isGlobal=is_global
+        )
+        return entity_id
+
+    def onDestroy(self):
+        # 清理：注销命令
+        if hasattr(self, &#39;_unregister&#39;):
+            self._unregister()
+</code></pre>
+<h3>3.2 调用命令</h3>
+<pre><code class="language-python">class QuestSystem(ServerSubsystem):
+    def spawn_quest_npc(self):
+        manager = SubsystemManager.getInstance()
+
+        # 检查命令是否可用
+        if not manager.bus.hasCommand(&#39;spawn_npc&#39;):
+            print(&#39;[Quest] Spawn system not available&#39;)
+            return
+
+        # 执行命令，收集返回值
+        results = manager.bus.execute(
+            &#39;spawn_npc&#39;,
+            &#39;minecraft:villager&#39;,
+            Location((100, 64, 200), 0),
+            is_global=False
+        )
+
+        # results = [&#39;entity_id_abc123&#39;]
+        if results:
+            print(&#39;[Quest] NPC spawned:&#39;, results[0])
+</code></pre>
+<h3>3.3 多个处理器</h3>
+<pre><code class="language-python"># 两个系统都处理 &#39;on_player_death&#39; 命令
+class ScoreSystem(ServerSubsystem):
+    def onInit(self):
+        SubsystemManager.getInstance().bus.register(
+            &#39;on_player_death&#39;, self.decrease_score
+        )
+
+    def decrease_score(self, player_id, cause):
+        print(&#39;[Score] Player lost points&#39;)
+        return {&#39;score_updated&#39;: True}
+
+class LogSystem(ServerSubsystem):
+    def onInit(self):
+        SubsystemManager.getInstance().bus.register(
+            &#39;on_player_death&#39;, self.log_death
+        )
+
+    def log_death(self, player_id, cause):
+        print(&#39;[Log] Player %s died: %s&#39; % (player_id, cause))
+        return {&#39;logged&#39;: True}
+
+# 执行命令 → 两个处理器都被调用
+results = bus.execute(&#39;on_player_death&#39;, &#39;player_1&#39;, &#39;fall&#39;)
+# results = [{&#39;score_updated&#39;: True}, {&#39;logged&#39;: True}]
+</code></pre>
+<h3>3.4 清理命令</h3>
+<pre><code class="language-python">manager = SubsystemManager.getInstance()
+
+# 移除特定命令的所有处理器
+manager.bus.clearCommand(&#39;spawn_npc&#39;)
+
+# 移除所有命令
+manager.bus.clearAll()
+</code></pre>
+<hr>
+<h2 id="4">4. 典型模式</h2>
+<h3>4.1 服务提供者模式</h3>
+<pre><code class="language-python">class DatabaseSystem(ServerSubsystem):
+    def onInit(self):
+        bus = SubsystemManager.getInstance().bus
+        bus.register(&#39;db.save&#39;, self.save_data)
+        bus.register(&#39;db.load&#39;, self.load_data)
+        bus.register(&#39;db.delete&#39;, self.delete_data)
+
+    def save_data(self, key, value):
+        # ... 保存到数据库
+        return True
+
+    def load_data(self, key):
+        # ... 从数据库加载
+        return {&#39;stored_value&#39;}
+
+    def delete_data(self, key):
+        # ... 删除
+        return True
+</code></pre>
+<pre><code class="language-python">class AnySystem(ServerSubsystem):
+    def save_player_data(self):
+        bus = SubsystemManager.getInstance().bus
+        bus.execute(&#39;db.save&#39;, &#39;player_1&#39;, {&#39;hp&#39;: 100})
+</code></pre>
+<h3>4.2 请求-响应模式</h3>
+<pre><code class="language-python"># 提供者
+class ConfigSystem(ServerSubsystem):
+    def onInit(self):
+        SubsystemManager.getInstance().bus.register(
+            &#39;config.get&#39;, self.get_config
+        )
+
+    def get_config(self, key):
+        return self.config.get(key, None)
+
+# 消费者
+class FeatureSystem(ServerSubsystem):
+    def onReady(self):
+        results = SubsystemManager.getInstance().bus.execute(
+            &#39;config.get&#39;, &#39;max_players&#39;
+        )
+        self.max_players = results[0] if results else 10
+</code></pre>
+<hr>
+<h2 id="5">5. 与事件系统的对比</h2>
+<pre><code class="language-python"># === CommandBus 方式 ===
+# 优点：有返回值，同步调用，适合&quot;请求-响应&quot;
+manager.bus.execute(&#39;get_player_stats&#39;, player_id)
+# → [{&#39;hp&#39;: 100, &#39;mana&#39;: 50}]
+
+# === Event 方式 ===
+# 优点：广播通知，适合&quot;状态变化通知&quot;
+self.sendServer(&#39;PlayerStatsChanged&#39;, {&#39;player_id&#39;: player_id})
+# → 客户端异步接收
+</code></pre>
+<p><strong>选择建议：</strong></p>
+<ul>
+<li>需要<strong>返回值</strong> → 使用 <code>CommandBus</code></li>
+<li>需要<strong>异步广播</strong>给多个接收者 → 使用 Event</li>
+<li>需要<strong>跨端通信</strong> → 使用 Remote RPC / sendServer / sendClient</li>
+</ul>
+<hr>
+<h2 id="">下一步</h2>
+<ul>
+<li><a href="subsystem.md">子系统 (subsystem.md)</a> — 子系统生命周期</li>
+<li><a href="event.md">事件系统 (event.md)</a> — 事件 API</li>
+<li><a href="quickstart.md#12-%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8-rpc">远程调用 (quickstart.md#12-远程调用-rpc)</a> — RPC 参考</li>
+</ul>
+
+</article>
+</main>
+</body>
+</html>
