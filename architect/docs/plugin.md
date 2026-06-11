@@ -1,120 +1,84 @@
-# 插件系统 (architect.plugins)
+# 插件系统
 
-`architect.plugins` 提供了插件/模组间的模块加载和依赖管理机制。
+## 概念
 
-## 核心组件
+插件是框架的扩展单元，可注册在 `PLUGINS` 配置列表中。每个插件由 `@Plugin` 装饰器标记，实现 `PluginBase` 的方法，拥有完整的生命周期钩子。
 
-### 插件管理器 (PluginManager)
+---
 
-由框架自动管理，负责插件的注册、依赖解析和执行生命周期回调。
-
-### 装饰器
-
-#### `@Plugin(name, version, author, description)`
-
-将类注册为插件。必须使用函数调用形式。
+## 定义插件
 
 ```python
 from architect.compact import Plugin, PluginBase
 
-@Plugin('MyPlugin', [1, 0, 0], 'AuthorName', 'A sample plugin')
-class MyPlugin(PluginBase):
-    def __init__(self):
-        self.data = {}
+@Plugin('weather', ver=[1, 0, 0], author='Author', desc='天气系统插件')
+class WeatherPlugin(PluginBase):
 
-    def onAttach(self, manager):
-        # 插件被挂载时调用
-        print('MyPlugin attached')
-
-    def onReady(self, manager):
-        # 所有插件加载完成后调用
-        print('MyPlugin ready')
-```
-
-参数说明：
-- `name`（str）: 插件唯一名称，用于 `getPlugin()` 查询
-- `version`（list[int]）: 语义化版本号 `[major, minor, patch]`
-- `author`（str）: 作者名称
-- `description`（str）: 插件描述
-
-### 基类
-
-#### `PluginBase`
-
-所有插件的基类，提供生命周期方法：
-
-```python
-class PluginBase:
-    def __init__(self):
+    def onCreate(self):
+        "插件类实例化时调用。"
         pass
 
     def onAttach(self, manager):
-        # 当插件被挂载到管理器时调用
+        "框架初始化时调用。manager 是 SubsystemManager 实例。"
         pass
 
     def onReady(self, manager):
-        # 当所有插件都完成 onAttach 后调用
+        "所有子系统创建完毕后调用。"
         pass
-```
 
-### 核心函数
+    def onRegisterComponent(self, compCls):
+        "框架注册组件时调用。插件可以在此注入或替换组件。"
+        pass
 
-```python
-from architect.compact import getPlugin, hasPlugin
+    def onAddSubsystem(self, subsystem):
+        "框架添加子系统时调用。"
+        pass
 
-# 获取已注册的插件实例
-plugin = getPlugin('MyPlugin')
-if plugin:
-    plugin.do_something()
+    def onRemoveSubsystem(self, subsystem):
+        "框架移除子系统时调用。"
+        pass
 
-# 检查插件是否存在
-if hasPlugin('other_mod'):
-    print('other_mod is loaded')
-```
-
-### 使用示例
-
-#### 定义插件
-
-```python
-from architect.compact import Plugin, PluginBase
-
-@Plugin('my_weapon_mod', [1, 2, 0], 'DevTeam', 'Custom weapon system')
-class WeaponPlugin(PluginBase):
-    def __init__(self):
-        self.weapons = {}
-
-    def onAttach(self, manager):
-        self.weapons = {'sword': 10, 'bow': 8}
-
-    def onReady(self, manager):
-        print('Weapon system ready')
-
-    def getDamage(self, weaponName):
-        return self.weapons.get(weaponName, 0)
-```
-
-#### 使用插件
-
-```python
-from architect.compact import getPlugin, hasPlugin
-
-# 在子系统或组件中使用
-class GameSystem:
-    def onInit(self):
-        if hasPlugin('my_weapon_mod'):
-            plugin = getPlugin('my_weapon_mod')
-            damage = plugin.getDamage('sword')
-            print('Damage: %d' % damage)
+    def onDestroy(self):
+        "插件被卸载时调用。"
+        pass
 ```
 
 ---
 
-## 完整 API 对照
+## 在 `conf.py` 中启用插件
 
-| 功能 | API | 说明 |
-|------|-----|------|
-| 插件注册 | `@Plugin(name, version, author, desc)` | 装饰器-注册插件类 |
-| 插件基类 | `PluginBase` | 插件的基类（含 onAttach/onReady） |
-| 获取插件 | `getPlugin(name)` | 通过名称获取插件实例 |
-| 检查插件 | `hasPlugin(name)` | 检查插件是否已加载 |
+```python
+# conf.py
+PLUGINS = [
+    '$vendor.weather',
+    '$user.myPlugin',
+]
+# $vendor → architect/plugins/
+# $user   → my_mod/plugins/
+```
+
+---
+
+## 声明依赖 — v1.1.0
+
+插件可以通过 `deps` 参数声明对其他插件的依赖。框架在加载时按拓扑排序执行，确保依赖项先加载。
+
+```python
+@Plugin('combat', ver=[1, 0, 0], deps={'weather': '>=1.0.0'})
+class CombatPlugin(PluginBase):
+    "combat 插件依赖 weather 插件 >= 1.0.0"
+    pass
+```
+
+拓扑排序带循环依赖安全防护——出现循环时不会死循环，按注册顺序兜底加载。
+
+---
+
+## 运行时获取插件
+
+```python
+from architect.compact import getPlugin, hasPlugin
+
+if hasPlugin('weather'):
+    plugin = getPlugin('weather')
+```

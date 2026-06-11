@@ -1,164 +1,110 @@
-# 调度器 Scheduler
+# 调度系统
 
-`architect` 的调度器提供了灵活的任务调度机制，支持普通任务、可暂停任务（协程）和调度序列。
+## 四种调度类型
 
-## 核心类
+| 装饰器 | 触发时机 | 运行环境 | 典型场景 |
+|--------|----------|----------|----------|
+| `@Sched.Tick()` | 每游戏 Tick (~50ms) | Server & Client | 游戏逻辑、AI |
+| `@Sched.Render()` | 每渲染帧 | **仅 Client** | 特效、动画 |
+| `@Sched.Fixed('name')` | 固定间隔（秒） | 任意 | 自动保存、心跳 |
+| `@Sched.Event('EventName')` | 指定事件触发 | 任意 | 事件驱动任务 |
 
-### Scheduler
+---
 
-调度器管理多个任务队列，每个队列对应一个调度阶段（flag）。任务按阶段依次执行。
+## 使用方式
+
+```python
+from architect.compact import Sched, SchedUpdateFlags, SchedEventFlags
+
+class GameSystem(ServerSubsystem):
+
+    @Sched.Tick(SchedUpdateFlags.Update)
+    def every_tick(self, args):
+        pass  # 每个 Tick 在 Update 阶段执行
+
+    @Sched.Tick(SchedUpdateFlags.BeforeUpdate)
+    def before_update(self, args):
+        pass  # 在 Update 之前执行
+
+    @Sched.Render()
+    def every_frame(self, args):
+        pass  # 客户端每帧执行
+```
+
+---
+
+## 固定频率调度
+
+```python
+class SaveSystem(ServerSubsystem):
+
+    def onInit(self):
+        self.scheduleFixed('save', period=10)  # 每 10 秒执行
+
+    @Sched.Fixed('save')
+    def auto_save(self):
+        print('保存数据...')
+
+    def onDestroy(self):
+        self.stopFixed('save')
+```
+
+---
+
+## 事件触发调度
+
+```python
+class BossSystem(ServerSubsystem):
+
+    @Sched.Event('BossSpawned', isCustom=True, scheduleFlag=SchedEventFlags.Event)
+    def on_boss_spawn(self):
+        print('Boss 出现！开始 AI 逻辑')
+```
+
+---
+
+## 底层 Scheduler API
+
+如果不想使用装饰器，也可以直接操作 `Scheduler` 实例：
 
 ```python
 from architect.core.scheduler import Scheduler
 
-scheduler = Scheduler()
-
-# 默认执行顺序
-print(scheduler.scheduleSequence)
-# ('BeforeUpdate', 'Update', 'AfterUpdate')
+sched = Scheduler()
+sched.addTask('Update', my_func)       # 注册任务
+sched.addSuspendableTask('Update', my_gen)  # 协程任务
+sched.executeSequence()                # 执行一轮
+sched.removeTask('Update', task_id)    # 取消任务
 ```
 
-### SchedulerPoller
+---
 
-可轮询的调度器封装，`SimpleFixedScheduler` 是其子类，提供固定频率执行：
+## 异步 Future 与协程
 
 ```python
-from architect.core.scheduler import SimpleFixedScheduler
+from architect.core.scheduler import Future, Async
 
-poller = SimpleFixedScheduler(period=1)
+@Async
+def fetch_data():
+    "生成器函数转异步协程。yield 出来的 Future 会被自动等待。"
+    result1 = yield remote.client.invoke('Server.check_login')
+    result2 = yield remote.client.invoke('Server.get_profile')
+    return result1, result2
 
-# 启动轮询
-poller.start(lambda: print("tick"))
-
-# 更新（在 Tick 中调用）
-poller.update()
-
-# 停止
-poller.stop()
+# 调用
+ftr = fetch_data()
+ftr.done(lambda data: print('获取完成:', data))
+ftr.expected(lambda err: print('失败:', err))
 ```
 
-## 添加任务
+---
 
-### 普通任务
+## 重入保护
+
+如果上一个 `executeSequence` 还未完成（某任务耗时超过一个 Tick），当前帧**直接跳过**并递增内部计数器。
 
 ```python
-def my_task(*args):
-    print("Task executed with:", args)
-
-scheduler.addTask('Update', my_task)
+sched.getSkippedUpdates()  # 返回跳过帧数（通过 Profiler 可观测）
 ```
 
-### 可暂停任务（协程）
-
-使用生成器函数，`yield` 时暂停，下次调用从暂停处继续：
-
-```python
-def my_coroutine():
-    print("Step 1")
-    yield
-    print("Step 2")
-    yield
-    print("Step 3")
-
-scheduler.addSuspendableTask('Update', my_coroutine)
-```
-
-## 执行任务
-
-```python
-# 执行单个阶段的队列
-scheduler.execute('Update', args=[1, 2, 3])
-
-# 执行完整序列（按 scheduleSequence 顺序）
-dt, skipped = scheduler.executeSequence()
-```
-
-### 执行序列返回值
-
-- **deltaTime**: 距上次执行的时间差（秒）
-- **skippedUpdates**: 跳过的更新次数（当 deltaTime 超过阈值时）
-
-## 移除任务
-
-```python
-# 移除指定任务
-scheduler.removeTask('Update', taskId=123)
-
-# 移除某个阶段的所有任务（taskId=-1）
-scheduler.removeTask('Update')
-
-# 在任务执行中标记移除（延迟删除，避免迭代器异常）
-from architect.core.scheduler import Scheduler
-scheduler.removeTask('Update', taskId)
-
-# 或调用 removeTaskByFn
-scheduler.removeTaskByFn(my_function, 'Update')
-```
-
-## 内部辅助类
-
-### Task
-
-封装一个可调用对象：
-
-```python
-from architect.core.scheduler import Task
-
-task = Task(lambda: print("task"))
-print(task.id)  # 自动递增的 ID
-print(task.finished)  # False
-```
-
-### SuspendableTask
-
-封装一个生成器，每次 `callOnce()` 执行到下一个 `yield`：
-
-```python
-task = SuspendableTask(lambda: (print("a") for _ in range(1)))
-task.callOnce()  # 执行到 yield 或结束
-print(task.finished)  # 如果生成器耗尽则为 True
-```
-
-## 与 Subsystem 集成
-
-在 `ServerSubsystem` / `ClientSubsystem` 中通过 `system` 访问调度器：
-
-```python
-class MySystem(ServerSubsystem):
-    def onReady(self):
-        self.system.addSchedulerTask(self.update)
-
-    def update(self):
-        print("Tick update")
-```
-
-框架提供的 `scheduleFixed` / `stopFixed` 简化了固定频率调度器的使用：
-
-```python
-class MySystem(ServerSubsystem):
-    def onReady(self):
-        self.scheduleFixed('myTask', period=1.0)
-
-    def stop(self):
-        self.stopFixed('myTask')
-```
-
-## 调度标记常量
-
-调度阶段标记在 `architect.conf` 中定义：
-
-```python
-from architect.conf import (
-    TIMER_TASK,          # 定时器任务
-    SYSTEM_SCHED_ANNO,   # 系统调度注解
-    SchedEventFlags,     # 事件调度标记
-    SchedUpdateFlags,    # 更新调度标记
-)
-
-# SchedUpdateFlags
-SchedUpdateFlags.BeforeUpdate  # 更新前
-SchedUpdateFlags.Update         # 更新中
-SchedUpdateFlags.AfterUpdate    # 更新后
-
-# SchedEventFlags
-SchedEventFlags.OnEvent         # 事件触发时
+这不是 Bug——跳帧是单线程环境下的止损策略（排队会导致无限堆积）。跳过帧数通过 Profiler 的 `scheduler.tickSkipped` 指标暴露，开发者可以据此识别性能瓶颈。

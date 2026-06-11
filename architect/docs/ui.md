@@ -1,183 +1,121 @@
 # UI 系统
 
-`architect` 的 UI 系统基于网易 SDK 的 ScreenNode 机制，提供了声明式 UI 定义、响应式数据绑定、手势事件处理等功能。
+## 概念
 
-## UiSubsystem
+`UiSubsystem` 是客户端专用于 UI 管理的子系统，内建了**响应式数据绑定**（Signal/Sink）模式，自动追踪数据变化并更新控件。
 
-UI 子系统继承自 `ScreenNode`、`ClientSubsystem` 和 `EventTarget`，是 UI 的核心类：
+---
+
+## 定义 UI
 
 ```python
-from architect.ui import UiSubsystem, Sink, AutoCreate, UiDef, signal, reactive, Screen
+from architect.compact import UiSubsystem, Screen, AutoCreate
+
+@Screen       # 标记为全屏 UI
+@AutoCreate   # 框架初始化完成后自动创建
+class MainScreen(UiSubsystem):
+    pass
 ```
 
-### 定义 UI
+---
+
+## 生命周期
+
+| 方法 | 调用时机 |
+|------|----------|
+| `onCreate()` | UI 被创建后立即调用（在 Create 中） |
+| `onBackPressed()` | 玩家按返回键时调用（返回 True 阻止关闭） |
+| `onDestroy()` | UI 被销毁时调用 |
 
 ```python
-@UiDef('netease.my_ui.main')
-@Screen
-@AutoCreate
-class MyUI(UiSubsystem):
-    ns = 'my_namespace'
+class MainScreen(UiSubsystem):
 
     def onCreate(self):
-        print("UI created")
+        print('UI 已创建')
 
-    def onDestroy(self):
-        print("UI destroyed")
+    def onBackPressed(self):
+        "返回 True 可阻止 UI 关闭。"
+        return True  # 禁止关闭此屏
 ```
 
-### 生命周期
-
-1. **`Create()`**: UI 创建时自动调用，初始化根控件、监听返回键、初始化 Sink 和手势
-2. **`Destroy()`**: UI 销毁时自动调用，清理监听器和 Sink
-3. **`onCreate()`**: 重写此方法进行初始化
-4. **`onDestroy()`**: 重写此方法进行清理
-5. **`onBackPressed()`**: 返回键按下时调用，返回 `True` 阻止默认关闭行为
-
-### 创建与管理
-
-```python
-# 获取或创建 UI 实例
-ui = MyUI.getOrCreate()
-
-# 强制创建新实例（替换旧实例）
-ui = MyUI.create()
-
-# 压栈（Screen 模式）
-ui = MyUI.pushScreen()
-
-# 移除 UI
-ui.remove()
-```
+---
 
 ## 控件查找
 
 ```python
-# 通过路径查找（带缓存）
-ctrl = self.find('path/to/control')
+class MainScreen(UiSubsystem):
 
-# 通过名称查找（从根控件开始）
-ctrl = self.findByName('control_name')
+    def onCreate(self):
+        # 通过路径查找
+        btn = self.find('/panel/button')
+        # 通过名称查找
+        btn = self.findByName('my_button')
+        # 根控件
+        root = self.rootControl
 ```
 
-## 响应式数据绑定
+---
 
-### `signal`
-
-创建响应式数据变量（返回 (getter, setter) 元组）：
+## 响应式数据绑定 (Signal/Sink)
 
 ```python
-from architect.ui import signal
+from architect.compact import signal, Sink
 
-class MyUI(UiSubsystem):
+class HUD(UiSubsystem):
+
     def onCreate(self):
-        self.count, self.setCount = signal(0)
+        # signal 返回 (getter, setter) 元组
+        self.get_score, self.set_score = signal(0)
+        self.get_name, self.set_name = signal('Player1')
 
     @Sink
-    def update_label(self):
-        # 自动追踪依赖，count 变化时自动重新执行
-        self.find('label').asText().SetText(f"Count: {self.count()}")
+    def update_display(self):
+        "当依赖的 signal 值变化时自动重新执行。
+        Sink 首次执行时自动追踪所有被 getter() 调用的 signal。"
+        label = self.find('/label')
+        label.SetText(self.get_name() + ': ' + str(self.get_score()))
+
+    def add_score(self, pts):
+        self.set_score(self.get_score() + pts)  # 自动触发 update_display
 ```
 
-### `reactive`
+### 原理
 
-将整个对象变为响应式：
+1. `@Sink` 装饰的方法首次执行时，`SinkContext` 会追踪所有被调用的 `getter()`
+2. 当任意被追踪的 `signal` 通过 `setter()` 更新，`@Sink` 方法自动重新执行
+3. 类似 Vue 的 computed / Solid.js 的 createEffect
 
-```python
-from architect.ui import reactive
-
-class MyUI(UiSubsystem):
-    def onCreate(self):
-        data = MyData()
-        self.getData, self.setData = reactive(data)
-        # 修改 data 的任何字段都会触发依赖更新
-```
-
-## 装饰器
-
-### `@UiDef(uiDef)`
-
-标记 UI 的 JSON 定义路径，框架会自动注册 UI：
-
-```python
-@UiDef('netease.my_ui.main')
-class MyUI(UiSubsystem):
-    pass
-```
-
-### `@AutoCreate`
-
-标记 UI 在游戏加载完成后自动创建：
-
-```python
-@AutoCreate
-class MyUI(UiSubsystem):
-    pass
-```
-
-### `@Screen`
-
-标记 UI 为 Screen 模式（栈式管理）：
-
-```python
-@Screen
-@AutoCreate
-class MyUI(UiSubsystem):
-    pass
-```
-
-### `@Sink`
-
-标记方法为依赖追踪函数，在控件初始化和依赖变化时自动调用：
-
-```python
-@Sink
-def update_view(self):
-    text = self.find('text')
-    text.asText().SetText(f"Value: {self.value()}")
-```
+---
 
 ## 手势事件
 
-使用 `Touch` 类的装饰器属性绑定手势事件：
-
 ```python
-from architect.ui import Touch
+class MainScreen(UiSubsystem):
 
-class MyUI(UiSubsystem):
-    @Touch.Click('path/to/button')
-    def on_click(self, ev):
-        print("Clicked at:", ev.pos)
-        print(ev.x, ev.y)
-        print("Target:", ev.target)
-        print("Control:", ev.control)
+    def onCreate(self):
+        # 注册按钮点击事件
+        self.addEventListener('/btn', 'ButtonTouchUpInsideEvent', self.on_click)
+
+    def on_click(self, event):
+        print('按钮被点击:', event.control)
 ```
 
-### 可用手势
+支持的手势类型：`ButtonTouchDownEvent`、`ButtonTouchUpEvent`、`ButtonTouchUpInsideEvent`、`ButtonTouchUpOutsideEvent`、`ButtonDragEvent`、`ButtonLongPressEvent`。
 
-| 装饰器 | 说明 |
-|--------|------|
-| `Touch.Click(btnPath)` | 点击（触摸抬起） |
-| `Touch.Down(btnPath)` | 按下 |
-| `Touch.Move(btnPath)` | 触摸移动 |
-| `Touch.MoveIn(btnPath)` | 移入目标区域 |
-| `Touch.MoveOut(btnPath)` | 移出目标区域 |
-| `Touch.Cancel(btnPath)` | 触摸取消 |
+---
 
-### 事件对象属性
-
-每个手势回调接收的 `ev` 对象包含：
-
-- **`ev.target`**: 绑定的控件对象
-- **`ev.control`**: 路径对应的控件
-- **`ev.screen`**: UI 实例
-- **`ev.x` / `ev.y`**: 触摸坐标
-- **`ev.pos`**: `(x, y)` 坐标元组
-
-## 命名空间
-
-UI 命名空间默认为 `UI_NAMESPACE`，可通过类属性覆盖：
+## 创建/管理
 
 ```python
-class MyUI(UiSubsystem):
-    ns = 'my_custom_namespace'
+# 获取或创建实例（存在则返回已有）
+ui = MainScreen.getOrCreate(param1='val')
+
+# 强制创建（存在则先销毁旧的）
+ui = MainScreen.create(param1='val')
+
+# 作为全屏界面 push
+ui = MainScreen.pushScreen()
+
+# 关闭
+ui.remove()
+```

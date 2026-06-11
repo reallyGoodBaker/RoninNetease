@@ -8,7 +8,7 @@ All notable changes to the RoninNetease framework.
 
 - **CommandBus** (`architect/core/bus.py`): Local synchronous command bus for decoupling subsystem communication. Supports register/execute/unregister/hasCommand/clearAll.
 - **Profiler** (`architect/core/profiler.py`): Lightweight timing collector with `record()`, `flush()`, `snapshot()`, `enable()`/`disable()`. Global `profiler` singleton. Scheduler skipped frames (`scheduler.tickSkipped`, `scheduler.renderSkipped`) automatically fed to profiler.
-- **FieldSchema** (`architect/component/schema.py`): `@defineFields` decorator with `FieldSchema(default, validator)` for component field declaration and validation. Auto-initialized in `createComponent`.
+- **FieldSchema** (`architect/component/schema.py`): `@DefineFields` decorator with `FieldSchema(default, validator)` for component field declaration and validation. Auto-initialized in `createComponent`.
 - **Entity lifecycle events**: `Marker` now exposes `onEntityCreated` and `onEntityDestroyed` EventSignals, triggered on first mark / last unmark.
 - **Plugin dependency declaration**: `@Plugin` decorator now accepts `deps` parameter. `_loadPlugins` runs plugins in topological dependency order with cycle safety.
 - **Hot-reloadable config**: `modConf().set(key, value)` runtime setter with `HOT_RELOADABLE` whitelist protection.

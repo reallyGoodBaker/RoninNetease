@@ -6,10 +6,10 @@
 自动初始化字段并可选的执行验证，减少因拼写错误导致的运行时 bug。
 
 使用方式:
-    from architect.component.schema import FieldSchema, defineFields
+    from architect.component.schema import FieldSchema, DefineFields
 
     @Component()
-    @defineFields(
+    @DefineFields(
         health=FieldSchema(default=100, validator=lambda v: 0 <= v <= 1000),
         name=FieldSchema(default='unnamed')
     )
@@ -38,7 +38,7 @@ class FieldSchema:
             )
 
 
-def defineFields(**fields):
+def DefineFields(**fields):
     """
     装饰器：为组件类声明字段 schema。
 

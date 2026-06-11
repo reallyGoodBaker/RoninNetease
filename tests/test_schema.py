@@ -7,10 +7,10 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import mocks; mocks.install()
-from architect.component.schema import FieldSchema, defineFields, initComponentFields
+from architect.component.schema import FieldSchema, DefineFields, initComponentFields
 
 
-@defineFields(
+@DefineFields(
     health=FieldSchema(default=100, validator=lambda v: 0 <= v <= 1000),
     name=FieldSchema(default='unnamed'),
 )

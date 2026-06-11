@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoninNetease Docs</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; line-height: 1.7; color: #1a1a1a; }
+  h1 { border-bottom: 2px solid #e0e0e0; padding-bottom: .5rem; }
+  h2 { border-bottom: 1px solid #e0e0e0; padding-bottom: .3rem; margin-top: 2rem; }
+  h3 { margin-top: 1.5rem; }
+  pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: .9rem; }
+  code { background: #f0f0f0; padding: .15em .4em; border-radius: 3px; font-size: .9em; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ddd; padding: .5rem .75rem; text-align: left; }
+  th { background: #f5f5f5; }
+  hr { border: none; border-top: 1px solid #ddd; margin: 2rem 0; }
+  p { margin: .8rem 0; }
+  strong { color: #333; }
+</style>
+</head>
+<body>
+<p><h1>UI 系统</h1></p><p><h2>概念</h2></p><p><code>UiSubsystem</code> 是客户端专用于 UI 管理的子系统，内建了<strong>响应式数据绑定</strong>（Signal/Sink）模式，自动追踪数据变化并更新控件。</p><p><hr><br><h2>定义 UI</h2></p><p><pre><code class="lang-python">from architect.compact import UiSubsystem, Screen, AutoCreate</p><p>@Screen       # 标记为全屏 UI<br>@AutoCreate   # 框架初始化完成后自动创建<br>class MainScreen(UiSubsystem):<br>    pass<br></code></pre></p><p><hr><br><h2>生命周期</h2></p><p><table><tr><td>方法</td><td>调用时机</td></tr></table></p><p><table><tr><td><code>onCreate()</code></td><td>UI 被创建后立即调用（在 Create 中）</td></tr></table><br><table><tr><td><code>onBackPressed()</code></td><td>玩家按返回键时调用（返回 True 阻止关闭）</td></tr></table><br><table><tr><td><code>onDestroy()</code></td><td>UI 被销毁时调用</td></tr></table></p><p><pre><code class="lang-python">class MainScreen(UiSubsystem):</p><p>    def onCreate(self):<br>        print('UI 已创建')</p><p>    def onBackPressed(self):<br>        "返回 True 可阻止 UI 关闭。"<br>        return True  # 禁止关闭此屏<br></code></pre></p><p><hr><br><h2>控件查找</h2></p><p><pre><code class="lang-python">class MainScreen(UiSubsystem):</p><p>    def onCreate(self):<br>        # 通过路径查找<br>        btn = self.find('/panel/button')<br>        # 通过名称查找<br>        btn = self.findByName('my_button')<br>        # 根控件<br>        root = self.rootControl<br></code></pre></p><p><hr><br><h2>响应式数据绑定 (Signal/Sink)</h2></p><p><pre><code class="lang-python">from architect.compact import signal, Sink</p><p>class HUD(UiSubsystem):</p><p>    def onCreate(self):<br>        # signal 返回 (getter, setter) 元组<br>        self.get_score, self.set_score = signal(0)<br>        self.get_name, self.set_name = signal('Player1')</p><p>    @Sink<br>    def update_display(self):<br>        "当依赖的 signal 值变化时自动重新执行。<br>        Sink 首次执行时自动追踪所有被 getter() 调用的 signal。"<br>        label = self.find('/label')<br>        label.SetText(self.get_name() + ': ' + str(self.get_score()))</p><p>    def add_score(self, pts):<br>        self.set_score(self.get_score() + pts)  # 自动触发 update_display<br></code></pre></p><p><h3>原理</h3></p><p>1. <code>@Sink</code> 装饰的方法首次执行时，<code>SinkContext</code> 会追踪所有被调用的 <code>getter()</code><br>2. 当任意被追踪的 <code>signal</code> 通过 <code>setter()</code> 更新，<code>@Sink</code> 方法自动重新执行<br>3. 类似 Vue 的 computed / Solid.js 的 createEffect</p><p><hr><br><h2>手势事件</h2></p><p><pre><code class="lang-python">class MainScreen(UiSubsystem):</p><p>    def onCreate(self):<br>        # 注册按钮点击事件<br>        self.addEventListener('/btn', 'ButtonTouchUpInsideEvent', self.on_click)</p><p>    def on_click(self, event):<br>        print('按钮被点击:', event.control)<br></code></pre></p><p>支持的手势类型：<code>ButtonTouchDownEvent</code>、<code>ButtonTouchUpEvent</code>、<code>ButtonTouchUpInsideEvent</code>、<code>ButtonTouchUpOutsideEvent</code>、<code>ButtonDragEvent</code>、<code>ButtonLongPressEvent</code>。</p><p><hr><br><h2>创建/管理</h2></p><p><pre><code class="lang-python"><h1>获取或创建实例（存在则返回已有）</h1><br>ui = MainScreen.getOrCreate(param1='val')</p><p><h1>强制创建（存在则先销毁旧的）</h1><br>ui = MainScreen.create(param1='val')</p><p><h1>作为全屏界面 push</h1><br>ui = MainScreen.pushScreen()</p><p><h1>关闭</h1><br>ui.remove()<br></code></pre></p>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoninNetease Docs</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; line-height: 1.7; color: #1a1a1a; }
+  h1 { border-bottom: 2px solid #e0e0e0; padding-bottom: .5rem; }
+  h2 { border-bottom: 1px solid #e0e0e0; padding-bottom: .3rem; margin-top: 2rem; }
+  h3 { margin-top: 1.5rem; }
+  pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: .9rem; }
+  code { background: #f0f0f0; padding: .15em .4em; border-radius: 3px; font-size: .9em; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ddd; padding: .5rem .75rem; text-align: left; }
+  th { background: #f5f5f5; }
+  hr { border: none; border-top: 1px solid #ddd; margin: 2rem 0; }
+  p { margin: .8rem 0; }
+  strong { color: #333; }
+</style>
+</head>
+<body>
+<p><h1>事件系统</h1></p><p><h2>概念</h2></p><p>RoninNetease 提供三层事件抽象：</p><p><table><tr><td>类型</td><td>用途</td><td>特性</td></tr></table></p><p><table><tr><th>EventSignal</th><td>简单观察者</td><td>一对多，按注册顺序同步执行</td></tr></table><br><table><tr><th>EventChain</th><td>可中断事件链</td><td>捕获/冒泡阶段，<code>stop()</code> 终止传递</td></tr></table><br><table><tr><th>ChainedEvent</th><td>事件对象</td><td>含 <code>stop()</code>/<code>prevent()</code>/<code>setEvent()</code></td></tr></table></p><p><hr><br><h2>EventSignal</h2></p><p><pre><code class="lang-python">from architect.event.core import EventSignal</p><p>signal = EventSignal()<br>handler = lambda val: print('收到:', val)<br>signal.on(handler)<br>signal.emit(42)     # → 收到: 42<br>signal.off(handler)<br></code></pre></p><p><hr><br><h2>EventChain</h2></p><p><pre><code class="lang-python">from architect.event.core import EventChain</p><p>chain = EventChain('MyEvent')<br>chain.guarded = True      # 前一个处理器异常 → 后续跳过<br>chain.useCapture = False  # False=冒泡（后注册先执行），True=捕获</p><p><h1>捕获处理器（先注册先执行）</h1><br>chain.capture(lambda ev: print('[Capture]', ev.dict()))<br><h1>冒泡处理器（后注册先执行，子→父）</h1><br>chain.addListener(lambda ev: print('[Bubble]', ev.dict()))</p><p>chain.dispatch({'key': 'value'})<br></code></pre></p><p><hr><br><h2>ChainedEvent</h2></p><p><pre><code class="lang-python">def listener(self, event):<br>    # event 是 ChainedEvent 实例<br>    event.stop()            # 终止链（后续处理器不执行）<br>    event.prevent()         # 设置 cancel=True（引擎跳过默认行为）<br>    event.setEvent('h', 1) # 修改事件数据<br>    data = event.dict()     # 获取完整数据字典<br></code></pre></p><p><hr><br><h2><code>@EventListener</code> 装饰器</h2></p><p><pre><code class="lang-python">from architect.compact import EventListener</p><p>class DamageSystem(ServerSubsystem):</p><p>    @EventListener('EntityHurtEvent')<br>    def on_hurt(self, event):<br>        "event 是 ChainedEvent。"<br>        if event.damage > 100:<br>            event.prevent()</p><p>    @EventListener('EntityDeathEvent')<br>    def on_death(self, event):<br>        print('实体死亡:', event.entityId)<br></code></pre></p><p><hr><br><h2>自定义事件 <code>@CustomEvent</code></h2></p><p><pre><code class="lang-python">from architect.compact import CustomEvent</p><p>class LevelSystem(ServerSubsystem):</p><p>    @CustomEvent('PlayerLevelUp')<br>    def on_level_up(self, event):<br>        pid = event.playerId<br>        lv = event.level<br>        self.sendClient(pid, 'ShowLevelUp', {'level': lv})<br></code></pre></p><p><hr><br><h2>子系统内置事件方法</h2></p><p>子系统中也提供了便捷的事件注册/注销 API：</p><p><pre><code class="lang-python">class MySystem(ServerSubsystem):</p><p>    def onInit(self):<br>        # 引擎事件（原生）<br>        self.listen('EntityHurtEvent', self.on_hurt)<br>        # 自定义事件<br>        self.on('PlayerLevelUp', self.on_level_up)<br>        # 广播自定义事件给所有监听者<br>        self.broadcast('GameStarted', {'time': 0})</p><p>    def onDestroy(self):<br>        self.unlisten('EntityHurtEvent', self.on_hurt)<br>        self.off('PlayerLevelUp', self.on_level_up)<br></code></pre></p><p><hr><br><h2>兼容性提示</h2></p><p><code>ChainedEvent</code> 会自动处理引擎事件中的 <code>from</code> 字段：</p><p><pre><code class="lang-python">class ChainedEvent:<br>    def __init__(self, eventType, data={}, interruptRef=Ref(None)):<br>        if 'from' in data:<br>            data['source'] = data['from']  # 统一命名<br></code></pre></p>
+</body>
+</html>

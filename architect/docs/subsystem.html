@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoninNetease Docs</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; line-height: 1.7; color: #1a1a1a; }
+  h1 { border-bottom: 2px solid #e0e0e0; padding-bottom: .5rem; }
+  h2 { border-bottom: 1px solid #e0e0e0; padding-bottom: .3rem; margin-top: 2rem; }
+  h3 { margin-top: 1.5rem; }
+  pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: .9rem; }
+  code { background: #f0f0f0; padding: .15em .4em; border-radius: 3px; font-size: .9em; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ddd; padding: .5rem .75rem; text-align: left; }
+  th { background: #f5f5f5; }
+  hr { border: none; border-top: 1px solid #ddd; margin: 2rem 0; }
+  p { margin: .8rem 0; }
+  strong { color: #333; }
+</style>
+</head>
+<body>
+<p><h1>子系统</h1></p><p><h2>概念</h2></p><p>子系统是业务逻辑的唯一载体。每个子系统负责一个功能域（战斗、背包、任务等），由 <code>SubsystemManager</code> 统一管理完整的生命周期。</p><p><hr><br><h2>定义子系统</h2></p><p><pre><code class="lang-python">from architect.compact import ServerSubsystem, ClientSubsystem, SubsystemServer</p><p>@SubsystemServer<br>class CombatSystem(ServerSubsystem):<br>    "在服务端运行，包含所有战斗逻辑。"<br>    pass<br></code></pre></p><p><hr><br><h2>生命周期</h2></p><p><table><tr><td>方法</td><td>调用时机</td><td>典型用途</td></tr></table></p><p><table><tr><td><code>onInit()</code></td><td>当前子系统创建完毕</td><td>注册监听器、初始化数据结构、设 <code>canTick=True</code></td></tr></table><br><table><tr><td><code>onReady()</code></td><td><strong>所有</strong>子系统创建完毕后调用</td><td>安全获取其他子系统、启动定时器</td></tr></table><br><table><tr><td><code>onUpdate(dt)</code></td><td>每 Tick（需 <code>canTick=True</code>）</td><td>核心逻辑更新。<code>dt</code> 为上次 Tick 的秒数</td></tr></table><br><table><tr><td><code>onRender(dt)</code></td><td>每帧（<strong>仅客户端</strong>）</td><td>渲染相关逻辑</td></tr></table><br><table><tr><td><code>onDestroy()</code></td><td>子系统被移除时</td><td>清理资源、注销事件</td></tr></table></p><p><pre><code class="lang-python">@SubsystemServer<br>class InventorySystem(ServerSubsystem):</p><p>    def onInit(self):<br>        self.data = {}<br>        self.canTick = True</p><p>    def onReady(self):<br>        # 所有系统就绪，可获取其他子系统<br>        other = SubsystemManager.getInstance().getSubsystem(CombatSystem)</p><p>    def onUpdate(self, dt):<br>        # 每 tick 执行<br>        pass</p><p>    def onDestroy(self):<br>        self.data.clear()<br></code></pre></p><p><hr><br><h2>获取子系统实例</h2></p><p><pre><code class="lang-python">from architect.core.subsystem import SubsystemManager</p><p>mgr = SubsystemManager.getInstance()<br>combat = mgr.getSubsystem(CombatSystem)<br>combat = mgr.getSubsystemByName('CombatSystem')<br></code></pre></p><p><hr><br><h2>通信方法</h2></p><p><h3>服务端 → 客户端 / 全体客户端</h3></p><p><pre><code class="lang-python">class ServerSystem(ServerSubsystem):<br>    def notify_player(self, pid):<br>        self.sendClient(pid, 'UpdateInventory', {'slots': [...]})<br>    def broadcast_message(self, msg):<br>        self.sendAllClients('ChatMsg', {'text': msg})<br></code></pre></p><p><h3>客户端 → 服务端</h3></p><p><pre><code class="lang-python">class ClientSystem(ClientSubsystem):<br>    def request_purchase(self, item_id):<br>        self.sendServer('BuyItem', {'itemId': item_id})<br></code></pre></p><p><hr><br><h2>快捷代理: <code>subsystem</code>（小写类）</h2></p><p><pre><code class="lang-python">from architect.core.subsystem import subsystem</p><p><h1>无需获取具体子系统实例——框架自动代理第一个注册的子系统</h1><br>subsystem.sendServer('RequestItem', {'itemId': 'diamond'})<br>subsystem.spawnServerEntity('minecraft:zombie', loc, (0, 0))<br></code></pre></p><p>当模组中只有一个服务端子类、一个客户端子类时，<code>subsystem</code> 提供了最简洁的 API。<br>多子系统场景请使用 <code>SubsystemManager.getSubsystem(YourClass)</code> 获取精确实例。</p><p><hr><br><h2><code>@Internal</code> 访问控制 — v1.1.0</h2></p><p>标记为 <code>@Internal</code> 的方法禁止被外部子系统直接调用，必须通过 CommandBus 或事件系统间接访问。</p><p><pre><code class="lang-python">from architect.core.subsystem import Internal</p><p>class CombatSystem(ServerSubsystem):</p><p>    @Internal<br>    def compute_damage(self, attacker_id, target_id):<br>        "内部计算逻辑。其他系统请走 bus.execute('compute_damage')。"<br>        return {'effective': 50}<br></code></pre></p><p><hr><br><h2>固定频率调度器</h2></p><p><pre><code class="lang-python">class AutoSaveSystem(ServerSubsystem):</p><p>    def onInit(self):<br>        self.scheduleFixed('save', period=5)  # 每 5 秒执行一次</p><p>    @Sched.Fixed('save')<br>    def auto_save(self):<br>        print('自动保存中...')<br></code></pre></p>
+</body>
+</html>

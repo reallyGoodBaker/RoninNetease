@@ -7,4 +7,5 @@ from .level.client import LevelClient
 from .level.server import LevelServer
 from .utils.export import *
 from .component import *
+from .component.schema import DefineFields, FieldSchema
 from .remote.common import *
