@@ -1,3 +1,4 @@
+# coding=utf-8
 from .basic import isServer, clientApi, serverApi
 
 
@@ -22,32 +23,76 @@ MOD_ARRAYS = [
     'PLUGINS',
 ]
 
+# 允许在运行时通过 modConf().set(key, value) 修改的配置键
+# 用户可在自己的 conf.py 中扩展此集合
+HOT_RELOADABLE = set([
+    # 'MAX_PLAYERS',
+    # 'DEBUG_MODE',
+    # 'LOG_LEVEL',
+])
+
 VendorPlugins = __dirname__[:__dirname__.rfind('.')] + '.plugins'
 UserPlugins = __modname__ + '.plugins'
 
+
 def modConf():
     from .. import conf
-    engineConf = conf.__dict__ # type: dict[str, str | list[str]]
+    engineConf = conf.__dict__  # type: dict[str, str | list[str]]
     try:
         from .... import conf as mUserConf
-        userConf = mUserConf.__dict__ # type: dict[str, str | list[str]]
+        userConf = mUserConf.__dict__  # type: dict[str, str | list[str]]
     except ImportError:
-        raise ImportError('请在 {} 文件夹中创建 conf.py 文件，并定义 MOD_ENGINE_NAME 和 MOD_SYSTEM_NAME, 如果你已经有了conf文件夹, 请在 __init__.py 中定义以上两个常量'.format(__modname__))
+        raise ImportError(
+            'Please create conf.py in the {} folder and define MOD_ENGINE_NAME and MOD_SYSTEM_NAME. '
+            'If you already have a conf folder, define the two constants above in __init__.py'.format(__modname__)
+        )
+
+    # 合并用户定义的 HOT_RELOADABLE
+    _hotReloadable = HOT_RELOADABLE.copy()
+    userHot = userConf.get('HOT_RELOADABLE')
+    if isinstance(userHot, (list, set)):
+        _hotReloadable.update(userHot)
 
     def getter(key):
         # type: (str) -> str | list[str] | set[str] | None
         if key in MOD_CONST_NAMES:
-            _user = userConf.get(key) # type: ignore
+            _user = userConf.get(key)  # type: ignore
             if _user is None:
                 return engineConf.get(key)
             return _user
         elif key in MOD_ARRAYS:
-            _user = userConf.get(key) # type: ignore
+            _user = userConf.get(key)  # type: ignore
             if _user is None:
                 return engineConf.get(key)
-            rawConf = engineConf.get(key) # type: ignore
+            rawConf = engineConf.get(key)  # type: ignore
             if isinstance(_user, list) and isinstance(rawConf, list):
                 return set(rawConf + _user)
         else:
-            return None
+            # 查找自定义热更键
+            _user = userConf.get(key)
+            if _user is not None:
+                return _user
+            return engineConf.get(key)
+        return None
+
+    def setter(key, value):
+        # type: (str, object) -> None
+        """
+        运行时修改配置。仅允许修改 HOT_RELOADABLE 中列出的键。
+
+        :param key:   配置键名
+        :param value: 新值
+        :raises RuntimeError: 若 key 不在 HOT_RELOADABLE 白名单中
+        """
+        if key not in _hotReloadable:
+            raise RuntimeError(
+                "Config '{}' is not hot-reloadable. "
+                "Add it to HOT_RELOADABLE in your conf.py.".format(key)
+            )
+        existing = userConf.get(key)
+        if existing is not None and type(value) != type(existing):
+            raise TypeError("Config %s expects type %s, got %s"%(key,type(existing).__name__,type(value).__name__))
+        userConf[key] = value
+
+    getter.set = setter
     return getter

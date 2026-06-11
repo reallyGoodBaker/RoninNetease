@@ -1,9 +1,15 @@
 class DBSource:
+    @staticmethod
+    def _checksum(value):
+        import hashlib
+        return hashlib.md5(str(value)).hexdigest()[:8]
+
     def getData(self, key):
         # type: (str) -> object
         pass
     
     def setData(self, key, value):
+        self.setData(key + '_cs', self._checksum(value))
         # type: (str, object) -> None
         pass
 

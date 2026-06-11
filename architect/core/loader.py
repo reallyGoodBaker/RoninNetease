@@ -1,3 +1,4 @@
+# coding=utf-8
 from .subsystem import SubsystemManager, Subsystem, _ShadowSystemClient, _ShadowSystemServer, subsystem
 from .basic import isServer, clientApi, serverApi
 from .contextRecorder import ContextRecorder, Context
@@ -59,14 +60,52 @@ def hasPlugin(name):
 depComps = ContextRecorder.get('depComps')
 depSubsystems = ContextRecorder.get('depSubsystems')
 
+
+def _topologicalOrder(registerList):
+    """
+    按依赖关系对插件进行拓扑排序。
+    registerList: dict[str, _PluginHost]
+    返回经过排序的 (name, host) 迭代器。
+    如果存在循环依赖，会按注册顺序兜底加载（不会死循环）。
+    """
+    visited = set()
+    visiting = set()
+    order = []
+
+    def visit(name):
+        if name in visited:
+            return
+        if name in visiting:
+            return
+        visiting.add(name)
+        host = registerList.get(name)
+        if host:
+            for dep_name in host.dependencies:
+                visit(dep_name)
+        visiting.discard(name)
+        visited.add(name)
+        order.append(name)
+
+    for name in registerList:
+        visit(name)
+
+    result = []
+    for name in order:
+        host = registerList.get(name)
+        if host:
+            result.append((name, host))
+    return result
+
+
 class _PluginHost(object):
-    def __init__(self, name, ver, author, desc, compCls):
-        # type: (str, list[int], str, str, type[PluginBase]) -> None
+    def __init__(self, name, ver, author, desc, compCls, deps=None):
+        # type: (str, list[int], str, str, type[PluginBase], dict | None) -> None
         self.name = name
         self.ver = ver
         self.author = author
         self.desc = desc
         self.compCls = compCls
+        self.dependencies = deps or {}
         self._inst = None
         self._capturedComps = []
         self._capturedSubsystems = []
@@ -147,12 +186,21 @@ def _upgradePlugin(pluginHost, newCls, name, ver, author, desc):
         _inst.onAttach(SubsystemManager.getInstance())
 
 
-def Plugin(name, ver=[0, 0, 1], author='Unknown', desc='Unknown'):
+def Plugin(name, ver=[0, 0, 1], author='Unknown', desc='Unknown', deps=None):
+    """
+    声明一个插件。
+
+    :param name:   插件名称
+    :param ver:    版本号 [major, minor, patch]
+    :param author: 作者
+    :param desc:   描述
+    :param deps:   依赖的其他插件名称与版本约束, 如 {'otherPlugin': '>=1.0.0'}
+    """
     def _decorator(cls):
         # type: (type) -> type
         registerList = _REGISTERED_SER_PLUGINS if isServer() else _REGISTERED_CLI_PLUGINS
         if cls not in registerList:
-            registerList[name] = _PluginHost(name, ver, author, desc, cls)
+            registerList[name] = _PluginHost(name, ver, author, desc, cls, deps)
             registerList[name].create()
         else:
             registered = registerList[name]
@@ -197,7 +245,8 @@ def _loadPlugins(manager, isHost):
     # type: (SubsystemManager, bool) -> None
     _scanPlugins(isHost)
     registerList = _REGISTERED_SER_PLUGINS if isHost else _REGISTERED_CLI_PLUGINS
-    for _name, _host in registerList.items():
+    # 按依赖拓扑排序加载插件，确保依赖项先加载
+    for _name, _host in _topologicalOrder(registerList):
         try:
             _host.load(manager)
             print('[INFO] Loaded plugin: ' + _host.name + ' by ' + _host.author + '\n' + _host.desc)

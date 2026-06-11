@@ -1,3 +1,4 @@
+# coding=utf-8
 class _ModuleLocator: pass
 __modname__ = _ModuleLocator.__module__[:_ModuleLocator.__module__.find('.')]
 """
@@ -66,6 +67,7 @@ class SchedEventFlags:
     Event = SCHED_EVENT
     AfterEvent = SCHED_AFTER_EVENT
 
+INTERNAL_METHOD = '_internal_method'
 ASPECT = '_Aspect'
 
 class Aspects:

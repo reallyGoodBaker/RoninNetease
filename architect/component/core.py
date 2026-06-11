@@ -1,10 +1,13 @@
+# coding=utf-8
 from ..conf import COMPONENT_NAMESPACE, COMPONENT_TAG, PERSIST_INFO
 from ..core.annotation import AnnotationHelper
 from ..core.contextRecorder import ContextRecorder
 from ..core.basic import isServer, clientApi, serverApi, levelId
+from ..event.core import EventSignal
 from ..persistent.client import ClientKVDatabase, ClientKVDatabaseGlobal
 from ..persistent.server import ServerKVDatabase
 from .common import _nativeCompGet
+from .schema import initComponentFields
 
 clientCompCls = []
 serverCompCls = []
@@ -67,15 +70,20 @@ def isPersistComponent(cls):
 class Marker:
     def __init__(self):
         self.marked = {}
+        self.onEntityCreated = EventSignal()
+        self.onEntityDestroyed = EventSignal()
     
     def mark(self, entityId):
         cur = self.marked.get(entityId, 0)
         self.marked[entityId] = cur + 1
+        if cur == 0:
+            self.onEntityCreated.emit(entityId)
 
     def unmark(self, entityId):
         cur = self.marked.get(entityId, 0) - 1
         if cur <= 0:
             self.marked.pop(entityId, None)
+            self.onEntityDestroyed.emit(entityId)
             return
         else:
             self.marked[entityId] = cur
@@ -130,7 +138,13 @@ class CompIndex:
             allSets.append(entitySet)
 
         if not allSets:
-            # 没有 targets 也没有 required: 退化为全量遍历
+            # No targets or required: fallback to full scan
+            import warnings
+            warnings.warn(
+                'CompIndex.queryEntities: no targets or required specified, '
+                'falling back to full entity scan.',
+                RuntimeWarning
+            )
             return list(_getEntityMarker().getMarkedEntities())
 
         # 按集合大小升序排列 (从最小的集合开始, 加速交集)
@@ -196,8 +210,8 @@ def _handlePersistKeys(comp, entityId):
 def createComponent(entityId, cls):
     if 1 > 2:
         return cls()
-    if not entityId:
-        raise ValueError('entityId is empty')
+    if not entityId or not isinstance(entityId, basestring) or len(entityId) == 0:
+        raise ValueError('entityId is invalid: %s' % repr(entityId))
     api = serverApi if isServer() else clientApi
     compKey = cls if type(cls) == str else cls.__name__
     comp = api.CreateComponent(entityId, COMPONENT_NAMESPACE, compKey)
@@ -210,6 +224,7 @@ def createComponent(entityId, cls):
     if hasattr(comp, 'onCreate'):
         comp.onCreate(entityId) # type: ignore
 
+    initComponentFields(comp, cls, entityId)
     _getEntityMarker().mark(entityId)
     _getCompIndex().add(entityId, compKey)
     return comp

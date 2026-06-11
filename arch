@@ -1,0 +1,73 @@
+# Profiler 性能诊断
+
+Profiler 提供轻量级的函数/代码块耗时统计，用于定位 Tick 中的性能瓶颈。
+
+## 快速上手
+
+```python
+from architect.core.profiler import profiler
+
+with profiler.record('my_slow_function'):
+    do_something()
+
+# 定期导出快照
+snap = profiler.flush()
+# {'my_slow_function': {'avg_ms': 1.5, 'max_ms': 3.2, 'count': 60}}
+```
+
+## 集成到子系统
+
+框架会自动为每个子系统的 `onUpdate` 记录耗时。在 `SubsystemManager.flush()` 时也能看到调度器的跳过帧数：
+
+```python
+snap = profiler.flush()
+# {
+#   'HealthSystem.onUpdate': {'avg_ms': 0.8, 'max_ms': 2.1, 'count': 600},
+#   'CombatSystem.onUpdate': {'avg_ms': 3.2, 'max_ms': 12.0, 'count': 600},
+#   'scheduler.tickSkipped': {'avg_ms': 0.0, 'max_ms': 0.0, 'count': 600},
+#   'scheduler.renderSkipped': {'avg_ms': 0.0, 'max_ms': 0.0, 'count': 600},
+# }
+```
+
+## API 参考
+
+### `profiler.record(key)`
+
+返回一个上下文管理器（`with` 块），退出时自动记录耗时。
+
+```python
+with profiler.record('my_key'):
+    expensive_work()
+```
+
+### `profiler.flush()`
+
+返回自上次 flush 以来所有记录的统计快照，并清空记录。
+
+返回值格式：
+
+```python
+{
+    'key': {
+        'avg_ms': float,   # 平均耗时（毫秒）
+        'max_ms': float,   # 最大耗时（毫秒）
+        'count': int,      # 采样次数
+    }
+}
+```
+
+### `profiler.snapshot()`
+
+与 `flush()` 相同，但不清空记录。
+
+### `profiler.enable()` / `profiler.disable()`
+
+启用或禁用 profiler。禁用后 `record()` 不会累积数据，可用于生产环境关闭诊断以节省开销。
+
+## 诊断工作流
+
+1. 在开发阶段启用 profiler（默认启用）
+2. 让游戏运行 10-15 秒
+3. `flush()` 获取快照
+4. 找出 `avg_ms` 或 `max_ms` 超出预期的 key
+5. 在对应子系统中添加更细粒度的 `profiler.record()` 定位瓶颈

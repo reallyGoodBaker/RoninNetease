@@ -133,6 +133,10 @@ class Scheduler:
 
         return dt, self._skippedUpdates
 
+    def getSkippedUpdates(self):
+        # type: () -> int
+        return self._skippedUpdates
+
 
     def _timeoutWrapper(self, fn, ticks, once=False):
         startTick = self._innerTicks

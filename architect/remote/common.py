@@ -11,13 +11,23 @@ if 1 > 2:
 REMOTE_CALL_KEY = '[[remote_call]]'
 REMOTE_RET_KEY = '[[remote_ret]]'
 REMOTE_INNER_KEY = '[[remote_inner]]'
+REMOTE_VALIDATE_KEY = '[[remote_validate]]'
 
 
-def Remote(method):
+def Remote(method=None, **validate_types):
     """
     装饰器被应用在服务器子系统的方法上时, 会往参数列表第一个添加客户端的playerId
     """
+    if method is None:
+        def decorator(fn):
+            AnnotationHelper.addAnnotation(fn, REMOTE_INNER_KEY, True)
+            if validate_types:
+                AnnotationHelper.addAnnotation(fn, REMOTE_VALIDATE_KEY, validate_types)
+            return fn
+        return decorator
     AnnotationHelper.addAnnotation(method, REMOTE_INNER_KEY, True)
+    if validate_types:
+        AnnotationHelper.addAnnotation(method, REMOTE_VALIDATE_KEY, validate_types)
     return method
 
 
@@ -103,6 +113,36 @@ def _createInvokeData(id, uri, *args, **kwargs):
     }
 
 
+def _validateRemoteArgs(uri, args, kwargs):
+    if not isServer():
+        return
+    methods = _serverRemoteMethods
+    fn = methods.get(uri)
+    if fn is None:
+        return
+    import inspect
+    validators = AnnotationHelper.getAnnotation(fn, REMOTE_VALIDATE_KEY)
+    if validators is None:
+        return
+    try:
+        spec = inspect.getargspec(fn)
+    except Exception:
+        return
+    arg_names = spec.args[2:]
+    for i2,v in enumerate(args):
+        if i2<len(arg_names):
+            n=arg_names[i2];ch=validators.get(n)
+            if ch:
+                try: ok=ch(v)
+                except: ok=False
+                if not ok: raise ValueError("Remote arg %s=%r failed"%(n,v))
+    for n,v in kwargs.items():
+        ch=validators.get(n)
+        if ch:
+            try: ok=ch(v)
+            except: ok=False
+            if not ok: raise ValueError("Remote arg %s=%r failed"%(n,v))
+
 def _callRemoteMethod(subsys, data):
     id = data['id']
     uri = data['uri']
@@ -127,6 +167,7 @@ def _callRemoteMethod(subsys, data):
             kwargs[key] = value
 
     try:
+        _validateRemoteArgs(uri, args, kwargs)
         if isServer():
             result = _serverRemoteMethods[uri](data['__id__'], *args, **kwargs)
         else:
