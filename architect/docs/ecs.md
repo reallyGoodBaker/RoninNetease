@@ -36,18 +36,20 @@ class Transform(Component):
 
 `Component` 是所有自定义组件的基类。类属性会作为实例的默认值。
 
-### 2.2 持久化组件
+### 2.2 持久化组件 — `@PersistKeys`
+
+`@PersistKeys` 是一个**类装饰器**，接收需要持久化的字段名作为参数：
 
 ```python
 from architect.component import Component, PersistKeys
 
+@PersistKeys('slots', 'selected')
 class Inventory(Component):
-    items = PersistKeys()      # 标记需要持久化的字段集
     slots = [''] * 36
     selected = 0
 ```
 
-`PersistKeys()` 创建一个特殊的描述符，用来标记组件中需要持久化存储的字段。标记后，这些字段的值会在实体卸载/重载时自动保存和恢复。
+标记后，这些字段的值会在实体卸载/重载时自动保存和恢复。
 
 ### 2.3 带字段验证的组件 — `@DefineFields`
 
@@ -84,7 +86,6 @@ class PlayerStats(Component):
 | `createComponent` | `(entityId: str, cls: type) -> instance` | 创建并附着组件 |
 | `getOrCreateComponent` | `(entityId: str, cls: type) -> instance` | 获取已有或创建新组件 |
 | `getComponent` | `(entityId: str, cls: type) -> instance \| None` | 获取组件，不存在返回 None |
-| `getOneComponent` | `(entityId: str, cls: type) -> instance \| None` | 获取或创建单例组件 |
 | `hasComponent` | `(entityId: str, cls: type) -> bool` | 检查组件存在性 |
 | `destroyComponent` | `(entityId: str, cls: type) -> None` | 销毁组件 |
 | `removeComponents` | `(entityId: str) -> None` | 移除实体上的所有组件 |
@@ -124,7 +125,6 @@ destroyComponent('entity_abc', Health)
 ```python
 from architect.component import (
     getOrCreateSingletonComponent,
-    getOneSingletonComponent,
     destroySingletonComponent
 )
 
@@ -141,25 +141,23 @@ destroySingletonComponent('EventReader')
 
 ### 4.1 基本用法
 
+`@Query` 接收组件类作为位置参数，按顺序注入到方法参数中。用 `EntityId` 伪组件获取实体 ID：
+
 ```python
-from architect.component import Query, EntityId
+from architect.query import Query, EntityId
 
 class DamageSystem(ServerSubsystem):
     canTick = True
 
-    @Query(
-        target='{Health,Transform}',       # 必须同时存在
-        required=['{PlayerStats}'],         # 可选
-        attach_query=True                   # 注入参数
-    )
-    def process(self, entityId, Health, Transform, PlayerStats=None):
-        # entityId: str
-        # Health: Health 实例
-        # Transform: Transform 实例
-        # PlayerStats: PlayerStats 实例 或 None
-        Health.hp -= 1
-        if PlayerStats:
-            PlayerStats.xp += 1
+    @Query(Health, Transform, EntityId,
+           required=[PlayerStats],
+           excluded=[Dead])
+    def process(self, health, transform, entityId):
+        # health: Health 实例
+        # transform: Transform 实例
+        # entityId: 实体 ID (str)
+        # 注：required 中的 PlayerStats 仅用于筛选，不注入到参数
+        health.hp -= 1
 
     def onUpdate(self, dt):
         self.process()  # 遍历所有匹配实体
@@ -167,37 +165,38 @@ class DamageSystem(ServerSubsystem):
 
 ### 4.2 `@Query` 参数详解
 
+```python
+def Query(*compCls, **options):
+```
+
 | 参数 | 类型 | 说明 |
 |---|---|---|
-| `target` | `str` | 必须存在的组件，格式 `'{Comp1,Comp2,...}'` |
-| `required` | `list[str]` | 可选组件列表，格式 `['{Comp1}','{Comp2}',...]` |
-| `attach_query` | `bool` | `True` 时自动注入 `entityId` + 组件实例到参数 |
+| `*compCls` | 位置参数 | 组件类型列表，按顺序注入到被装饰方法的参数中 |
+| `required` | `list` | 必须额外存在的组件（不注入到参数中） |
+| `excluded` | `list` | 必须排除的组件 |
 
-### 4.3 非自动注入模式
+### 4.3 伪组件
 
-```python
-from architect.component import getComponent
+| 伪组件 | 注入值 |
+|---|---|
+| `EntityId` | 实体 ID 字符串 |
+| `ExtraArguments` | 调用 wrapper 时传入的 `*args` |
+| `ExtraArgDict` | 调用 wrapper 时传入的 `**kwargs` |
 
-@Query(target='{Health}')
-def check_low_hp(self, entityId):
-    # attach_query=False（或不设置）时，需要手动获取
-    health = getComponent(entityId, Health)
-    if health and health.hp < 20:
-        self.heal(entityId)
-```
+伪组件可以放在参数列表的任意位置，框架自动替换对应的值。
 
 ### 4.4 查询装饰器内部机制
 
 `@Query` 装饰器修改被装饰方法的行为：
-1. 不带参数调用时 → 遍历所有匹配实体，注入参数后调用
-2. 带 `entityId` 参数调用时 → 只处理指定实体
+- 不带参数调用时 → 遍历所有匹配实体，注入参数后逐次调用
+- 带参数调用时 → 传入的参数作为 `*args` 和 `**kwargs`（可通过 `ExtraArguments`/`ExtraArgDict` 获取）
 
 ```python
 # 处理所有匹配实体
 self.process()
 
-# 处理单个实体
-self.process('entity_123')
+# 带额外参数（需要 ExtraArgDict 伪组件接收）
+self.process(some_flag=True)
 ```
 
 ---
@@ -214,7 +213,7 @@ CompIndex
 └── ...
 ```
 
-查询 `{Health,Transform}` 时：
+查询 `(Health, Transform, EntityId)` 时：
 1. 取 `Health` 实体集 ∩ `Transform` 实体集
 2. 遍历结果，注入对应组件实例
 
@@ -222,28 +221,29 @@ CompIndex
 
 ## 6. Marker — 实体标记组件
 
-`Marker` 是一个特殊的生命周期标记组件，用于追踪实体的创建和销毁：
+`Marker` 是一个特殊的生命周期标记组件，用于追踪实体的创建和销毁。每次 `createComponent()` 自动执行 `mark()`，`destroyComponent()` 自动执行 `unmark()`：
 
 ```python
 from architect.component import createComponent, destroyComponent
 
 # 创建 Marker（自动追踪实体创建）
-marker = createComponent(entity_id, Marker)
+marker = createComponent(entityId, Marker)
 
 # 销毁 Marker（自动追踪实体销毁）
-destroyComponent(entity_id, Marker)
+destroyComponent(entityId, Marker)
 ```
 
-从 v1.1.0 开始，`Marker` 暴露了两个 `EventSignal`：
+从 v1.1.0 开始，`Marker` 暴露了两个 `EventSignal` 用于监听实体生命周期：
 
 ```python
-from architect.component import Marker
+from architect.component import entitiesServer  # 服务端
+from architect.component import entitiesClient  # 客户端
 
 # 实体首次标记时
-Marker.onEntityCreated.on(lambda entityId: print('Created:', entityId))
+entitiesServer.onEntityCreated.on(lambda entityId: print('Created:', entityId))
 
 # 实体最终取消标记时
-Marker.onEntityDestroyed.on(lambda entityId: print('Destroyed:', entityId))
+entitiesServer.onEntityDestroyed.on(lambda entityId: print('Destroyed:', entityId))
 ```
 
 ---
@@ -282,68 +282,64 @@ class Health(Component):
 class CombatStats(Component):
     pass
 
-# subsystems/combat_system.py
+class Dead(Component):
+    """标记死尸组件"""
+    pass
+
+# subsystems/combatSystem.py
 from architect.core import SubsystemServer, ServerSubsystem, EventListener
-from architect.component import Query, EntityId, createComponent, getComponent
+from architect.query import Query, EntityId
+from architect.component import createComponent, getComponent
 
 class ServerCombatSystem(ServerSubsystem):
     canTick = True
 
     @EventListener('EntityHurtEvent')
     def onEntityHurt(self, event):
-        source_id = event.srcId
-        target_id = event.id
-        raw_damage = event.damage
+        sourceId = event.srcId
+        targetId = event.id
+        rawDamage = event.damage
 
         # 获取攻击方属性
-        attacker = getComponent(source_id, CombatStats)
+        attacker = getComponent(sourceId, CombatStats)
         atk = attacker.attack if attacker else 5
 
         # 获取防御方属性
-        defender = getComponent(target_id, CombatStats)
+        defender = getComponent(targetId, CombatStats)
         defense = defender.defense if defender else 0
 
         # 计算最终伤害
-        final_damage = max(1, atk - defense)
+        finalDamage = max(1, atk - defense)
 
         # 应用伤害
-        health = getComponent(target_id, Health)
+        health = getComponent(targetId, Health)
         if health:
-            health.hp = max(0, health.hp - final_damage)
-            event.setEvent('damage', final_damage)
+            health.hp = max(0, health.hp - finalDamage)
+            event.setEvent('damage', finalDamage)
 
             if health.hp <= 0:
-                self.handle_death(target_id)
+                self.handle_death(targetId)
 
-    def handle_death(self, entity_id):
-        # 死亡处理
-        pass
+    def handleDeath(self, entityId):
+        createComponent(entityId, Dead)
 ```
 
 ```python
 # subsystems/combat_client.py
 from architect.core import SubsystemClient, ClientSubsystem
-from architect.component import Query, EntityId
+from architect.query import Query, EntityId
 
 class ClientCombatSystem(ClientSubsystem):
     canTick = True
 
-    @Query(
-        target='{Health}',
-        required=['{CombatStats}'],
-        attach_query=True
-    )
-    def update_health_bars(self, entityId, Health, CombatStats=None):
-        # 更新血条 UI
-        hp_pct = Health.hp / max(1, Health.maxHp)
-        self.show_health_bar(entityId, min(1.0, hp_pct))
+    @Query(Health, EntityId, excluded=[Dead])
+    def updateHealthBars(self, health, entityId):
+        # 只处理活着的实体
+        hpPct = health.hp / max(1, health.maxHp)
+        self.show_health_bar(entityId, min(1.0, hpPct))
 
     def onUpdate(self, dt):
         self.update_health_bars()
-
-    def show_health_bar(self, entity_id, pct):
-        # UI 更新逻辑
-        pass
 ```
 
 ---

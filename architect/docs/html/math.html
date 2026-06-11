@@ -4,235 +4,223 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>math - RoninNetease v1.1.0</title>
-<style>:root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}body{font-family:"Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR",Inter,-apple-system,system-ui,sans-serif;background:hsl(var(--b));color:hsl(var(--f));line-height:1.7;font-size:15px;zoom:1.25}nav{position:fixed;top:0;left:0;bottom:0;width:17rem;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}nav a:hover,nav a.active{color:hsl(var(--f));background:hsl(var(--s) / .5);border-left-color:hsl(var(--p))}nav a.active{font-weight:600}nav a.sub{padding:.22rem 1.25rem .22rem 2.2rem;font-size:.76rem;opacity:.6}nav a.sub:hover{opacity:1}nav::-webkit-scrollbar,.pages::-webkit-scrollbar{width:4px}nav::-webkit-scrollbar-track,.pages::-webkit-scrollbar-track{background:transparent}nav::-webkit-scrollbar-thumb,.pages::-webkit-scrollbar-thumb{background:hsl(0 0% 25%);border-radius:4px}nav::-webkit-scrollbar-thumb:hover,.pages::-webkit-scrollbar-thumb:hover{background:hsl(0 0% 35%)}nav,.pages{scrollbar-width:thin;scrollbar-color:hsl(0 0% 25%) transparent}main{margin-left:17rem;display:flex;justify-content:center;padding:2rem 2.5rem}article{background:hsl(var(--c));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:2.5rem 3rem;max-width:860px;width:100%}h1{font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid hsl(0 0% 14%)}h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.35rem;border-bottom:1px solid hsl(0 0% 14%)}h3{font-size:1.1rem;font-weight:600;margin-top:2rem;margin-bottom:.5rem}h4{font-size:1rem;font-weight:600;margin-top:1.5rem;margin-bottom:.4rem;color:hsl(var(--m))}p{margin:.8rem 0;line-height:1.75}a:not(nav a){color:hsl(var(--p));text-decoration:underline}code{background:hsl(var(--s) / .5);padding:.12em .35em;border-radius:3px;font-size:.87em;font-family:"Noto Sans Mono","JetBrains Mono","Fira Code",Consolas,monospace}pre{background:hsl(var(--b));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:1rem 1.25rem;overflow-x:auto;margin:1.25rem 0}pre code{background:0 0;padding:0;font-size:.83rem;line-height:1.6}table{border-collapse:collapse;width:100%;margin:1.5rem 0}td,th{border:1px solid hsl(0 0% 14%);padding:.55rem .85rem;text-align:left;font-size:.9rem}th{background:hsl(var(--s) / .5);font-weight:600}tr:nth-child(even){background:hsl(0 0% 7%)}blockquote{border-left:3px solid hsl(var(--p));padding:.5rem 1.1rem;margin:1.25rem 0;background:hsl(267 100% 70% / .04);border-radius:0 var(--r) var(--r) 0;font-size:.92rem;color:hsl(var(--m))}hr{border:0;border-top:1px solid hsl(0 0% 14%);margin:2rem 0}ol,ul{padding-left:1.5rem;margin:.75rem 0}li{margin:.35rem 0;line-height:1.75}strong{color:hsl(var(--f))}@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}</style>
+<style>:root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}body{font-family:"Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR",Inter,-apple-system,system-ui,sans-serif;background:hsl(var(--b));color:hsl(var(--f));line-height:1.7;font-size:15px;zoom:1.25}nav{position:fixed;top:0;left:0;bottom:0;width:17rem;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}.sr-btn{margin-left:auto;background:0 0;border:0;cursor:pointer;color:hsl(0 0% 63.9%);padding:.2rem;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:.12s;flex-shrink:0}.sr-btn:hover{background:hsl(0 0% 14%);color:hsl(0 0% 98%)}nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}nav a:hover,nav a.active{color:hsl(var(--f));background:hsl(var(--s) / .5);border-left-color:hsl(var(--p))}nav a.active{font-weight:600}nav a.sub{padding:.22rem 1.25rem .22rem 2.2rem;font-size:.76rem;opacity:.6}nav a.sub:hover{opacity:1}nav::-webkit-scrollbar,.pages::-webkit-scrollbar{width:4px}nav::-webkit-scrollbar-track,.pages::-webkit-scrollbar-track{background:transparent}nav::-webkit-scrollbar-thumb,.pages::-webkit-scrollbar-thumb{background:hsl(0 0% 25%);border-radius:4px}nav::-webkit-scrollbar-thumb:hover,.pages::-webkit-scrollbar-thumb:hover{background:hsl(0 0% 35%)}nav,.pages{scrollbar-width:thin;scrollbar-color:hsl(0 0% 25%) transparent}main{margin-left:17rem;display:flex;justify-content:center;padding:2rem 2.5rem}article{background:hsl(var(--c));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:2.5rem 3rem;max-width:860px;width:100%}h1{font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid hsl(0 0% 14%)}h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.35rem;border-bottom:1px solid hsl(0 0% 14%)}h3{font-size:1.1rem;font-weight:600;margin-top:2rem;margin-bottom:.5rem}h4{font-size:1rem;font-weight:600;margin-top:1.5rem;margin-bottom:.4rem;color:hsl(var(--m))}p{margin:.8rem 0;line-height:1.75}a:not(nav a){color:hsl(var(--p));text-decoration:underline}code{background:hsl(var(--s) / .5);padding:.12em .35em;border-radius:3px;font-size:.87em;font-family:"Noto Sans Mono","JetBrains Mono","Fira Code",Consolas,monospace}pre{background:hsl(var(--b));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:1rem 1.25rem;overflow-x:auto;margin:1.25rem 0}pre code{background:0 0;padding:0;font-size:.83rem;line-height:1.6}table{border-collapse:collapse;width:100%;margin:1.5rem 0}td,th{border:1px solid hsl(0 0% 14%);padding:.55rem .85rem;text-align:left;font-size:.9rem}th{background:hsl(var(--s) / .5);font-weight:600}tr:nth-child(even){background:hsl(0 0% 7%)}blockquote{border-left:3px solid hsl(var(--p));padding:.5rem 1.1rem;margin:1.25rem 0;background:hsl(267 100% 70% / .04);border-radius:0 var(--r) var(--r) 0;font-size:.92rem;color:hsl(var(--m))}hr{border:0;border-top:1px solid hsl(0 0% 14%);margin:2rem 0}ol,ul{padding-left:1.5rem;margin:.75rem 0}li{margin:.35rem 0;line-height:1.75}strong{color:hsl(var(--f))}.sr{display:flex;align-items:center;padding:.5rem 1rem;text-decoration:none;color:hsl(0 0% 63.9%);font-size:.87rem;transition:.08s}.sr:hover,.sr:focus{background:hsl(0 0% 12%);color:hsl(0 0% 98%);outline:0}.sr-t{flex-shrink:0;width:1.8rem;font-size:.66rem;opacity:.5;text-transform:uppercase}@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}</style>
 </head>
 <body>
 <nav>
-<div class="logo">Ronin<span>Netease</span></div>
+<div class="logo">
+Ronin<span>Netease</span>
+<button title="搜索 (Ctrl+K)" onclick="document.dispatchEvent(new KeyboardEvent('keydown',{ctrlKey:!0,key:'k'}))" class="sr-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+</div>
 <div class="pages">
-<div class="group">Getting Started</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">Core Systems</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">Advanced</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5-ui" class="sub">5. Ui 对象</a><a href="ui.html#6-touch" class="sub">6. 触摸手势 — Touch</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><div class="group">Reference</div><a href="math.html" class="active">Math — 数学库</a><a href="math.html#1" class="sub">1. 概述</a><a href="math.html#2-vec3" class="sub">2. Vec3 — 三维向量</a><a href="math.html#3-vec4" class="sub">3. Vec4 — 四维向量</a><a href="math.html#4-mat4-4-4" class="sub">4. Mat4 — 4×4 变换矩阵</a><a href="math.html#5-double" class="sub">5. Double — 高精度浮点数</a><a href="math.html#6-math-common-py" class="sub">6. 通用工具函数 — math/common.py</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang" class="sub">3. Molang 表达式 — molang/</a><a href="utils.html#4-persona-persona" class="sub">4. Persona 渲染覆盖 — persona/</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a><a href="fsm.html">FSM — 有限状态机</a><a href="fsm.html#1-statetree" class="sub">1. StateTree — 树形状态机（推荐）</a><a href="fsm.html#2-fsm" class="sub">2. 古典 FSM（已弃用）</a><a href="fsm.html#3-statetree-vs-fsm" class="sub">3. StateTree vs 古典 FSM 对比</a><a href="fsm.html#" class="sub">下一步</a>
+<div class="group">入门</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">核心系统</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">进阶</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5" class="sub">5. 触摸手势</a><a href="ui.html#6" class="sub">6. 完整示例</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="plugins.html">Plugins — 系统插件参考</a><a href="plugins.html#1-vendor-event" class="sub">1. 事件系统插件 — $vendor.event</a><a href="plugins.html#2-vendor-animation" class="sub">2. 动画扩展插件 — $vendor.animation</a><a href="plugins.html#3-vendor-input" class="sub">3. 输入系统插件 — $vendor.input</a><a href="plugins.html#4-vendor-squad" class="sub">4. 小队系统插件 — $vendor.squad</a><a href="plugins.html#" class="sub">下一步</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><div class="group">参考</div><a href="math.html" class="active">Math — 数学库</a><a href="math.html#1" class="sub">1. 概述</a><a href="math.html#2-vec3-py" class="sub">2. 向量运算函数 — vec3.py</a><a href="math.html#3-mat4-py" class="sub">3. 矩阵函数 — mat4.py</a><a href="math.html#4-double-py" class="sub">4. 插值与常量 — double.py</a><a href="math.html#5-unit-py" class="sub">5. 时间常量 — unit.py</a><a href="math.html#6-math-utils-py" class="sub">6. 客户端工具 — math/utils.py</a><a href="molang.html">Molang — 表达式工具</a><a href="molang.html#1" class="sub">1. 概述</a><a href="molang.html#2-types-py" class="sub">2. 抽象类型 — types.py</a><a href="molang.html#3-common-py" class="sub">3. 命名变量 — common.py</a><a href="molang.html#4-query-client-py" class="sub">4. 客户端 Query 变量 — client.py</a><a href="molang.html#5-server-py" class="sub">5. 服务端 — server.py</a><a href="molang.html#6" class="sub">6. 完整示例</a><a href="persona.html">Persona — 渲染覆盖系统</a><a href="persona.html#1" class="sub">1. 概述</a><a href="persona.html#2-personarenderercomponent" class="sub">2. PersonaRendererComponent — 客户端渲染组件</a><a href="persona.html#3-personaeventssubsystem" class="sub">3. PersonaEventsSubsystem — 客户端事件子系统</a><a href="persona.html#4-personaserver" class="sub">4. PersonaServer — 服务端中继子系统</a><a href="persona.html#5" class="sub">5. 完整示例</a><a href="persona.html#" class="sub">下一步</a><a href="fsm.html">FSM — 有限状态机</a><a href="fsm.html#1" class="sub">1. 概述</a><a href="fsm.html#2-statetree" class="sub">2. StateTree — 树形状态机（推荐）</a><a href="fsm.html#3-fsm" class="sub">3. 经典 FSM（已弃用）</a><a href="fsm.html#" class="sub">下一步</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang-md-molang-md" class="sub">3. Molang 表达式 — 见 [molang.md](molang.md)</a><a href="utils.html#4-persona-persona-md-persona-m" class="sub">4. Persona 渲染覆盖 — 见 [persona.md](persona.m</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a>
 </div>
 </nav>
 <main>
 <article>
 <h1>Math — 数学库</h1>
-<p>RoninNetease 数学库提供了三维向量（<code>vec3</code>、<code>vec4</code>）、4×4 矩阵（<code>mat4</code>）、高精度浮点数（<code>Double</code>）和常用几何工具。</p>
+<p>RoninNetease 数学库提供了三维向量、4×4 矩阵、几何工具和物理时间常量。所有 API 以<strong>模块级函数</strong>形式导出。</p>
 <hr>
 <h2 id="1">1. 概述</h2>
 <pre><code>architect.math
-├── vec3.py     ← Vec3 三维向量
-├── vec4.py     ← Vec4 四维向量
-├── mat4.py     ← Mat4 4×4 变换矩阵
-├── double.py   ← Double 高精度浮点运算
-├── common.py   ← 通用工具（距离、插值等）
-├── unity.py    ← Unity 引擎相关类型
-├── utils.py    ← Vec3Utils 客户端工具
-└── utilsServer.py ← 服务端工具
+├── vec3.py      ← 三维向量运算函数
+├── vec4.py      ← Vec4 四维向量
+├── mat4.py      ← 4×4 变换矩阵函数
+├── double.py    ← 插值与截断函数、常量（inf, epsilon）
+├── common.py    ← 汇总导出（vec3 + mat4 + double + unit）
+├── unit.py      ← time 时间常量类
+├── utils.py     ← 客户端工具（屏幕转换、碰撞检测、射线等）
+└── utilsServer.py ← 服务端工具（碰撞检测、实体查询等）
 </code></pre>
 <hr>
-<h2 id="2-vec3">2. Vec3 — 三维向量</h2>
-<h3>2.1 属性</h3>
-<table>
-<thead>
-<tr>
-<th>属性</th>
-<th>类型</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>x</code></td>
-<td><code>float</code></td>
-<td>X 分量</td>
-</tr>
-<tr>
-<td><code>y</code></td>
-<td><code>float</code></td>
-<td>Y 分量</td>
-</tr>
-<tr>
-<td><code>z</code></td>
-<td><code>float</code></td>
-<td>Z 分量</td>
-</tr>
-</tbody></table>
-<h3>2.2 构造与基本操作</h3>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> Vec3
+<h2 id="2-vec3-py">2. 向量运算函数 — <code>vec3.py</code></h2>
+<p>所有函数操作 <code>Vector3</code> 对象（引擎 SDK 提供），框架只导出包装函数：</p>
+<h3>2.1 构造与转换</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> vec, tup
 
-<span class="hljs-comment"># 构造</span>
-v = Vec3(<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span>)
-zero = Vec3.zero()          <span class="hljs-comment"># (0, 0, 0)</span>
-one = Vec3.one()            <span class="hljs-comment"># (1, 1, 1)</span>
-up = Vec3.up()              <span class="hljs-comment"># (0, 1, 0)</span>
-forward = Vec3.forward()    <span class="hljs-comment"># (0, 0, 1)</span>
-
-<span class="hljs-comment"># 读写</span>
-x = v.x
-v.x = <span class="hljs-number">10.0</span>
-
-<span class="hljs-comment"># 运算</span>
-v3 = v + Vec3(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>)     <span class="hljs-comment"># 加法</span>
-v3 = v - Vec3(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>)     <span class="hljs-comment"># 减法</span>
-v3 = v * <span class="hljs-number">2.0</span>                <span class="hljs-comment"># 标量乘</span>
-v3 = v / <span class="hljs-number">2.0</span>                <span class="hljs-comment"># 标量除</span>
+v = vec((<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span>))  <span class="hljs-comment"># 从元组创建 Vector3</span>
+v = vec(<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span>)    <span class="hljs-comment"># 从三个浮点数创建</span>
+t = tup(v)                  <span class="hljs-comment"># Vector3 → tuple</span>
 </code></pre>
-<h3>2.3 Vec3Utils — 客户端</h3>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> Vec3Utils
+<h3>2.2 运算</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> add, sub, mul, div, dot, cross, modulo, moduloSqrt, normalize, lerp, nlerp
 
-<span class="hljs-comment"># 距离</span>
-dist = Vec3Utils.distance(v1, v2)           <span class="hljs-comment"># 两点距离</span>
-sqr_dist = Vec3Utils.distance_squared(v1, v2) <span class="hljs-comment"># 距离平方</span>
-
-<span class="hljs-comment"># 方向与角度</span>
-direction = Vec3Utils.direction(v1, v2)     <span class="hljs-comment"># 单位方向向量</span>
-angle = Vec3Utils.angle(v1, v2)            <span class="hljs-comment"># 两向量夹角（弧度）</span>
-angle_deg = Vec3Utils.angle_degrees(v1, v2) <span class="hljs-comment"># 两向量夹角（度）</span>
-
-<span class="hljs-comment"># 单位化与长度</span>
-norm = Vec3Utils.normalize(v)               <span class="hljs-comment"># 单位化</span>
-length = Vec3Utils.magnitude(v)             <span class="hljs-comment"># 向量长度</span>
-sqr_len = Vec3Utils.magnitude_squared(v)    <span class="hljs-comment"># 长度平方</span>
-
-<span class="hljs-comment"># 线性插值</span>
-lerped = Vec3Utils.lerp(v1, v2, t)         <span class="hljs-comment"># 线性插值 t ∈ [0, 1]</span>
-
-<span class="hljs-comment"># 点积与叉积</span>
-dot = Vec3Utils.dot(v1, v2)                <span class="hljs-comment"># 点积</span>
-cross = Vec3Utils.cross(v1, v2)            <span class="hljs-comment"># 叉积</span>
-
-<span class="hljs-comment"># 旋转</span>
-rotated = Vec3Utils.rotate(v, axis, angle)  <span class="hljs-comment"># 绕轴旋转</span>
-
-<span class="hljs-comment"># 投影</span>
-proj = Vec3Utils.project(v, onto)           <span class="hljs-comment"># 投影到 onto 方向</span>
-rej = Vec3Utils.reject(v, onto)             <span class="hljs-comment"># 正交于 onto 的分量</span>
-
-<span class="hljs-comment"># 反射</span>
-reflected = Vec3Utils.reflect(v, normal)     <span class="hljs-comment"># 反射向量</span>
+add(v1, v2)        <span class="hljs-comment"># 加法</span>
+sub(v1, v2)        <span class="hljs-comment"># 减法</span>
+mul(v, <span class="hljs-number">2.0</span>)        <span class="hljs-comment"># 标量乘</span>
+div(v, <span class="hljs-number">2.0</span>)        <span class="hljs-comment"># 标量除</span>
+dot(v1, v2)        <span class="hljs-comment"># 点积（返回 float）</span>
+cross(v1, v2)      <span class="hljs-comment"># 叉积（返回 Vector3）</span>
+modulo(v)          <span class="hljs-comment"># 向量长度</span>
+moduloSqrt(v)      <span class="hljs-comment"># 向量长度平方</span>
+normalize(v)       <span class="hljs-comment"># 单位化</span>
+lerp(a, b, t)      <span class="hljs-comment"># 线性插值 (t ∈ [0, 1])</span>
+nlerp(a, b, t)     <span class="hljs-comment"># 归一化线性插值（两向量需为单位向量）</span>
 </code></pre>
-<h3>2.4 服务端</h3>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utilsServer <span class="hljs-keyword">import</span> Vec3UtilsServer
+<h3>2.3 工具</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> clamp, compare, vabs
 
-<span class="hljs-comment"># 服务端也有类似的 Vec3 工具集</span>
+clamp(v, min_len, max_len)  <span class="hljs-comment"># 将向量长度限制在 [min, max]</span>
+compare(a, b)                <span class="hljs-comment"># 比较长度：&gt;0 表示 a &gt; b，&lt;0 表示 a &lt; b，0 表示相等</span>
+vabs(v)                      <span class="hljs-comment"># 各分量取绝对值</span>
 </code></pre>
 <hr>
-<h2 id="3-vec4">3. Vec4 — 四维向量</h2>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec4 <span class="hljs-keyword">import</span> Vec4
+<h2 id="3-mat4-py">3. 矩阵函数 — <code>mat4.py</code></h2>
+<p>操作引擎 SDK 的 <code>Matrix</code> 对象（4x4 矩阵，行向量左乘：<code>v&#39; = v * M</code>）：</p>
+<h3>3.1 基础矩阵</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> identity, translate, scale, rotateX, rotateY, rotateZ, rotateAxis, rotateXYZ
 
-v = Vec4(<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span>, <span class="hljs-number">1.0</span>)
-
-x = v.x     <span class="hljs-comment"># 1.0</span>
-y = v.y     <span class="hljs-comment"># 2.0</span>
-z = v.z     <span class="hljs-comment"># 3.0</span>
-w = v.w     <span class="hljs-comment"># 1.0</span>
+identity()                      <span class="hljs-comment"># 单位矩阵</span>
+translate(vec((x, y, z)))      <span class="hljs-comment"># 平移矩阵</span>
+scale(vec((sx, sy, sz)))       <span class="hljs-comment"># 缩放矩阵</span>
+rotateX(angle)                  <span class="hljs-comment"># 绕 X 轴旋转（弧度）</span>
+rotateY(angle)                  <span class="hljs-comment"># 绕 Y 轴旋转（弧度）</span>
+rotateZ(angle)                  <span class="hljs-comment"># 绕 Z 轴旋转（弧度）</span>
+rotateAxis(axis_vec, angle)    <span class="hljs-comment"># 绕任意轴旋转</span>
+rotateXYZ(rz, ry, rx)           <span class="hljs-comment"># 组合旋转（先 Z，再 Y，最后 X）</span>
 </code></pre>
-<p>常用于：</p>
-<ul>
-<li>齐次坐标 <code>(x, y, z, 1)</code> — 表示位置</li>
-<li>齐次坐标 <code>(x, y, z, 0)</code> — 表示方向</li>
-<li>RGBA 颜色 <code>(r, g, b, a)</code></li>
-</ul>
-<hr>
-<h2 id="4-mat4-4-4">4. Mat4 — 4×4 变换矩阵</h2>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> Mat4
+<h3>3.2 观察与投影矩阵</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> lookAt, perspective
 
-<span class="hljs-comment"># 构造</span>
-identity = Mat4.identity()              <span class="hljs-comment"># 单位矩阵</span>
-translation = Mat4.translation(v3)      <span class="hljs-comment"># 平移矩阵</span>
-rotation = Mat4.rotation(axis, angle)   <span class="hljs-comment"># 旋转矩阵</span>
-scale = Mat4.scale(v3)                  <span class="hljs-comment"># 缩放矩阵</span>
+lookAt(eye, target, up)                       <span class="hljs-comment"># 观察矩阵（右手系，-Z 为前）</span>
+perspective(fov_degrees, aspect, near, far)    <span class="hljs-comment"># 透视投影矩阵</span>
+</code></pre>
+<h3>3.3 矩阵运算</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> multiply, transpose, inverse
 
-<span class="hljs-comment"># 组合变换</span>
-transform = translation * rotation * scale
+multiply(a, b)   <span class="hljs-comment"># 矩阵乘法</span>
+transpose(m)     <span class="hljs-comment"># 转置</span>
+inverse(m)       <span class="hljs-comment"># 逆矩阵</span>
+</code></pre>
+<h3>3.4 变换</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> transform, transformPoint, transformVector, localToWorld, worldToLocal
 
-<span class="hljs-comment"># 矩阵-向量乘法</span>
-result_vec4 = transform * Vec4(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>)
-result_vec3 = transform * Vec3(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>)  <span class="hljs-comment"># 结果自动除 w</span>
+<span class="hljs-comment"># 标准模型变换：先缩放(S)，再旋转(R)，最后平移(T)，再乘父矩阵(m)</span>
+transform(m, translate_vec, rotate_vec, scale_vec)
+
+<span class="hljs-comment"># 用矩阵变换点（含平移，w=1）</span>
+transformPoint(mat, point)     <span class="hljs-comment"># 返回 Vector4</span>
+
+<span class="hljs-comment"># 用矩阵变换向量（忽略平移，w=0）</span>
+transformVector(mat, vector)   <span class="hljs-comment"># 返回 Vector3</span>
+
+<span class="hljs-comment"># 坐标空间转换</span>
+localToWorld(modelMatrix, localPoint)   <span class="hljs-comment"># 模型空间 → 世界空间</span>
+worldToLocal(modelMatrix, worldPoint)   <span class="hljs-comment"># 世界空间 → 模型空间</span>
+</code></pre>
+<h3>3.5 屏幕坐标转换</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> worldToScreen
+
+screenPoint = worldToScreen(modelMatrix, viewMatrix, projMatrix, viewport, worldPoint)
+<span class="hljs-comment"># 返回 Vector3，x/y 为屏幕坐标，z 为深度</span>
 </code></pre>
 <hr>
-<h2 id="5-double">5. Double — 高精度浮点数</h2>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.double <span class="hljs-keyword">import</span> Double
+<h2 id="4-double-py">4. 插值与常量 — <code>double.py</code></h2>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.double <span class="hljs-keyword">import</span> lerp, clamp, smoothstep, inf, epsilon
 
-<span class="hljs-comment"># 构造</span>
-d = Double(<span class="hljs-number">3.14159265358979</span>)
-d = Double.long_value(<span class="hljs-number">314159265358979</span>)
-d = Double.int_value(<span class="hljs-number">3</span>)
-
-<span class="hljs-comment"># 运算</span>
-sum_d = d + Double(<span class="hljs-number">1.0</span>)
-diff = d - Double(<span class="hljs-number">0.5</span>)
-prod = d * Double(<span class="hljs-number">2.0</span>)
-quot = d / Double(<span class="hljs-number">2.0</span>)
+lerp(a, b, t)                          <span class="hljs-comment"># 浮点线性插值</span>
+clamp(x, min_val, max_val)             <span class="hljs-comment"># 截断到 [min, max]</span>
+smoothstep(edge0, edge1, x)            <span class="hljs-comment"># 平滑阶梯函数</span>
+inf                                     <span class="hljs-comment"># 1e+10</span>
+epsilon                                 <span class="hljs-comment"># 1e-8</span>
 </code></pre>
-<p><code>Double</code> 封装了底层的高精度定点数运算，用于需要精确计算的场景（如经济系统、物理模拟）。</p>
 <hr>
-<h2 id="6-math-common-py">6. 通用工具函数 — <code>math/common.py</code></h2>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.common <span class="hljs-keyword">import</span> (
-    distance, distance_sq,
-    lerp, lerp_vec3,
-    clamp, clamp01,
-    move_towards, move_towards_angle,
-    get_rotation_from_direction
+<h2 id="5-unit-py">5. 时间常量 — <code>unit.py</code></h2>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.unit <span class="hljs-keyword">import</span> time
+
+time.entityTick   <span class="hljs-comment"># 0.05 秒</span>
+time.tick         <span class="hljs-comment"># ~0.033 秒（30fps）</span>
+time.ms           <span class="hljs-comment"># 0.001 秒</span>
+time.s            <span class="hljs-comment"># 1 秒</span>
+time.m            <span class="hljs-comment"># 60 秒</span>
+time.h            <span class="hljs-comment"># 3600 秒</span>
+time.d            <span class="hljs-comment"># 86400 秒</span>
+time.w            <span class="hljs-comment"># 604800 秒</span>
+time.y            <span class="hljs-comment"># 31536000 秒</span>
+</code></pre>
+<blockquote>
+<p>用 <code>time.s * 3</code> 表示 3 秒，<code>time.ms * 500</code> 表示 500 毫秒。</p>
+</blockquote>
+<hr>
+<h2 id="6-math-utils-py">6. 客户端工具 — <code>math/utils.py</code></h2>
+<h3>6.1 屏幕坐标工具</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> (
+    screenSize, localViewMatrix, localProjectionMatrix,
+    worldPosToScreenPos, screenToWorld
 )
 
-<span class="hljs-comment"># 距离</span>
-d = distance(v1, v2)            <span class="hljs-comment"># float</span>
-d2 = distance_sq(v1, v2)       <span class="hljs-comment"># 距离平方</span>
-
-<span class="hljs-comment"># 插值</span>
-val = lerp(<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, t)        <span class="hljs-comment"># 标量插值</span>
-vec = lerp_vec3(v1, v2, t)     <span class="hljs-comment"># Vec3 插值</span>
-
-<span class="hljs-comment"># 截断</span>
-x = clamp(value, <span class="hljs-number">0</span>, <span class="hljs-number">100</span>)       <span class="hljs-comment"># 限制在 [min, max]</span>
-x = clamp01(value)              <span class="hljs-comment"># 限制在 [0, 1]</span>
-
-<span class="hljs-comment"># 渐进移动</span>
-pos = move_towards(current, target, max_delta)
-angle = move_towards_angle(current, target, max_delta)
-
-<span class="hljs-comment"># 方向转旋转</span>
-rot = get_rotation_from_direction(direction_vec3)
+w, h = screenSize()
+view = localViewMatrix()
+proj = localProjectionMatrix()
+screenPoint = worldPosToScreenPos(worldPoint)
+worldPoint = screenToWorld(modelMatrix, screenPoint)
 </code></pre>
-<hr>
-<h2 id="7-unit">7. Unit — 单位转换</h2>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.unit <span class="hljs-keyword">import</span> (
-    degrees_to_radians,
-    radians_to_degrees
+<h3>6.2 实体查询与朝向</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> forward, facing, around, entityAabbDef
+
+dirVec = forward(entityId)          <span class="hljs-comment"># 实体前方单位向量</span>
+facingVec = facing(entityId)        <span class="hljs-comment"># 实体朝向向量（含 Y 分量）</span>
+nearby = around(entityId, radius)   <span class="hljs-comment"># 半径内实体 ID 列表</span>
+aabbMin, aabbMax = entityAabbDef(entityId)  <span class="hljs-comment"># 实体 AABB 包围盒</span>
+</code></pre>
+<h3>6.3 碰撞检测</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> (
+    boxOverlap3dClient, boxOverlap3dForward, boxOverlap3dFacing
 )
 
-rad = degrees_to_radians(<span class="hljs-number">90</span>)    <span class="hljs-comment"># π/2</span>
-deg = radians_to_degrees(<span class="hljs-number">3.14</span>)  <span class="hljs-comment"># ~180°</span>
+entities = boxOverlap3dClient(pos, rot, size, debug=<span class="hljs-literal">False</span>)
+entities = boxOverlap3dForward(entityId, size, debug=<span class="hljs-literal">False</span>)
+entities = boxOverlap3dFacing(entityId, size, debug=<span class="hljs-literal">False</span>)
+</code></pre>
+<h3>6.4 辅助函数</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> pointInBox, pointInAabb
+
+inside = pointInBox(point, size)
+inside = pointInAabb(point, min_vec, max_vec)
+</code></pre>
+<hr>
+<h2 id="7-math-utilsserver-py">7. 服务端工具 — <code>math/utilsServer.py</code></h2>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utilsServer <span class="hljs-keyword">import</span> (
+    boxOverlap3dServer, boxOverlap3dForward, forward, facing, around, pointInBox
+)
+
+<span class="hljs-comment"># 碰撞检测（服务端使用 Location + dimId）</span>
+entities = boxOverlap3dServer(location, rot, size)
+
+<span class="hljs-comment"># 实体前方</span>
+entities = boxOverlap3dForward(entityId, size)
+
+<span class="hljs-comment"># 朝向与附近实体</span>
+dirVec = forward(entityId)
+nearby = around(location, radius)
 </code></pre>
 <hr>
 <h2 id="8">8. 完整示例</h2>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> Vec3
-<span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> Mat4
-<span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> Vec3Utils
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> vec, add, normalize, modulo, tup
+<span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> lookAt, perspective, worldToScreen
+<span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> forward, boxOverlap3dForward
+<span class="hljs-keyword">from</span> architect.math.double <span class="hljs-keyword">import</span> clamp, smoothstep
+<span class="hljs-keyword">from</span> architect.math.unit <span class="hljs-keyword">import</span> time
 
-<span class="hljs-comment"># 玩家朝向计算</span>
-player_pos = Vec3(<span class="hljs-number">0</span>, <span class="hljs-number">64</span>, <span class="hljs-number">0</span>)
-target_pos = Vec3(<span class="hljs-number">10</span>, <span class="hljs-number">64</span>, <span class="hljs-number">10</span>)
+<span class="hljs-comment"># 距离检测</span>
+player = vec((<span class="hljs-number">0</span>, <span class="hljs-number">64</span>, <span class="hljs-number">0</span>))
+target = vec((<span class="hljs-number">10</span>, <span class="hljs-number">64</span>, <span class="hljs-number">10</span>))
+dir_to_target = normalize(add(target, vec((<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>))))  <span class="hljs-comment"># target - player 用 sub</span>
+dist = modulo(target - player)
+<span class="hljs-keyword">if</span> dist &lt; <span class="hljs-number">5.0</span>:
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;In range&#x27;</span>)
 
-<span class="hljs-comment"># 计算方向</span>
-direction = Vec3Utils.direction(player_pos, target_pos)
-<span class="hljs-comment"># 结果近似: Vec3(0.707, 0, 0.707)</span>
+<span class="hljs-comment"># 屏幕投影</span>
+view = lookAt(player, target, vec((<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>)))
+proj = perspective(<span class="hljs-number">60.0</span>, <span class="hljs-number">16.0</span> / <span class="hljs-number">9.0</span>, <span class="hljs-number">0.1</span>, <span class="hljs-number">100.0</span>)
+screenPt = worldToScreen(identity(), view, proj, (<span class="hljs-number">1920</span>, <span class="hljs-number">1080</span>), target)
 
-<span class="hljs-comment"># 计算距离</span>
-dist = Vec3Utils.distance(player_pos, target_pos)
-<span class="hljs-comment"># 结果: ~14.14</span>
+<span class="hljs-comment"># 碰撞检测</span>
+hits = boxOverlap3dForward(entityId, (<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>))
 
-<span class="hljs-comment"># 创建变换矩阵</span>
-transform = Mat4.translation(player_pos) * \
-            Mat4.rotation(Vec3.up(), Vec3Utils.angle(Vec3.forward(), direction))
-
-<span class="hljs-comment"># 插值相机平滑跟随</span>
-camera_pos = Vec3Utils.lerp(current_cam, target_cam, <span class="hljs-number">0.1</span>)
-
-<span class="hljs-comment"># 反射弹道</span>
-bullet_dir = Vec3(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>)
-surface_normal = Vec3(-<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>)
-reflected = Vec3Utils.reflect(bullet_dir, Vec3Utils.normalize(surface_normal))
+<span class="hljs-comment"># 平滑过渡（3 秒内完成）</span>
+t = clamp(current_time / (<span class="hljs-number">3</span> * time.s), <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>)
+alpha = smoothstep(<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, t)
 </code></pre>
 <hr>
 <h2 id="">下一步</h2>
@@ -243,6 +231,8 @@ reflected = Vec3Utils.reflect(bullet_dir, Vec3Utils.normalize(surface_normal))
 
 </article>
 </main>
+<div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.6);align-items:flex-start;justify-content:center;padding-top:12vh"><div style="background:hsl(0 0% 6%);border:1px solid hsl(0 0% 14%);border-radius:.5rem;width:580px;max-width:90vw;max-height:70vh;display:flex;flex-direction:column;overflow:hidden"><div style="display:flex;align-items:center;padding:.75rem 1rem;border-bottom:1px solid hsl(0 0% 14%)"><svg style="width:1.2rem;height:1.2rem;margin-right:.6rem;opacity:.4;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="hsl(0 0% 63.9%)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input id="search-input" type="text" placeholder="搜索文档..." autofocus style="flex:1;background:0 0;border:0;outline:0;color:hsl(0 0% 98%);font-size:.95rem;font-family:inherit"><kbd style="font-size:.72rem;padding:.15em .5em;border-radius:3px;background:hsl(0 0% 12%);color:hsl(0 0% 63.9%);border:1px solid hsl(0 0% 20%);margin-left:.5rem;flex-shrink:0">Esc</kbd></div><div id="search-results" style="flex:1;overflow-y:auto;padding:.4rem 0"></div><div id="search-empty" style="padding:1.5rem;text-align:center;color:hsl(0 0% 40%);font-size:.85rem;display:none">没有找到结果</div></div></div>
 <script>(function(){var p=document.querySelector(".pages");var k="rns";var y=sessionStorage.getItem(k);if(y){p.scrollTop=parseInt(y,10)||0};p.addEventListener("scroll",function(){sessionStorage.setItem(k,p.scrollTop)});var as=document.querySelectorAll("nav a");for(var i=0;i<as.length;i++){as[i].addEventListener("click",function(){sessionStorage.setItem(k,p.scrollTop)})}})()</script>
+<script>(function(){var idx=[];var r=document.getElementById("search-results");var e=document.getElementById("search-empty");var o=document.getElementById("search-overlay");var inp=document.getElementById("search-input");function openSearch(){o.style.display="flex";inp.value="";inp.focus();render([])}function closeSearch(){o.style.display="none"}function render(list){  e.style.display=list.length?"none":"block";  r.innerHTML=list.slice(0,20).map(function(x){    var t=x.type==="page"?"页面":"章节";    return '<a href="'+x.id+'" class="sr">'+      '<span class="sr-t">'+t+'</span>'+'<span>'+x.title+'</span>'+'</a>'  }).join("")}o.addEventListener("click",function(ev){if(ev.target===o)closeSearch()});function doSearch(q){  var t=q.toLowerCase();  if(!t)return render([]);  var f=idx.filter(function(x){    return x.title.toLowerCase().indexOf(t)>-1||(x.parent||"").toLowerCase().indexOf(t)>-1  });render(f)}inp.addEventListener("input",function(){doSearch(inp.value)});document.addEventListener("keydown",function(ev){  if((ev.ctrlKey||ev.metaKey)&&ev.key==="k"){ev.preventDefault();openSearch()}  if(ev.key==="Escape"&&o.style.display==="flex"){closeSearch();ev.stopPropagation()}});o.addEventListener("keydown",function(ev){  if(ev.key==="ArrowDown"){var a=r.querySelector("a");if(a){a.focus();ev.preventDefault()}}});fetch("search-index.json").then(function(rr){return rr.json()}).then(function(d){idx=d});})()</script>
 </body>
 </html>

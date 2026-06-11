@@ -6,30 +6,19 @@ const hljsCSS = fs.readFileSync(
   'utf-8'
 ).trim().replace(/background:#282c34/g, 'background:#0a0a0a');
 
-/**
- * HTML 实体解码
- * 用 split+join 代替 replace，避免 & 在源码中被工具转义
- */
 function decodeHTMLEntities(str) {
-  var A = String.fromCharCode(38);  // &
-  // 1. 保护 &
+  var A = String.fromCharCode(38);
   str = str.split(A + 'amp;').join('\x00A\x00');
-  // 2. 解码命名/数字实体
   str = str.split(A + 'lt;').join('<');
   str = str.split(A + 'gt;').join('>');
   str = str.split(A + 'quot;').join('"');
   str = str.split(A + '#x27;').join("'");
   str = str.split(A + '#39;').join("'");
-  // 3. 裸 &
   str = str.split(A).join('&');
-  // 4. 还原被保护的 &
   str = str.split('\x00A\x00').join('&');
   return str;
 }
 
-/**
- * 对 HTML 中的代码块进行后处理高亮
- */
 function highlightCodeBlocks(html) {
   return html.replace(/<pre><code class="language-(\w+)">([\s\S]*?)<\/code><\/pre>/g, function(m, lang, code) {
     var txt = decodeHTMLEntities(code);
@@ -53,10 +42,10 @@ for (const f of fs.readdirSync(src).filter(f => f.endsWith('.md') && !f.startsWi
   docs[f.replace('.md', '')] = fs.readFileSync(path.join(src, f), 'utf-8');
 
 const groups = [
-  ['Getting Started', ['quickstart', 'architecture', 'best-practices']],
-  ['Core Systems',     ['subsystem', 'ecs', 'event', 'scheduler']],
-  ['Advanced',         ['ui', 'plugin', 'bus', 'profiler']],
-  ['Reference',        ['math', 'utils', 'fsm']]
+  ['\u5165\u95e8',     ['quickstart', 'architecture', 'best-practices']],
+  ['\u6838\u5fc3\u7cfb\u7edf', ['subsystem', 'ecs', 'event', 'scheduler']],
+  ['\u8fdb\u9636',     ['ui', 'plugin', 'plugins', 'bus', 'profiler']],
+  ['\u53c2\u8003',     ['math', 'molang', 'persona', 'fsm', 'utils']]
 ];
 
 function navHtml(cur) {
@@ -82,6 +71,73 @@ function anchors(body) {
     '<h2 id="' + t.toLowerCase().replace(/<[^>]*>/g, '').replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '') + '">' + t + '</h2>');
 }
 
+// Build search index
+const searchIndex = [];
+for (const [name, md] of Object.entries(docs)) {
+  const title = md.split('\n')[0].replace(/^#\s*/, '').trim() || name;
+  searchIndex.push({ id: name + '.html', title: title, type: 'page' });
+  const h2s = md.match(/^## (.+)$/gm);
+  if (h2s) for (const h of h2s) {
+    const t = h.replace(/^##\s*/, '').trim();
+    const anchor = t.toLowerCase().replace(/<[^>]*>/g, '').replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
+    searchIndex.push({ id: name + '.html#' + anchor, title: t, type: 'section', parent: title });
+  }
+}
+fs.writeFileSync(path.join(out, 'search-index.json'), JSON.stringify(searchIndex), 'utf-8');
+
+const SEARCH_HTML = [
+'<div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.6);align-items:flex-start;justify-content:center;padding-top:12vh">',
+'<div style="background:hsl(0 0% 6%);border:1px solid hsl(0 0% 14%);border-radius:.5rem;width:580px;max-width:90vw;max-height:70vh;display:flex;flex-direction:column;overflow:hidden">',
+'<div style="display:flex;align-items:center;padding:.75rem 1rem;border-bottom:1px solid hsl(0 0% 14%)">',
+'<svg style="width:1.2rem;height:1.2rem;margin-right:.6rem;opacity:.4;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="hsl(0 0% 63.9%)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>',
+'<input id="search-input" type="text" placeholder="\u641c\u7d22\u6587\u6863..." autofocus style="flex:1;background:0 0;border:0;outline:0;color:hsl(0 0% 98%);font-size:.95rem;font-family:inherit">',
+'<kbd style="font-size:.72rem;padding:.15em .5em;border-radius:3px;background:hsl(0 0% 12%);color:hsl(0 0% 63.9%);border:1px solid hsl(0 0% 20%);margin-left:.5rem;flex-shrink:0">Esc</kbd>',
+'</div>',
+'<div id="search-results" style="flex:1;overflow-y:auto;padding:.4rem 0"></div>',
+'<div id="search-empty" style="padding:1.5rem;text-align:center;color:hsl(0 0% 40%);font-size:.85rem;display:none">\u6ca1\u6709\u627e\u5230\u7ed3\u679c</div>',
+'</div>',
+'</div>'
+].join('');
+
+const SEARCH_JS = '<script>' +
+'(function(){' +
+'var idx=[];' +
+'var r=document.getElementById("search-results");' +
+'var e=document.getElementById("search-empty");' +
+'var o=document.getElementById("search-overlay");' +
+'var inp=document.getElementById("search-input");' +
+'function openSearch(){o.style.display="flex";inp.value="";inp.focus();render([])}' +
+'function closeSearch(){o.style.display="none"}' +
+'function render(list){' +
+'  e.style.display=list.length?"none":"block";' +
+'  r.innerHTML=list.slice(0,20).map(function(x){' +
+'    var t=x.type==="page"?"\u9875\u9762":"\u7ae0\u8282";' +
+'    return \'<a href="\'+x.id+\'" class="sr">\'+' +
+'      \'<span class="sr-t">\'+t+\'</span>\'+\'<span>\'+x.title+\'</span>\'+\'</a>\'' +
+'  }).join("")' +
+'}' +
+'o.addEventListener("click",function(ev){if(ev.target===o)closeSearch()});' +
+'function doSearch(q){' +
+'  var t=q.toLowerCase();' +
+'  if(!t)return render([]);' +
+'  var f=idx.filter(function(x){' +
+'    return x.title.toLowerCase().indexOf(t)>-1||(x.parent||"").toLowerCase().indexOf(t)>-1' +
+'  });render(f)' +
+'}' +
+'inp.addEventListener("input",function(){doSearch(inp.value)});' +
+'document.addEventListener("keydown",function(ev){' +
+'  if((ev.ctrlKey||ev.metaKey)&&ev.key==="k"){ev.preventDefault();openSearch()}' +
+'  if(ev.key==="Escape"&&o.style.display==="flex"){closeSearch();ev.stopPropagation()}' +
+'});' +
+'o.addEventListener("keydown",function(ev){' +
+'  if(ev.key==="ArrowDown"){var a=r.querySelector("a");if(a){a.focus();ev.preventDefault()}}' +
+'});' +
+'fetch("search-index.json").then(function(rr){return rr.json()}).then(function(d){idx=d});' +
+'})()' +
+'</script>';
+
+const LOGO_HTML = '<div class="logo">\nRonin<span>Netease</span>\n<button title="\u641c\u7d22 (Ctrl+K)" onclick="document.dispatchEvent(new KeyboardEvent(\'keydown\',{ctrlKey:!0,key:\'k\'}))" class="sr-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>\n</div>';
+
 const CSS = '<style>' +
 ':root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}' +
 '*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}' +
@@ -90,6 +146,8 @@ const CSS = '<style>' +
 'nav{position:fixed;top:0;left:0;bottom:0;width:17rem;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}' +
 'nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}' +
 'nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}' +
+'.sr-btn{margin-left:auto;background:0 0;border:0;cursor:pointer;color:hsl(0 0% 63.9%);padding:.2rem;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:.12s;flex-shrink:0}' +
+'.sr-btn:hover{background:hsl(0 0% 14%);color:hsl(0 0% 98%)}' +
 'nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}' +
 '.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}' +
 'nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}' +
@@ -122,14 +180,21 @@ const CSS = '<style>' +
 'ol,ul{padding-left:1.5rem;margin:.75rem 0}' +
 'li{margin:.35rem 0;line-height:1.75}' +
 'strong{color:hsl(var(--f))}' +
+'.sr{display:flex;align-items:center;padding:.5rem 1rem;text-decoration:none;color:hsl(0 0% 63.9%);font-size:.87rem;transition:.08s}' +
+'.sr:hover,.sr:focus{background:hsl(0 0% 12%);color:hsl(0 0% 98%);outline:0}' +
+'.sr-t{flex-shrink:0;width:1.8rem;font-size:.66rem;opacity:.5;text-transform:uppercase}' +
 '@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}' +
 hljsCSS +
 '</style>';
 
 for (const [name, md] of Object.entries(docs)) {
   const body = anchors(highlightCodeBlocks(marked.parse(md, { breaks: !0, gfm: !0 })));
-  const html = '<!DOCTYPE html>\n<html lang="zh">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1.0">\n<title>' + name + ' - RoninNetease v1.1.0</title>\n' + CSS + '\n</head>\n<body>\n<nav>\n<div class="logo">Ronin<span>Netease</span></div>\n<div class="pages">\n' + navHtml(name) + '\n</div>\n</nav>\n<main>\n<article>\n' + body + '\n</article>\n</main>\n<script>(function(){var p=document.querySelector(".pages");var k="rns";var y=sessionStorage.getItem(k);if(y){p.scrollTop=parseInt(y,10)||0};p.addEventListener("scroll",function(){sessionStorage.setItem(k,p.scrollTop)});var as=document.querySelectorAll("nav a");for(var i=0;i<as.length;i++){as[i].addEventListener("click",function(){sessionStorage.setItem(k,p.scrollTop)})}})()</script>\n</body>\n</html>';
+  const html = '<!DOCTYPE html>\n<html lang="zh">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1.0">\n<title>' + name + ' - RoninNetease v1.1.0</title>\n' + CSS + '\n</head>\n<body>\n<nav>\n' + LOGO_HTML + '\n<div class="pages">\n' + navHtml(name) + '\n</div>\n</nav>\n<main>\n<article>\n' + body + '\n</article>\n</main>\n'
+    + SEARCH_HTML
+    + '\n<script>(function(){var p=document.querySelector(".pages");var k="rns";var y=sessionStorage.getItem(k);if(y){p.scrollTop=parseInt(y,10)||0};p.addEventListener("scroll",function(){sessionStorage.setItem(k,p.scrollTop)});var as=document.querySelectorAll("nav a");for(var i=0;i<as.length;i++){as[i].addEventListener("click",function(){sessionStorage.setItem(k,p.scrollTop)})}})()</script>\n'
+    + SEARCH_JS
+    + '\n</body>\n</html>';
   fs.writeFileSync(path.join(out, name + '.html'), html, 'utf-8');
-  console.log('✔ ' + name);
+  console.log('\u2714 ' + name);
 }
-console.log('Done — 12 files');
+console.log('Done \u2014 ' + Object.keys(docs).length + ' files');

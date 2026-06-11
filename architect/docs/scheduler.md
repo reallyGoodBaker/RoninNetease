@@ -276,7 +276,7 @@ def fetch_data():
     return ft
 
 @Async
-def load_player_data():
+def loadPlayer_data():
     data = yield fetch_data()
     print('Received:', data)
     return data['hp']

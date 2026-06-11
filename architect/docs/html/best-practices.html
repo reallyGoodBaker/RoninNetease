@@ -4,13 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>best-practices - RoninNetease v1.1.0</title>
-<style>:root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}body{font-family:"Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR",Inter,-apple-system,system-ui,sans-serif;background:hsl(var(--b));color:hsl(var(--f));line-height:1.7;font-size:15px;zoom:1.25}nav{position:fixed;top:0;left:0;bottom:0;width:17rem;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}nav a:hover,nav a.active{color:hsl(var(--f));background:hsl(var(--s) / .5);border-left-color:hsl(var(--p))}nav a.active{font-weight:600}nav a.sub{padding:.22rem 1.25rem .22rem 2.2rem;font-size:.76rem;opacity:.6}nav a.sub:hover{opacity:1}nav::-webkit-scrollbar,.pages::-webkit-scrollbar{width:4px}nav::-webkit-scrollbar-track,.pages::-webkit-scrollbar-track{background:transparent}nav::-webkit-scrollbar-thumb,.pages::-webkit-scrollbar-thumb{background:hsl(0 0% 25%);border-radius:4px}nav::-webkit-scrollbar-thumb:hover,.pages::-webkit-scrollbar-thumb:hover{background:hsl(0 0% 35%)}nav,.pages{scrollbar-width:thin;scrollbar-color:hsl(0 0% 25%) transparent}main{margin-left:17rem;display:flex;justify-content:center;padding:2rem 2.5rem}article{background:hsl(var(--c));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:2.5rem 3rem;max-width:860px;width:100%}h1{font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid hsl(0 0% 14%)}h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.35rem;border-bottom:1px solid hsl(0 0% 14%)}h3{font-size:1.1rem;font-weight:600;margin-top:2rem;margin-bottom:.5rem}h4{font-size:1rem;font-weight:600;margin-top:1.5rem;margin-bottom:.4rem;color:hsl(var(--m))}p{margin:.8rem 0;line-height:1.75}a:not(nav a){color:hsl(var(--p));text-decoration:underline}code{background:hsl(var(--s) / .5);padding:.12em .35em;border-radius:3px;font-size:.87em;font-family:"Noto Sans Mono","JetBrains Mono","Fira Code",Consolas,monospace}pre{background:hsl(var(--b));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:1rem 1.25rem;overflow-x:auto;margin:1.25rem 0}pre code{background:0 0;padding:0;font-size:.83rem;line-height:1.6}table{border-collapse:collapse;width:100%;margin:1.5rem 0}td,th{border:1px solid hsl(0 0% 14%);padding:.55rem .85rem;text-align:left;font-size:.9rem}th{background:hsl(var(--s) / .5);font-weight:600}tr:nth-child(even){background:hsl(0 0% 7%)}blockquote{border-left:3px solid hsl(var(--p));padding:.5rem 1.1rem;margin:1.25rem 0;background:hsl(267 100% 70% / .04);border-radius:0 var(--r) var(--r) 0;font-size:.92rem;color:hsl(var(--m))}hr{border:0;border-top:1px solid hsl(0 0% 14%);margin:2rem 0}ol,ul{padding-left:1.5rem;margin:.75rem 0}li{margin:.35rem 0;line-height:1.75}strong{color:hsl(var(--f))}@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}</style>
+<style>:root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}body{font-family:"Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR",Inter,-apple-system,system-ui,sans-serif;background:hsl(var(--b));color:hsl(var(--f));line-height:1.7;font-size:15px;zoom:1.25}nav{position:fixed;top:0;left:0;bottom:0;width:17rem;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}.sr-btn{margin-left:auto;background:0 0;border:0;cursor:pointer;color:hsl(0 0% 63.9%);padding:.2rem;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:.12s;flex-shrink:0}.sr-btn:hover{background:hsl(0 0% 14%);color:hsl(0 0% 98%)}nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}nav a:hover,nav a.active{color:hsl(var(--f));background:hsl(var(--s) / .5);border-left-color:hsl(var(--p))}nav a.active{font-weight:600}nav a.sub{padding:.22rem 1.25rem .22rem 2.2rem;font-size:.76rem;opacity:.6}nav a.sub:hover{opacity:1}nav::-webkit-scrollbar,.pages::-webkit-scrollbar{width:4px}nav::-webkit-scrollbar-track,.pages::-webkit-scrollbar-track{background:transparent}nav::-webkit-scrollbar-thumb,.pages::-webkit-scrollbar-thumb{background:hsl(0 0% 25%);border-radius:4px}nav::-webkit-scrollbar-thumb:hover,.pages::-webkit-scrollbar-thumb:hover{background:hsl(0 0% 35%)}nav,.pages{scrollbar-width:thin;scrollbar-color:hsl(0 0% 25%) transparent}main{margin-left:17rem;display:flex;justify-content:center;padding:2rem 2.5rem}article{background:hsl(var(--c));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:2.5rem 3rem;max-width:860px;width:100%}h1{font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid hsl(0 0% 14%)}h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.35rem;border-bottom:1px solid hsl(0 0% 14%)}h3{font-size:1.1rem;font-weight:600;margin-top:2rem;margin-bottom:.5rem}h4{font-size:1rem;font-weight:600;margin-top:1.5rem;margin-bottom:.4rem;color:hsl(var(--m))}p{margin:.8rem 0;line-height:1.75}a:not(nav a){color:hsl(var(--p));text-decoration:underline}code{background:hsl(var(--s) / .5);padding:.12em .35em;border-radius:3px;font-size:.87em;font-family:"Noto Sans Mono","JetBrains Mono","Fira Code",Consolas,monospace}pre{background:hsl(var(--b));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:1rem 1.25rem;overflow-x:auto;margin:1.25rem 0}pre code{background:0 0;padding:0;font-size:.83rem;line-height:1.6}table{border-collapse:collapse;width:100%;margin:1.5rem 0}td,th{border:1px solid hsl(0 0% 14%);padding:.55rem .85rem;text-align:left;font-size:.9rem}th{background:hsl(var(--s) / .5);font-weight:600}tr:nth-child(even){background:hsl(0 0% 7%)}blockquote{border-left:3px solid hsl(var(--p));padding:.5rem 1.1rem;margin:1.25rem 0;background:hsl(267 100% 70% / .04);border-radius:0 var(--r) var(--r) 0;font-size:.92rem;color:hsl(var(--m))}hr{border:0;border-top:1px solid hsl(0 0% 14%);margin:2rem 0}ol,ul{padding-left:1.5rem;margin:.75rem 0}li{margin:.35rem 0;line-height:1.75}strong{color:hsl(var(--f))}.sr{display:flex;align-items:center;padding:.5rem 1rem;text-decoration:none;color:hsl(0 0% 63.9%);font-size:.87rem;transition:.08s}.sr:hover,.sr:focus{background:hsl(0 0% 12%);color:hsl(0 0% 98%);outline:0}.sr-t{flex-shrink:0;width:1.8rem;font-size:.66rem;opacity:.5;text-transform:uppercase}@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}</style>
 </head>
 <body>
 <nav>
-<div class="logo">Ronin<span>Netease</span></div>
+<div class="logo">
+Ronin<span>Netease</span>
+<button title="搜索 (Ctrl+K)" onclick="document.dispatchEvent(new KeyboardEvent('keydown',{ctrlKey:!0,key:'k'}))" class="sr-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+</div>
 <div class="pages">
-<div class="group">Getting Started</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html" class="active">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">Core Systems</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">Advanced</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5-ui" class="sub">5. Ui 对象</a><a href="ui.html#6-touch" class="sub">6. 触摸手势 — Touch</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><div class="group">Reference</div><a href="math.html">Math — 数学库</a><a href="math.html#1" class="sub">1. 概述</a><a href="math.html#2-vec3" class="sub">2. Vec3 — 三维向量</a><a href="math.html#3-vec4" class="sub">3. Vec4 — 四维向量</a><a href="math.html#4-mat4-4-4" class="sub">4. Mat4 — 4×4 变换矩阵</a><a href="math.html#5-double" class="sub">5. Double — 高精度浮点数</a><a href="math.html#6-math-common-py" class="sub">6. 通用工具函数 — math/common.py</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang" class="sub">3. Molang 表达式 — molang/</a><a href="utils.html#4-persona-persona" class="sub">4. Persona 渲染覆盖 — persona/</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a><a href="fsm.html">FSM — 有限状态机</a><a href="fsm.html#1-statetree" class="sub">1. StateTree — 树形状态机（推荐）</a><a href="fsm.html#2-fsm" class="sub">2. 古典 FSM（已弃用）</a><a href="fsm.html#3-statetree-vs-fsm" class="sub">3. StateTree vs 古典 FSM 对比</a><a href="fsm.html#" class="sub">下一步</a>
+<div class="group">入门</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html" class="active">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">核心系统</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">进阶</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5" class="sub">5. 触摸手势</a><a href="ui.html#6" class="sub">6. 完整示例</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="plugins.html">Plugins — 系统插件参考</a><a href="plugins.html#1-vendor-event" class="sub">1. 事件系统插件 — $vendor.event</a><a href="plugins.html#2-vendor-animation" class="sub">2. 动画扩展插件 — $vendor.animation</a><a href="plugins.html#3-vendor-input" class="sub">3. 输入系统插件 — $vendor.input</a><a href="plugins.html#4-vendor-squad" class="sub">4. 小队系统插件 — $vendor.squad</a><a href="plugins.html#" class="sub">下一步</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><div class="group">参考</div><a href="math.html">Math — 数学库</a><a href="math.html#1" class="sub">1. 概述</a><a href="math.html#2-vec3-py" class="sub">2. 向量运算函数 — vec3.py</a><a href="math.html#3-mat4-py" class="sub">3. 矩阵函数 — mat4.py</a><a href="math.html#4-double-py" class="sub">4. 插值与常量 — double.py</a><a href="math.html#5-unit-py" class="sub">5. 时间常量 — unit.py</a><a href="math.html#6-math-utils-py" class="sub">6. 客户端工具 — math/utils.py</a><a href="molang.html">Molang — 表达式工具</a><a href="molang.html#1" class="sub">1. 概述</a><a href="molang.html#2-types-py" class="sub">2. 抽象类型 — types.py</a><a href="molang.html#3-common-py" class="sub">3. 命名变量 — common.py</a><a href="molang.html#4-query-client-py" class="sub">4. 客户端 Query 变量 — client.py</a><a href="molang.html#5-server-py" class="sub">5. 服务端 — server.py</a><a href="molang.html#6" class="sub">6. 完整示例</a><a href="persona.html">Persona — 渲染覆盖系统</a><a href="persona.html#1" class="sub">1. 概述</a><a href="persona.html#2-personarenderercomponent" class="sub">2. PersonaRendererComponent — 客户端渲染组件</a><a href="persona.html#3-personaeventssubsystem" class="sub">3. PersonaEventsSubsystem — 客户端事件子系统</a><a href="persona.html#4-personaserver" class="sub">4. PersonaServer — 服务端中继子系统</a><a href="persona.html#5" class="sub">5. 完整示例</a><a href="persona.html#" class="sub">下一步</a><a href="fsm.html">FSM — 有限状态机</a><a href="fsm.html#1" class="sub">1. 概述</a><a href="fsm.html#2-statetree" class="sub">2. StateTree — 树形状态机（推荐）</a><a href="fsm.html#3-fsm" class="sub">3. 经典 FSM（已弃用）</a><a href="fsm.html#" class="sub">下一步</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang-md-molang-md" class="sub">3. Molang 表达式 — 见 [molang.md](molang.md)</a><a href="utils.html#4-persona-persona-md-persona-m" class="sub">4. Persona 渲染覆盖 — 见 [persona.md](persona.m</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a>
 </div>
 </nav>
 <main>
@@ -30,12 +33,6 @@
 
 <span class="hljs-keyword">class</span> <span class="hljs-title class_">SpawnSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):     <span class="hljs-comment"># 实体生成</span>
     <span class="hljs-keyword">pass</span>
-
-<span class="hljs-comment"># 不好：一个系统做所有事情</span>
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">GodSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_combat</span>(<span class="hljs-params">self</span>): ...
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_inventory</span>(<span class="hljs-params">self</span>): ...
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_ai</span>(<span class="hljs-params">self</span>): ...
 </code></pre>
 <p><strong>通过 <code>CommandBus</code> 解耦：</strong> 让子系统通过命令总线通信，而非直接引用。</p>
 <pre><code class="hljs language-python"><span class="hljs-comment"># 好：通过 CommandBus</span>
@@ -43,11 +40,6 @@
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
         manager = SubsystemManager.getInstance()
         <span class="hljs-variable language_">self</span>._unreg = manager.bus.register(<span class="hljs-string">&#x27;quest.complete&#x27;</span>, <span class="hljs-variable language_">self</span>.on_quest_done)
-
-<span class="hljs-comment"># 不好：直接引用其他子系统</span>
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">QuestSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
-        <span class="hljs-variable language_">self</span>.reward_sys = SubsystemManager.getInstance().getSubsystem(RewardSystem)
 </code></pre>
 <p><strong>在 <code>onReady</code> 中初始化跨系统依赖：</strong> <code>onInit</code> 只初始化自身，等所有系统创建完毕后再在 <code>onReady</code> 中建立连接。</p>
 <pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
@@ -55,53 +47,25 @@
         <span class="hljs-variable language_">self</span>.data = {}          <span class="hljs-comment"># ✅ 初始化自身状态</span>
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
-        <span class="hljs-variable language_">self</span>.other = OtherSystem.getInstance()  <span class="hljs-comment"># ✅ 获取其他系统</span>
-        <span class="hljs-variable language_">self</span>.start_fixed()                      <span class="hljs-comment"># ✅ 启动固定调度器</span>
+        <span class="hljs-variable language_">self</span>.other = OtherSystem.getInstance()          <span class="hljs-comment"># ✅ 获取其他系统</span>
+        <span class="hljs-variable language_">self</span>.scheduleFixed(<span class="hljs-string">&#x27;my_fixed&#x27;</span>, period=<span class="hljs-number">1.0</span>)     <span class="hljs-comment"># ✅ 启动固定调度器</span>
 </code></pre>
 <h3>❌ 避免</h3>
 <ul>
-<li>在 <code>onInit</code> 中调用 <code>serveFixed()</code> — 此时引擎未初始化</li>
+<li>在 <code>onInit</code> 中调用 <code>scheduleFixed()</code> — 此时引擎未初始化</li>
 <li>在 <code>onInit</code> 中通过 <code>getSubsystem()</code> 获取其他系统</li>
 <li>忘记设置 <code>canTick = True</code> 导致 <code>onUpdate</code> 不执行</li>
+<li>使用不存在的 <code>getManager()</code> 方法 — 应使用 <code>SubsystemManager.getInstance()</code></li>
 </ul>
 <hr>
 <h2 id="2">2. 组件设计</h2>
 <h3>✅ 推荐</h3>
 <p><strong>纯数据容器：</strong> 组件只存储数据，不含业务逻辑。</p>
-<pre><code class="hljs language-python"><span class="hljs-comment"># 好</span>
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
     hp = <span class="hljs-number">100</span>
     maxHp = <span class="hljs-number">100</span>
-
-<span class="hljs-comment"># 不好：组件里写逻辑</span>
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
-    hp = <span class="hljs-number">100</span>
-    maxHp = <span class="hljs-number">100</span>
-
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">take_damage</span>(<span class="hljs-params">self, amount</span>):   <span class="hljs-comment"># 逻辑应该放在 System 中</span>
-        <span class="hljs-variable language_">self</span>.hp -= amount
-        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.hp &lt;= <span class="hljs-number">0</span>:
-            <span class="hljs-variable language_">self</span>.on_death()
 </code></pre>
 <p><strong>细粒度组件：</strong> 拆分大组件为多个小组件，便于查询和复用。</p>
-<pre><code class="hljs language-python"><span class="hljs-comment"># 好：细粒度</span>
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">Position</span>(<span class="hljs-title class_ inherited__">Component</span>):
-    x = <span class="hljs-number">0.0</span>; y = <span class="hljs-number">0.0</span>; z = <span class="hljs-number">0.0</span>
-
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">Velocity</span>(<span class="hljs-title class_ inherited__">Component</span>):
-    vx = <span class="hljs-number">0.0</span>; vy = <span class="hljs-number">0.0</span>; vz = <span class="hljs-number">0.0</span>
-
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
-    hp = <span class="hljs-number">100</span>; maxHp = <span class="hljs-number">100</span>
-
-<span class="hljs-comment"># 不好：大杂烩</span>
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">EntityData</span>(<span class="hljs-title class_ inherited__">Component</span>):
-    x = <span class="hljs-number">0.0</span>; y = <span class="hljs-number">0.0</span>; z = <span class="hljs-number">0.0</span>
-    vx = <span class="hljs-number">0.0</span>; vy = <span class="hljs-number">0.0</span>; vz = <span class="hljs-number">0.0</span>
-    hp = <span class="hljs-number">100</span>; maxHp = <span class="hljs-number">100</span>
-    inventory = []
-    effects = {}
-</code></pre>
 <p><strong>使用 <code>@DefineFields</code> 做验证：</strong></p>
 <pre><code class="hljs language-python"><span class="hljs-meta">@DefineFields(<span class="hljs-params">{
     <span class="hljs-string">&#x27;level&#x27;</span>: FieldSchema(<span class="hljs-params">default=<span class="hljs-number">1</span>, validator=<span class="hljs-keyword">lambda</span> v: v &gt;= <span class="hljs-number">1</span></span>),
@@ -111,23 +75,25 @@
     <span class="hljs-keyword">pass</span>
 </code></pre>
 <p><strong>标记持久化字段：</strong></p>
-<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Inventory</span>(<span class="hljs-title class_ inherited__">Component</span>):
-    items = PersistKeys()   <span class="hljs-comment"># 标记需要持久化的字段集</span>
+<pre><code class="hljs language-python"><span class="hljs-meta">@PersistKeys(<span class="hljs-params"><span class="hljs-string">&#x27;slots&#x27;</span></span>)</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Inventory</span>(<span class="hljs-title class_ inherited__">Component</span>):
     slots = [<span class="hljs-string">&#x27;&#x27;</span>] * <span class="hljs-number">36</span>
 </code></pre>
 <h3>❌ 避免</h3>
 <ul>
 <li>在组件中编写带副作用的逻辑</li>
-<li>组件的类属性使用可变默认值（如 <code>items = []</code>）— 所有实例共享同一个列表</li>
-<li>忘记在需要持久化的组件上使用 <code>PersistKeys()</code></li>
+<li>组件的类属性使用可变默认值（如 <code>items = []</code>）</li>
 </ul>
 <hr>
 <h2 id="3">3. 查询模式</h2>
 <h3>✅ 推荐</h3>
-<p><strong>使用 <code>@Query(attach_query=True)</code> 自动注入：</strong></p>
-<pre><code class="hljs language-python"><span class="hljs-meta">@Query(<span class="hljs-params">target=<span class="hljs-string">&#x27;{Health}&#x27;</span>, required=[<span class="hljs-string">&#x27;{CombatStats}&#x27;</span>], attach_query=<span class="hljs-literal">True</span></span>)</span>
-<span class="hljs-keyword">def</span> <span class="hljs-title function_">damage_tick</span>(<span class="hljs-params">self, entityId, Health, CombatStats=<span class="hljs-literal">None</span></span>):
-    Health.hp -= <span class="hljs-number">1</span>  <span class="hljs-comment"># 直接使用组件实例</span>
+<p><code>@Query</code> 接收组件类作为位置参数，用 <code>EntityId</code> 获取实体 ID：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.query <span class="hljs-keyword">import</span> Query, EntityId
+
+<span class="hljs-meta">@Query(<span class="hljs-params">Health, EntityId, required=[CombatStats]</span>)</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">damage_tick</span>(<span class="hljs-params">self, health, entityId</span>):
+    <span class="hljs-comment"># 注：required 中的 CombatStats 仅用于筛选，不注入到参数</span>
+    health.hp -= <span class="hljs-number">1</span>
 </code></pre>
 <p><strong>在 <code>onUpdate</code> 中调用查询方法：</strong></p>
 <pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">DamageSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
@@ -137,16 +103,14 @@
         <span class="hljs-variable language_">self</span>.damage_tick()  <span class="hljs-comment"># 遍历所有匹配实体</span>
 </code></pre>
 <p><strong>按需使用手动获取：</strong></p>
-<pre><code class="hljs language-python"><span class="hljs-meta">@Query(<span class="hljs-params">target=<span class="hljs-string">&#x27;{Health}&#x27;</span></span>)</span>
-<span class="hljs-keyword">def</span> <span class="hljs-title function_">check_low_hp</span>(<span class="hljs-params">self, entityId</span>):
-    health = getComponent(entityId, Health)
-    <span class="hljs-keyword">if</span> health <span class="hljs-keyword">and</span> health.hp &lt; <span class="hljs-number">20</span>:
-        <span class="hljs-variable language_">self</span>.heal(entityId)
+<pre><code class="hljs language-python">health = getComponent(entityId, Health)
+<span class="hljs-keyword">if</span> health <span class="hljs-keyword">and</span> health.hp &lt; <span class="hljs-number">20</span>:
+    <span class="hljs-variable language_">self</span>.heal(entityId)
 </code></pre>
 <h3>❌ 避免</h3>
 <ul>
-<li>在 <code>@Query</code> 方法内遍历实体再调用 <code>getComponent()</code> — 这是反模式</li>
-<li>对频繁变化的组件使用大范围的 <code>target</code> 查询 — 用 <code>required</code> 代替</li>
+<li>在 <code>@Query</code> 方法内遍历实体再调用 <code>getComponent()</code></li>
+<li>误用不存在的 <code>target</code>/<code>attach_query</code> 参数 — <code>@Query</code> 只接受位置组件参数和 <code>required</code>/<code>excluded</code> 选项</li>
 </ul>
 <hr>
 <h2 id="4">4. 事件系统</h2>
@@ -157,26 +121,13 @@
     entityId = event.<span class="hljs-built_in">id</span>        <span class="hljs-comment"># ✅ 使用属性访问</span>
     damage = event.damage
 </code></pre>
-<p><strong>在需要时中断事件流：</strong></p>
-<pre><code class="hljs language-python"><span class="hljs-meta">@EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span></span>)</span>
-<span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self, event</span>):
-    <span class="hljs-keyword">if</span> event.<span class="hljs-built_in">id</span> == <span class="hljs-variable language_">self</span>.god_player:
-        event.stop()           <span class="hljs-comment"># 阻止后续监听器</span>
-        event.setEvent(<span class="hljs-string">&#x27;damage&#x27;</span>, <span class="hljs-number">0</span>)  <span class="hljs-comment"># 修改伤害为 0</span>
-</code></pre>
 <p><strong>区分引擎事件与自定义事件：</strong></p>
-<pre><code class="hljs language-python"><span class="hljs-meta">@EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;ServerPostInitEvent&#x27;</span></span>)   </span><span class="hljs-comment"># 引擎事件 → isCustomEvent=False</span>
+<pre><code class="hljs language-python"><span class="hljs-meta">@EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;ServerPostInitEvent&#x27;</span></span>)   </span><span class="hljs-comment"># 引擎事件</span>
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self, event</span>): ...
 
-<span class="hljs-meta">@CustomEvent(<span class="hljs-params"><span class="hljs-string">&#x27;MyDataSyncEvent&#x27;</span></span>)          </span><span class="hljs-comment"># 自定义事件 → isCustomEvent=True</span>
+<span class="hljs-meta">@CustomEvent(<span class="hljs-params"><span class="hljs-string">&#x27;MyDataSyncEvent&#x27;</span></span>)          </span><span class="hljs-comment"># 自定义事件</span>
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">onSync</span>(<span class="hljs-params">self, event</span>): ...
 </code></pre>
-<h3>❌ 避免</h3>
-<ul>
-<li>在事件处理中执行耗时操作 — 考虑用 <code>@Sched.Event</code> 延迟处理</li>
-<li>忘记 <code>event.stop()</code> 后仍需返回值或清理状态</li>
-<li>混淆 <code>event.prevent()</code>（取消默认）和 <code>event.stop()</code>（停止传递）</li>
-</ul>
 <hr>
 <h2 id="5">5. 调度系统</h2>
 <h3>✅ 推荐</h3>
@@ -199,7 +150,7 @@
 </code></pre>
 <h3>❌ 避免</h3>
 <ul>
-<li>在 <code>onInit</code> 中调用 <code>serveFixed()</code> — 引擎未就绪</li>
+<li>在 <code>onInit</code> 中调用 <code>scheduleFixed()</code> — 引擎未就绪</li>
 <li>在 <code>@Sched.Event</code> 中尝试访问事件参数 — 应使用 <code>EventReader</code> 组件</li>
 <li>创建过多固定频率调度器 — 合并到少数调度器中</li>
 </ul>
@@ -210,120 +161,139 @@
 <pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
     <span class="hljs-keyword">with</span> profiler.record(<span class="hljs-string">&#x27;Combat.damage_loop&#x27;</span>):
         <span class="hljs-variable language_">self</span>.damage_tick()
-
-    <span class="hljs-keyword">with</span> profiler.record(<span class="hljs-string">&#x27;Combat.heal_loop&#x27;</span>):
-        <span class="hljs-variable language_">self</span>.heal_tick()
 </code></pre>
 <p><strong>周期性输出报告：</strong></p>
 <pre><code class="hljs language-python"><span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.ticks % <span class="hljs-number">300</span> == <span class="hljs-number">0</span>:
     snap = profiler.flush()
     <span class="hljs-keyword">for</span> key, stats <span class="hljs-keyword">in</span> snap.items():
-        <span class="hljs-keyword">if</span> stats[<span class="hljs-string">&#x27;avg_ms&#x27;</span>] &gt; <span class="hljs-number">5.0</span>:   <span class="hljs-comment"># 只输出超过 5ms 的</span>
+        <span class="hljs-keyword">if</span> stats[<span class="hljs-string">&#x27;avgMs&#x27;</span>] &gt; <span class="hljs-number">5.0</span>:   <span class="hljs-comment"># 只输出超过 5ms 的</span>
             <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[WARN] %s: avg=%.2fms max=%.2fms&#x27;</span> %
-                  (key, stats[<span class="hljs-string">&#x27;avg_ms&#x27;</span>], stats[<span class="hljs-string">&#x27;max_ms&#x27;</span>]))
+                  (key, stats[<span class="hljs-string">&#x27;avgMs&#x27;</span>], stats[<span class="hljs-string">&#x27;maxMs&#x27;</span>]))
 </code></pre>
-<p><strong>生产环境禁用：</strong></p>
-<pre><code class="hljs language-python">profiler.disable()  <span class="hljs-comment"># 发布时关闭</span>
-</code></pre>
-<h3>❌ 避免</h3>
-<ul>
-<li>每帧都 <code>flush()</code> — 开销大且输出过多</li>
-<li>用过细的 key 导致统计数据过于分散</li>
-<li>在 profiler 开启时记录快速路径（&lt; 0.1ms）— 几乎没有诊断价值</li>
-</ul>
 <hr>
-<h2 id="7">7. 插件设计</h2>
+<h2 id="7-ui">7. UI 系统</h2>
 <h3>✅ 推荐</h3>
-<p><strong>插件只做功能扩展，不承载核心业务逻辑：</strong></p>
-<pre><code class="hljs language-python"><span class="hljs-comment"># 好：插件提供基础设施</span>
-<span class="hljs-meta">@Plugin(<span class="hljs-params">name=<span class="hljs-string">&#x27;DatabasePlugin&#x27;</span>, ver=[<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>]</span>)</span>
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">DatabasePlugin</span>(<span class="hljs-title class_ inherited__">PluginBase</span>):
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onAttach</span>(<span class="hljs-params">self, manager</span>):
-        manager.bus.register(<span class="hljs-string">&#x27;db.save&#x27;</span>, <span class="hljs-variable language_">self</span>.save)
-        manager.bus.register(<span class="hljs-string">&#x27;db.load&#x27;</span>, <span class="hljs-variable language_">self</span>.load)
+<p><code>signal()</code> 不是装饰器，返回 <code>(getter, setter)</code> 元组：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.ui.client <span class="hljs-keyword">import</span> signal, Sink
 
-<span class="hljs-comment"># 子系统使用插件提供的基础设施</span>
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">PlayerSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">save_player</span>(<span class="hljs-params">self</span>):
-        SubsystemManager.getInstance().bus.execute(<span class="hljs-string">&#x27;db.save&#x27;</span>, <span class="hljs-string">&#x27;player_1&#x27;</span>, data)
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyHUD</span>(<span class="hljs-title class_ inherited__">UiSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onCreate</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.hpGet, <span class="hljs-variable language_">self</span>.hpSet = signal(<span class="hljs-number">100</span>)
+
+<span class="hljs-meta">    @Sink  </span><span class="hljs-comment"># 无参数</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">refresh</span>(<span class="hljs-params">self</span>):
+        hp = <span class="hljs-variable language_">self</span>.hpGet()
+        <span class="hljs-variable language_">self</span>.find(<span class="hljs-string">&#x27;/hpLabel&#x27;</span>).SetText(<span class="hljs-built_in">str</span>(hp))
 </code></pre>
-<p><strong>声明正确的依赖：</strong></p>
-<pre><code class="hljs language-python"><span class="hljs-meta">@Plugin(<span class="hljs-params">
-    name=<span class="hljs-string">&#x27;MyCombatPlugin&#x27;</span>,
-    deps={
-        <span class="hljs-string">&#x27;RoninAnimationEx&#x27;</span>: <span class="hljs-string">&#x27;&gt;=1.0.0&#x27;</span>,   <span class="hljs-comment"># 需要动画插件</span>
-        <span class="hljs-string">&#x27;RoninInputEx&#x27;</span>: <span class="hljs-string">&#x27;&gt;=1.0.0&#x27;</span>        <span class="hljs-comment"># 需要输入插件</span>
-    }
-</span>)</span>
+<p><code>@UiDef</code>、<code>@Screen</code>、<code>@Hud</code>、<code>@AutoCreate</code> 都是<strong>类装饰器</strong>：</p>
+<pre><code class="hljs language-python"><span class="hljs-meta">@UiDef(<span class="hljs-params"><span class="hljs-string">&#x27;myHud&#x27;</span></span>)</span>
+<span class="hljs-meta">@Screen</span>
+<span class="hljs-meta">@AutoCreate</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyHUD</span>(<span class="hljs-title class_ inherited__">UiSubsystem</span>):
+    <span class="hljs-keyword">pass</span>
 </code></pre>
 <h3>❌ 避免</h3>
 <ul>
-<li>插件之间循环依赖</li>
-<li>在插件中直接实例化子系统 — 应通过 <code>registerSubsystem</code></li>
-<li>插件做太多事情 — 一个插件一个关注点</li>
+<li>把 <code>signal()</code> 当装饰器使用</li>
+<li>给 <code>@Sink</code> 传 <code>initiator</code> 参数</li>
+<li>把 <code>@UiDef</code>/<code>@Screen</code> 用在方法上</li>
 </ul>
 <hr>
-<h2 id="8">8. 常见陷阱</h2>
-<h3>8.1 可变默认值</h3>
-<pre><code class="hljs language-python"><span class="hljs-comment"># ❌ 错误：所有 Health 实例共享同一个 effects 列表</span>
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
-    effects = []
+<h2 id="8-rpc">8. 远程调用 (RPC)</h2>
+<h3>✅ 推荐</h3>
+<p>使用 <code>remote.client</code> 和 <code>remote.server</code> 单例：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.remote.common <span class="hljs-keyword">import</span> remote
 
-<span class="hljs-comment"># ✅ 正确：定义类属性作为默认值</span>
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
-    hp = <span class="hljs-number">100</span>
+<span class="hljs-comment"># 客户端调用服务端（fire-and-forget）</span>
+remote.client.call(<span class="hljs-string">&#x27;MySystem.method&#x27;</span>, arg1, arg2)
+
+<span class="hljs-comment"># 客户端调用服务端（需要返回值）</span>
+fut = remote.client.invoke(<span class="hljs-string">&#x27;MySystem.method&#x27;</span>, arg1, arg2)
+fut.done(<span class="hljs-keyword">lambda</span> result: <span class="hljs-built_in">print</span>(result))
+
+<span class="hljs-comment"># 服务端调用客户端</span>
+remote.server.call(playerId, <span class="hljs-string">&#x27;ClientSystem.method&#x27;</span>, arg1)
+remote.server.callEvery(<span class="hljs-string">&#x27;ClientSystem.method&#x27;</span>, arg1)  <span class="hljs-comment"># 广播</span>
+
+<span class="hljs-comment"># 注册可远程调用的方法</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+<span class="hljs-meta">    @Remote</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">my_method</span>(<span class="hljs-params">self, caller_playerId, *args, **kwargs</span>):
+        <span class="hljs-keyword">pass</span>
+</code></pre>
+<h3>❌ 避免</h3>
+<ul>
+<li>使用不存在的 <code>callRemote()</code> 函数</li>
+</ul>
+<hr>
+<h2 id="9">9. 常见陷阱</h2>
+<h3>9.1 可变默认值</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Health</span>(<span class="hljs-title class_ inherited__">Component</span>):
+    hp = <span class="hljs-number">100</span>         <span class="hljs-comment"># ✅ 不可变默认值 OK</span>
     maxHp = <span class="hljs-number">100</span>
-    <span class="hljs-comment"># effects 在创建时设置</span>
 </code></pre>
 <p>组件的类属性用作默认值。对于需要实例独立值的字段，在 <code>createComponent</code> 后初始化。</p>
-<h3>8.2 装饰器注册顺序</h3>
-<pre><code class="hljs language-python"><span class="hljs-comment"># ❌ 先 @SubsystemServer 后定义类会报错</span>
-<span class="hljs-meta">@SubsystemServer  </span><span class="hljs-comment"># ← Manager 此时可能未创建</span>
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>): ...
-
-<span class="hljs-comment"># ✅ 正常流程下没问题（modMain.py → createServer() → 导入模块 → 装饰器执行）</span>
-</code></pre>
+<h3>9.2 API 名称错误</h3>
+<table>
+<thead>
+<tr>
+<th>❌ 错误</th>
+<th>✅ 正确</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>self.getManager()</code></td>
+<td><code>SubsystemManager.getInstance()</code></td>
+</tr>
+<tr>
+<td><code>callRemote(...)</code></td>
+<td><code>remote.client.invoke(...)</code> 或 <code>remote.client.call(...)</code></td>
+</tr>
+<tr>
+<td><code>@signal</code> (装饰器)</td>
+<td><code>signal(default)</code> 函数调用，返回 <code>(get, set)</code></td>
+</tr>
+<tr>
+<td><code>@Sink(initiator=hp)</code></td>
+<td><code>@Sink</code> (无参数)</td>
+</tr>
+<tr>
+<td><code>@Query(target=&#39;{Health}&#39;)</code></td>
+<td><code>@Query(Health, EntityId)</code></td>
+</tr>
+<tr>
+<td><code>serveFixed(&#39;name&#39;)</code></td>
+<td><code>self.scheduleFixed(&#39;name&#39;, period=1.0)</code></td>
+</tr>
+<tr>
+<td><code>Sched.Tick.BeforeUpdate</code></td>
+<td><code>SchedUpdateFlags.BeforeUpdate</code></td>
+</tr>
+<tr>
+<td><code>@UiDef(&#39;name&#39;)</code> 在方法上</td>
+<td><code>@UiDef(&#39;name&#39;)</code> 在<strong>类</strong>上</td>
+</tr>
+</tbody></table>
+<h3>9.3 装饰器注册顺序</h3>
 <p>确保 <code>modMain.py</code> 中先调用 <code>createServer()</code> / <code>createClient()</code>，再让模块被导入。</p>
-<h3>8.3 组件注册时机</h3>
-<pre><code class="hljs language-python"><span class="hljs-comment"># ❌ 在 Manager 未完成初始化时创建组件</span>
-createComponent(entity_id, Health)  <span class="hljs-comment"># → 组件未注册到引擎</span>
-
-<span class="hljs-comment"># ✅ 在 onReady 或 Tick 中创建</span>
-<span class="hljs-keyword">def</span> <span class="hljs-title function_">onReady</span>(<span class="hljs-params">self</span>):
-    createComponent(entity_id, Health)
-</code></pre>
 <hr>
-<h2 id="9">9. 目录结构建议</h2>
+<h2 id="10">10. 目录结构建议</h2>
 <pre><code>your_mod/
 ├── modMain.py               # 入口
 ├── conf.py                  # 配置
-├── subsystems/              # 子系统（按领域分）
-│   ├── combat/
-│   │   ├── __init__.py
-│   │   ├── server.py       # 服务端战斗系统
-│   │   └── client.py       # 客户端战斗系统
-│   ├── inventory/
-│   └── quest/
-├── components/              # 组件（按数据域分）
-│   ├── combat.py           # Health, CombatStats
-│   ├── inventory.py        # Inventory
-│   └── player.py           # PlayerStats
+├── subsystems/              # 子系统
+├── components/              # 组件
 ├── plugins/                 # 用户插件
-│   └── my_plugin.py
-├── events/                  # 自定义事件定义（可选）
-│   └── custom_events.py
 └── utils/                   # 工具函数
-    └── helpers.py
 </code></pre>
 <hr>
-<h2 id="10-python-2-7">10. Python 2.7 注意事项</h2>
+<h2 id="11-python-2-7">11. Python 2.7 注意事项</h2>
 <ul>
 <li>使用 <code># coding=utf-8</code> 声明文件编码</li>
 <li><code>print</code> 是语句，不是函数（<code>print &#39;hello&#39;</code>）</li>
 <li><code>dict.items()</code> 返回 list，不是 view</li>
 <li>字符串格式使用 <code>%</code> 或 <code>.format()</code>，没有 f-string</li>
 <li>生成器返回值通过 <code>StopIteration</code> 异常传递</li>
-<li>不要使用 <code>async</code> / <code>await</code> 关键字</li>
 <li>类定义使用 <code>class Foo(object):</code> 显式继承 object</li>
 </ul>
 <hr>
@@ -336,6 +306,8 @@ createComponent(entity_id, Health)  <span class="hljs-comment"># → 组件未�
 
 </article>
 </main>
+<div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.6);align-items:flex-start;justify-content:center;padding-top:12vh"><div style="background:hsl(0 0% 6%);border:1px solid hsl(0 0% 14%);border-radius:.5rem;width:580px;max-width:90vw;max-height:70vh;display:flex;flex-direction:column;overflow:hidden"><div style="display:flex;align-items:center;padding:.75rem 1rem;border-bottom:1px solid hsl(0 0% 14%)"><svg style="width:1.2rem;height:1.2rem;margin-right:.6rem;opacity:.4;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="hsl(0 0% 63.9%)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input id="search-input" type="text" placeholder="搜索文档..." autofocus style="flex:1;background:0 0;border:0;outline:0;color:hsl(0 0% 98%);font-size:.95rem;font-family:inherit"><kbd style="font-size:.72rem;padding:.15em .5em;border-radius:3px;background:hsl(0 0% 12%);color:hsl(0 0% 63.9%);border:1px solid hsl(0 0% 20%);margin-left:.5rem;flex-shrink:0">Esc</kbd></div><div id="search-results" style="flex:1;overflow-y:auto;padding:.4rem 0"></div><div id="search-empty" style="padding:1.5rem;text-align:center;color:hsl(0 0% 40%);font-size:.85rem;display:none">没有找到结果</div></div></div>
 <script>(function(){var p=document.querySelector(".pages");var k="rns";var y=sessionStorage.getItem(k);if(y){p.scrollTop=parseInt(y,10)||0};p.addEventListener("scroll",function(){sessionStorage.setItem(k,p.scrollTop)});var as=document.querySelectorAll("nav a");for(var i=0;i<as.length;i++){as[i].addEventListener("click",function(){sessionStorage.setItem(k,p.scrollTop)})}})()</script>
+<script>(function(){var idx=[];var r=document.getElementById("search-results");var e=document.getElementById("search-empty");var o=document.getElementById("search-overlay");var inp=document.getElementById("search-input");function openSearch(){o.style.display="flex";inp.value="";inp.focus();render([])}function closeSearch(){o.style.display="none"}function render(list){  e.style.display=list.length?"none":"block";  r.innerHTML=list.slice(0,20).map(function(x){    var t=x.type==="page"?"页面":"章节";    return '<a href="'+x.id+'" class="sr">'+      '<span class="sr-t">'+t+'</span>'+'<span>'+x.title+'</span>'+'</a>'  }).join("")}o.addEventListener("click",function(ev){if(ev.target===o)closeSearch()});function doSearch(q){  var t=q.toLowerCase();  if(!t)return render([]);  var f=idx.filter(function(x){    return x.title.toLowerCase().indexOf(t)>-1||(x.parent||"").toLowerCase().indexOf(t)>-1  });render(f)}inp.addEventListener("input",function(){doSearch(inp.value)});document.addEventListener("keydown",function(ev){  if((ev.ctrlKey||ev.metaKey)&&ev.key==="k"){ev.preventDefault();openSearch()}  if(ev.key==="Escape"&&o.style.display==="flex"){closeSearch();ev.stopPropagation()}});o.addEventListener("keydown",function(ev){  if(ev.key==="ArrowDown"){var a=r.querySelector("a");if(a){a.focus();ev.preventDefault()}}});fetch("search-index.json").then(function(rr){return rr.json()}).then(function(d){idx=d});})()</script>
 </body>
 </html>

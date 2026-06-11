@@ -183,8 +183,8 @@ class MySystem(ServerSubsystem):
 
 ```python
 class MyServerSystem(ServerSubsystem):
-    def sync_to_client(self, player_id):
-        self.sendClient(player_id, 'OnSyncData', {'hp': 100})
+    def syncToClient(self, playerId):
+        self.sendClient(playerId, 'OnSyncData', {'hp': 100})
 
     def broadcast(self):
         self.sendAllClients('OnGlobalEvent', {'message': 'hello'})
@@ -199,7 +199,7 @@ class MyServerSystem(ServerSubsystem):
 
 ```python
 class MyClientSystem(ClientSubsystem):
-    def send_to_server(self):
+    def sendToServer(self):
         self.sendServer('OnClientAction', {'action': 'jump'})
 ```
 
@@ -226,7 +226,7 @@ class MyServerSystem(ServerSubsystem):
         from architect.core import Location
         from architect.core import isServer
         # 按字符串模板生成
-        entity_id = self.spawnEntity(
+        entityId = self.spawnEntity(
             'minecraft:zombie',
             Location((0, 64, 0), 0),
             (0, 0),           # rotation (yaw, pitch)
@@ -234,21 +234,21 @@ class MyServerSystem(ServerSubsystem):
             isGlobal=False
         )
         # 按 NBT 数据生成
-        entity_id = self.spawnEntity(
+        entityId = self.spawnEntity(
             {'identifier': 'minecraft:zombie', 'nbt': {}},
             Location((0, 64, 0), 0),
             (0, 0)
         )
 
-    def spawn_item(self):
+    def spawnItem(self):
         from architect.core import Location
         self.spawnItem(
             {'item': 'minecraft:diamond', 'count': 1},
             Location((0, 64, 0), 0)
         )
 
-    def destroy(self, entity_id):
-        self.destroyEntity(entity_id)
+    def destroy(self, entityId):
+        self.destroyEntity(entityId)
 ```
 
 ### 7.2 客户端
@@ -256,14 +256,14 @@ class MyServerSystem(ServerSubsystem):
 ```python
 class MyClientSystem(ClientSubsystem):
     def spawn(self):
-        entity_id = self.spawnEntity(
+        entityId = self.spawnEntity(
             'minecraft:zombie',
             (0, 64, 0),    # pos
             (0, 0)         # rot
         )
 
-    def destroy(self, entity_id):
-        self.destroyEntity(entity_id)
+    def destroy(self, entityId):
+        self.destroyEntity(entityId)
 
     def create_effect(self):
         self.createSfx('effects/explosion', (0, 0, 0))

@@ -50,108 +50,15 @@ from architect.utils.device.server import DeviceServer
 
 ---
 
-## 3. Molang 表达式 — `molang/`
+## 3. Molang 表达式 — 见 [molang.md](molang.md)
 
-Molang 是 Minecraft 内置的表达式语言，用于动画、渲染和粒子效果。
-
-### 3.1 类型
-
-```python
-from architect.utils.molang.types import (
-    MolangNumber,
-    MolangString,
-    MolangVariable,
-    MolangExpression
-)
-
-# Molang 数值
-val = MolangNumber('query.health / query.max_health')
-
-# Molang 变量
-var = MolangVariable('variable.is_running')
-```
-
-### 3.2 客户端
-
-```python
-from architect.utils.molang.client import MolangClient
-
-# 设置 Molang 变量
-MolangClient.set_variable(entity_id, 'variable.speed', 1.5)
-
-# 获取 Molang 变量
-value = MolangClient.get_variable(entity_id, 'variable.speed')
-```
-
-### 3.3 服务端
-
-```python
-from architect.utils.molang.server import MolangServer
-
-# 服务端 Molang 操作
-```
-
-### 3.4 通用工具
-
-```python
-from architect.utils.molang.common import (
-    molang_lerp,
-    molang_clamp,
-    molang_if_else
-)
-
-# Molang 条件表达式
-expr = molang_if_else(
-    'query.is_sprinting',
-    '1.5',      # 冲刺时速度
-    '1.0'       # 默认速度
-)
-
-# Molang 插值
-blend = molang_lerp('0.0', '1.0', 'variable.blend_factor')
-```
+Molang API 已移至独立文档。`NamedVariable`, `QueryVariable`, `ReactiveQueryVariable`, `@MolangQuery`, `NamedProperty` 等详见 Molang 参考。
 
 ---
 
-## 4. Persona 渲染覆盖 — `persona/`
+## 4. Persona 渲染覆盖 — 见 [persona.md](persona.md)
 
-Persona 系统允许修改玩家的渲染外观（皮肤、模型覆盖）。
-
-### 4.1 客户端
-
-```python
-from architect.utils.persona.client import PersonaRendererComponent, PersonaEventsSubsystem
-
-class MyPersonaSystem(ClientSubsystem):
-    def onInit(self):
-        # 获取 Persona 渲染组件
-        self.renderer = PersonaRendererComponent.get()
-
-    def change_skin(self, player_id):
-        # 覆盖玩家渲染
-        self.renderer.override_skin(player_id, 'custom:textures/skin.png')
-        self.renderer.override_model(player_id, 'custom:models/armor.geo')
-
-    def reset_skin(self, player_id):
-        # 重置为默认
-        self.renderer.reset(player_id)
-```
-
-### 4.2 服务端
-
-```python
-from architect.utils.persona.server import PersonaServer
-
-class MyPersonaServer(ServerSubsystem):
-    def onInit(self):
-        self.persona = PersonaServer()
-
-    def sync_skin_to_client(self, player_id, skin_path):
-        # 通知客户端切换皮肤
-        self.sendClient(player_id, 'OnPersonaChange', {
-            'skin': skin_path
-        })
-```
+Persona API 已移至独立文档。`PersonaRendererComponent`, `PersonaEventsSubsystem`, `PersonaServer` 详见 Persona 参考。
 
 ---
 

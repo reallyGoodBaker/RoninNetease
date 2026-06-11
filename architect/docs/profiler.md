@@ -9,7 +9,7 @@
 `Profiler` 的核心功能：
 
 - **耗时记录**：通过 `with profiler.record('key')` 上下文管理器自动计时
-- **统计快照**：输出 `avg_ms`（平均耗时）、`max_ms`（最大耗时）、`count`（采样数）
+- **统计快照**：输出 `avgMs`（平均耗时）、`maxMs`（最大耗时）、`count`（采样数）
 - **全局单例**：`from architect.core.profiler import profiler` 即可使用
 - **自动记录**：框架自动将调度器跳过帧数（`scheduler.tickSkipped`、`scheduler.renderSkipped`）写入 profiler
 
@@ -40,8 +40,8 @@ from architect.core.profiler import profiler
 ```python
 {
     'key_name': {
-        'avg_ms': 1.23,    # 平均耗时（毫秒）
-        'max_ms': 5.67,    # 最大耗时（毫秒）
+        'avgMs': 1.23,    # 平均耗时（毫秒）
+        'maxMs': 5.67,    # 最大耗时（毫秒）
         'count': 120       # 采样次数
     },
     ...
@@ -84,7 +84,7 @@ class MySystem(ServerSubsystem):
 snap = profiler.snapshot()
 for key, stats in snap.items():
     print('%s: avg=%.2fms max=%.2fms count=%d' %
-          (key, stats['avg_ms'], stats['max_ms'], stats['count']))
+          (key, stats['avgMs'], stats['maxMs'], stats['count']))
 
 # 获取统计并重置（适合周期性输出）
 snap = profiler.flush()
@@ -130,8 +130,8 @@ profiler._add('manual_work', elapsed)
 # 自动产生的 key：
 profiler.flush()
 # {
-#     'scheduler.tickSkipped':   {'avg_ms': ..., 'max_ms': ..., 'count': ...},
-#     'scheduler.renderSkipped': {'avg_ms': ..., 'max_ms': ..., 'count': ...},
+#     'scheduler.tickSkipped':   {'avgMs': ..., 'maxMs': ..., 'count': ...},
+#     'scheduler.renderSkipped': {'avgMs': ..., 'maxMs': ..., 'count': ...},
 # }
 ```
 
@@ -152,11 +152,11 @@ class DiagnosticSystem(ServerSubsystem):
             if snap:
                 print('=== Performance Report ===')
                 sorted_keys = sorted(snap.items(),
-                                    key=lambda x: x[1]['avg_ms'],
+                                    key=lambda x: x[1]['avgMs'],
                                     reverse=True)
                 for key, stats in sorted_keys[:10]:  # Top 10
                     print('  %-30s avg=%.2fms max=%.2fms count=%d' %
-                          (key, stats['avg_ms'], stats['max_ms'], stats['count']))
+                          (key, stats['avgMs'], stats['maxMs'], stats['count']))
 ```
 
 ---
@@ -190,7 +190,7 @@ def heavy_function():
        self.find_path()
 
    # 不好（粒度太粗）
-   with profiler.record('my_system'):
+   with profiler.record('mySystem'):
        self.do_everything()
    ```
 

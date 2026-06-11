@@ -22,7 +22,7 @@ your_mod/
 ├── modMain.py             # 模组入口
 ├── subsystems/            # 子系统目录
 │   ├── __init__.py
-│   └── my_system.py
+│   └── mySystem.py
 ├── components/            # 自定义组件
 │   └── health.py
 ├── plugins/               # 用户插件（可选）
@@ -33,17 +33,22 @@ your_mod/
 
 ## 3. 入口文件 — `modMain.py`
 
-框架的启动入口，只需要调用 `createClient()` 和 `createServer()`：
+框架通过网易的 `Mod` 绑定类启动。`Mod.Binding` 声明模组名称和版本，`Mod.InitServer` / `Mod.InitClient` 分别在服务端和客户端初始化时调用：
 
 ```python
-# coding=utf-8
-from architect.startup import createClient, createServer
+# -*- coding: utf-8 -*-
+from mod.common.mod import Mod
+from .engine.architect.startup import createServer, createClient, conf
 
-# 服务端启动
-createServer()
+@Mod.Binding(name=conf('MOD_NAME'), version=conf('MOD_VERSION'))
+class ModBase(object):
+    @Mod.InitServer()
+    def initServer(self):
+        createServer()
 
-# 客户端启动
-createClient()
+    @Mod.InitClient()
+    def initClient(self):
+        createClient()
 ```
 
 `createServer()` 和 `createClient()` 会自动完成：
@@ -59,40 +64,28 @@ createClient()
 
 ## 4. 配置文件 — `conf.py`
 
-在模组根目录创建 `conf.py` 来覆盖框架默认配置：
+在模组根目录（`my_scripts/`）创建 `conf.py` 来覆盖框架默认配置：
 
 ```python
-# coding=utf-8
-# 基础信息
-MOD_NAME = 'MyMod'
-MOD_VERSION = '1.0.0'
-MOD_ENGINE_NAME = 'MyModEngine'   # 引擎系统名
-MOD_SYSTEM_NAME = 'MyModSystem'   # 子系统名
+# -*- coding: utf-8 -*-
 
-# 需要导入的模块（相对于模组根目录的路径）
+# 基础信息
+MOD_NAME = 'my_mod'
+MOD_VERSION = '1.0.0'
+
+MOD_ENGINE_NAME = 'engine'   # 引擎系统名
+MOD_SYSTEM_NAME = 'system'   # 子系统名
+
+# 需要导入的模块（相对于 my_scripts 目录）
 MOD_SERVER_MODULES = [
-    'subsystems.my_system',
 ]
 MOD_CLIENT_MODULES = [
-    'subsystems.my_system',
 ]
 
 # 启用的插件列表
 PLUGINS = [
-    '$vendor.event',      # 事件系统插件（推荐启用）
 ]
-
-# 热更配置白名单
-HOT_RELOADABLE = {
-    'MAX_PLAYERS',
-    'DEBUG_MODE',
-}
 ```
-
-**配置覆盖规则：**
-- `MOD_NAME`、`MOD_VERSION` 等单值配置 — 用户值优先
-- `MOD_SERVER_MODULES`、`MOD_CLIENT_MODULES`、`PLUGINS` — 用户值与引擎值合并（取并集）
-- 其他键 — 按 `HOT_RELOADABLE` 白名单控制运行时修改
 
 ---
 
@@ -101,10 +94,9 @@ HOT_RELOADABLE = {
 ### 5.1 服务端子系统
 
 ```python
-# subsystems/my_system.py
+# subsystems/mySystem.py
 from architect.core import SubsystemServer, ServerSubsystem, Sched
 from architect.core import EventListener, CustomEvent
-from architect.core import Internal
 
 class MyServerSystem(ServerSubsystem):
     canTick = True  # 启用 onUpdate
@@ -116,10 +108,9 @@ class MyServerSystem(ServerSubsystem):
     def onReady(self):
         """所有子系统初始化完毕后调用，此时可获取其他子系统"""
         print('[MySystem] Server ready')
-        # other = self.getManager().getSubsystem(AnotherSystem)
 
     def onUpdate(self, dt):
-        """每 Tick 调用（每游戏帧）"""
+        """每 Tick 调用"""
         pass
 
     def onDestroy(self):
@@ -137,16 +128,16 @@ class MyServerSystem(ServerSubsystem):
         print('[MySystem] Custom event received:', event)
 
     # 调度到 Tick 更新前
-    @Sched.Tick(Sched.Tick.BeforeUpdate)
+    @Sched.Tick(SchedUpdateFlags.BeforeUpdate)
     def beforeTick(self):
         pass
 
     # 广播事件到所有客户端
-    def broadcast_message(self, msg):
+    def broadcastMessage(self, msg):
         self.sendAllClients('OnMessage', {'text': msg})
 
     # 生成实体
-    def spawn_npc(self, template, pos, dim=0):
+    def spawnNpc(self, template, pos, dim=0):
         from architect.core import Location
         loc = Location(pos, dim)
         return self.spawnEntity(template, loc, (0, 0))
@@ -155,7 +146,7 @@ class MyServerSystem(ServerSubsystem):
 ### 5.2 客户端子系统
 
 ```python
-# subsystems/my_client_system.py
+# subsystems/myClientSystem.py
 from architect.core import SubsystemClient, ClientSubsystem
 from architect.core import Sched, EventListener
 
@@ -182,9 +173,7 @@ class MyClientSystem(ClientSubsystem):
 
 ## 6. 使用装饰器注册子系统
 
-框架支持两种注册子系统的模式：
-
-### 模式 1：装饰器注册（推荐）
+框架支持装饰器自动注册：
 
 ```python
 from architect.core import SubsystemServer, ServerSubsystem
@@ -194,9 +183,7 @@ class MySystem(ServerSubsystem):
     canTick = True
 ```
 
-### 模式 2：手动注册模块导入
-
-服务端在 `MOD_SERVER_MODULES` 中声明了 `'subsystems.my_system'` 后，该模块会被 Import。子系统的 `@SubsystemServer` 装饰器会在此时自动调用。
+模块在 `MOD_SERVER_MODULES` 中被声明后会被 Import，装饰器在此时自动生效。
 
 ---
 
@@ -214,9 +201,10 @@ class Health(Component):
     maxHp = 100
 
 # 带持久化的组件
+@PersistKeys('slots', 'selected')
 class Inventory(Component):
-    items = PersistKeys()          # 持久化字段列表
     slots = [''] * 36
+    selected = 0
 
 # 带字段验证的组件
 @DefineFields({
@@ -251,34 +239,33 @@ destroyComponent(entityId, Health)
 
 ### 7.3 查询组件 — `@Query` 装饰器
 
+`@Query` 接收组件类作为位置参数，`required` 和 `excluded` 作为可选关键字参数。用 `EntityId` 伪组件获取实体 ID：
+
 ```python
-from architect.component import Query, EntityId, getComponent
+from architect.query import Query, EntityId
 
 class PlayerDamageSystem(ServerSubsystem):
     canTick = True
 
-    @Query(
-        target='{Health}',          # 需要 Health 组件
-        required=['{PlayerStats}'], # 可选加载 PlayerStats
-        attach_query=True           # 将查询结果传入参数
-    )
-    def damage_player(self, entityId, Health, PlayerStats=None):
+    @Query(Health, EntityId,
+           required=[PlayerStats],
+           excluded=[Dead])
+    def damagePlayer(self, healthComp, entityId):
+        # healthComp: Health 组件实例
         # entityId: 实体 ID (str)
-        # Health: Health 组件实例
-        # PlayerStats: PlayerStats 组件实例（可能为 None）
-        Health.hp = max(0, Health.hp - 5)
-        if PlayerStats:
-            PlayerStats.xp += 1
+        # 注：required 中的 PlayerStats 仅用于筛选，不注入到参数
+        healthComp.hp = max(0, healthComp.hp - 5)
 
     def onUpdate(self, dt):
-        # 对所有拥有 Health 和 PlayerStats 的实体造成伤害
-        self.damage_player()
+        self.damagePlayer()  # 遍历所有匹配实体
 ```
 
-`@Query` 的参数：
-- `target` — 必须存在的组件（逗号分隔，如 `'{Health,Player}'`）
-- `required` — 可选组件（允许为 `None`）
-- `attach_query` — `True` 时自动传入 `entityId` + 组件实例作为参数；`False` 时在方法内通过 `getComponent()` 获取
+`@Query` 接受的参数：
+- `*compCls` — 位置参数，组件类列表，按顺序注入到方法参数中
+- `required=[...]` — 必须存在的额外组件（不注入到参数中）
+- `excluded=[...]` — 必须排除的组件
+
+伪组件 `EntityId` 用于获取实体 ID，放在参数列表的任意位置即可。
 
 ---
 
@@ -315,17 +302,16 @@ class MySystem(ClientSubsystem):
 
 ### 8.3 事件链 — `ChainedEvent`
 
-事件监听器接收一个 `ChainedEvent` 对象，可以用它来中断事件流或修改事件数据：
+事件监听器接收一个 `ChainedEvent` 对象：
 
 ```python
 @EventListener('EntityHurtEvent')
 def onEntityHurt(self, event):
-    # event 是 ChainedEvent 实例
     entityId = event.id          # 属性访问 → 等价于 event['id']
     damage = event.damage
 
-    if entityId == self.admin_id:
-        event.stop()             # 停止事件继续传递
+    if entityId == self.adminId:
+        event.stop()             # 停止事件向下传递
         event.setEvent('damage', 0)  # 修改事件数据
 ```
 
@@ -349,8 +335,7 @@ def onEntityHurt(self, event):
 from architect.core import Sched, SchedUpdateFlags
 
 class MySystem(ServerSubsystem):
-    # === Tick 调度（随游戏帧调度） ===
-
+    # === Tick 调度 ===
     @Sched.Tick()  # 默认在 Update 阶段
     def onTickUpdate(self):
         pass
@@ -364,25 +349,21 @@ class MySystem(ServerSubsystem):
         pass
 
     # === 渲染帧调度（仅客户端） ===
-
     @Sched.Render()
     def onRender(self):
         pass
 
     # === 固定频率调度 ===
-
     @Sched.Fixed('MyFixedSched')
     def onFixedUpdate(self):
         pass
 
     def onReady(self):
-        # 在 onReady 中启动固定调度器（不要在 onInit 中调用）
-        sched = self.scheduleFixed('MyFixedSched', period=0.5)  # 0.5 秒
+        self.scheduleFixed('MyFixedSched', period=0.5)  # 0.5 秒
 
     # === 事件调度 ===
-
-    @Sched.Event('EntityHurtEvent', isCustom=False)
-    def onEntityHurt(self):
+    @Sched.Event('EntityHurtEvent')
+    def onEntityHurtSched(self):
         pass
 ```
 
@@ -391,30 +372,34 @@ class MySystem(ServerSubsystem):
 ## 10. UI 系统
 
 ```python
-from architect.ui.client import UiSubsystem, UiDef, Sink, AutoCreate
-from architect.ui.client import signal, Screen, Ui
+from architect.ui.client import UiSubsystem, UiDef, Sink, signal, Screen, AutoCreate, Hud
 
+@UiDef('myHud')      # 类装饰器：声明 UI 命名空间
+@Screen               # 类装饰器：标记为全屏界面
+@AutoCreate           # 类装饰器：自动创建
 class MyHUD(UiSubsystem):
     canTick = True
 
-    @signal
-    def hp(self):
-        return self.health.hp  # 自动追踪 health.hp 的变化
+    def onCreate(self):
+        """UI 创建时调用，等效于引擎 Create 事件"""
+        # signal 返回 (getter, setter) 元组
+        self.hpGet, self.hpSet = signal(100)
+        self.nameGet, self.nameSet = signal('Steve')
 
-    @UiDef('my_hud')  # UI JSON 中的命名空间
-    @Screen('hud_screen')  # UI 屏幕名
-    @AutoCreate
-    def initHUD(self, ui: Ui):
-        """UI 首次创建时调用"""
-        self.hud = ui
-        # 绑定 UI 控件数据
-        self.hud.bind('hp_text', 'text', self.hp_signal)
+        # 绑定控件
+        label = self.find('/hpLabel')
+        # ...
 
-    def onUpdate(self, dt):
-        if self.hp_value != self.last_hp:
-            self.last_hp = self.hp_value
-            # signal 自动触发 UI 刷新
+    @Sink  # 方法装饰器：无参数，自动追踪内部访问的所有 signal
+    def refresh(self):
+        """任何 signal 变化时自动调用"""
+        hp = self.hpGet()
+        name = self.nameGet()
+        # 更新 UI 控件
+        self.find('/hpLabel').SetText(str(hp))
 ```
+
+**关键区别：** `signal()` 不是装饰器，返回 `(getter, setter)` 元组。`@Sink` 不带参数。`@UiDef`、`@Screen`、`@AutoCreate`、`@Hud` 都是类装饰器。
 
 ---
 
@@ -433,8 +418,6 @@ class MyHUD(UiSubsystem):
 
 ### 11.2 启用插件
 
-在 `conf.py` 中：
-
 ```python
 PLUGINS = [
     '$vendor.event',
@@ -445,7 +428,7 @@ PLUGINS = [
 ### 11.3 创建自定义插件
 
 ```python
-# plugins/my_plugin.py
+# plugins/myPlugin.py
 from architect.core.loader import Plugin, PluginBase
 
 @Plugin(
@@ -453,23 +436,19 @@ from architect.core.loader import Plugin, PluginBase
     ver=[1, 0, 0],
     author='You',
     desc='My first plugin',
-    deps={'RoninAnimationEx': '>=1.0.0'}  # 依赖其他插件
+    deps={'RoninAnimationEx': '>=1.0.0'}
 )
 class MyPlugin(PluginBase):
     def onCreate(self):
-        """插件实例创建时调用"""
         print('[MyPlugin] Created')
 
     def onAttach(self, manager):
-        """插件附加到 SubsystemManager 时调用"""
         print('[MyPlugin] Attached')
 
     def onReady(self, manager):
-        """所有插件加载完毕后调用"""
         print('[MyPlugin] Ready')
 
     def onDestroy(self):
-        """插件销毁时调用"""
         print('[MyPlugin] Destroyed')
 ```
 
@@ -478,7 +457,7 @@ class MyPlugin(PluginBase):
 ```python
 PLUGINS = [
     '$vendor.event',
-    '$user.my_plugin',   # 用户插件路径: {modname}.plugins.my_plugin
+    '$user.myPlugin',   # 用户插件路径: {modname}.plugins.myPlugin
 ]
 ```
 
@@ -487,23 +466,33 @@ PLUGINS = [
 ## 12. 远程调用 (RPC)
 
 ```python
-from architect.remote.common import Remote, callRemote
+from architect.remote.common import Remote, remote
 
 class SyncSystem(ServerSubsystem):
     @Remote
-    def sync_player_data(self, target_id=None, data=None):
-        """可被客户端远程调用的方法"""
-        # ... 处理逻辑
+    def syncPlayerData(self, callerPlayerId, targetId=None, data=None):
+        """被客户端远程调用时，第一个参数自动注入调用者的 playerId"""
         return {'status': 'ok'}
 
+# === 客户端调用服务端 ===
 class ClientCaller(ClientSubsystem):
     def onReady(self):
-        # 调用服务端的 Remote 方法
-        fut = callRemote('SyncSystem.sync_player_data',
-                          target_id='player123',
-                          data={'hp': 100})
+        # 无需返回值（fire-and-forget）
+        remote.client.call('SyncSystem.syncPlayerData',
+                           targetId='player123',
+                           data={'hp': 100})
+
+        # 需要返回值（返回 Future）
+        fut = remote.client.invoke('SyncSystem.syncPlayerData',
+                                    targetId='player123',
+                                    data={'hp': 100})
         fut.done(lambda result: print('Success:', result))
         fut.expected(lambda err: print('Failed:', err))
+
+# === 服务端调用客户端 ===
+# remote.server.call(playerId, uri, *args, **kwargs)
+# remote.server.callEvery(uri, *args, **kwargs)  # 广播
+# remote.server.invoke(playerId, uri, *args, **kwargs)  # 需要返回值
 ```
 
 ---
@@ -518,27 +507,22 @@ from architect.core.aspect import Aspect
 class MyAspect:
     @Before('someMethod')
     def beforeMethod(self, targetInst, args, kwargs):
-        """方法调用前执行"""
         print('Before:', args)
 
     @After('someMethod')
     def afterMethod(self, targetInst, args, kwargs):
-        """方法调用后执行"""
         print('After:', args)
 
     @AfterReturning('someMethod')
     def afterReturning(self, targetInst, returnVal, args, kwargs):
-        """方法成功返回后执行"""
         print('Returned:', returnVal)
 
     @AfterThrowing('someMethod')
     def afterThrowing(self, targetInst, e, args, kwargs):
-        """方法抛出异常后执行"""
         print('Error:', e)
 
     @Replace('someMethod')
     def replaceMethod(self, targetInst, targetMethod, args, kwargs):
-        """完全替换原方法"""
         print('Intercepted!')
         return targetMethod(targetInst, *args, **kwargs)
 ```
@@ -553,15 +537,14 @@ from architect.core.subsystem import SubsystemManager
 manager = SubsystemManager.getInstance()
 
 # 注册命令处理器
-def handle_spawn(template, location):
+def handleSpawn(template, location):
     print('Spawning:', template, 'at', location)
     return template
 
-unreg = manager.bus.register('spawn_npc', handle_spawn)
+unreg = manager.bus.register('spawnNpc', handleSpawn)
 
 # 执行命令（同步调用所有已注册的处理器）
-results = manager.bus.execute('spawn_npc', 'zombie', (0, 64, 0))
-# results = ['zombie']
+results = manager.bus.execute('spawnNpc', 'zombie', (0, 64, 0))
 
 # 注销
 unreg()
@@ -574,12 +557,12 @@ unreg()
 ```python
 from architect.core.profiler import profiler
 
-with profiler.record('my_operation'):
-    do_heavy_work()
+with profiler.record('myOperation'):
+    doHeavyWork()
 
 # 获取快照（不重置）
 snap = profiler.snapshot()
-# {'my_operation': {'avg_ms': 1.2, 'max_ms': 3.4, 'count': 60}}
+# {'myOperation': {'avgMs': 1.2, 'maxMs': 3.4, 'count': 60}}
 
 # 获取快照并重置
 snap = profiler.flush()
@@ -597,11 +580,10 @@ from architect.compact import *
 # - Sched, Future, Async, EventListener, CustomEvent
 # - Query, EntityId
 # - createComponent, getComponent, hasComponent
-# - vec3, mat4, Vec3Utils
 # - LevelClient, LevelServer
 # - UiDef, Sink, signal, Screen
 # - AnnotationHelper
-# - Remote, callRemote
+# - Remote
 ```
 
 ---

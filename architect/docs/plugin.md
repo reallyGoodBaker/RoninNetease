@@ -230,7 +230,7 @@ entity.set_attr('notify_{name}', 1)
 
 ```python
 # 获取输入值
-input_comp = getComponent(entity_id, InputExComponent)
+input_comp = getComponent(entityId, InputExComponent)
 move_forward = input_comp.get('MoveForward')   # 0.0 ~ 1.0
 is_jumping = input_comp.get('Jump')            # True/False
 ```
@@ -251,7 +251,7 @@ is_jumping = input_comp.get('Jump')            # True/False
 your_mod/
 └── plugins/
     ├── __init__.py
-    └── my_plugin.py
+    └── myPlugin.py
 ```
 
 ### 6.2 启用用户插件
@@ -261,7 +261,7 @@ your_mod/
 ```python
 PLUGINS = [
     '$vendor.event',
-    '$user.my_plugin',    # → {modname}.plugins.my_plugin
+    '$user.myPlugin',    # → {modname}.plugins.myPlugin
 ]
 ```
 
@@ -295,7 +295,7 @@ class MyPlugin(PluginBase):
     def onAttach(self, manager):
         # manager 是 SubsystemManager 实例
         # 可以访问所有已注册的子系统
-        my_system = manager.getSubsystemByName('MySystem')
+        mySystem = manager.getSubsystemByName('MySystem')
 
     def onRegisterComponent(self, compCls):
         # compCls 是组件类型列表

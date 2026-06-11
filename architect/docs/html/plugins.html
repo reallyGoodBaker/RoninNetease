@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>plugins - RoninNetease v1.1.0</title>
+<style>:root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}body{font-family:"Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR",Inter,-apple-system,system-ui,sans-serif;background:hsl(var(--b));color:hsl(var(--f));line-height:1.7;font-size:15px;zoom:1.25}nav{position:fixed;top:0;left:0;bottom:0;width:17rem;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}.sr-btn{margin-left:auto;background:0 0;border:0;cursor:pointer;color:hsl(0 0% 63.9%);padding:.2rem;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:.12s;flex-shrink:0}.sr-btn:hover{background:hsl(0 0% 14%);color:hsl(0 0% 98%)}nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}nav a:hover,nav a.active{color:hsl(var(--f));background:hsl(var(--s) / .5);border-left-color:hsl(var(--p))}nav a.active{font-weight:600}nav a.sub{padding:.22rem 1.25rem .22rem 2.2rem;font-size:.76rem;opacity:.6}nav a.sub:hover{opacity:1}nav::-webkit-scrollbar,.pages::-webkit-scrollbar{width:4px}nav::-webkit-scrollbar-track,.pages::-webkit-scrollbar-track{background:transparent}nav::-webkit-scrollbar-thumb,.pages::-webkit-scrollbar-thumb{background:hsl(0 0% 25%);border-radius:4px}nav::-webkit-scrollbar-thumb:hover,.pages::-webkit-scrollbar-thumb:hover{background:hsl(0 0% 35%)}nav,.pages{scrollbar-width:thin;scrollbar-color:hsl(0 0% 25%) transparent}main{margin-left:17rem;display:flex;justify-content:center;padding:2rem 2.5rem}article{background:hsl(var(--c));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:2.5rem 3rem;max-width:860px;width:100%}h1{font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid hsl(0 0% 14%)}h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.35rem;border-bottom:1px solid hsl(0 0% 14%)}h3{font-size:1.1rem;font-weight:600;margin-top:2rem;margin-bottom:.5rem}h4{font-size:1rem;font-weight:600;margin-top:1.5rem;margin-bottom:.4rem;color:hsl(var(--m))}p{margin:.8rem 0;line-height:1.75}a:not(nav a){color:hsl(var(--p));text-decoration:underline}code{background:hsl(var(--s) / .5);padding:.12em .35em;border-radius:3px;font-size:.87em;font-family:"Noto Sans Mono","JetBrains Mono","Fira Code",Consolas,monospace}pre{background:hsl(var(--b));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:1rem 1.25rem;overflow-x:auto;margin:1.25rem 0}pre code{background:0 0;padding:0;font-size:.83rem;line-height:1.6}table{border-collapse:collapse;width:100%;margin:1.5rem 0}td,th{border:1px solid hsl(0 0% 14%);padding:.55rem .85rem;text-align:left;font-size:.9rem}th{background:hsl(var(--s) / .5);font-weight:600}tr:nth-child(even){background:hsl(0 0% 7%)}blockquote{border-left:3px solid hsl(var(--p));padding:.5rem 1.1rem;margin:1.25rem 0;background:hsl(267 100% 70% / .04);border-radius:0 var(--r) var(--r) 0;font-size:.92rem;color:hsl(var(--m))}hr{border:0;border-top:1px solid hsl(0 0% 14%);margin:2rem 0}ol,ul{padding-left:1.5rem;margin:.75rem 0}li{margin:.35rem 0;line-height:1.75}strong{color:hsl(var(--f))}.sr{display:flex;align-items:center;padding:.5rem 1rem;text-decoration:none;color:hsl(0 0% 63.9%);font-size:.87rem;transition:.08s}.sr:hover,.sr:focus{background:hsl(0 0% 12%);color:hsl(0 0% 98%);outline:0}.sr-t{flex-shrink:0;width:1.8rem;font-size:.66rem;opacity:.5;text-transform:uppercase}@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}</style>
+</head>
+<body>
+<nav>
+<div class="logo">
+Ronin<span>Netease</span>
+<button title="搜索 (Ctrl+K)" onclick="document.dispatchEvent(new KeyboardEvent('keydown',{ctrlKey:!0,key:'k'}))" class="sr-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+</div>
+<div class="pages">
+<div class="group">入门</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">核心系统</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">进阶</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5" class="sub">5. 触摸手势</a><a href="ui.html#6" class="sub">6. 完整示例</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="plugins.html" class="active">Plugins — 系统插件参考</a><a href="plugins.html#1-vendor-event" class="sub">1. 事件系统插件 — $vendor.event</a><a href="plugins.html#2-vendor-animation" class="sub">2. 动画扩展插件 — $vendor.animation</a><a href="plugins.html#3-vendor-input" class="sub">3. 输入系统插件 — $vendor.input</a><a href="plugins.html#4-vendor-squad" class="sub">4. 小队系统插件 — $vendor.squad</a><a href="plugins.html#" class="sub">下一步</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><div class="group">参考</div><a href="math.html">Math — 数学库</a><a href="math.html#1" class="sub">1. 概述</a><a href="math.html#2-vec3-py" class="sub">2. 向量运算函数 — vec3.py</a><a href="math.html#3-mat4-py" class="sub">3. 矩阵函数 — mat4.py</a><a href="math.html#4-double-py" class="sub">4. 插值与常量 — double.py</a><a href="math.html#5-unit-py" class="sub">5. 时间常量 — unit.py</a><a href="math.html#6-math-utils-py" class="sub">6. 客户端工具 — math/utils.py</a><a href="molang.html">Molang — 表达式工具</a><a href="molang.html#1" class="sub">1. 概述</a><a href="molang.html#2-types-py" class="sub">2. 抽象类型 — types.py</a><a href="molang.html#3-common-py" class="sub">3. 命名变量 — common.py</a><a href="molang.html#4-query-client-py" class="sub">4. 客户端 Query 变量 — client.py</a><a href="molang.html#5-server-py" class="sub">5. 服务端 — server.py</a><a href="molang.html#6" class="sub">6. 完整示例</a><a href="persona.html">Persona — 渲染覆盖系统</a><a href="persona.html#1" class="sub">1. 概述</a><a href="persona.html#2-personarenderercomponent" class="sub">2. PersonaRendererComponent — 客户端渲染组件</a><a href="persona.html#3-personaeventssubsystem" class="sub">3. PersonaEventsSubsystem — 客户端事件子系统</a><a href="persona.html#4-personaserver" class="sub">4. PersonaServer — 服务端中继子系统</a><a href="persona.html#5" class="sub">5. 完整示例</a><a href="persona.html#" class="sub">下一步</a><a href="fsm.html">FSM — 有限状态机</a><a href="fsm.html#1" class="sub">1. 概述</a><a href="fsm.html#2-statetree" class="sub">2. StateTree — 树形状态机（推荐）</a><a href="fsm.html#3-fsm" class="sub">3. 经典 FSM（已弃用）</a><a href="fsm.html#" class="sub">下一步</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang-md-molang-md" class="sub">3. Molang 表达式 — 见 [molang.md](molang.md)</a><a href="utils.html#4-persona-persona-md-persona-m" class="sub">4. Persona 渲染覆盖 — 见 [persona.md](persona.m</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a>
+</div>
+</nav>
+<main>
+<article>
+<h1>Plugins — 系统插件参考</h1>
+<p>RoninNetease 内置了系统插件（<code>$vendor.*</code>），通过 <code>conf.py</code> 中的 <code>PLUGINS</code> 列表启用。本文档基于实际示例说明动画和输入插件的用法。</p>
+<hr>
+<h2 id="1-vendor-event">1. 事件系统插件 — <code>$vendor.event</code></h2>
+<h3>1.1 概述</h3>
+<p>封装了事件分发和管理。启用后自动注册客户端/服务端的 <code>EventReader</code> 单例组件。</p>
+<h3>1.2 启用</h3>
+<pre><code class="hljs language-python">PLUGINS = [
+    <span class="hljs-string">&#x27;$vendor.event&#x27;</span>,
+]
+</code></pre>
+<h3>1.3 EventReader 组件</h3>
+<p><code>EventReader</code> 是一个单例组件，用于在 <code>@Sched.Event</code> 中获取当前事件数据。正确的用法是<strong>在 <code>@Query</code> 的位置参数中传入 <code>EventReader</code>，框架会自动注入</strong>：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.query <span class="hljs-keyword">import</span> Query
+<span class="hljs-keyword">from</span> architect.plugins.event.client <span class="hljs-keyword">import</span> EventReader
+<span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> Sched
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+<span class="hljs-meta">    @Sched.Event(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span></span>)</span>
+<span class="hljs-meta">    @Query(<span class="hljs-params">EventReader</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self, reader</span>):
+        <span class="hljs-comment"># reader 是 EventReader 实例，由 @Query 自动注入</span>
+        event = reader.event()
+        entityId = event.<span class="hljs-built_in">id</span>
+        damage = event.damage
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Entity %s took %s damage&#x27;</span> % (entityId, damage))
+</code></pre>
+<h3>1.4 <code>EventReader</code> 属性与方法</h3>
+<pre><code class="hljs language-python">event = reader.event()  <span class="hljs-comment"># 获取当前 ChainedEvent</span>
+
+<span class="hljs-comment"># ChainedEvent 的常用属性与方法</span>
+event.<span class="hljs-built_in">id</span>           <span class="hljs-comment"># 实体 ID</span>
+event.damage       <span class="hljs-comment"># 伤害值</span>
+event.srcId        <span class="hljs-comment"># 来源实体 ID</span>
+event.cause        <span class="hljs-comment"># 伤害原因</span>
+event.stop()       <span class="hljs-comment"># 停止事件传递</span>
+event.prevent()    <span class="hljs-comment"># 阻止默认行为</span>
+event.setEvent(k, v)  <span class="hljs-comment"># 修改事件字段</span>
+event.<span class="hljs-built_in">dict</span>()       <span class="hljs-comment"># 获取原始 dict</span>
+</code></pre>
+<h3>1.5 服务端用法</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.plugins.event.server <span class="hljs-keyword">import</span> EventReader
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyServerSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+<span class="hljs-meta">    @Sched.Event(<span class="hljs-params"><span class="hljs-string">&#x27;EntityHurtEvent&#x27;</span></span>)</span>
+<span class="hljs-meta">    @Query(<span class="hljs-params">EventReader</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self, reader</span>):
+        event = reader.event()
+        <span class="hljs-keyword">if</span> event.damage &gt; <span class="hljs-number">50</span>:
+            event.setEvent(<span class="hljs-string">&#x27;damage&#x27;</span>, <span class="hljs-number">10</span>)
+</code></pre>
+<hr>
+<h2 id="2-vendor-animation">2. 动画扩展插件 — <code>$vendor.animation</code></h2>
+<h3>2.1 启用</h3>
+<pre><code class="hljs language-python">PLUGINS = [<span class="hljs-string">&#x27;$vendor.animation&#x27;</span>]
+</code></pre>
+<h3>2.2 动画映射定义</h3>
+<p>动画系统使用<strong>短键 → 完整动画路径</strong>的映射模式。在配置模块中定义一个字典：</p>
+<pre><code class="hljs language-python"><span class="hljs-comment"># assets/animations.py</span>
+GenericMapping = {
+    <span class="hljs-string">&#x27;idle&#x27;</span>:    <span class="hljs-string">&#x27;animation.standard_steve.idle&#x27;</span>,
+    <span class="hljs-string">&#x27;walk&#x27;</span>:    <span class="hljs-string">&#x27;animation.standard_steve.walk&#x27;</span>,
+    <span class="hljs-string">&#x27;diamond&#x27;</span>: <span class="hljs-string">&#x27;animation.standard_steve.diamond&#x27;</span>,
+    <span class="hljs-string">&#x27;stop&#x27;</span>:    <span class="hljs-string">&#x27;animation.standard_steve.stop&#x27;</span>,
+    <span class="hljs-string">&#x27;attack&#x27;</span>:  <span class="hljs-string">&#x27;animation.standard_steve.attack.diamond&#x27;</span>,
+}
+</code></pre>
+<ul>
+<li><strong>键</strong>：短名称，用于代码中播放和停止动画</li>
+<li><strong>值</strong>：完整的 MC 动画标识符（对应 <code>.animation.json</code> 文件中的路径）</li>
+</ul>
+<h3>2.3 动画元数据</h3>
+<pre><code class="hljs language-python"><span class="hljs-comment"># assets/animMeta.py</span>
+AnimMeta = {
+    <span class="hljs-string">&quot;animation.standard_steve.idle&quot;</span>: {
+        <span class="hljs-string">&quot;loop&quot;</span>: <span class="hljs-literal">True</span>,
+        <span class="hljs-string">&quot;length&quot;</span>: <span class="hljs-number">2</span>
+    },
+    <span class="hljs-string">&quot;animation.standard_steve.walk&quot;</span>: {
+        <span class="hljs-string">&quot;loop&quot;</span>: <span class="hljs-literal">True</span>,
+        <span class="hljs-string">&quot;length&quot;</span>: <span class="hljs-number">1</span>
+    },
+    <span class="hljs-string">&quot;animation.standard_steve.attack.diamond&quot;</span>: {
+        <span class="hljs-string">&quot;loop&quot;</span>: <span class="hljs-string">&quot;hold_on_last_frame&quot;</span>,
+        <span class="hljs-string">&quot;length&quot;</span>: <span class="hljs-number">0.4167</span>,
+        <span class="hljs-string">&quot;notifies&quot;</span>: {
+            <span class="hljs-string">&quot;0.25&quot;</span>: [{<span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;attack&quot;</span>, <span class="hljs-string">&quot;state&quot;</span>: <span class="hljs-number">1</span>}],
+            <span class="hljs-string">&quot;0.375&quot;</span>: [{<span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;stun&quot;</span>, <span class="hljs-string">&quot;state&quot;</span>: <span class="hljs-number">0</span>}],
+        }
+    },
+}
+</code></pre>
+<h3>2.4 注册和播放</h3>
+<p>在子系统中注册映射、配置缓动并播放动画。<strong>播放时使用映射字典的短键和槽位名</strong>：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.plugins.animation.components.animClient <span class="hljs-keyword">import</span> (
+    AnimationExComponent, AnimationEasingTypes, AnimationEasingConf
+)
+<span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> getOrCreateComponent, getOneComponent
+<span class="hljs-keyword">from</span> architect.core <span class="hljs-keyword">import</span> localPlayerId
+<span class="hljs-keyword">from</span> .assets.animations <span class="hljs-keyword">import</span> GenericMapping
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyAnimSystem</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onPlayerCreated</span>(<span class="hljs-params">self</span>):
+        entityId = localPlayerId()
+        animEx = getOrCreateComponent(entityId, AnimationExComponent)
+
+        <span class="hljs-comment"># 注册动画映射</span>
+        animEx.registerAnimations(GenericMapping)
+        animEx.updateActorAnimDef()
+
+        <span class="hljs-comment"># 为每个动画键配置缓动（缓入/缓出）</span>
+        <span class="hljs-keyword">for</span> animKey <span class="hljs-keyword">in</span> GenericMapping.keys():
+            animEx.registerEasing(
+                animKey,
+                AnimationEasingConf(<span class="hljs-number">1</span>, <span class="hljs-number">0.15</span>, AnimationEasingTypes.SINE),
+                AnimationEasingConf(<span class="hljs-number">0</span>, <span class="hljs-number">0.24</span>, AnimationEasingTypes.CUBIC),
+            )
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">start_walking</span>(<span class="hljs-params">self</span>):
+        animEx = getOneComponent(localPlayerId(), AnimationExComponent)
+        animEx.play(<span class="hljs-string">&#x27;walk&#x27;</span>, <span class="hljs-string">&#x27;loco&#x27;</span>)    <span class="hljs-comment"># 键=&#x27;walk&#x27;, 槽=&#x27;loco&#x27;</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">stop_walking</span>(<span class="hljs-params">self</span>):
+        animEx = getOneComponent(localPlayerId(), AnimationExComponent)
+        animEx.stop(<span class="hljs-string">&#x27;walk&#x27;</span>, <span class="hljs-string">&#x27;loco&#x27;</span>)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">play_attack</span>(<span class="hljs-params">self</span>):
+        animEx = getOneComponent(localPlayerId(), AnimationExComponent)
+        animEx.play(<span class="hljs-string">&#x27;attack&#x27;</span>, <span class="hljs-string">&#x27;holding&#x27;</span>)  <span class="hljs-comment"># 键=&#x27;attack&#x27;, 槽=&#x27;holding&#x27;</span>
+</code></pre>
+<h3>2.5 <code>@Dispatch</code> 动画事件分发</h3>
+<p><code>@Dispatch</code> 接收<strong>完整的动画路径</strong>作为参数，处理类建议继承 <code>BaseActionDispatcher</code>。通知回调命名规则为 <code>notify{Name}{Start|End}</code>：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.plugins.animation.utils <span class="hljs-keyword">import</span> BaseActionDispatcher, Dispatch
+<span class="hljs-keyword">from</span> architect.plugins.animation.components.animClient <span class="hljs-keyword">import</span> AnimationExComponent
+
+<span class="hljs-meta">@Dispatch(<span class="hljs-params"><span class="hljs-string">&#x27;animation.standard_steve.attack.diamond&#x27;</span></span>)  </span><span class="hljs-comment"># 完整动画路径</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">DiamondAttackDispatcher</span>(<span class="hljs-title class_ inherited__">BaseActionDispatcher</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEnded</span>(<span class="hljs-params">self, entityId, animComp</span>):
+        <span class="hljs-comment"># 动画结束（完成或中断）时调用</span>
+        animComp.play(<span class="hljs-string">&#x27;diamond&#x27;</span>, <span class="hljs-string">&#x27;holding&#x27;</span>)  <span class="hljs-comment"># 回到持剑动画</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">notifyAttackStart</span>(<span class="hljs-params">self, entityId, animEx</span>):
+        <span class="hljs-comment"># 对应 AnimMeta 中的 notify &#x27;attack&#x27; state=1</span>
+        <span class="hljs-keyword">pass</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">notifyStunStart</span>(<span class="hljs-params">self, entityId, animEx</span>):
+        <span class="hljs-comment"># 对应 notify &#x27;stun&#x27; state=1</span>
+        <span class="hljs-variable language_">self</span>.movement(entityId, <span class="hljs-literal">False</span>)  <span class="hljs-comment"># 禁止移动</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">notifyStunEnd</span>(<span class="hljs-params">self, entityId, animEx</span>):
+        <span class="hljs-comment"># 对应 notify &#x27;stun&#x27; state=0</span>
+        <span class="hljs-variable language_">self</span>.movement(entityId, <span class="hljs-literal">True</span>)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInterrupted</span>(<span class="hljs-params">self, entityId, animEx</span>):
+        <span class="hljs-variable language_">self</span>.movement(entityId, <span class="hljs-literal">True</span>)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onFinish</span>(<span class="hljs-params">self, entityId, animEx</span>):
+        <span class="hljs-variable language_">self</span>.movement(entityId, <span class="hljs-literal">True</span>)
+</code></pre>
+<p><strong><code>AnimationEventDispatcher</code> 事件回调：</strong></p>
+<table>
+<thead>
+<tr>
+<th>回调</th>
+<th>签名</th>
+<th>触发时机</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>onFinish</code></td>
+<td><code>(self, entityId, animComp)</code></td>
+<td>动画正常结束</td>
+</tr>
+<tr>
+<td><code>onInterrupted</code></td>
+<td><code>(self, entityId, animComp)</code></td>
+<td>动画被中断</td>
+</tr>
+<tr>
+<td><code>onEnded</code></td>
+<td><code>(self, entityId, animComp)</code></td>
+<td>动画结束（完成或中断）</td>
+</tr>
+<tr>
+<td><code>notify{Name}Start</code></td>
+<td><code>(self, entityId, animEx)</code></td>
+<td>通知状态变为 1</td>
+</tr>
+<tr>
+<td><code>notify{Name}End</code></td>
+<td><code>(self, entityId, animEx)</code></td>
+<td>通知状态变为 0</td>
+</tr>
+</tbody></table>
+<p><strong><code>BaseActionDispatcher</code> 提供的基础方法：</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>movement(entityId, canMove)</code></td>
+<td>控制实体移动/跳跃</td>
+</tr>
+<tr>
+<td><code>cam(entityId, lock)</code></td>
+<td>控制摄像机拖拽</td>
+</tr>
+</tbody></table>
+<h3>2.6 <code>AnimationExComponent</code> 核心方法</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>registerAnimations(mapping)</code></td>
+<td>注册动画映射 dict</td>
+</tr>
+<tr>
+<td><code>updateActorAnimDef()</code></td>
+<td>应用动画定义到实体</td>
+</tr>
+<tr>
+<td><code>registerEasing(key, easeIn, easeOut)</code></td>
+<td>为动画键注册缓动配置</td>
+</tr>
+<tr>
+<td><code>play(key, slot)</code></td>
+<td>在指定槽位播放动画（key 为映射短键）</td>
+</tr>
+<tr>
+<td><code>stop(key, slot)</code></td>
+<td>停止槽位中的动画</td>
+</tr>
+<tr>
+<td><code>stopAll()</code></td>
+<td>停止所有动画</td>
+</tr>
+<tr>
+<td><code>setPlaybackRate(key, rate)</code></td>
+<td>设置动画播放速率</td>
+</tr>
+<tr>
+<td><code>getPlayingAnimation(key)</code></td>
+<td>获取当前播放的动画对象（含 <code>.playRate</code> 属性）</td>
+</tr>
+</tbody></table>
+<h3>2.7 物品切换动画示例</h3>
+<p>根据手持物品切换动画：</p>
+<pre><code class="hljs language-python">ItemHoldingAnimMapping = {
+    <span class="hljs-string">&#x27;minecraft:diamond_sword&#x27;</span>: <span class="hljs-string">&#x27;diamond&#x27;</span>,
+    <span class="hljs-string">&#x27;minecraft:wooden_sword&#x27;</span>: <span class="hljs-string">&#x27;wood&#x27;</span>,
+    <span class="hljs-string">&#x27;minecraft:iron_sword&#x27;</span>:   <span class="hljs-string">&#x27;iron&#x27;</span>,
+}
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">AnimClient</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+<span class="hljs-meta">    @EventListener()</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onPlayerSwap</span>(<span class="hljs-params">self, ev=events.OnCarriedNewItemChangedClientEvent(<span class="hljs-params"></span>)</span>):
+        itemName = ev.itemDict[<span class="hljs-string">&#x27;newItemName&#x27;</span>]
+        animKey = ItemHoldingAnimMapping.get(itemName, <span class="hljs-string">&#x27;idle&#x27;</span>)
+        animEx = getOneComponent(localPlayerId(), AnimationExComponent)
+        <span class="hljs-keyword">if</span> animEx:
+            animEx.play(animKey, <span class="hljs-string">&#x27;holding&#x27;</span>)  <span class="hljs-comment"># 在 holding 槽播放</span>
+</code></pre>
+<p><strong>槽位</strong>用于分层动画。同一实体可同时在 <code>&#39;loco&#39;</code> 槽（下半身）和 <code>&#39;holding&#39;</code> 槽（上半身）播放不同动画。</p>
+<h3>2.8 缓动类型</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.plugins.animation.components.animClient <span class="hljs-keyword">import</span> AnimationEasingTypes
+
+<span class="hljs-comment"># LINEAR, QUAD, CUBIC, QUART, QUINT, SINE, EXPO</span>
+</code></pre>
+<h3>2.9 实体 Molang 变量控制</h3>
+<p>动画参数通过<strong>动画 JSON 文件</strong>中的 Molang 表达式绑定，不在 Python 代码中设置。动画 JSON 定义示例：</p>
+<pre><code class="hljs language-json"><span class="hljs-attr">&quot;animation.standard_steve.idle&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;loop&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;blend_weight&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;v.blendex.standard_steve.idle&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;anim_time_update&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;v.anim_timeex.standard_steve.idle&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;bones&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> ... <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<ul>
+<li><code>blend_weight</code> — 绑定到实体变量 <code>v.blendex.{path}</code>，用于控制混合权重</li>
+<li><code>anim_time_update</code> — 绑定到 <code>v.anim_timeex.{path}</code>，用于控制动画时间</li>
+<li>通知通过 <code>notifies</code> 字段在 JSON 中声明，由 <code>@Dispatch</code> 处理类响应</li>
+</ul>
+<hr>
+<h2 id="3-vendor-input">3. 输入系统插件 — <code>$vendor.input</code></h2>
+<h3>3.1 概述</h3>
+<p>输入系统基于 <strong>Unreal Enhanced Input</strong> 模式，核心概念：</p>
+<ul>
+<li><strong>InputAction</strong>：声明一个输入动作（名称 + 值类型 + 修饰符）</li>
+<li><strong>InputMapping</strong>：将物理输入（键盘/手柄/鼠标）绑定到 InputAction，支持修饰符和触发器</li>
+<li><strong>消费</strong>：<code>@InputAction</code> 装饰器监听动作，通过事件对象 <code>ev.value</code> 获取输入值</li>
+</ul>
+<h3>3.2 启用</h3>
+<pre><code class="hljs language-python">PLUGINS = [<span class="hljs-string">&#x27;$vendor.input&#x27;</span>]
+</code></pre>
+<h3>3.3 步骤一：声明输入动作（<code>assets/inputAction.py</code>）</h3>
+<p><strong>模块级别的独立调用</strong>，<code>InputAction()</code> 会注册到全局注册表：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.utils.inputAction <span class="hljs-keyword">import</span> InputAction
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.enum <span class="hljs-keyword">import</span> ValueType
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.utils.modifier <span class="hljs-keyword">import</span> DeadZone
+
+<span class="hljs-comment"># 二维轴向输入（WASD 移动）</span>
+InputAction(<span class="hljs-string">&#x27;laravelMovement&#x27;</span>, ValueType.Vector2, modifiers=[
+    DeadZone()  <span class="hljs-comment"># 归一化处理（键盘出现 (1.0,1.0) 时长度归一化）</span>
+])
+
+<span class="hljs-comment"># 双击输入</span>
+InputAction(<span class="hljs-string">&#x27;jump&#x27;</span>, ValueType.Double)
+InputAction(<span class="hljs-string">&#x27;startFly&#x27;</span>, ValueType.Double)
+InputAction(<span class="hljs-string">&#x27;stopFly&#x27;</span>, ValueType.Double)
+
+<span class="hljs-comment"># 长按输入</span>
+InputAction(<span class="hljs-string">&#x27;spying&#x27;</span>, ValueType.Double)
+
+<span class="hljs-comment"># 飞行移动</span>
+InputAction(<span class="hljs-string">&#x27;flyMove&#x27;</span>, ValueType.Vector2)
+</code></pre>
+<p><strong><code>InputAction</code> 构造函数：</strong> <code>InputAction(actionName, valueType, modifiers=[])</code></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>actionName</code></td>
+<td>动作名称，用作 <code>@InputAction</code> 装饰器的匹配键</td>
+</tr>
+<tr>
+<td><code>valueType</code></td>
+<td><code>ValueType.Double</code> / <code>ValueType.Vector2</code> / <code>ValueType.Vector3</code></td>
+</tr>
+<tr>
+<td><code>modifiers</code></td>
+<td>修饰符列表（<code>DeadZone</code>, <code>Negate</code>, <code>SwizzleAxis</code> 等）</td>
+</tr>
+</tbody></table>
+<h3>3.4 步骤二：定义输入映射（<code>assets/inputMapping.py</code>）</h3>
+<p><strong>模块级别的独立调用</strong>，<code>InputMapping()</code> 注册上下文并绑定物理输入到 InputAction：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.utils.mappingContext <span class="hljs-keyword">import</span> InputMapping, InputBinding
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.enum <span class="hljs-keyword">import</span> KeyboardKey, InputType, AxisSwizzleOrder, GamepadAxis, GamepadKey, MouseKey
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.utils.modifier <span class="hljs-keyword">import</span> SwizzleAxis, Negate
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.utils.trigger <span class="hljs-keyword">import</span> TriggerDown, DoubleTap, TriggerHold
+
+InputMapping(<span class="hljs-string">&#x27;move&#x27;</span>, [
+    <span class="hljs-comment"># W → laravelMovement (yxz 轴交换 + 按下触发)</span>
+    InputBinding(InputType.Key, KeyboardKey.W, <span class="hljs-string">&#x27;laravelMovement&#x27;</span>,
+        modifiers=[SwizzleAxis(order=AxisSwizzleOrder.YXZ)],
+        triggers=[TriggerDown()]),
+    <span class="hljs-comment"># S → laravelMovement (反向)</span>
+    InputBinding(InputType.Key, KeyboardKey.S, <span class="hljs-string">&#x27;laravelMovement&#x27;</span>,
+        modifiers=[SwizzleAxis(order=AxisSwizzleOrder.YXZ), Negate()],
+        triggers=[TriggerDown()]),
+    <span class="hljs-comment"># D → laravelMovement (x 轴正向)</span>
+    InputBinding(InputType.Key, KeyboardKey.D, <span class="hljs-string">&#x27;laravelMovement&#x27;</span>,
+        triggers=[TriggerDown()]),
+    <span class="hljs-comment"># A → laravelMovement (x 轴反向)</span>
+    InputBinding(InputType.Key, KeyboardKey.A, <span class="hljs-string">&#x27;laravelMovement&#x27;</span>,
+        modifiers=[Negate()],
+        triggers=[TriggerDown()]),
+    <span class="hljs-comment"># 手柄左摇杆 → laravelMovement</span>
+    InputBinding(InputType.Axis, GamepadAxis.LS, <span class="hljs-string">&#x27;laravelMovement&#x27;</span>,
+        triggers=[TriggerDown()]),
+
+    <span class="hljs-comment"># 空格 → jump</span>
+    InputBinding(InputType.Key, KeyboardKey.Space, <span class="hljs-string">&#x27;jump&#x27;</span>,
+        triggers=[TriggerDown()]),
+    <span class="hljs-comment"># 手柄 A → jump</span>
+    InputBinding(InputType.Gamepad, GamepadKey.A, <span class="hljs-string">&#x27;jump&#x27;</span>,
+        triggers=[TriggerDown()]),
+
+    <span class="hljs-comment"># 双击空格 → startFly</span>
+    InputBinding(InputType.Key, KeyboardKey.Space, <span class="hljs-string">&#x27;startFly&#x27;</span>,
+        triggers=[DoubleTap()]),
+    <span class="hljs-comment"># 双击手柄 A → startFly</span>
+    InputBinding(InputType.Gamepad, GamepadKey.A, <span class="hljs-string">&#x27;startFly&#x27;</span>,
+        triggers=[DoubleTap()]),
+])
+
+<span class="hljs-comment"># 飞行模式映射</span>
+InputMapping(<span class="hljs-string">&#x27;fly&#x27;</span>, [
+    InputBinding(InputType.Key, KeyboardKey.W, <span class="hljs-string">&#x27;flyMove&#x27;</span>,
+        modifiers=[SwizzleAxis(order=AxisSwizzleOrder.YXZ)],
+        triggers=[TriggerDown()]),
+    <span class="hljs-comment"># ... (同 move 的 WASD 绑定)</span>
+    InputBinding(InputType.Key, KeyboardKey.Space, <span class="hljs-string">&#x27;stopFly&#x27;</span>,
+        triggers=[DoubleTap()]),
+])
+
+<span class="hljs-comment"># 瞄具模式映射</span>
+InputMapping(<span class="hljs-string">&#x27;spying&#x27;</span>, [
+    InputBinding(InputType.Key, MouseKey.Right, <span class="hljs-string">&#x27;spying&#x27;</span>,
+        triggers=[TriggerHold(<span class="hljs-number">1</span>)]),   <span class="hljs-comment"># 长按右键 1 秒</span>
+    InputBinding(InputType.Axis, GamepadAxis.LT, <span class="hljs-string">&#x27;spying&#x27;</span>,
+        triggers=[TriggerHold(<span class="hljs-number">1</span>)]),    <span class="hljs-comment"># 长按 LT 1 秒</span>
+])
+</code></pre>
+<p><strong><code>InputBinding</code> 构造函数：</strong> <code>InputBinding(inputType, key, actionName, modifiers=[], triggers=[])</code></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>inputType</code></td>
+<td><code>InputType.Key</code> / <code>InputType.Gamepad</code> / <code>InputType.Axis</code></td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td><code>KeyboardKey.*</code> / <code>GamepadKey.*</code> / <code>GamepadAxis.*</code> / <code>MouseKey.*</code></td>
+</tr>
+<tr>
+<td><code>actionName</code></td>
+<td>目标 InputAction 名称</td>
+</tr>
+<tr>
+<td><code>modifiers</code></td>
+<td>输入值修饰符</td>
+</tr>
+<tr>
+<td><code>triggers</code></td>
+<td>触发条件</td>
+</tr>
+</tbody></table>
+<h3>3.5 步骤三：启用映射（子系统中）</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.components.inputEx <span class="hljs-keyword">import</span> InputExComponent
+<span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> getOneSingletonComponent
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+<span class="hljs-meta">    @EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;OnLocalPlayerStopLoading&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onLocalPlayerStopLoading</span>(<span class="hljs-params">self, ev</span>):
+        inputEx = getOneSingletonComponent(InputExComponent)
+        <span class="hljs-comment"># 启用映射上下文</span>
+        inputEx.enableMappings(<span class="hljs-string">&#x27;move&#x27;</span>, <span class="hljs-string">&#x27;spying&#x27;</span>)
+
+        <span class="hljs-comment"># 屏蔽原版移动</span>
+        operation = LevelClient.getInstance().operation
+        operation.SetCanMove(<span class="hljs-literal">False</span>)
+        operation.SetCanJump(<span class="hljs-literal">False</span>)
+</code></pre>
+<p><strong><code>InputExComponent</code> 映射控制：</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>enableMapping(name)</code></td>
+<td>启用单个映射上下文</td>
+</tr>
+<tr>
+<td><code>enableMappings(*names)</code></td>
+<td>启用多个映射上下文</td>
+</tr>
+<tr>
+<td><code>disableMapping(name)</code></td>
+<td>禁用单个映射上下文</td>
+</tr>
+<tr>
+<td><code>disableMappings(*names)</code></td>
+<td>禁用多个映射上下文</td>
+</tr>
+</tbody></table>
+<h3>3.6 步骤四：消费输入（<code>@InputAction</code> 装饰器）</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.client <span class="hljs-keyword">import</span> InputAction
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.enum <span class="hljs-keyword">import</span> InputState
+
+<span class="hljs-meta">@SubsystemClient</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">TestClient</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+<span class="hljs-meta">    @InputAction(<span class="hljs-params"><span class="hljs-string">&#x27;laravelMovement&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">iaMove</span>(<span class="hljs-params">self, ev</span>):
+        <span class="hljs-comment"># ev.value 是 Vector2 (x, y)</span>
+        x, y = ev.value
+        <span class="hljs-comment"># 将输入转换为世界方向移动...</span>
+        motion.SetMotion((mx, my, mz))
+
+<span class="hljs-meta">    @InputAction(<span class="hljs-params"><span class="hljs-string">&#x27;jump&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">iaJump</span>(<span class="hljs-params">self, ev</span>):
+        <span class="hljs-comment"># ev.value 是 Double (0.0 或 1.0)</span>
+        <span class="hljs-keyword">if</span> attr.isEntityOnGround():
+            motion.SetMotion((x, JUMP_POWER, z))
+
+<span class="hljs-meta">    @InputAction(<span class="hljs-params"><span class="hljs-string">&#x27;startFly&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">iaStartFly</span>(<span class="hljs-params">self, ev</span>):
+        inputEx = getOneSingletonComponent(InputExComponent)
+        inputEx.disableMapping(<span class="hljs-string">&#x27;move&#x27;</span>)
+        inputEx.enableMapping(<span class="hljs-string">&#x27;fly&#x27;</span>)
+
+<span class="hljs-meta">    @InputAction(<span class="hljs-params"><span class="hljs-string">&#x27;spying&#x27;</span>, InputState.Completed</span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">iaCompleteSpying</span>(<span class="hljs-params">self, ev</span>):
+        <span class="hljs-comment"># 长按释放时恢复</span>
+        LevelClient.getInstance().playerView.SetPlayerFovScale(<span class="hljs-number">1</span>)
+</code></pre>
+<p><strong><code>@InputAction</code> 装饰器：</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-meta">@InputAction(<span class="hljs-params"><span class="hljs-string">&#x27;actionName&#x27;</span></span>)                     </span><span class="hljs-comment"># 持续触发（每帧）</span>
+<span class="hljs-meta">@InputAction(<span class="hljs-params"><span class="hljs-string">&#x27;actionName&#x27;</span>, InputState.Started</span>)  </span><span class="hljs-comment"># 开始按下</span>
+<span class="hljs-meta">@InputAction(<span class="hljs-params"><span class="hljs-string">&#x27;actionName&#x27;</span>, InputState.Completed</span>) </span><span class="hljs-comment"># 释放</span>
+</code></pre>
+<p>被装饰方法接收一个事件对象 <code>ev</code>，其属性：</p>
+<ul>
+<li><code>ev.value</code> — 输入值（<code>Double</code> 或 <code>(x, y)</code> Vector2 或 <code>(x, y, z)</code> Vector3）</li>
+</ul>
+<h3>3.7 修饰符（Modifiers）</h3>
+<p>在 <code>InputAction</code> 或 <code>InputBinding</code> 中用于处理原始输入值：</p>
+<table>
+<thead>
+<tr>
+<th>修饰符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>DeadZone()</code></td>
+<td>死区 + 归一化（避免对角线长度超过 1）</td>
+</tr>
+<tr>
+<td><code>Negate()</code></td>
+<td>取反（A/D 键实现轴向反向）</td>
+</tr>
+<tr>
+<td><code>SwizzleAxis(order)</code></td>
+<td>轴交换（<code>AxisSwizzleOrder.YXZ</code> 等）</td>
+</tr>
+</tbody></table>
+<p><strong><code>AxisSwizzleOrder</code>：</strong> <code>XYZ</code>, <code>XZY</code>, <code>YXZ</code>, <code>YZX</code>, <code>ZXY</code>, <code>ZYX</code></p>
+<h3>3.8 触发器（Triggers）</h3>
+<p>在 <code>InputBinding</code> 中定义激活条件：</p>
+<table>
+<thead>
+<tr>
+<th>触发器</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>TriggerDown()</code></td>
+<td>按下时触发</td>
+</tr>
+<tr>
+<td><code>DoubleTap()</code></td>
+<td>双击触发</td>
+</tr>
+<tr>
+<td><code>TriggerHold(seconds)</code></td>
+<td>长按指定秒数后触发</td>
+</tr>
+</tbody></table>
+<h3>3.9 输入类型枚举</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.enum <span class="hljs-keyword">import</span> (
+    InputType,      <span class="hljs-comment"># Key(1), Touch(2), Gamepad(3), Axis(4)</span>
+    ValueType,      <span class="hljs-comment"># Double(1), Vector2(2), Vector3(3)</span>
+    KeyboardKey,    <span class="hljs-comment"># A-Z, Space, Lshift, Return, 等</span>
+    MouseKey,       <span class="hljs-comment"># Left(-99), Right(-98), Middle(-97)</span>
+    GamepadKey,     <span class="hljs-comment"># A(1), B(2), X(3), Y(4), Up/Down/Left/Right, LS, RS, LB, RB</span>
+    GamepadAxis,    <span class="hljs-comment"># LS(4096), RS(4097), LT(256), RT(257)</span>
+    InputState,     <span class="hljs-comment"># Empty, Started, Triggered, Completed, Canceled, Ongoing</span>
+    AxisSwizzleOrder,
+)
+</code></pre>
+<h3>3.10 完整示例</h3>
+<pre><code class="hljs language-python"><span class="hljs-comment"># conf.py</span>
+MOD_CLIENT_MODULES = [<span class="hljs-string">&#x27;assets.inputAction&#x27;</span>, <span class="hljs-string">&#x27;assets.inputMapping&#x27;</span>, <span class="hljs-string">&#x27;testClient&#x27;</span>]
+PLUGINS = [<span class="hljs-string">&#x27;$vendor.input&#x27;</span>]
+</code></pre>
+<pre><code class="hljs language-python"><span class="hljs-comment"># assets/inputAction.py</span>
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.utils.inputAction <span class="hljs-keyword">import</span> InputAction
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.enum <span class="hljs-keyword">import</span> ValueType
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.utils.modifier <span class="hljs-keyword">import</span> DeadZone
+
+InputAction(<span class="hljs-string">&#x27;laravelMovement&#x27;</span>, ValueType.Vector2, modifiers=[DeadZone()])
+InputAction(<span class="hljs-string">&#x27;jump&#x27;</span>, ValueType.Double)
+InputAction(<span class="hljs-string">&#x27;startFly&#x27;</span>, ValueType.Double)
+InputAction(<span class="hljs-string">&#x27;stopFly&#x27;</span>, ValueType.Double)
+InputAction(<span class="hljs-string">&#x27;spying&#x27;</span>, ValueType.Double)
+InputAction(<span class="hljs-string">&#x27;flyMove&#x27;</span>, ValueType.Vector2)
+</code></pre>
+<pre><code class="hljs language-python"><span class="hljs-comment"># assets/inputMapping.py</span>
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.utils.mappingContext <span class="hljs-keyword">import</span> InputMapping, InputBinding
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.enum <span class="hljs-keyword">import</span> KeyboardKey, InputType, AxisSwizzleOrder
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.utils.modifier <span class="hljs-keyword">import</span> SwizzleAxis, Negate
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.utils.trigger <span class="hljs-keyword">import</span> TriggerDown, DoubleTap, TriggerHold
+
+InputMapping(<span class="hljs-string">&#x27;move&#x27;</span>, [
+    InputBinding(InputType.Key, KeyboardKey.W, <span class="hljs-string">&#x27;laravelMovement&#x27;</span>,
+        modifiers=[SwizzleAxis(order=AxisSwizzleOrder.YXZ)], triggers=[TriggerDown()]),
+    InputBinding(InputType.Key, KeyboardKey.S, <span class="hljs-string">&#x27;laravelMovement&#x27;</span>,
+        modifiers=[SwizzleAxis(order=AxisSwizzleOrder.YXZ), Negate()], triggers=[TriggerDown()]),
+    InputBinding(InputType.Key, KeyboardKey.D, <span class="hljs-string">&#x27;laravelMovement&#x27;</span>, triggers=[TriggerDown()]),
+    InputBinding(InputType.Key, KeyboardKey.A, <span class="hljs-string">&#x27;laravelMovement&#x27;</span>, modifiers=[Negate()], triggers=[TriggerDown()]),
+    InputBinding(InputType.Key, KeyboardKey.Space, <span class="hljs-string">&#x27;jump&#x27;</span>, triggers=[TriggerDown()]),
+    InputBinding(InputType.Key, KeyboardKey.Space, <span class="hljs-string">&#x27;startFly&#x27;</span>, triggers=[DoubleTap()]),
+])
+InputMapping(<span class="hljs-string">&#x27;spying&#x27;</span>, [
+    InputBinding(InputType.Key, KeyboardKey.Lshift, <span class="hljs-string">&#x27;spying&#x27;</span>, triggers=[TriggerHold(<span class="hljs-number">1</span>)]),
+])
+</code></pre>
+<pre><code class="hljs language-python"><span class="hljs-comment"># testClient.py</span>
+<span class="hljs-keyword">from</span> architect.compact <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.client <span class="hljs-keyword">import</span> InputAction, InputExComponent
+<span class="hljs-keyword">from</span> architect.plugins.<span class="hljs-built_in">input</span>.enum <span class="hljs-keyword">import</span> InputState
+
+<span class="hljs-meta">@SubsystemClient</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">TestClient</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+<span class="hljs-meta">    @EventListener(<span class="hljs-params"><span class="hljs-string">&#x27;OnLocalPlayerStopLoading&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onLocalPlayerStopLoading</span>(<span class="hljs-params">self, ev</span>):
+        inputEx = getOneSingletonComponent(InputExComponent)
+        inputEx.enableMappings(<span class="hljs-string">&#x27;move&#x27;</span>, <span class="hljs-string">&#x27;spying&#x27;</span>)
+        LevelClient.getInstance().operation.SetCanMove(<span class="hljs-literal">False</span>)
+
+<span class="hljs-meta">    @InputAction(<span class="hljs-params"><span class="hljs-string">&#x27;laravelMovement&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">iaMove</span>(<span class="hljs-params">self, ev</span>):
+        x, y = ev.value
+        <span class="hljs-comment"># 将输入转换为世界方向移动</span>
+
+<span class="hljs-meta">    @InputAction(<span class="hljs-params"><span class="hljs-string">&#x27;jump&#x27;</span></span>)</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">iaJump</span>(<span class="hljs-params">self, ev</span>):
+        <span class="hljs-keyword">if</span> compClient.CreateAttr(localPlayerId()).isEntityOnGround():
+            motion = compClient.CreateActorMotion(localPlayerId())
+            motion.SetMotion((<span class="hljs-number">0</span>, <span class="hljs-number">0.5</span>, <span class="hljs-number">0</span>))
+</code></pre>
+<hr>
+<h2 id="4-vendor-squad">4. 小队系统插件 — <code>$vendor.squad</code></h2>
+<blockquote>
+<p>此插件源文件目前为空（预留），尚未实现。</p>
+</blockquote>
+<hr>
+<h2 id="">下一步</h2>
+<ul>
+<li><a href="plugin.md">插件系统 (plugin.md)</a> — 如何创建自定义插件</li>
+<li><a href="quickstart.md">快速开始 (quickstart.md)</a> — 入门教程</li>
+</ul>
+
+</article>
+</main>
+<div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.6);align-items:flex-start;justify-content:center;padding-top:12vh"><div style="background:hsl(0 0% 6%);border:1px solid hsl(0 0% 14%);border-radius:.5rem;width:580px;max-width:90vw;max-height:70vh;display:flex;flex-direction:column;overflow:hidden"><div style="display:flex;align-items:center;padding:.75rem 1rem;border-bottom:1px solid hsl(0 0% 14%)"><svg style="width:1.2rem;height:1.2rem;margin-right:.6rem;opacity:.4;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="hsl(0 0% 63.9%)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input id="search-input" type="text" placeholder="搜索文档..." autofocus style="flex:1;background:0 0;border:0;outline:0;color:hsl(0 0% 98%);font-size:.95rem;font-family:inherit"><kbd style="font-size:.72rem;padding:.15em .5em;border-radius:3px;background:hsl(0 0% 12%);color:hsl(0 0% 63.9%);border:1px solid hsl(0 0% 20%);margin-left:.5rem;flex-shrink:0">Esc</kbd></div><div id="search-results" style="flex:1;overflow-y:auto;padding:.4rem 0"></div><div id="search-empty" style="padding:1.5rem;text-align:center;color:hsl(0 0% 40%);font-size:.85rem;display:none">没有找到结果</div></div></div>
+<script>(function(){var p=document.querySelector(".pages");var k="rns";var y=sessionStorage.getItem(k);if(y){p.scrollTop=parseInt(y,10)||0};p.addEventListener("scroll",function(){sessionStorage.setItem(k,p.scrollTop)});var as=document.querySelectorAll("nav a");for(var i=0;i<as.length;i++){as[i].addEventListener("click",function(){sessionStorage.setItem(k,p.scrollTop)})}})()</script>
+<script>(function(){var idx=[];var r=document.getElementById("search-results");var e=document.getElementById("search-empty");var o=document.getElementById("search-overlay");var inp=document.getElementById("search-input");function openSearch(){o.style.display="flex";inp.value="";inp.focus();render([])}function closeSearch(){o.style.display="none"}function render(list){  e.style.display=list.length?"none":"block";  r.innerHTML=list.slice(0,20).map(function(x){    var t=x.type==="page"?"页面":"章节";    return '<a href="'+x.id+'" class="sr">'+      '<span class="sr-t">'+t+'</span>'+'<span>'+x.title+'</span>'+'</a>'  }).join("")}o.addEventListener("click",function(ev){if(ev.target===o)closeSearch()});function doSearch(q){  var t=q.toLowerCase();  if(!t)return render([]);  var f=idx.filter(function(x){    return x.title.toLowerCase().indexOf(t)>-1||(x.parent||"").toLowerCase().indexOf(t)>-1  });render(f)}inp.addEventListener("input",function(){doSearch(inp.value)});document.addEventListener("keydown",function(ev){  if((ev.ctrlKey||ev.metaKey)&&ev.key==="k"){ev.preventDefault();openSearch()}  if(ev.key==="Escape"&&o.style.display==="flex"){closeSearch();ev.stopPropagation()}});o.addEventListener("keydown",function(ev){  if(ev.key==="ArrowDown"){var a=r.querySelector("a");if(a){a.focus();ev.preventDefault()}}});fetch("search-index.json").then(function(rr){return rr.json()}).then(function(d){idx=d});})()</script>
+</body>
+</html>

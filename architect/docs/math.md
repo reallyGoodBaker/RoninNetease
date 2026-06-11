@@ -1,6 +1,6 @@
 # Math — 数学库
 
-RoninNetease 数学库提供了三维向量（`vec3`、`vec4`）、4×4 矩阵（`mat4`）、高精度浮点数（`Double`）和常用几何工具。
+RoninNetease 数学库提供了三维向量、4×4 矩阵、几何工具和物理时间常量。所有 API 以**模块级函数**形式导出。
 
 ---
 
@@ -8,203 +8,231 @@ RoninNetease 数学库提供了三维向量（`vec3`、`vec4`）、4×4 矩阵�
 
 ```
 architect.math
-├── vec3.py     ← Vec3 三维向量
-├── vec4.py     ← Vec4 四维向量
-├── mat4.py     ← Mat4 4×4 变换矩阵
-├── double.py   ← Double 高精度浮点运算
-├── common.py   ← 通用工具（距离、插值等）
-├── unity.py    ← Unity 引擎相关类型
-├── utils.py    ← Vec3Utils 客户端工具
-└── utilsServer.py ← 服务端工具
+├── vec3.py      ← 三维向量运算函数
+├── vec4.py      ← Vec4 四维向量
+├── mat4.py      ← 4×4 变换矩阵函数
+├── double.py    ← 插值与截断函数、常量（inf, epsilon）
+├── common.py    ← 汇总导出（vec3 + mat4 + double + unit）
+├── unit.py      ← time 时间常量类
+├── utils.py     ← 客户端工具（屏幕转换、碰撞检测、射线等）
+└── utilsServer.py ← 服务端工具（碰撞检测、实体查询等）
 ```
 
 ---
 
-## 2. Vec3 — 三维向量
+## 2. 向量运算函数 — `vec3.py`
 
-### 2.1 属性
+所有函数操作 `Vector3` 对象（引擎 SDK 提供），框架只导出包装函数：
 
-| 属性 | 类型 | 说明 |
-|---|---|---|
-| `x` | `float` | X 分量 |
-| `y` | `float` | Y 分量 |
-| `z` | `float` | Z 分量 |
-
-### 2.2 构造与基本操作
+### 2.1 构造与转换
 
 ```python
-from architect.math.vec3 import Vec3
+from architect.math.vec3 import vec, tup
 
-# 构造
-v = Vec3(1.0, 2.0, 3.0)
-zero = Vec3.zero()          # (0, 0, 0)
-one = Vec3.one()            # (1, 1, 1)
-up = Vec3.up()              # (0, 1, 0)
-forward = Vec3.forward()    # (0, 0, 1)
-
-# 读写
-x = v.x
-v.x = 10.0
-
-# 运算
-v3 = v + Vec3(1, 2, 3)     # 加法
-v3 = v - Vec3(1, 2, 3)     # 减法
-v3 = v * 2.0                # 标量乘
-v3 = v / 2.0                # 标量除
+v = vec((1.0, 2.0, 3.0))  # 从元组创建 Vector3
+v = vec(1.0, 2.0, 3.0)    # 从三个浮点数创建
+t = tup(v)                  # Vector3 → tuple
 ```
 
-### 2.3 Vec3Utils — 客户端
+### 2.2 运算
 
 ```python
-from architect.math.utils import Vec3Utils
+from architect.math.vec3 import add, sub, mul, div, dot, cross, modulo, moduloSqrt, normalize, lerp, nlerp
 
-# 距离
-dist = Vec3Utils.distance(v1, v2)           # 两点距离
-sqr_dist = Vec3Utils.distance_squared(v1, v2) # 距离平方
-
-# 方向与角度
-direction = Vec3Utils.direction(v1, v2)     # 单位方向向量
-angle = Vec3Utils.angle(v1, v2)            # 两向量夹角（弧度）
-angle_deg = Vec3Utils.angle_degrees(v1, v2) # 两向量夹角（度）
-
-# 单位化与长度
-norm = Vec3Utils.normalize(v)               # 单位化
-length = Vec3Utils.magnitude(v)             # 向量长度
-sqr_len = Vec3Utils.magnitude_squared(v)    # 长度平方
-
-# 线性插值
-lerped = Vec3Utils.lerp(v1, v2, t)         # 线性插值 t ∈ [0, 1]
-
-# 点积与叉积
-dot = Vec3Utils.dot(v1, v2)                # 点积
-cross = Vec3Utils.cross(v1, v2)            # 叉积
-
-# 旋转
-rotated = Vec3Utils.rotate(v, axis, angle)  # 绕轴旋转
-
-# 投影
-proj = Vec3Utils.project(v, onto)           # 投影到 onto 方向
-rej = Vec3Utils.reject(v, onto)             # 正交于 onto 的分量
-
-# 反射
-reflected = Vec3Utils.reflect(v, normal)     # 反射向量
+add(v1, v2)        # 加法
+sub(v1, v2)        # 减法
+mul(v, 2.0)        # 标量乘
+div(v, 2.0)        # 标量除
+dot(v1, v2)        # 点积（返回 float）
+cross(v1, v2)      # 叉积（返回 Vector3）
+modulo(v)          # 向量长度
+moduloSqrt(v)      # 向量长度平方
+normalize(v)       # 单位化
+lerp(a, b, t)      # 线性插值 (t ∈ [0, 1])
+nlerp(a, b, t)     # 归一化线性插值（两向量需为单位向量）
 ```
 
-### 2.4 服务端
+### 2.3 工具
 
 ```python
-from architect.math.utilsServer import Vec3UtilsServer
+from architect.math.vec3 import clamp, compare, vabs
 
-# 服务端也有类似的 Vec3 工具集
+clamp(v, min_len, max_len)  # 将向量长度限制在 [min, max]
+compare(a, b)                # 比较长度：>0 表示 a > b，<0 表示 a < b，0 表示相等
+vabs(v)                      # 各分量取绝对值
 ```
 
 ---
 
-## 3. Vec4 — 四维向量
+## 3. 矩阵函数 — `mat4.py`
+
+操作引擎 SDK 的 `Matrix` 对象（4x4 矩阵，行向量左乘：`v' = v * M`）：
+
+### 3.1 基础矩阵
 
 ```python
-from architect.math.vec4 import Vec4
+from architect.math.mat4 import identity, translate, scale, rotateX, rotateY, rotateZ, rotateAxis, rotateXYZ
 
-v = Vec4(1.0, 2.0, 3.0, 1.0)
-
-x = v.x     # 1.0
-y = v.y     # 2.0
-z = v.z     # 3.0
-w = v.w     # 1.0
+identity()                      # 单位矩阵
+translate(vec((x, y, z)))      # 平移矩阵
+scale(vec((sx, sy, sz)))       # 缩放矩阵
+rotateX(angle)                  # 绕 X 轴旋转（弧度）
+rotateY(angle)                  # 绕 Y 轴旋转（弧度）
+rotateZ(angle)                  # 绕 Z 轴旋转（弧度）
+rotateAxis(axis_vec, angle)    # 绕任意轴旋转
+rotateXYZ(rz, ry, rx)           # 组合旋转（先 Z，再 Y，最后 X）
 ```
 
-常用于：
-- 齐次坐标 `(x, y, z, 1)` — 表示位置
-- 齐次坐标 `(x, y, z, 0)` — 表示方向
-- RGBA 颜色 `(r, g, b, a)`
+### 3.2 观察与投影矩阵
+
+```python
+from architect.math.mat4 import lookAt, perspective
+
+lookAt(eye, target, up)                       # 观察矩阵（右手系，-Z 为前）
+perspective(fov_degrees, aspect, near, far)    # 透视投影矩阵
+```
+
+### 3.3 矩阵运算
+
+```python
+from architect.math.mat4 import multiply, transpose, inverse
+
+multiply(a, b)   # 矩阵乘法
+transpose(m)     # 转置
+inverse(m)       # 逆矩阵
+```
+
+### 3.4 变换
+
+```python
+from architect.math.mat4 import transform, transformPoint, transformVector, localToWorld, worldToLocal
+
+# 标准模型变换：先缩放(S)，再旋转(R)，最后平移(T)，再乘父矩阵(m)
+transform(m, translate_vec, rotate_vec, scale_vec)
+
+# 用矩阵变换点（含平移，w=1）
+transformPoint(mat, point)     # 返回 Vector4
+
+# 用矩阵变换向量（忽略平移，w=0）
+transformVector(mat, vector)   # 返回 Vector3
+
+# 坐标空间转换
+localToWorld(modelMatrix, localPoint)   # 模型空间 → 世界空间
+worldToLocal(modelMatrix, worldPoint)   # 世界空间 → 模型空间
+```
+
+### 3.5 屏幕坐标转换
+
+```python
+from architect.math.mat4 import worldToScreen
+
+screenPoint = worldToScreen(modelMatrix, viewMatrix, projMatrix, viewport, worldPoint)
+# 返回 Vector3，x/y 为屏幕坐标，z 为深度
+```
 
 ---
 
-## 4. Mat4 — 4×4 变换矩阵
+## 4. 插值与常量 — `double.py`
 
 ```python
-from architect.math.mat4 import Mat4
+from architect.math.double import lerp, clamp, smoothstep, inf, epsilon
 
-# 构造
-identity = Mat4.identity()              # 单位矩阵
-translation = Mat4.translation(v3)      # 平移矩阵
-rotation = Mat4.rotation(axis, angle)   # 旋转矩阵
-scale = Mat4.scale(v3)                  # 缩放矩阵
-
-# 组合变换
-transform = translation * rotation * scale
-
-# 矩阵-向量乘法
-result_vec4 = transform * Vec4(1, 0, 0, 1)
-result_vec3 = transform * Vec3(1, 0, 0)  # 结果自动除 w
+lerp(a, b, t)                          # 浮点线性插值
+clamp(x, min_val, max_val)             # 截断到 [min, max]
+smoothstep(edge0, edge1, x)            # 平滑阶梯函数
+inf                                     # 1e+10
+epsilon                                 # 1e-8
 ```
 
 ---
 
-## 5. Double — 高精度浮点数
+## 5. 时间常量 — `unit.py`
 
 ```python
-from architect.math.double import Double
+from architect.math.unit import time
 
-# 构造
-d = Double(3.14159265358979)
-d = Double.long_value(314159265358979)
-d = Double.int_value(3)
-
-# 运算
-sum_d = d + Double(1.0)
-diff = d - Double(0.5)
-prod = d * Double(2.0)
-quot = d / Double(2.0)
+time.entityTick   # 0.05 秒
+time.tick         # ~0.033 秒（30fps）
+time.ms           # 0.001 秒
+time.s            # 1 秒
+time.m            # 60 秒
+time.h            # 3600 秒
+time.d            # 86400 秒
+time.w            # 604800 秒
+time.y            # 31536000 秒
 ```
 
-`Double` 封装了底层的高精度定点数运算，用于需要精确计算的场景（如经济系统、物理模拟）。
+> 用 `time.s * 3` 表示 3 秒，`time.ms * 500` 表示 500 毫秒。
 
 ---
 
-## 6. 通用工具函数 — `math/common.py`
+## 6. 客户端工具 — `math/utils.py`
+
+### 6.1 屏幕坐标工具
 
 ```python
-from architect.math.common import (
-    distance, distance_sq,
-    lerp, lerp_vec3,
-    clamp, clamp01,
-    move_towards, move_towards_angle,
-    get_rotation_from_direction
+from architect.math.utils import (
+    screenSize, localViewMatrix, localProjectionMatrix,
+    worldPosToScreenPos, screenToWorld
 )
 
-# 距离
-d = distance(v1, v2)            # float
-d2 = distance_sq(v1, v2)       # 距离平方
+w, h = screenSize()
+view = localViewMatrix()
+proj = localProjectionMatrix()
+screenPoint = worldPosToScreenPos(worldPoint)
+worldPoint = screenToWorld(modelMatrix, screenPoint)
+```
 
-# 插值
-val = lerp(0.0, 1.0, t)        # 标量插值
-vec = lerp_vec3(v1, v2, t)     # Vec3 插值
+### 6.2 实体查询与朝向
 
-# 截断
-x = clamp(value, 0, 100)       # 限制在 [min, max]
-x = clamp01(value)              # 限制在 [0, 1]
+```python
+from architect.math.utils import forward, facing, around, entityAabbDef
 
-# 渐进移动
-pos = move_towards(current, target, max_delta)
-angle = move_towards_angle(current, target, max_delta)
+dirVec = forward(entityId)          # 实体前方单位向量
+facingVec = facing(entityId)        # 实体朝向向量（含 Y 分量）
+nearby = around(entityId, radius)   # 半径内实体 ID 列表
+aabbMin, aabbMax = entityAabbDef(entityId)  # 实体 AABB 包围盒
+```
 
-# 方向转旋转
-rot = get_rotation_from_direction(direction_vec3)
+### 6.3 碰撞检测
+
+```python
+from architect.math.utils import (
+    boxOverlap3dClient, boxOverlap3dForward, boxOverlap3dFacing
+)
+
+entities = boxOverlap3dClient(pos, rot, size, debug=False)
+entities = boxOverlap3dForward(entityId, size, debug=False)
+entities = boxOverlap3dFacing(entityId, size, debug=False)
+```
+
+### 6.4 辅助函数
+
+```python
+from architect.math.utils import pointInBox, pointInAabb
+
+inside = pointInBox(point, size)
+inside = pointInAabb(point, min_vec, max_vec)
 ```
 
 ---
 
-## 7. Unit — 单位转换
+## 7. 服务端工具 — `math/utilsServer.py`
 
 ```python
-from architect.math.unit import (
-    degrees_to_radians,
-    radians_to_degrees
+from architect.math.utilsServer import (
+    boxOverlap3dServer, boxOverlap3dForward, forward, facing, around, pointInBox
 )
 
-rad = degrees_to_radians(90)    # π/2
-deg = radians_to_degrees(3.14)  # ~180°
+# 碰撞检测（服务端使用 Location + dimId）
+entities = boxOverlap3dServer(location, rot, size)
+
+# 实体前方
+entities = boxOverlap3dForward(entityId, size)
+
+# 朝向与附近实体
+dirVec = forward(entityId)
+nearby = around(location, radius)
 ```
 
 ---
@@ -212,33 +240,31 @@ deg = radians_to_degrees(3.14)  # ~180°
 ## 8. 完整示例
 
 ```python
-from architect.math.vec3 import Vec3
-from architect.math.mat4 import Mat4
-from architect.math.utils import Vec3Utils
+from architect.math.vec3 import vec, add, normalize, modulo, tup
+from architect.math.mat4 import lookAt, perspective, worldToScreen
+from architect.math.utils import forward, boxOverlap3dForward
+from architect.math.double import clamp, smoothstep
+from architect.math.unit import time
 
-# 玩家朝向计算
-player_pos = Vec3(0, 64, 0)
-target_pos = Vec3(10, 64, 10)
+# 距离检测
+player = vec((0, 64, 0))
+target = vec((10, 64, 10))
+dir_to_target = normalize(add(target, vec((0, 0, 0))))  # target - player 用 sub
+dist = modulo(target - player)
+if dist < 5.0:
+    print('In range')
 
-# 计算方向
-direction = Vec3Utils.direction(player_pos, target_pos)
-# 结果近似: Vec3(0.707, 0, 0.707)
+# 屏幕投影
+view = lookAt(player, target, vec((0, 1, 0)))
+proj = perspective(60.0, 16.0 / 9.0, 0.1, 100.0)
+screenPt = worldToScreen(identity(), view, proj, (1920, 1080), target)
 
-# 计算距离
-dist = Vec3Utils.distance(player_pos, target_pos)
-# 结果: ~14.14
+# 碰撞检测
+hits = boxOverlap3dForward(entityId, (2, 3, 2))
 
-# 创建变换矩阵
-transform = Mat4.translation(player_pos) * \
-            Mat4.rotation(Vec3.up(), Vec3Utils.angle(Vec3.forward(), direction))
-
-# 插值相机平滑跟随
-camera_pos = Vec3Utils.lerp(current_cam, target_cam, 0.1)
-
-# 反射弹道
-bullet_dir = Vec3(1, 0, 0)
-surface_normal = Vec3(-1, 1, 0)
-reflected = Vec3Utils.reflect(bullet_dir, Vec3Utils.normalize(surface_normal))
+# 平滑过渡（3 秒内完成）
+t = clamp(current_time / (3 * time.s), 0.0, 1.0)
+alpha = smoothstep(0.0, 1.0, t)
 ```
 
 ---

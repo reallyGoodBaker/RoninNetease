@@ -56,17 +56,17 @@ class SpawnSystem(ServerSubsystem):
         manager = SubsystemManager.getInstance()
 
         # 注册命令处理器
-        self._unregister = manager.bus.register('spawn_npc', self.handle_spawn)
+        self._unregister = manager.bus.register('spawnNpc', self.handle_spawn)
 
-    def handle_spawn(self, template, location, is_global=False):
+    def handleSpawn(self, template, location, is_global=False):
         """处理生成 NPC 的命令"""
-        entity_id = self.spawnEntity(
+        entityId = self.spawnEntity(
             template,
             location,
             (0, 0),
             isGlobal=is_global
         )
-        return entity_id
+        return entityId
 
     def onDestroy(self):
         # 清理：注销命令
@@ -82,19 +82,19 @@ class QuestSystem(ServerSubsystem):
         manager = SubsystemManager.getInstance()
 
         # 检查命令是否可用
-        if not manager.bus.hasCommand('spawn_npc'):
+        if not manager.bus.hasCommand('spawnNpc'):
             print('[Quest] Spawn system not available')
             return
 
         # 执行命令，收集返回值
         results = manager.bus.execute(
-            'spawn_npc',
+            'spawnNpc',
             'minecraft:villager',
             Location((100, 64, 200), 0),
             is_global=False
         )
 
-        # results = ['entity_id_abc123']
+        # results = ['entityIdAbc123']
         if results:
             print('[Quest] NPC spawned:', results[0])
 ```
@@ -109,7 +109,7 @@ class ScoreSystem(ServerSubsystem):
             'on_player_death', self.decrease_score
         )
 
-    def decrease_score(self, player_id, cause):
+    def decreaseScore(self, playerId, cause):
         print('[Score] Player lost points')
         return {'score_updated': True}
 
@@ -119,8 +119,8 @@ class LogSystem(ServerSubsystem):
             'on_player_death', self.log_death
         )
 
-    def log_death(self, player_id, cause):
-        print('[Log] Player %s died: %s' % (player_id, cause))
+    def logDeath(self, playerId, cause):
+        print('[Log] Player %s died: %s' % (playerId, cause))
         return {'logged': True}
 
 # 执行命令 → 两个处理器都被调用
@@ -134,7 +134,7 @@ results = bus.execute('on_player_death', 'player_1', 'fall')
 manager = SubsystemManager.getInstance()
 
 # 移除特定命令的所有处理器
-manager.bus.clearCommand('spawn_npc')
+manager.bus.clearCommand('spawnNpc')
 
 # 移除所有命令
 manager.bus.clearAll()
@@ -169,7 +169,7 @@ class DatabaseSystem(ServerSubsystem):
 
 ```python
 class AnySystem(ServerSubsystem):
-    def save_player_data(self):
+    def savePlayer_data(self):
         bus = SubsystemManager.getInstance().bus
         bus.execute('db.save', 'player_1', {'hp': 100})
 ```
@@ -203,12 +203,12 @@ class FeatureSystem(ServerSubsystem):
 ```python
 # === CommandBus 方式 ===
 # 优点：有返回值，同步调用，适合"请求-响应"
-manager.bus.execute('get_player_stats', player_id)
+manager.bus.execute('get_playerStats', playerId)
 # → [{'hp': 100, 'mana': 50}]
 
 # === Event 方式 ===
 # 优点：广播通知，适合"状态变化通知"
-self.sendServer('PlayerStatsChanged', {'player_id': player_id})
+self.sendServer('PlayerStatsChanged', {'playerId': playerId})
 # → 客户端异步接收
 ```
 
