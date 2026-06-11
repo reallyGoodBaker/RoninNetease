@@ -85,7 +85,7 @@ strong{color:hsl(var(--f))}
 
 for (const [name, md] of Object.entries(docs)) {
   const body = anchors(marked.parse(md));
-  const html = '<!DOCTYPE html>\n<html lang="zh">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1.0">\n<title>' + name + ' - RoninNetease v1.1.0</title>\n' + CSS + '\n</head>\n<body>\n<nav>\n<div class="logo">Ronin<span>Netease</span></div>\n<div class="pages">\n' + navHtml(name) + '\n</div>\n</nav>\n<main>\n<article>\n' + body + '\n</article>\n</main>\n</body>\n</html>';
+  const html = '<!DOCTYPE html>\n<html lang="zh">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1.0">\n<title>' + name + ' - RoninNetease v1.1.0</title>\n' + CSS + '\n</head>\n<body>\n<nav>\n<div class="logo">Ronin<span>Netease</span></div>\n<div class="pages">\n' + navHtml(name) + '\n</div>\n</nav>\n<main>\n<article>\n' + body + '\n</article>\n</main>\n<script>(function(){var p=document.querySelector(".pages");var k="rns";var y=sessionStorage.getItem(k);if(y){p.scrollTop=parseInt(y,10)||0};p.addEventListener("scroll",function(){sessionStorage.setItem(k,p.scrollTop)});var as=document.querySelectorAll("nav a");for(var i=0;i<as.length;i++){as[i].addEventListener("click",function(){sessionStorage.setItem(k,p.scrollTop)})}})()</script>\n</body>\n</html>';
   fs.writeFileSync(path.join(out, name + '.html'), html, 'utf-8');
   console.log('✔ ' + name);
 }
