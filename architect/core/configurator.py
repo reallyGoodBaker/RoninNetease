@@ -1,17 +1,15 @@
 # coding=utf-8
-from .basic import isServer, clientApi, serverApi
-
-
 class _ModuleLocator(object):
     pass
 
 
 __modname__ = _ModuleLocator.__module__[:_ModuleLocator.__module__.find('.')]
-__framework__ = __modname__ + '.architect'
+__framework__ = __modname__ + '.engine.architect'
 __dirname__ = __framework__ + '.core'
 
 
 MOD_CONST_NAMES = [
+    'ENGINE_MODULE_NAME',
     'MOD_NAME',
     'MOD_VERSION',
     'MOD_ENGINE_NAME',
