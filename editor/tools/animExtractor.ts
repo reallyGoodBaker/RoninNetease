@@ -1,6 +1,6 @@
 import path from 'path'
 import * as fs from 'fs'
-import { findResDir } from './utils'
+import { findResDir } from './utils.ts'
 
 
 function walkDir(dir: string, callback: (fp: string) => void) {
@@ -71,7 +71,7 @@ function extractAnimations() {
         return
     }
 
-    const animMetaPath = path.join(import.meta.dirname, '../../assets/animMeta.py')
+    const animMetaPath = path.join(import.meta.dirname, './animMeta.py')
     const animMetaInfos = {} as any
 
     if (fs.existsSync(animMetaPath)) {

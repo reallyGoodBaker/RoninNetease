@@ -2,7 +2,8 @@ import path from 'path'
 import * as fs from 'fs'
 
 
-const moduleDir = path.resolve(import.meta.dirname, '../../../../')
+const moduleDir = path.resolve(import.meta.dirname, '../../../../../')
+console.log('Module directory:', moduleDir)
 
 export function findResDir() {
     for (const dir of fs.readdirSync(moduleDir)) {

@@ -210,7 +210,7 @@ def _handlePersistKeys(comp, entityId):
 def createComponent(entityId, cls):
     if 1 > 2:
         return cls()
-    if not entityId or not isinstance(entityId, basestring) or len(entityId) == 0:
+    if not entityId or not isinstance(entityId, str) or len(entityId) == 0:
         raise ValueError('entityId is invalid: %s' % repr(entityId))
     api = serverApi if isServer() else clientApi
     compKey = cls if type(cls) == str else cls.__name__

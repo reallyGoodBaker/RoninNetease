@@ -5,11 +5,6 @@ from ....utils.persona.client import PersonaRendererComponent
 from ....math.double import clamp, inf, epsilon
 from ..enum import AnimationEasingTypes, AnimationBlendingTypes, LoopType
 
-try:
-    from ......assets.animMeta import AnimMeta
-except:
-    print('[ERROR] 未找到 AnimMeta, 请使用 architect/tools/animExtractor 提取动画元数据')
-
 
 class AnimationEasingConf(object):
     def __init__(self, target=1, duration=0.15, func=AnimationEasingTypes.LINEAR):
@@ -19,7 +14,7 @@ class AnimationEasingConf(object):
 
 
 class AnimPlayingInfo(object):
-    def __init__(self, entityId, animName, layer, startTime, playRate, serverSync=False):
+    def __init__(self, meta, entityId, animName, layer, startTime, playRate, serverSync=False):
         self.serverSync = serverSync
         self.animName = animName
         self.layer = layer
@@ -30,7 +25,6 @@ class AnimPlayingInfo(object):
         self.animTimeComp = NamedEntityVariable(entityId, 'anim_timeex.' + nameSuffix, 0)
         self._manualStop = False
         self._dt = epsilon
-        meta = AnimMeta[animName]
         self.duration = inf if meta['length'] == -1 else meta['length']
         self.notifies = meta.get('notifies')
         if meta['loop'] == True:
@@ -94,6 +88,10 @@ class AnimPlayingInfo(object):
 
 @Component()
 class AnimationExComponent(BaseCompClient):
+    """
+    一定要使用 registerMetadatas 和 registerAnimations 注册动画，
+    否则该组件无法正常使用
+    """
 
     def onCreate(self, entityId):
         self.entityId = entityId
@@ -104,11 +102,16 @@ class AnimationExComponent(BaseCompClient):
         self.blendingConf = {} # type: dict[str, dict[str, AnimationEasingConf]]
         self.playing = {} # type: dict[str, AnimPlayingInfo]
         self.notifies = {}
+        self.animMetas = {}
+
+    def registerMetadatas(self, metadata):
+        for key, data in metadata.items():
+            self.animMetas[key] = data
 
     def registerAnimations(self, mapping):
         # type: (dict[str, str]) -> None
         for name, anim in mapping.items():
-            if anim in AnimMeta:
+            if anim in self.animMetas:
                 self.animations[name] = anim
             else:
                 print('[ERROR] 动画 {} 元数据不存在, 动画是否存在或通过 animExtractor 提取?'.format(anim))
