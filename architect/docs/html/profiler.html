@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>profiler - RoninNetease v1.1.0</title>
+<style>:root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}body{font-family:"Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR",Inter,-apple-system,system-ui,sans-serif;background:hsl(var(--b));color:hsl(var(--f));line-height:1.7;font-size:15px;zoom:1.25}nav{position:fixed;top:0;left:0;bottom:0;width:17rem;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}.sr-btn{margin-left:auto;background:0 0;border:0;cursor:pointer;color:hsl(0 0% 63.9%);padding:.2rem;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:.12s;flex-shrink:0}.sr-btn:hover{background:hsl(0 0% 14%);color:hsl(0 0% 98%)}nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}nav a:hover,nav a.active{color:hsl(var(--f));background:hsl(var(--s) / .5);border-left-color:hsl(var(--p))}nav a.active{font-weight:600}nav a.sub{padding:.22rem 1.25rem .22rem 2.2rem;font-size:.76rem;opacity:.6}nav a.sub:hover{opacity:1}nav::-webkit-scrollbar,.pages::-webkit-scrollbar{width:4px}nav::-webkit-scrollbar-track,.pages::-webkit-scrollbar-track{background:transparent}nav::-webkit-scrollbar-thumb,.pages::-webkit-scrollbar-thumb{background:hsl(0 0% 25%);border-radius:4px}nav::-webkit-scrollbar-thumb:hover,.pages::-webkit-scrollbar-thumb:hover{background:hsl(0 0% 35%)}nav,.pages{scrollbar-width:thin;scrollbar-color:hsl(0 0% 25%) transparent}main{margin-left:17rem;display:flex;justify-content:center;padding:2rem 2.5rem}article{background:hsl(var(--c));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:2.5rem 3rem;max-width:860px;width:100%}h1{font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid hsl(0 0% 14%)}h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.35rem;border-bottom:1px solid hsl(0 0% 14%)}h3{font-size:1.1rem;font-weight:600;margin-top:2rem;margin-bottom:.5rem}h4{font-size:1rem;font-weight:600;margin-top:1.5rem;margin-bottom:.4rem;color:hsl(var(--m))}p{margin:.8rem 0;line-height:1.75}a:not(nav a){color:hsl(var(--p));text-decoration:underline}code{background:hsl(var(--s) / .5);padding:.12em .35em;border-radius:3px;font-size:.87em;font-family:"Noto Sans Mono","JetBrains Mono","Fira Code",Consolas,monospace}pre{background:hsl(var(--b));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:1rem 1.25rem;overflow-x:auto;margin:1.25rem 0}pre code{background:0 0;padding:0;font-size:.83rem;line-height:1.6}table{border-collapse:collapse;width:100%;margin:1.5rem 0}td,th{border:1px solid hsl(0 0% 14%);padding:.55rem .85rem;text-align:left;font-size:.9rem}th{background:hsl(var(--s) / .5);font-weight:600}tr:nth-child(even){background:hsl(0 0% 7%)}blockquote{border-left:3px solid hsl(var(--p));padding:.5rem 1.1rem;margin:1.25rem 0;background:hsl(267 100% 70% / .04);border-radius:0 var(--r) var(--r) 0;font-size:.92rem;color:hsl(var(--m))}hr{border:0;border-top:1px solid hsl(0 0% 14%);margin:2rem 0}ol,ul{padding-left:1.5rem;margin:.75rem 0}li{margin:.35rem 0;line-height:1.75}strong{color:hsl(var(--f))}.sr{display:flex;align-items:center;padding:.5rem 1rem;text-decoration:none;color:hsl(0 0% 63.9%);font-size:.87rem;transition:.08s}.sr:hover,.sr:focus{background:hsl(0 0% 12%);color:hsl(0 0% 98%);outline:0}.sr-t{flex-shrink:0;width:1.8rem;font-size:.66rem;opacity:.5;text-transform:uppercase}@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}</style>
+</head>
+<body>
+<nav>
+<div class="logo">
+Ronin<span>Netease</span>
+<button title="搜索 (Ctrl+K)" onclick="document.dispatchEvent(new KeyboardEvent('keydown',{ctrlKey:!0,key:'k'}))" class="sr-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+</div>
+<div class="pages">
+<div class="group">入门</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">核心系统</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">进阶</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5" class="sub">5. 触摸手势</a><a href="ui.html#6" class="sub">6. 完整示例</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="plugins.html">Plugins — 系统插件参考</a><a href="plugins.html#1-vendor-event" class="sub">1. 事件系统插件 — $vendor.event</a><a href="plugins.html#2-vendor-animation" class="sub">2. 动画扩展插件 — $vendor.animation</a><a href="plugins.html#3-vendor-input" class="sub">3. 输入系统插件 — $vendor.input</a><a href="plugins.html#4-vendor-squad" class="sub">4. 小队系统插件 — $vendor.squad</a><a href="plugins.html#" class="sub">下一步</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html" class="active">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><div class="group">参考</div><a href="math.html">Math — 数学库</a><a href="math.html#1" class="sub">1. 概述</a><a href="math.html#2-vec3-py" class="sub">2. 向量运算函数 — vec3.py</a><a href="math.html#3-mat4-py" class="sub">3. 矩阵函数 — mat4.py</a><a href="math.html#4-double-py" class="sub">4. 插值与常量 — double.py</a><a href="math.html#5-unit-py" class="sub">5. 时间常量 — unit.py</a><a href="math.html#6-math-utils-py" class="sub">6. 客户端工具 — math/utils.py</a><a href="molang.html">Molang — 表达式工具</a><a href="molang.html#1" class="sub">1. 概述</a><a href="molang.html#2-types-py" class="sub">2. 抽象类型 — types.py</a><a href="molang.html#3-common-py" class="sub">3. 命名变量 — common.py</a><a href="molang.html#4-query-client-py" class="sub">4. 客户端 Query 变量 — client.py</a><a href="molang.html#5-server-py" class="sub">5. 服务端 — server.py</a><a href="molang.html#6" class="sub">6. 完整示例</a><a href="persona.html">Persona — 渲染覆盖系统</a><a href="persona.html#1" class="sub">1. 概述</a><a href="persona.html#2-personarenderercomponent" class="sub">2. PersonaRendererComponent — 客户端渲染组件</a><a href="persona.html#3-personaeventssubsystem" class="sub">3. PersonaEventsSubsystem — 客户端事件子系统</a><a href="persona.html#4-personaserver" class="sub">4. PersonaServer — 服务端中继子系统</a><a href="persona.html#5" class="sub">5. 完整示例</a><a href="persona.html#" class="sub">下一步</a><a href="fsm.html">FSM — 有限状态机</a><a href="fsm.html#1" class="sub">1. 概述</a><a href="fsm.html#2-statetree" class="sub">2. StateTree — 树形状态机（推荐）</a><a href="fsm.html#3-fsm" class="sub">3. 经典 FSM（已弃用）</a><a href="fsm.html#" class="sub">下一步</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang-md-molang-md" class="sub">3. Molang 表达式 — 见 [molang.md](molang.md)</a><a href="utils.html#4-persona-persona-md-persona-m" class="sub">4. Persona 渲染覆盖 — 见 [persona.md](persona.m</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a>
+</div>
+</nav>
+<main>
+<article>
+<h1>Profiler — 性能诊断器</h1>
+<p><code>Profiler</code> 是一个轻量级耗时收集器，用于诊断子系统 <code>onUpdate</code>/<code>onRender</code> 及各调度器的性能开销。框架提供了一个全局 <code>profiler</code> 单例供所有模块共用。</p>
+<hr>
+<h2 id="1">1. 概述</h2>
+<p><code>Profiler</code> 的核心功能：</p>
+<ul>
+<li><strong>耗时记录</strong>：通过 <code>with profiler.record(&#39;key&#39;)</code> 上下文管理器自动计时</li>
+<li><strong>统计快照</strong>：输出 <code>avgMs</code>（平均耗时）、<code>maxMs</code>（最大耗时）、<code>count</code>（采样数）</li>
+<li><strong>全局单例</strong>：<code>from architect.core.profiler import profiler</code> 即可使用</li>
+<li><strong>自动记录</strong>：框架自动将调度器跳过帧数（<code>scheduler.tickSkipped</code>、<code>scheduler.renderSkipped</code>）写入 profiler</li>
+</ul>
+<hr>
+<h2 id="2-api">2. API</h2>
+<h3>2.1 <code>Profiler</code> 类</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>enable()</code></td>
+<td><code>() -&gt; None</code></td>
+<td>启用 profiler</td>
+</tr>
+<tr>
+<td><code>disable()</code></td>
+<td><code>() -&gt; None</code></td>
+<td>禁用 profiler（停止记录）</td>
+</tr>
+<tr>
+<td><code>record(key)</code></td>
+<td><code>(str) -&gt; _TimerContext</code></td>
+<td>返回上下文管理器，<code>with</code> 块内自动计时</td>
+</tr>
+<tr>
+<td><code>flush()</code></td>
+<td><code>() -&gt; dict</code></td>
+<td>返回统计快照并<strong>重置</strong>所有记录</td>
+</tr>
+<tr>
+<td><code>snapshot()</code></td>
+<td><code>() -&gt; dict</code></td>
+<td>返回统计快照但<strong>不重置</strong>记录</td>
+</tr>
+</tbody></table>
+<h3>2.2 全局单例</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.profiler <span class="hljs-keyword">import</span> profiler
+
+<span class="hljs-comment"># profiler 是 Profiler 的全局实例</span>
+</code></pre>
+<h3>2.3 返回格式</h3>
+<pre><code class="hljs language-python">{
+    <span class="hljs-string">&#x27;key_name&#x27;</span>: {
+        <span class="hljs-string">&#x27;avgMs&#x27;</span>: <span class="hljs-number">1.23</span>,    <span class="hljs-comment"># 平均耗时（毫秒）</span>
+        <span class="hljs-string">&#x27;maxMs&#x27;</span>: <span class="hljs-number">5.67</span>,    <span class="hljs-comment"># 最大耗时（毫秒）</span>
+        <span class="hljs-string">&#x27;count&#x27;</span>: <span class="hljs-number">120</span>       <span class="hljs-comment"># 采样次数</span>
+    },
+    ...
+}
+</code></pre>
+<hr>
+<h2 id="3">3. 使用示例</h2>
+<h3>3.1 手动记录耗时</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.profiler <span class="hljs-keyword">import</span> profiler
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        <span class="hljs-keyword">with</span> profiler.record(<span class="hljs-string">&#x27;MySystem.onUpdate&#x27;</span>):
+            <span class="hljs-variable language_">self</span>.heavy_computation()
+            <span class="hljs-variable language_">self</span>.world_query()
+            <span class="hljs-variable language_">self</span>.sync_state()
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">heavy_computation</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">with</span> profiler.record(<span class="hljs-string">&#x27;MySystem.heavy&#x27;</span>):
+            <span class="hljs-comment"># ... 复杂的计算</span>
+            <span class="hljs-keyword">pass</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">world_query</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">with</span> profiler.record(<span class="hljs-string">&#x27;MySystem.query&#x27;</span>):
+            <span class="hljs-comment"># ... 大量的实体查询</span>
+            <span class="hljs-keyword">pass</span>
+</code></pre>
+<h3>3.2 获取统计</h3>
+<pre><code class="hljs language-python"><span class="hljs-comment"># 查看快照（不重置）</span>
+snap = profiler.snapshot()
+<span class="hljs-keyword">for</span> key, stats <span class="hljs-keyword">in</span> snap.items():
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;%s: avg=%.2fms max=%.2fms count=%d&#x27;</span> %
+          (key, stats[<span class="hljs-string">&#x27;avgMs&#x27;</span>], stats[<span class="hljs-string">&#x27;maxMs&#x27;</span>], stats[<span class="hljs-string">&#x27;count&#x27;</span>]))
+
+<span class="hljs-comment"># 获取统计并重置（适合周期性输出）</span>
+snap = profiler.flush()
+</code></pre>
+<h3>3.3 控制记录</h3>
+<pre><code class="hljs language-python"><span class="hljs-comment"># 临时禁用</span>
+profiler.disable()
+do_non_critical_work()
+profiler.enable()
+
+<span class="hljs-comment"># 只记录关键路径</span>
+<span class="hljs-keyword">with</span> profiler.record(<span class="hljs-string">&#x27;critical_path&#x27;</span>):
+    profiler.disable()
+    do_auxiliary_work()
+    profiler.enable()
+    do_critical_work()
+</code></pre>
+<h3>3.4 编程式记录</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">import</span> time
+
+<span class="hljs-comment"># 不使用 with，手动记录</span>
+start = time.time()
+do_work()
+elapsed = time.time() - start
+profiler._add(<span class="hljs-string">&#x27;manual_work&#x27;</span>, elapsed)
+</code></pre>
+<hr>
+<h2 id="4">4. 框架自动记录</h2>
+<h3>4.1 调度器跳过帧</h3>
+<p>框架在 <code>SubsystemManager.tickSubsystem()</code> 和 <code>tickRender()</code> 中自动记录：</p>
+<pre><code class="hljs language-python"><span class="hljs-comment"># 自动产生的 key：</span>
+profiler.flush()
+<span class="hljs-comment"># {</span>
+<span class="hljs-comment">#     &#x27;scheduler.tickSkipped&#x27;:   {&#x27;avgMs&#x27;: ..., &#x27;maxMs&#x27;: ..., &#x27;count&#x27;: ...},</span>
+<span class="hljs-comment">#     &#x27;scheduler.renderSkipped&#x27;: {&#x27;avgMs&#x27;: ..., &#x27;maxMs&#x27;: ..., &#x27;count&#x27;: ...},</span>
+<span class="hljs-comment"># }</span>
+</code></pre>
+<p>这些记录反映了调度器因重入保护跳过的帧数，用于诊断帧率波动。</p>
+<h3>4.2 子系统的诊断集成</h3>
+<p>可以在子系统中周期性输出 profiler 数据：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">DiagnosticSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    canTick = <span class="hljs-literal">True</span>
+    _report_interval = <span class="hljs-number">300</span>  <span class="hljs-comment"># 每 300 tick 输出一次</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.ticks % <span class="hljs-variable language_">self</span>._report_interval == <span class="hljs-number">0</span>:
+            snap = profiler.flush()
+            <span class="hljs-keyword">if</span> snap:
+                <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;=== Performance Report ===&#x27;</span>)
+                sorted_keys = <span class="hljs-built_in">sorted</span>(snap.items(),
+                                    key=<span class="hljs-keyword">lambda</span> x: x[<span class="hljs-number">1</span>][<span class="hljs-string">&#x27;avgMs&#x27;</span>],
+                                    reverse=<span class="hljs-literal">True</span>)
+                <span class="hljs-keyword">for</span> key, stats <span class="hljs-keyword">in</span> sorted_keys[:<span class="hljs-number">10</span>]:  <span class="hljs-comment"># Top 10</span>
+                    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;  %-30s avg=%.2fms max=%.2fms count=%d&#x27;</span> %
+                          (key, stats[<span class="hljs-string">&#x27;avgMs&#x27;</span>], stats[<span class="hljs-string">&#x27;maxMs&#x27;</span>], stats[<span class="hljs-string">&#x27;count&#x27;</span>]))
+</code></pre>
+<hr>
+<h2 id="5-timecost">5. <code>@TimeCost</code> 装饰器（遗留）</h2>
+<p>框架还提供了一个简单的 <code>@TimeCost</code> 装饰器，直接在控制台打印函数耗时：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.profiler <span class="hljs-keyword">import</span> TimeCost
+
+<span class="hljs-meta">@TimeCost</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">heavy_function</span>():
+    <span class="hljs-comment"># ... 耗时操作</span>
+    <span class="hljs-keyword">pass</span>
+
+<span class="hljs-comment"># 每次调用会输出：</span>
+<span class="hljs-comment"># Time cost: 0.1234567890 s</span>
+</code></pre>
+<p><strong>注意：</strong> <code>@TimeCost</code> 是遗留 API，推荐使用 <code>profiler.record()</code> 获取更结构化的统计。</p>
+<hr>
+<h2 id="6">6. 最佳实践</h2>
+<ol>
+<li><p><strong>在关键路径上记录</strong>：不用 <code>with</code> 包裹所有代码，只在性能敏感的操作上使用</p>
+<pre><code class="hljs language-python"><span class="hljs-comment"># 好</span>
+<span class="hljs-keyword">with</span> profiler.record(<span class="hljs-string">&#x27;ai.pathfinding&#x27;</span>):
+    <span class="hljs-variable language_">self</span>.find_path()
+
+<span class="hljs-comment"># 不好（粒度太粗）</span>
+<span class="hljs-keyword">with</span> profiler.record(<span class="hljs-string">&#x27;mySystem&#x27;</span>):
+    <span class="hljs-variable language_">self</span>.do_everything()
+</code></pre>
+</li>
+<li><p><strong>周期性输出统计</strong>，而不是每帧都 <code>flush()</code></p>
+</li>
+<li><p><strong>使用语义化的 key 名</strong>，便于识别瓶颈</p>
+<pre><code class="hljs language-python">profiler.record(<span class="hljs-string">&#x27;CombatSystem.damage_calc&#x27;</span>)  <span class="hljs-comment"># 好</span>
+profiler.record(<span class="hljs-string">&#x27;func1&#x27;</span>)                      <span class="hljs-comment"># 不好</span>
+</code></pre>
+</li>
+<li><p><strong>在生产环境中禁用</strong> profiler 以节省开销：</p>
+<pre><code class="hljs language-python">profiler.disable()
+</code></pre>
+</li>
+<li><p><strong>与日志结合</strong>：在子系统初始化时检查 profiler 状态，按需启用：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
+    <span class="hljs-keyword">if</span> DEBUG_MODE:
+        profiler.enable()
+    <span class="hljs-keyword">else</span>:
+        profiler.disable()
+</code></pre>
+</li>
+</ol>
+<hr>
+<h2 id="">下一步</h2>
+<ul>
+<li><a href="scheduler.md">调度系统 (scheduler.md)</a> — 了解调度器跳过帧机制</li>
+<li><a href="subsystem.md">子系统 (subsystem.md)</a> — 子系统生命周期</li>
+<li><a href="best-practices.md">最佳实践 (best-practices.md)</a> — 性能优化建议</li>
+</ul>
+
+</article>
+</main>
+<div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.6);align-items:flex-start;justify-content:center;padding-top:12vh"><div style="background:hsl(0 0% 6%);border:1px solid hsl(0 0% 14%);border-radius:.5rem;width:580px;max-width:90vw;max-height:70vh;display:flex;flex-direction:column;overflow:hidden"><div style="display:flex;align-items:center;padding:.75rem 1rem;border-bottom:1px solid hsl(0 0% 14%)"><svg style="width:1.2rem;height:1.2rem;margin-right:.6rem;opacity:.4;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="hsl(0 0% 63.9%)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input id="search-input" type="text" placeholder="搜索文档..." autofocus style="flex:1;background:0 0;border:0;outline:0;color:hsl(0 0% 98%);font-size:.95rem;font-family:inherit"><kbd style="font-size:.72rem;padding:.15em .5em;border-radius:3px;background:hsl(0 0% 12%);color:hsl(0 0% 63.9%);border:1px solid hsl(0 0% 20%);margin-left:.5rem;flex-shrink:0">Esc</kbd></div><div id="search-results" style="flex:1;overflow-y:auto;padding:.4rem 0"></div><div id="search-empty" style="padding:1.5rem;text-align:center;color:hsl(0 0% 40%);font-size:.85rem;display:none">没有找到结果</div></div></div>
+<script>(function(){var p=document.querySelector(".pages");var k="rns";var y=sessionStorage.getItem(k);if(y){p.scrollTop=parseInt(y,10)||0};p.addEventListener("scroll",function(){sessionStorage.setItem(k,p.scrollTop)});var as=document.querySelectorAll("nav a");for(var i=0;i<as.length;i++){as[i].addEventListener("click",function(){sessionStorage.setItem(k,p.scrollTop)})}})()</script>
+<script>(function(){var idx=[];var r=document.getElementById("search-results");var e=document.getElementById("search-empty");var o=document.getElementById("search-overlay");var inp=document.getElementById("search-input");function openSearch(){o.style.display="flex";inp.value="";inp.focus();render([])}function closeSearch(){o.style.display="none"}function render(list){  e.style.display=list.length?"none":"block";  r.innerHTML=list.slice(0,20).map(function(x){    var t=x.type==="page"?"页面":"章节";    return '<a href="'+x.id+'" class="sr">'+      '<span class="sr-t">'+t+'</span>'+'<span>'+x.title+'</span>'+'</a>'  }).join("")}o.addEventListener("click",function(ev){if(ev.target===o)closeSearch()});function doSearch(q){  var t=q.toLowerCase();  if(!t)return render([]);  var f=idx.filter(function(x){    return x.title.toLowerCase().indexOf(t)>-1||(x.parent||"").toLowerCase().indexOf(t)>-1  });render(f)}inp.addEventListener("input",function(){doSearch(inp.value)});document.addEventListener("keydown",function(ev){  if((ev.ctrlKey||ev.metaKey)&&ev.key==="k"){ev.preventDefault();openSearch()}  if(ev.key==="Escape"&&o.style.display==="flex"){closeSearch();ev.stopPropagation()}});o.addEventListener("keydown",function(ev){  if(ev.key==="ArrowDown"){var a=r.querySelector("a");if(a){a.focus();ev.preventDefault()}}});fetch("search-index.json").then(function(rr){return rr.json()}).then(function(d){idx=d});})()</script>
+</body>
+</html>

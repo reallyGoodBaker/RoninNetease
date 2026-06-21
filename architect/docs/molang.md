@@ -118,7 +118,34 @@ def playerLevel(actorId):
 
 被 `@MolangQuery` 装饰的函数作为 `ReactiveQueryVariable` 的计算函数。`shared=True` 时会通过 `MolangClient.broadcastQuery()` 发送到服务端再广播给其他客户端。
 
-### 4.4 `MolangClient` 子系统
+### 4.4 `evalMolang` — 一次性 Molang 表达式求值
+
+用于在客户端对 Molang 表达式进行一次性求值，无需注册持久变量：
+
+```python
+from architect.utils.molang.client import evalMolang
+
+# 求值 Molang 表达式，返回计算结果
+value = evalMolang(entityId, 'query.health')
+value = evalMolang(entityId, 'query.mod.playerLevel')
+
+# 带错误处理的求值
+def onError(err):
+    print('Molang 表达式出错:', err)
+    return 0  # 出错时返回默认值
+
+value = evalMolang(entityId, 'v.broken_expr', onerror=onError)  # 返回 0
+```
+
+| 参数 | 类型 | 说明 |
+|---|---|---|
+| `id` | `str` | 实体 ID |
+| `expr` | `str` | 完整的 Molang 表达式字符串 |
+| `onerror` | `callable` / `None` | 可选错误回调；若为 `None`，错误时抛出 `SyntaxError` |
+
+> `evalMolang` 适用于需要临时求值 Molang 表达式的场景（如调试、一次性计算），无需像 `QueryVariable` 那样创建持久注册。
+
+### 4.5 `MolangClient` 子系统
 
 ```python
 from architect.utils.molang.client import MolangClient

@@ -122,7 +122,7 @@ AnimMeta = {
 
 ### 2.4 注册和播放
 
-在子系统中注册映射、配置缓动并播放动画。**播放时使用映射字典的短键和槽位名**：
+在子系统中注册元数据、动画映射、配置缓动并播放动画。**播放时使用映射字典的短键和槽位名**：
 
 ```python
 from architect.plugins.animation.components.animClient import (
@@ -131,13 +131,15 @@ from architect.plugins.animation.components.animClient import (
 from architect.component import getOrCreateComponent, getOneComponent
 from architect.core import localPlayerId
 from .assets.animations import GenericMapping
+from .assets.animMeta import AnimMeta
 
 class MyAnimSystem(ClientSubsystem):
     def onPlayerCreated(self):
         entityId = localPlayerId()
         animEx = getOrCreateComponent(entityId, AnimationExComponent)
 
-        # 注册动画映射
+        # 必须先注册元数据，再注册动画映射
+        animEx.registerMetadatas(AnimMeta)
         animEx.registerAnimations(GenericMapping)
         animEx.updateActorAnimDef()
 
@@ -161,6 +163,8 @@ class MyAnimSystem(ClientSubsystem):
         animEx = getOneComponent(localPlayerId(), AnimationExComponent)
         animEx.play('attack', 'holding')  # 键='attack', 槽='holding'
 ```
+
+> **重要：** `registerMetadatas()` 必须在 `registerAnimations()` 之前调用，否则动画元数据不存在会导致注册失败。元数据由 `editor/tools/animExtractor` 工具从动画 JSON 文件中提取生成 `animMeta.py`。
 
 ### 2.5 `@Dispatch` 动画事件分发
 
@@ -216,6 +220,7 @@ class DiamondAttackDispatcher(BaseActionDispatcher):
 
 | 方法 | 说明 |
 |---|---|
+| `registerMetadatas(metadata)` | 注册动画元数据 dict（必须在 `registerAnimations` 之前调用） |
 | `registerAnimations(mapping)` | 注册动画映射 dict |
 | `updateActorAnimDef()` | 应用动画定义到实体 |
 | `registerEasing(key, easeIn, easeOut)` | 为动画键注册缓动配置 |
@@ -256,7 +261,32 @@ from architect.plugins.animation.components.animClient import AnimationEasingTyp
 # LINEAR, QUAD, CUBIC, QUART, QUINT, SINE, EXPO
 ```
 
-### 2.9 实体 Molang 变量控制
+### 2.9 `clientOnly` 动画与跨端同步
+
+`AnimationExComponent` 在本地玩家 `AddPlayerCreatedClientEvent` 事件触发时**无法修改本地玩家动画**，但可以给其他玩家进入渲染时播放动画。如果需要在所有玩家加载完成时都播放动画，需同时在 `AddPlayerCreatedClientEvent` 和 `OnLocalPlayerStopLoading` 两个事件中播放动画。
+
+这一限制对 `clientOnly` 动画影响最大：跨端同步动画即使在客户端播放失败，也会在广播到自己时重新尝试播放一次。
+
+```python
+class MyAnimSystem(ClientSubsystem):
+    @EventListener('AddPlayerCreatedClientEvent')
+    def onPlayerCreated(self, ev):
+        # 对其他进入渲染的玩家有效，但此时无法修改本地玩家动画
+        animEx = getOrCreateComponent(ev.entityId, AnimationExComponent)
+        animEx.registerMetadatas(AnimMeta)
+        animEx.registerAnimations(GenericMapping)
+        animEx.updateActorAnimDef()
+        animEx.play('idle', 'loco')
+
+    @EventListener('OnLocalPlayerStopLoading')
+    def onLocalPlayerStopLoading(self, ev):
+        # 本地玩家加载完成，补充播放本地玩家动画
+        animEx = getOneComponent(localPlayerId(), AnimationExComponent)
+        if animEx:
+            animEx.play('idle', 'loco')
+```
+
+### 2.10 实体 Molang 变量控制
 
 动画参数通过**动画 JSON 文件**中的 Molang 表达式绑定，不在 Python 代码中设置。动画 JSON 定义示例：
 

@@ -135,14 +135,30 @@ screenPoint = worldToScreen(modelMatrix, viewMatrix, projMatrix, viewport, world
 ## 4. 插值与常量 — `double.py`
 
 ```python
-from architect.math.double import lerp, clamp, smoothstep, inf, epsilon
+from architect.math.double import lerp, clamp, smoothstep, alerp, inf, epsilon
 
 lerp(a, b, t)                          # 浮点线性插值
+alerp(start, end, t)                   # 角度线性插值（自动处理 360° 环绕）
 clamp(x, min_val, max_val)             # 截断到 [min, max]
 smoothstep(edge0, edge1, x)            # 平滑阶梯函数
 inf                                     # 1e+10
 epsilon                                 # 1e-8
 ```
+
+### 4.1 `alerp` — 角度线性插值
+
+对角度值进行线性插值，自动选择最短路径处理 `0°` / `360°` 的环绕问题：
+
+```python
+from architect.math.double import alerp
+
+# 插值 350° → 10° 会走 20° 的短路径，而非 340° 的长路径
+alerp(350.0, 10.0, 0.5)   # 0.0 (即 360°/0°)
+alerp(10.0, 350.0, 0.5)   # 0.0
+alerp(10.0, 100.0, 0.5)   # 55.0
+```
+
+> `alerp` 适用于旋转角度、朝向、动画骨骼旋转等需要角度插值的场景。
 
 ---
 
