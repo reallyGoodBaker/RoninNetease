@@ -101,3 +101,13 @@ def MolangQuery(shared=False):
             _addReactiveQueryVariable(name, func)
         return func
     return decorator
+
+
+def evalMolang(id, expr, onerror=None):
+    molang = compClient.CreateQueryVariable(id)
+    result = molang.EvalMolangExpression(expr)
+    if 'error' in result:
+        if callable(onerror):
+            return onerror(result['error'])
+        raise SyntaxError(result['error'])
+    return result['value']

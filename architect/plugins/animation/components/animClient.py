@@ -91,6 +91,15 @@ class AnimationExComponent(BaseCompClient):
     """
     一定要使用 registerMetadatas 和 registerAnimations 注册动画，
     否则该组件无法正常使用
+
+    该组件在本地玩家 AddPlayerCreatedClientEvent 事件触发时无法修改本地玩家动画，
+    但是可以用于其他玩家进入渲染时给其他玩家播放动画。
+
+    所以如果你需要在所有玩家加载完成时都播放，请同时在 AddPlayerCreatedClientEvent 事件
+    和 OnLocalPlayerStopLoading 事件中播放动画
+
+    这个操作影响最大的是 clientOnly 动画，因为跨端同步动画即使在 client 端播放失败，
+    也会在广播到自己时重新尝试播放一次。
     """
 
     def onCreate(self, entityId):
@@ -220,7 +229,7 @@ class AnimationExComponent(BaseCompClient):
 
         # 创建动画播放运行时
         animInfo = AnimPlayingInfo(
-            self.entityId, self.animations[animKey],
+            self.animMetas[animName], self.entityId, self.animations[animKey],
             layer, startTime, playRate, serverSync
         )
         self.playing[animKey] = animInfo

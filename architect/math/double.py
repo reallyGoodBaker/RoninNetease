@@ -11,5 +11,13 @@ def smoothstep(edge0, edge1, x):
     t = clamp((x - edge0) / (edge1 - edge0), 0, 1)
     return t * t * (3 - 2 * t)
 
+def alerp(start, end, t):
+    diff = (end - start) % 360.0
+    if diff > 180.0:
+        diff -= 360.0
+    elif diff < -180.0:
+        diff += 360.0
+    return start + diff * t
+
 inf = 1e+10
 epsilon = 1e-8

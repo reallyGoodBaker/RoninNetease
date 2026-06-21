@@ -4,6 +4,10 @@ from ..enum import InputType
 
 
 class InputBinding(object):
+    __slots__ = [
+        'inputType', 'key', 'action', 'modifiers', 'triggers'
+    ]
+
     def __init__(self, inputType, key, action, modifiers=[], triggers=[]):
         # type: (InputType, str, str, list[InputModifier], list[InputTrigger]) -> None
         self.inputType = inputType
@@ -15,6 +19,10 @@ class InputBinding(object):
 
 class InputMapping(object):
     _registry = {}
+
+    __slots__ = [
+        'priority', 'name', 'bindings'
+    ]
 
     def __init__(self, name, bindings=[], priority=0):
         # type: (str, list[InputBinding], int) -> None
