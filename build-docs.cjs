@@ -66,6 +66,10 @@ function navHtml(cur) {
   return h;
 }
 
+function fixMdLinks(html) {
+  return html.replace(/href="(\w+)\.md"/g, 'href="$1.html"');
+}
+
 function anchors(body) {
   return body.replace(/<h2>(.*?)<\/h2>/g, (_, t) =>
     '<h2 id="' + t.toLowerCase().replace(/<[^>]*>/g, '').replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '') + '">' + t + '</h2>');
@@ -188,7 +192,7 @@ hljsCSS +
 '</style>';
 
 for (const [name, md] of Object.entries(docs)) {
-  const body = anchors(highlightCodeBlocks(marked.parse(md, { breaks: !0, gfm: !0 })));
+  const body = fixMdLinks(anchors(highlightCodeBlocks(marked.parse(md, { breaks: !0, gfm: !0 }))));
   const html = '<!DOCTYPE html>\n<html lang="zh">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1.0">\n<title>' + name + ' - RoninNetease v1.1.0</title>\n' + CSS + '\n</head>\n<body>\n<nav>\n' + LOGO_HTML + '\n<div class="pages">\n' + navHtml(name) + '\n</div>\n</nav>\n<main>\n<article>\n' + body + '\n</article>\n</main>\n'
     + SEARCH_HTML
     + '\n<script>(function(){var p=document.querySelector(".pages");var k="rns";var y=sessionStorage.getItem(k);if(y){p.scrollTop=parseInt(y,10)||0};p.addEventListener("scroll",function(){sessionStorage.setItem(k,p.scrollTop)});var as=document.querySelectorAll("nav a");for(var i=0;i<as.length;i++){as[i].addEventListener("click",function(){sessionStorage.setItem(k,p.scrollTop)})}})()</script>\n'
@@ -197,4 +201,31 @@ for (const [name, md] of Object.entries(docs)) {
   fs.writeFileSync(path.join(out, name + '.html'), html, 'utf-8');
   console.log('\u2714 ' + name);
 }
-console.log('Done \u2014 ' + Object.keys(docs).length + ' files');
+
+// Build index page
+{
+  const indexBody = [
+    '<h1>RoninNetease v1.1.0 \u6587\u6863</h1>',
+    '<p>RoninNetease \u662f\u4e00\u4e2a\u4e13\u4e3a\u7f51\u6613\u7248\u300a\u6211\u7684\u4e16\u754c\u300b\u8bbe\u8ba1\u7684 ECS\u6a21\u7ec4\u6846\u67b6\u3002\u6b64\u6587\u6863\u6db5\u76d6\u4ece\u5165\u95e8\u5230\u8fdb\u9636\u7684\u6240\u6709\u5185\u5bb9\u3002</p>'
+  ];
+  for (const [label, keys] of groups) {
+    indexBody.push('<h2>' + label + '</h2>');
+    indexBody.push('<ul>');
+    for (const k of keys) {
+      if (!docs[k]) continue;
+      const t = docs[k].split('\n')[0].replace(/^#\s*/, '').trim() || k;
+      indexBody.push('<li><a href="' + k + '.html">' + t + '</a></li>');
+    }
+    indexBody.push('</ul>');
+  }
+  const idxHtml = '<!DOCTYPE html>\n<html lang="zh">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1.0">\n<title>RoninNetease v1.1.0 \u6587\u6863</title>\n' + CSS + '\n</head>\n<body>\n<nav>\n' + LOGO_HTML + '\n<div class="pages">\n' + navHtml('') + '\n</div>\n</nav>\n<main>\n<article>\n' + indexBody.join('\n') + '\n</article>\n</main>\n'
+    + SEARCH_HTML
+    + '\n<script>(function(){var p=document.querySelector(".pages");var k="rns";var y=sessionStorage.getItem(k);if(y){p.scrollTop=parseInt(y,10)||0};p.addEventListener("scroll",function(){sessionStorage.setItem(k,p.scrollTop)});var as=document.querySelectorAll("nav a");for(var i=0;i<as.length;i++){as[i].addEventListener("click",function(){sessionStorage.setItem(k,p.scrollTop)})}})()</script>\n'
+    + SEARCH_JS
+    + '\n</body>\n</html>';
+  fs.writeFileSync(path.join(out, 'index.html'), idxHtml, 'utf-8');
+  fs.writeFileSync(path.join('docs', 'index.html'), idxHtml, 'utf-8');
+  console.log('\u2714 index');
+}
+
+console.log('Done \u2014 ' + Object.keys(docs).length + ' files + index');
