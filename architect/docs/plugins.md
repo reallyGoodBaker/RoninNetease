@@ -662,10 +662,15 @@ class MyMovement(ClientSubsystem):
 
 ### 4.6 设置运动（自动同步）
 
+`motion` setter 接受 `Vector3` 类型。如果只有 tuple，需用 `compact` 导出的 `vec()` 包装：
+
 ```python
+from architect.compact import vec
+from architect.plugins.motion.playerMotionComp import PlayerMotionComponent
+
 motionComp = getOneSingletonComponent(PlayerMotionComponent)
-# 设置运动向量，自动同步到服务端（接受 tuple 或 Vector3）
-motionComp.motion = (1.0, 0.5, 0.0)
+# 设置运动向量，自动同步到服务端
+motionComp.motion = vec(1.0, 0.5, 0.0)
 ```
 
 每次写入 `motion` 属性时，框架自动通过 `remote.client.call` 调用服务端的 `PlayerMotionSyncServer.syncMotion`，服务端再将运动状态应用到对应玩家的 `ActorMotionComponent`。
@@ -682,7 +687,7 @@ class TestClient(ClientSubsystem):
     def onMove(self, ev):
         x, y = ev.value
         motionComp = getOneSingletonComponent(PlayerMotionComponent)
-        motionComp.motion = (x, 0, y)
+        motionComp.motion = vec(x, 0, y)
 ```
 
 ### 4.8 服务端同步

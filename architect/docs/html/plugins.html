@@ -740,9 +740,13 @@ motionComp = getOneSingletonComponent(PlayerMotionComponent)
         <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Input:&#x27;</span>, inputVec)
 </code></pre>
 <h3>4.6 设置运动（自动同步）</h3>
-<pre><code class="hljs language-python">motionComp = getOneSingletonComponent(PlayerMotionComponent)
-<span class="hljs-comment"># 设置运动向量，自动同步到服务端（接受 tuple 或 Vector3）</span>
-motionComp.motion = (<span class="hljs-number">1.0</span>, <span class="hljs-number">0.5</span>, <span class="hljs-number">0.0</span>)
+<p><code>motion</code> setter 接受 <code>Vector3</code> 类型。如果只有 tuple，需用 <code>compact</code> 导出的 <code>vec()</code> 包装：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.compact <span class="hljs-keyword">import</span> vec
+<span class="hljs-keyword">from</span> architect.plugins.motion.playerMotionComp <span class="hljs-keyword">import</span> PlayerMotionComponent
+
+motionComp = getOneSingletonComponent(PlayerMotionComponent)
+<span class="hljs-comment"># 设置运动向量，自动同步到服务端</span>
+motionComp.motion = vec(<span class="hljs-number">1.0</span>, <span class="hljs-number">0.5</span>, <span class="hljs-number">0.0</span>)
 </code></pre>
 <p>每次写入 <code>motion</code> 属性时，框架自动通过 <code>remote.client.call</code> 调用服务端的 <code>PlayerMotionSyncServer.syncMotion</code>，服务端再将运动状态应用到对应玩家的 <code>ActorMotionComponent</code>。</p>
 <h3>4.7 配合输入系统使用</h3>
@@ -755,7 +759,7 @@ motionComp.motion = (<span class="hljs-number">1.0</span>, <span class="hljs-num
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">onMove</span>(<span class="hljs-params">self, ev</span>):
         x, y = ev.value
         motionComp = getOneSingletonComponent(PlayerMotionComponent)
-        motionComp.motion = (x, <span class="hljs-number">0</span>, y)
+        motionComp.motion = vec(x, <span class="hljs-number">0</span>, y)
 </code></pre>
 <h3>4.8 服务端同步</h3>
 <p>运动同步由 <code>PlayerMotionSyncServer</code> 自动处理，无需手动调用。客户端写入 <code>motion</code> 时立即触发：</p>
