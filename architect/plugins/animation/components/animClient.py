@@ -56,7 +56,7 @@ class AnimPlayingInfo(object):
     def getNotifies(self):
         if not self.notifies:
             return []
-        cur = self.playTime
+        cur = self.playTime % self.duration if self.loop == LoopType.LOOP else self.playTime
         prev = cur - self._dt
         for time, notifies in self.notifies.items():
             if prev < float(time) <= cur:
@@ -68,7 +68,9 @@ class AnimPlayingInfo(object):
         """
         动画进度, 始终返回 0 ~ 1
         """
-        return clamp((self.playTime % self.duration) / self.duration, 0, 1)
+        if self.loop == LoopType.LOOP:
+            return clamp((self.playTime % self.duration) / self.duration, 0, 1)
+        return clamp(self.playTime / self.duration, 0, 1)
 
     def isFinished(self):
         # type: () -> bool
@@ -78,9 +80,9 @@ class AnimPlayingInfo(object):
         """
         if self._manualStop:
             return True
-        if self.loop == LoopType.LOOP:
+        if self.loop in (LoopType.LOOP, LoopType.KEEP_LAST_FRAME):
             return False
-        elif self.loop in (LoopType.ONCE, LoopType.KEEP_LAST_FRAME):
+        elif self.loop == LoopType.ONCE:
             return self.playTime >= self.duration
         else:
             raise Exception('Unknown loop type: ' + self.loop)

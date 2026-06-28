@@ -1,8 +1,8 @@
-from ..component import getComponent, getComponentWithQuery, getEntities
-from ..component.core import components, _findNamedComp, singletonId, _getCompIndex
-from ..core.basic import serverApi, clientApi, isServer
+from ..component import getComponent, getComponentWithQuery
+from ..component.core import _getCompIndex, EMPTY_SLOT
 from ..core.annotation import AnnotationHelper
 from ..conf import COMPONENT_TAG
+from functools import wraps
 
 
 class _Query:
@@ -40,8 +40,8 @@ class ExtraArgDict:
 
 FakeComponents = [EntityId, ExtraArguments, ExtraArgDict]
 
-def _getQueryArgs(entityId, compClsSrc, required, excluded, args, kwargs):
-    # type: (str, list, list, list, list, dict) -> list | None
+def _getQueryArgs(entityId, compClsSrc, required, excluded, args, kwargs, showFailReason=False):
+    # type: (str, list, list, list, list, dict, bool) -> list | None
     compCls = compClsSrc[:]
     entityIdIndex = -1
     extraArgsIndex = -1
@@ -55,8 +55,20 @@ def _getQueryArgs(entityId, compClsSrc, required, excluded, args, kwargs):
     if ExtraArgDict in compCls:
         extraArgDict = compCls.index(ExtraArgDict)
         compCls[extraArgDict] = None
-    result = getComponentWithQuery(entityId, compCls, required, excluded)
-    if not result:
+    result, mismatch = getComponentWithQuery(entityId, compCls, required, excluded)
+    if mismatch:
+        if showFailReason:
+            print('[WARN] required 或 excluded 不匹配: {}'.format(mismatch.__name__))
+        return None
+    if EMPTY_SLOT in result:
+        if showFailReason:
+            missingComps = []
+            for i, v in enumerate(result):
+                if v == EMPTY_SLOT:
+                    missingComps.append(compCls[i].__name__)
+            print('[INFO] 缺失的查询组件: {}'.format(
+                ', '.join(missingComps)
+            ))
         return None
     if entityIdIndex >= 0:
         result[entityIdIndex] = entityId
@@ -87,6 +99,7 @@ def Query(*compCls, **options):
         compCls (list[type[BaseCompServer|BaseCompClient]]): 组件类或组件类名
         required (list[type[BaseCompServer|BaseCompClient]]): 必须包含的组件, 不会包含在查询结果中
         excluded (list[type[BaseCompServer|BaseCompClient]]): 必须排除的组件, 不会包含在查询结果中
+        showFailReason bool: 显示失败的原因
 
     使用 Query 查询时，`self` 为 ~entityId字符串~ 类实例,
     请一定要搭配 Sched.Tick() , Sched.Render() 等调度装饰器使用，否则不会执行。
@@ -105,18 +118,20 @@ def Query(*compCls, **options):
     """
     required = options.get('required', [])
     excluded = options.get('excluded', [])
+    showFailReason = options.get('showFailReason', False)
     def decorator(fn):
         isAllSingleton = _isCompAllSingleton(compCls) # type: ignore
         # 提取真实组件名 (过滤掉 EntityId 等伪组件), 用于索引查询
         _targetNames = [
-            c if type(c) == str else c.__name__
-            for c in compCls
+            c for c in compCls
             if c not in FakeComponents
         ]
+
+        @wraps(fn)
         def wrapper(inst, *args, **kwargs):
             _compList = list(compCls)
             if isAllSingleton:
-                args = _getQueryArgs(None, _compList, required, excluded, args, kwargs) # type: ignore
+                args = _getQueryArgs(None, _compList, required, excluded, args, kwargs, showFailReason) # type: ignore
                 if args:
                     fn(inst, *args)
             else:
@@ -124,11 +139,24 @@ def Query(*compCls, **options):
                 candidateEntities = _getCompIndex().queryEntities(
                     _targetNames, required, excluded
                 )
+                # if fn.__name__ == 'onJump':
+                #     print candidateEntities
                 for entityId in candidateEntities:
                     if not entityId:
                         continue
-                    comps = _getQueryArgs(entityId, _compList, required, excluded, args, kwargs) # type: ignore
+                    comps = _getQueryArgs(entityId, _compList, required, excluded, args, kwargs, showFailReason) # type: ignore
                     if comps:
                         fn(inst, *comps)
         return wrapper
     return decorator
+
+
+def Track(message=None):
+    def _tracker(method):
+        @wraps(method)
+        def modified(self, *args, **kwargs):
+            msg = message or "[INFO] Called: '{}.{}'".format(self.__class__.__name__, method.__name__)
+            print(msg)
+            return method(self, *args, **kwargs)
+        return modified
+    return _tracker

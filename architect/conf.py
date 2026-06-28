@@ -25,6 +25,7 @@ $vendor为系统插件, $user为用户插件
 """
 PLUGINS = [
     '$vendor.event',        # 事件系统
+    '$vendor.motion',       # 运动系统
 ]
 
 

@@ -47,3 +47,8 @@ All notable changes to the RoninNetease framework.
 - AOP aspect support (Before/After/Replace)
 - Math library (vec3, mat4, vec4)
 - FSM (deprecated)
+
+
+## [1.0.1] - MCBE Netease 3.9
+
+- Add PlayerMotionComponent to wrap native ActorMotionComponent

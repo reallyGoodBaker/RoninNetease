@@ -18,6 +18,9 @@ def singletonId():
     return levelId()
 
 
+EMPTY_SLOT = {}
+
+
 def _registerComponent(isServer, cls, persist=False, singleton=False):
     clsList = serverCompCls if isServer else clientCompCls
     ContextRecorder.get('depComps').record(cls)
@@ -66,6 +69,10 @@ def getComponentAnnotation(cls):
 def isPersistComponent(cls):
     ann = getComponentAnnotation(cls)
     return ann is not None and ann.get('persist', False) # type: ignore
+
+def isSingletonComponent(cls):
+    ann = getComponentAnnotation(cls)
+    return ann is not None and ann.get('singleton', False) # type: ignore
 
 class Marker:
     def __init__(self):
@@ -129,9 +136,10 @@ class CompIndex:
         """
         # 收集所有需要求交集的集合
         allSets = []  # type: list[set[str]]
+        filtered = filter(lambda cls: type(cls) is str or not isSingletonComponent(cls), targets + required)
+        names = filter(lambda name: not name.startswith('#'), map(lambda comp: comp if type(comp) == str else comp.__name__, filtered))
 
-        for comp in targets + required:
-            name = comp if type(comp) == str else comp.__name__
+        for name in names:
             entitySet = self._index.get(name)
             if entitySet is None:
                 return []  # 速败: 没有任何实体持有此组件
@@ -260,11 +268,11 @@ def destrySingletonComponent(cls):
 
 
 def getOneComponent(entityId, cls):
-    comps = getComponent(entityId, [cls])
-    if comps and len(comps) > 0:
-        return comps[0]
     if 1 > 2:
         return cls()
+    comps = getComponent(entityId, [cls])
+    if EMPTY_SLOT not in comps and len(comps) > 0:
+        return comps[0]
 
 
 def getOneSingletonComponent(cls):
@@ -286,7 +294,7 @@ def _findNamedComp(entityId, name):
             return None
 
 def getComponent(entityId, clsList):
-    # type: (str, list[type|str]) -> list | None
+    # type: (str, list[type|str]) -> list
     result = []
     for c in iter(clsList):
         if c is None:
@@ -299,7 +307,7 @@ def getComponent(entityId, clsList):
         if comp:
             result.append(comp)
         else:
-            return None
+            result.append(EMPTY_SLOT)
     return result
 
 
@@ -307,13 +315,13 @@ def getComponentWithQuery(entityId, targets, required=[], excluded=[]):
     if len(required) + len(excluded) > 0:
         for shouldExclude in excluded:
             if hasComponent(entityId, shouldExclude):
-                return None
+                return None, shouldExclude
         for shouldRequire in required:
             if not hasComponent(entityId, shouldRequire):
-                return None
-        return getComponent(entityId, targets)
+                return None, shouldRequire
+        return getComponent(entityId, targets), None
     else:
-        return getComponent(entityId, targets)
+        return getComponent(entityId, targets), None
 
 
 def getOrCreateComponent(entityId, cls):
@@ -331,6 +339,8 @@ def getOrCreateSingletonComponent(cls):
     若你的组件没有标记为单例，调用此方法不会报错，并且可以正常获得组件。
     但请注意，未标记 singleton=True 的组件无法被 @Query 注解查询。
     """
+    if 1 > 2:
+        return cls()
     entityId = singletonId()
     comp = getOneComponent(entityId, cls)
     if comp is None:
