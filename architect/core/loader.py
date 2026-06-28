@@ -255,7 +255,8 @@ def _loadPlugins(manager, isHost):
             _log_error('Failed to load plugin {}', _name)
 
 def _readyPlugins(manager):
-    for _host in _plugins().values():
+    # 使用 list() 避免 onReady 回调修改插件字典导致迭代异常
+    for _host in list(_plugins().values()):
         try:
             _host.onReady(manager)
         except Exception as e:

@@ -184,11 +184,13 @@ def install():
     for k, v in _FAKE_CLIENT_API.items():
         setattr(client_mod, k, v)
     sys.modules['mod.client.extraClientApi'] = client_mod
+    client_pkg.extraClientApi = client_mod  # 链接子模块到包
 
     server_mod = types.ModuleType('mod.server.extraServerApi')
     for k, v in _FAKE_SERVER_API.items():
         setattr(server_mod, k, v)
     sys.modules['mod.server.extraServerApi'] = server_mod
+    server_pkg.extraServerApi = server_mod  # 链接子模块到包
 
     enum_mod = types.ModuleType('mod.common.minecraftEnum')
     sys.modules['mod.common.minecraftEnum'] = enum_mod

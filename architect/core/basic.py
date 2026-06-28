@@ -1,4 +1,19 @@
 # coding=utf-8
+"""
+引擎约束说明 (Engine Constraint Notes)
+
+本文件是 RoninNetease 与网易引擎之间的适配层。以下设计由引擎特性决定：
+
+1. isServer() 通过 threading.current_thread().ident 和
+   clientApi.GetLocalPlayerId() == '-1' 判断当前运行端（服务端/客户端）。
+   网易引擎的服务端本地玩家 ID 固定返回 '-1'，此逻辑不可移植。
+
+2. 所有引擎 API 调用（serverApi / clientApi）通过 mod.client.extraClientApi
+   和 mod.server.extraServerApi 导入，这些模块由网易 MOD SDK 提供。
+
+3. compServer / compClient 为引擎组件工厂，在模块导入时即通过
+   GetEngineCompFactory() 初始化，后续通过 isServer() 分支选择。
+"""
 import mod.client.extraClientApi as clientApi
 import mod.server.extraServerApi as serverApi
 import threading

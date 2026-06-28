@@ -1,3 +1,4 @@
+# coding=utf-8
 from ..core.ref import Ref
 from ..core.unreliable import Unreliable
 from ..core.annotation import AnnotationHelper

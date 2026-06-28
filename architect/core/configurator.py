@@ -1,4 +1,20 @@
 # coding=utf-8
+"""
+引擎约束说明 (Engine Constraint Notes)
+
+本文件与 architect/conf.py 构成双轨制配置体系，这是网易引擎 ImportModule
+限制下的必要分层：
+
+- 本文件提供运行时配置获取和热重载功能（modConf() getter/setter），
+  它使用相对 import（from .... import conf）读取用户配置。
+- 此 import 需要引擎 ImportModule 就绪后才能工作，因此本文件只能在
+  SubsystemManager 初始化之后使用。
+- 框架早期初始化（Loader 注册、插件扫描路径等）由 architect/conf.py
+  提供配置，它通过 try/except import 在引擎加载前即可读取。
+
+运行时热重载白名单（HOT_RELOADABLE）可通过用户 conf.py 扩展。
+将两套系统合并为单一入口在现行引擎约束下不可行。
+"""
 class _ModuleLocator(object):
     pass
 

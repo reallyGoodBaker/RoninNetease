@@ -1,11 +1,25 @@
 # coding=utf-8
-class _ModuleLocator: pass
-__modname__ = _ModuleLocator.__module__[:_ModuleLocator.__module__.find('.')]
 """
+引擎约束说明 (Engine Constraint Notes)
+
+本文件与 core/configurator.py 构成双轨制配置体系，这是网易引擎 ImportModule
+限制下的必要分层：
+
+- 网易引擎不支持原生 __import__ 动态导入，其 ImportModule API 必须在引擎加载
+  完毕后才能调用。
+- 因此框架早期初始化（Loader 注册、子系统扫描路径等）只能通过本文件获取配置，
+  使用 `try: from ... import conf` 在引擎加载前即可读取。
+- 运行时热重载、类型安全 setter 等高级功能则由 configurator.py 提供，它需要
+  引擎 ImportModule 就绪后才能工作。
+
+将两套系统合并为单一入口在现行引擎约束下不可行。请勿移除任一配置体系。
+
 这里是引擎配置, 不建议直接修改.
 MOD_* 和 PLUGINS 遵循覆盖原则, 用户可以在脚本根目录下创建 conf.py 覆盖默认配置.
 如果你不知道有哪些配置可以修改, 请将引擎配置中 “推荐修改的配置” 和 “插件列表” 复制到你的 conf.py 中
 """
+class _ModuleLocator: pass
+__modname__ = _ModuleLocator.__module__[:_ModuleLocator.__module__.find('.')]
 
 
 

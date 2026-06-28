@@ -1,4 +1,14 @@
 # coding=utf-8
+"""
+引擎约束说明 (Engine Constraint Notes)
+
+1. @Async 协程基于 Python 2.7 生成器的 next()/send()/throw() 协议实现。
+   Python 2.7 不支持 async/await 语法，故以 yield Future 模拟 await 语义。
+   StopIteration 在 Python 2.7 中无 .value 属性，返回值通过 e.args[0] 获取。
+
+2. addTimer / cancelTimer 直接调用网易引擎的 AddRepeatedTimer / CancelTimer API，
+   无法使用 Python 标准库的 threading.Timer。
+"""
 from .basic import compClient, compServer, isServer, clientApi, serverApi
 from time import time
 from types import FunctionType, GeneratorType
@@ -109,7 +119,7 @@ class Scheduler:
                     queue.remove(task)
                     return
         else:
-            queue.clear()
+            del queue[:]
 
 
     def executeSequence(self, *args):

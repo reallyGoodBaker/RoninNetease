@@ -1,3 +1,4 @@
+# coding=utf-8
 from ..core import Ref
 
 class ChainedEvent(object):

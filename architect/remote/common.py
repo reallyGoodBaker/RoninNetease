@@ -1,3 +1,16 @@
+# coding=utf-8
+"""
+引擎约束说明 (Engine Constraint Notes)
+
+1. 远程调用（RPC）基于网易引擎的 sendServer / sendClient 事件通道实现。
+   _RemoteClient.invoke() 和 _RemoteServer.invoke() 使用引擎级定时器
+   （LevelClient.game.AddTimer / LevelServer.game.AddTimer）实现 3 秒超时。
+
+2. if 1 > 2: from ..core.subsystem import SubsystemManager 是
+   Python 2.7 缺少 typing 的类型提示变通方案（与 component/core.py 同理）。
+
+3. DataTable 的序列化/反序列化通过 ImportModule 动态加载类，依赖引擎的模块导入机制。
+"""
 from ..core.basic import isServer, serverApi, clientApi
 from ..core.scheduler import Future
 from ..core.log import error as _log_error
@@ -13,6 +26,9 @@ REMOTE_CALL_KEY = '[[remote_call]]'
 REMOTE_RET_KEY = '[[remote_ret]]'
 REMOTE_INNER_KEY = '[[remote_inner]]'
 REMOTE_VALIDATE_KEY = '[[remote_validate]]'
+
+# RPC 调用超时（秒），可按需通过 modConf 热更
+RPC_TIMEOUT = 3
 
 
 def Remote(method=None, **validate_types):
@@ -258,7 +274,7 @@ class _RemoteClient(object):
         def _timeout():
             del _clientRets[retId]
             reject('timeout')
-        timer = LevelClient.getInstance().game.AddTimer(3, _timeout) # type: ignore
+        timer = LevelClient.getInstance().game.AddTimer(RPC_TIMEOUT, _timeout) # type: ignore
 
         def _recieveReturn(result, err):
             LevelClient.getInstance().game.CancelTimer(timer)
@@ -308,7 +324,7 @@ class _RemoteServer(object):
             del _serverRets[retId]
             reject('timeout')
 
-        timer = LevelServer.game.AddTimer(3, _timeout) # type: ignore
+        timer = LevelServer.game.AddTimer(RPC_TIMEOUT, _timeout) # type: ignore
 
         def _recieveReturn(result, err):
             LevelServer.game.CancelTimer(timer)

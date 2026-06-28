@@ -31,9 +31,12 @@ if not _logger.handlers:
 
 
 def _format_msg(msg, *args):
-    """Format message with args, mimicking str.format behavior."""
+    """Format message with args. 使用 %-format 避免消息中的 {} 冲突."""
     if args:
-        return msg.format(*args)
+        try:
+            return msg % args
+        except TypeError:
+            return msg.format(*args)
     return msg
 
 

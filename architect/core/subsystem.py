@@ -55,6 +55,7 @@ class SubsystemManager(object):
         # 在manager之前初始化，否则无法监听组件注册和子系统变更
         self.rawEngine = clientApi.GetEngineNamespace()
         self.rawSysName = clientApi.GetEngineSystemName()
+        self._initRemoteCalls()
         self._initManager(False)
         return self
 
@@ -62,6 +63,7 @@ class SubsystemManager(object):
     def createServer(self):
         self.rawEngine = serverApi.GetEngineNamespace()
         self.rawSysName = serverApi.GetEngineSystemName()
+        self._initRemoteCalls()
         listener = EventListener('LoadServerAddonScriptsAfter', lambda _: self._initManager(True))
         self.system.ListenForEvent(
             self.rawEngine,
@@ -88,8 +90,15 @@ class SubsystemManager(object):
         self.bus = CommandBus()
         self.renderSched = Scheduler()
         self.tickSched = Scheduler()
+        self._remoteCallsReady = False
+
+    def _initRemoteCalls(self):
+        """初始化远程调用监听器（在 createServer/createClient 流程中显式调用）。"""
+        if self._remoteCallsReady:
+            return
         from ..remote.common import _registerRemoteCalls
         _registerRemoteCalls(self)
+        self._remoteCallsReady = True
 
 
     def _record(self, inst):

@@ -1,4 +1,18 @@
 # coding=utf-8
+"""
+引擎约束说明 (Engine Constraint Notes)
+
+1. `if 1 > 2: return cls()` 模式出现在多个组件操作函数中
+   （createComponent, getOneComponent, getOrCreateComponent 等）。
+   这是 Python 2.7 缺少 typing 模块的务实变通——静态分析工具（VS Code / PyCharm）
+   可通过此分支推导返回类型。Python 3 迁移后应替换为 TYPE_CHECKING 守卫。
+
+2. 所有组件的创建/销毁/注册均通过网易引擎 API（CreateComponent / DestroyComponent /
+   RegisterComponent）完成，不具独立运行能力。
+
+3. compIndex（反向索引）和 entityMarker（实体标记器）维护了服务端/客户端两套全局实例，
+   通过 isServer() 分支选择。
+"""
 from ..conf import COMPONENT_NAMESPACE, COMPONENT_TAG, PERSIST_INFO
 from ..core.annotation import AnnotationHelper
 from ..core.contextRecorder import ContextRecorder
@@ -194,6 +208,8 @@ def createSingletonComponent(cls):
     若你的组件没有标记为单例，调用此方法不会报错，并且可以通过 `getOneSingletonComponent` 等方法获得组件。
     但请注意，未标记 singleton=True 的组件无法被 @Query 注解查询。
     """
+    # TYPE_CHECKING: Python 2.7 typing workaround — enables IDE type inference.
+    # Replace with `if typing.TYPE_CHECKING` after Python 3 migration.
     if 1 > 2:
         return cls()
     entityId = singletonId()
@@ -217,6 +233,7 @@ def _handlePersistKeys(comp, entityId):
 
 
 def createComponent(entityId, cls):
+    # TYPE_CHECKING: Python 2.7 typing workaround
     if 1 > 2:
         return cls()
     if not entityId or not isinstance(entityId, str) or len(entityId) == 0:
@@ -269,6 +286,7 @@ def destrySingletonComponent(cls):
 
 
 def getOneComponent(entityId, cls):
+    # TYPE_CHECKING: Python 2.7 typing workaround
     if 1 > 2:
         return cls()
     comps = getComponent(entityId, [cls])
@@ -278,6 +296,7 @@ def getOneComponent(entityId, cls):
 
 def getOneSingletonComponent(cls):
     entityId = singletonId()
+    # TYPE_CHECKING: Python 2.7 typing workaround
     if 1 > 2:
         return cls()
     return getOneComponent(entityId, cls)
@@ -326,6 +345,7 @@ def getComponentWithQuery(entityId, targets, required=[], excluded=[]):
 
 
 def getOrCreateComponent(entityId, cls):
+    # TYPE_CHECKING: Python 2.7 typing workaround
     if 1 > 2:
         return cls()
     comp = getOneComponent(entityId, cls)
@@ -340,6 +360,7 @@ def getOrCreateSingletonComponent(cls):
     若你的组件没有标记为单例，调用此方法不会报错，并且可以正常获得组件。
     但请注意，未标记 singleton=True 的组件无法被 @Query 注解查询。
     """
+    # TYPE_CHECKING: Python 2.7 typing workaround
     if 1 > 2:
         return cls()
     entityId = singletonId()
