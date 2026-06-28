@@ -13,461 +13,1112 @@ Ronin<span>Netease</span>
 <button title="搜索 (Ctrl+K)" onclick="document.dispatchEvent(new KeyboardEvent('keydown',{ctrlKey:!0,key:'k'}))" class="sr-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
 </div>
 <div class="pages">
-<div class="group">入门</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">核心系统</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">进阶</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5" class="sub">5. 触摸手势</a><a href="ui.html#6" class="sub">6. 完整示例</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="plugins.html">Plugins — 系统插件参考</a><a href="plugins.html#1-vendor-event" class="sub">1. 事件系统插件 — $vendor.event</a><a href="plugins.html#2-vendor-animation" class="sub">2. 动画扩展插件 — $vendor.animation</a><a href="plugins.html#3-vendor-input" class="sub">3. 输入系统插件 — $vendor.input</a><a href="plugins.html#4-vendor-motion" class="sub">4. 运动系统插件 — $vendor.motion</a><a href="plugins.html#5-vendor-squad" class="sub">5. 小队系统插件 — $vendor.squad</a><a href="plugins.html#" class="sub">下一步</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><a href="concurrency.html">并发编程 — Future、异步与远程调用</a><a href="concurrency.html#1" class="sub">1. 架构概览</a><a href="concurrency.html#2-future" class="sub">2. Future — 异步原语</a><a href="concurrency.html#3-async" class="sub">3. @Async — 生成器协程</a><a href="concurrency.html#4-scheduler" class="sub">4. Scheduler 中的任务模型</a><a href="concurrency.html#5-rpc" class="sub">5. 跨端远程调用（RPC）</a><a href="concurrency.html#6-command" class="sub">6. command 模块 — 区块感知的异步操作</a><div class="group">参考</div><a href="math.html">Math — 数学库</a><a href="math.html#1" class="sub">1. 模块结构</a><a href="math.html#2-vec3-py" class="sub">2. 向量运算 — vec3.py</a><a href="math.html#3-vec4-py" class="sub">3. 四维向量 — vec4.py</a><a href="math.html#4-mat4-py" class="sub">4. 矩阵函数 — mat4.py</a><a href="math.html#5-double-py" class="sub">5. 插值与常量 — double.py</a><a href="math.html#6-unit-py" class="sub">6. 时间常量 — unit.py</a><a href="molang.html">Molang — 表达式工具</a><a href="molang.html#1" class="sub">1. 概述</a><a href="molang.html#2-types-py" class="sub">2. 抽象类型 — types.py</a><a href="molang.html#3-common-py" class="sub">3. 命名变量 — common.py</a><a href="molang.html#4-query-client-py" class="sub">4. 客户端 Query 变量 — client.py</a><a href="molang.html#5-server-py" class="sub">5. 服务端 — server.py</a><a href="molang.html#6" class="sub">6. 完整示例</a><a href="persona.html">Persona — 渲染覆盖系统</a><a href="persona.html#1" class="sub">1. 概述</a><a href="persona.html#2-personarenderercomponent" class="sub">2. PersonaRendererComponent — 客户端渲染组件</a><a href="persona.html#3-personaeventssubsystem" class="sub">3. PersonaEventsSubsystem — 客户端事件子系统</a><a href="persona.html#4-personaserver" class="sub">4. PersonaServer — 服务端中继子系统</a><a href="persona.html#5" class="sub">5. 完整示例</a><a href="persona.html#" class="sub">下一步</a><a href="fsm.html" class="active">FSM — 有限状态机</a><a href="fsm.html#1" class="sub">1. 概述</a><a href="fsm.html#2-statetree" class="sub">2. StateTree — 树形状态机（推荐）</a><a href="fsm.html#3-fsm" class="sub">3. 经典 FSM（已弃用）</a><a href="fsm.html#" class="sub">下一步</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang-md-molang-md" class="sub">3. Molang 表达式 — 见 [molang.md](molang.md)</a><a href="utils.html#4-persona-persona-md-persona-m" class="sub">4. Persona 渲染覆盖 — 见 [persona.md](persona.m</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a><a href="loader.html">Loader — 框架加载器（底层机制）</a><a href="loader.html#1" class="sub">1. 架构概览</a><a href="loader.html#2" class="sub">2. 核心类</a><a href="loader.html#3-pluginhost" class="sub">3. _PluginHost — 插件托管</a><a href="loader.html#4" class="sub">4. 启动流程全貌</a><a href="loader.html#5-loader" class="sub">5. 模块关联 — Loader 如何串联整个框架</a><a href="loader.html#6-subsystemclient-subsystemserver" class="sub">6. SubsystemClient / SubsystemServer 装饰器</a>
+<div class="group">入门</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">核心系统</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">进阶</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5" class="sub">5. 触摸手势</a><a href="ui.html#6" class="sub">6. 完整示例</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="plugins.html">Plugins — 系统插件参考</a><a href="plugins.html#1-vendor-event" class="sub">1. 事件系统插件 — $vendor.event</a><a href="plugins.html#2-vendor-animation" class="sub">2. 动画扩展插件 — $vendor.animation</a><a href="plugins.html#3-vendor-input" class="sub">3. 输入系统插件 — $vendor.input</a><a href="plugins.html#4-vendor-motion" class="sub">4. 运动系统插件 — $vendor.motion</a><a href="plugins.html#5-vendor-squad" class="sub">5. 小队系统插件 — $vendor.squad</a><a href="plugins.html#" class="sub">下一步</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><a href="concurrency.html">并发编程 — Future、异步与远程调用</a><a href="concurrency.html#1" class="sub">1. 架构概览</a><a href="concurrency.html#2-future" class="sub">2. Future — 异步原语</a><a href="concurrency.html#3-async" class="sub">3. @Async — 生成器协程</a><a href="concurrency.html#4-scheduler" class="sub">4. Scheduler 中的任务模型</a><a href="concurrency.html#5-rpc" class="sub">5. 跨端远程调用（RPC）</a><a href="concurrency.html#6-command" class="sub">6. command 模块 — 区块感知的异步操作</a><div class="group">参考</div><a href="math.html">Math — 数学库</a><a href="math.html#1" class="sub">1. 模块结构</a><a href="math.html#2-vec3-py" class="sub">2. 向量运算 — vec3.py</a><a href="math.html#3-vec4-py" class="sub">3. 四维向量 — vec4.py</a><a href="math.html#4-mat4-py" class="sub">4. 矩阵函数 — mat4.py</a><a href="math.html#5-double-py" class="sub">5. 插值与常量 — double.py</a><a href="math.html#6-unit-py" class="sub">6. 时间常量 — unit.py</a><a href="molang.html">Molang — 表达式工具</a><a href="molang.html#1" class="sub">1. 概述</a><a href="molang.html#2-types-py" class="sub">2. 抽象类型 — types.py</a><a href="molang.html#3-common-py" class="sub">3. 命名变量 — common.py</a><a href="molang.html#4-query-client-py" class="sub">4. 客户端 Query 变量 — client.py</a><a href="molang.html#5-server-py" class="sub">5. 服务端 — server.py</a><a href="molang.html#6" class="sub">6. 完整示例</a><a href="persona.html">Persona — 渲染覆盖系统</a><a href="persona.html#1" class="sub">1. 概述</a><a href="persona.html#2-personarenderercomponent" class="sub">2. PersonaRendererComponent — 客户端渲染组件</a><a href="persona.html#3-personaeventssubsystem" class="sub">3. PersonaEventsSubsystem — 客户端事件子系统</a><a href="persona.html#4-personaserver" class="sub">4. PersonaServer — 服务端中继子系统</a><a href="persona.html#5" class="sub">5. 完整示例</a><a href="persona.html#" class="sub">下一步</a><a href="fsm.html" class="active">FSM — 有限状态机与状态树</a><a href="fsm.html#1-fsm" class="sub">1. 为什么放弃经典 FSM？</a><a href="fsm.html#2-statetree" class="sub">2. StateTree 核心机制</a><a href="fsm.html#3-statetree" class="sub">3. 模块化 StateTree</a><a href="fsm.html#4-statetree-fsm" class="sub">4. StateTree 与经典 FSM 的对照</a><a href="fsm.html#5" class="sub">5. 常见陷阱</a><a href="fsm.html#6-statenodeserver" class="sub">6. StateNodeServer 服务端扩展</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang-md-molang-md" class="sub">3. Molang 表达式 — 见 [molang.md](molang.md)</a><a href="utils.html#4-persona-persona-md-persona-m" class="sub">4. Persona 渲染覆盖 — 见 [persona.md](persona.m</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a><a href="loader.html">Loader — 框架加载器（底层机制）</a><a href="loader.html#1" class="sub">1. 架构概览</a><a href="loader.html#2" class="sub">2. 核心类</a><a href="loader.html#3-pluginhost" class="sub">3. _PluginHost — 插件托管</a><a href="loader.html#4" class="sub">4. 启动流程全貌</a><a href="loader.html#5-loader" class="sub">5. 模块关联 — Loader 如何串联整个框架</a><a href="loader.html#6-subsystemclient-subsystemserver" class="sub">6. SubsystemClient / SubsystemServer 装饰器</a>
 </div>
 </nav>
 <main>
 <article>
-<h1>FSM — 有限状态机</h1>
-<p>RoninNetease 提供三种状态机实现：<strong>StateTree（推荐）</strong>、<strong>经典 FSM（已弃用）</strong> 和 <strong>组件化 StateTree（推荐嵌入 ECS）</strong>。</p>
+<h1>FSM — 有限状态机与状态树</h1>
+<p>RoninNetease 提供两种状态机实现：<strong>StateTree（状态树，推荐）</strong> 和<strong>经典 FSM（已弃用）</strong>。本章重点讲解 StateTree 的核心机制、模块化策略和常见陷阱。</p>
 <hr>
-<h2 id="1">1. 概述</h2>
-<pre><code>architect.fsm
-├── deprecated.py          ← 经典 FSM（已弃用）
-└── stateTree/
-    ├── common.py          ← StateTree + StateNode（核心）
-    ├── client.py          ← StateTreeCompClient + StateTreeClientSubsystem
-    └── server.py          ← StateTreeCompServer + StateNodeServer + StateTreeServerSubsystem
+<h2 id="1-fsm">1. 为什么放弃经典 FSM？</h2>
+<p>经典 FSM（<code>architect.fsm.deprecated</code>）是一个扁平状态机：所有状态平铺在一个字典中，通过 <code>transitionTo(name)</code> 手动切换。</p>
+<h3>1.1 经典 FSM 的三大致命缺陷</h3>
+<p><strong>① 状态爆炸没有分组</strong></p>
+<pre><code class="hljs language-python">fsm.addState(<span class="hljs-string">&#x27;idle_ground&#x27;</span>, ...)
+fsm.addState(<span class="hljs-string">&#x27;idle_air&#x27;</span>, ...)
+fsm.addState(<span class="hljs-string">&#x27;walk_ground&#x27;</span>, ...)
+fsm.addState(<span class="hljs-string">&#x27;walk_water&#x27;</span>, ...)
+fsm.addState(<span class="hljs-string">&#x27;attack_ground_sword&#x27;</span>, ...)
+fsm.addState(<span class="hljs-string">&#x27;attack_air_bow&#x27;</span>, ...)
+<span class="hljs-comment"># 10 个实体动作 × 5 种环境 = 50 个状态，无法复用</span>
 </code></pre>
+<p>没有层级概念，idle/walk/attack 是平级的，环境判定（地面/空中/水中）必须嵌入每个状态内部。</p>
+<p><strong>② 状态切换是显式的</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">WalkState</span>(<span class="hljs-title class_ inherited__">State</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> isOnGround():
+            <span class="hljs-variable language_">self</span>.fsm.transitionTo(<span class="hljs-string">&#x27;fall&#x27;</span>)   <span class="hljs-comment"># ❌ 必须手动记住切换目标</span>
+        <span class="hljs-keyword">if</span> enemyNearby():
+            <span class="hljs-variable language_">self</span>.fsm.transitionTo(<span class="hljs-string">&#x27;chase&#x27;</span>)  <span class="hljs-comment"># ❌ 每加一个状态，所有上游状态都要改</span>
+</code></pre>
+<p>每次新增状态，所有可能切换到它的上游状态都要修改 <code>transitionTo</code> 调用。状态越多，维护成本指数上升。</p>
+<p><strong>③ 没有 <code>canEnter</code>/<code>canExit</code> 守卫</strong></p>
+<p>经典 FSM 的 <code>transitionTo</code> 只在切换时检查 <code>canEnter</code>，但不检查 <code>canExit</code>。如果一个状态正在执行回血动画，被外部强制切换到攻击状态，动画就会被截断——经典 FSM 无法阻止这种切换。</p>
+<h3>1.2 StateTree 如何解决</h3>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>经典 FSM</th>
+<th>StateTree</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>状态分组</td>
+<td>无，所有状态平铺</td>
+<td>树形层级，父节点 = 分类/守卫</td>
+</tr>
+<tr>
+<td>切换方式</td>
+<td>手动 <code>transitionTo(name)</code></td>
+<td>自动深度优先搜索叶子节点</td>
+</tr>
+<tr>
+<td>退出守卫</td>
+<td>不支持 <code>canExit</code></td>
+<td><code>canExit()</code> 可阻止不安全的切换</td>
+</tr>
+<tr>
+<td>上下文复用</td>
+<td>无</td>
+<td>父子节点 <code>setContext/getContext</code> 继承链</td>
+</tr>
+<tr>
+<td>模块化</td>
+<td>状态间耦合</td>
+<td><code>copy(deep=True)</code> + 独立树组合</td>
+</tr>
+</tbody></table>
 <hr>
-<h2 id="2-statetree">2. StateTree — 树形状态机（推荐）</h2>
-<h3>2.1 核心概念</h3>
-<p><code>StateTree</code> 是一个<strong>树形结构</strong>的状态机，每个节点是 <code>StateNode</code> 实例。通过 <code>canEnter</code>/<code>canExit</code> 控制转换条件，通过深度优先搜索自动找到下一个可进入的叶子节点。</p>
-<h3>2.2 StateNode 基础节点</h3>
+<h2 id="2-statetree">2. StateTree 核心机制</h2>
+<h3>2.1 StateNode — 状态节点（完整 API）</h3>
+<p><code>StateNode</code> 是状态树的<strong>原子单元</strong>。每个节点有名称、父节点引用、子节点列表和上下文字典。框架通过 5 个生命周期钩子驱动节点的行为。</p>
+<h4>2.1.1 构造函数与属性</h4>
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.stateTree.common <span class="hljs-keyword">import</span> StateNode
 
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyState</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+node = StateNode(<span class="hljs-string">&#x27;myState&#x27;</span>)
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>初始值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td><code>str</code></td>
+<td><code>&#39;unknown&#39;</code></td>
+<td>节点名称（用于 <code>findNamedNode</code> 查找）</td>
+</tr>
+<tr>
+<td><code>_parent</code></td>
+<td><code>StateNode | None</code></td>
+<td><code>None</code></td>
+<td>父节点引用（由 <code>addChildren</code> 自动维护）</td>
+</tr>
+<tr>
+<td><code>children</code></td>
+<td><code>list[StateNode]</code></td>
+<td><code>[]</code></td>
+<td>子节点列表</td>
+</tr>
+<tr>
+<td><code>_isLeaf</code></td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+<td>是否叶子节点（有无子节点）</td>
+</tr>
+<tr>
+<td><code>_ctx</code></td>
+<td><code>dict</code></td>
+<td><code>{}</code></td>
+<td>上下文键值对（子节点可沿树向上读取父节点上下文）</td>
+</tr>
+</tbody></table>
+<h4>2.1.2 生命周期钩子</h4>
+<p>所有钩子都接收 <code>tree: StateTree</code> 参数，用于访问 <code>entityId</code>、<code>stateTicks</code>、<code>finishTasks()</code> 等。</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyNode</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">canEnter</span>(<span class="hljs-params">self, tree</span>):
-        <span class="hljs-comment"># type: (StateTree) -&gt; <span class="hljs-built_in">bool</span></span>
-        <span class="hljs-string">&quot;&quot;&quot;返回 True 允许进入此节点&quot;&quot;&quot;</span>
+        <span class="hljs-string">&quot;&quot;&quot;搜索阶段调用：返回 True 允许节点被搜索选中。
+        每帧可能被调用多次，❌ 不要写副作用。&quot;&quot;&quot;</span>
         <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">canExit</span>(<span class="hljs-params">self, tree</span>):
-        <span class="hljs-comment"># type: (StateTree) -&gt; <span class="hljs-built_in">bool</span></span>
-        <span class="hljs-string">&quot;&quot;&quot;返回 True 允许退出此节点&quot;&quot;&quot;</span>
+        <span class="hljs-string">&quot;&quot;&quot;搜索阶段调用：返回 False 锁死当前节点，阻止搜索继续。
+        返回 True 允许退出。&quot;&quot;&quot;</span>
         <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
-        <span class="hljs-comment"># type: (StateNode | <span class="hljs-literal">None</span>, StateTree) -&gt; <span class="hljs-literal">None</span></span>
-        <span class="hljs-string">&quot;&quot;&quot;进入节点时调用，previous 是上一个节点（首次为 None）&quot;&quot;&quot;</span>
+        <span class="hljs-string">&quot;&quot;&quot;切换阶段调用：节点被激活时触发。
+        previous: 上一个叶子节点（首次进入时为 None）&quot;&quot;&quot;</span>
         <span class="hljs-keyword">pass</span>
 
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">exit</span>(<span class="hljs-params">self, <span class="hljs-built_in">next</span>, tree</span>):
-        <span class="hljs-comment"># type: (StateNode | <span class="hljs-literal">None</span>, StateTree) -&gt; <span class="hljs-literal">None</span></span>
-        <span class="hljs-string">&quot;&quot;&quot;退出节点时调用，next 是即将进入的节点&quot;&quot;&quot;</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">exit</span>(<span class="hljs-params">self, nextNode, tree</span>):
+        <span class="hljs-string">&quot;&quot;&quot;切换阶段调用：节点被替换时触发。
+        nextNode: 即将进入的叶子节点&quot;&quot;&quot;</span>
         <span class="hljs-keyword">pass</span>
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
-        <span class="hljs-comment"># type: (StateTree) -&gt; <span class="hljs-literal">None</span></span>
-        <span class="hljs-string">&quot;&quot;&quot;每帧更新（仅当前节点及其父节点链）&quot;&quot;&quot;</span>
+        <span class="hljs-string">&quot;&quot;&quot;每帧调用：仅在当前激活路径上（当前叶子及所有祖先）触发。&quot;&quot;&quot;</span>
         <span class="hljs-keyword">pass</span>
 </code></pre>
-<h3>2.3 节点树操作</h3>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.stateTree.common <span class="hljs-keyword">import</span> StateNode
-
-<span class="hljs-comment"># 创建节点</span>
-root = StateNode(<span class="hljs-string">&#x27;root&#x27;</span>)
-idle = StateNode(<span class="hljs-string">&#x27;idle&#x27;</span>)
-patrol = StateNode(<span class="hljs-string">&#x27;patrol&#x27;</span>)
-
-<span class="hljs-comment"># 构建树</span>
-root.addChildren(idle)       <span class="hljs-comment"># idle 成为 root 的子节点</span>
-idle.addChildren(patrol)     <span class="hljs-comment"># patrol 成为 idle 的子节点（多级嵌套）</span>
-
-<span class="hljs-comment"># 节点关系</span>
-<span class="hljs-built_in">print</span>(patrol._parent)         <span class="hljs-comment"># idle</span>
-<span class="hljs-built_in">print</span>(idle.children)         <span class="hljs-comment"># [patrol]</span>
-<span class="hljs-built_in">print</span>(idle._isLeaf)          <span class="hljs-comment"># False（有子节点）</span>
-<span class="hljs-built_in">print</span>(patrol._isLeaf)        <span class="hljs-comment"># True（叶子节点）</span>
-</code></pre>
-<p><strong>StateNode 方法：</strong></p>
+<p><strong>调用时机对照：</strong></p>
 <table>
 <thead>
 <tr>
-<th>方法</th>
-<th>说明</th>
+<th>钩子</th>
+<th>谁调用</th>
+<th>触发条件</th>
+<th>每帧次数</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>addChildren(*nodes)</code></td>
-<td>添加子节点，自动维护 <code>_parent</code> 引用</td>
+<td><code>canEnter</code></td>
+<td><code>searchNode()</code> 搜索</td>
+<td>搜索遍历时检查每个节点</td>
+<td>可能多次</td>
 </tr>
 <tr>
-<td><code>removeChild(node)</code></td>
-<td>移除子节点</td>
+<td><code>canExit</code></td>
+<td><code>searchNode()</code> 搜索</td>
+<td>当前叶子需要退出时检查</td>
+<td>≤1</td>
 </tr>
 <tr>
-<td><code>insert(index, node)</code></td>
-<td>在指定位置插入子节点</td>
+<td><code>enter</code></td>
+<td><code>switchNode()</code> 切换</td>
+<td>节点变为激活状态</td>
+<td>≤1</td>
 </tr>
 <tr>
-<td><code>replaceChild(oldNode, newNode)</code></td>
-<td>替换子节点</td>
+<td><code>exit</code></td>
+<td><code>switchNode()</code> 切换</td>
+<td>节点失去激活状态</td>
+<td>≤1</td>
 </tr>
 <tr>
-<td><code>findNamedNode(name)</code></td>
-<td>按名称递归搜索节点（含自身）</td>
-</tr>
-<tr>
-<td><code>copy(deep=True)</code></td>
-<td>深拷贝节点树</td>
-</tr>
-<tr>
-<td><code>setContext(k, v)</code> / <code>getContext(k)</code></td>
-<td>节点上下文存取（向上查找父节点）</td>
+<td><code>update</code></td>
+<td><code>execute()</code> 主循环</td>
+<td>节点在激活路径上</td>
+<td>1</td>
 </tr>
 </tbody></table>
-<h3>2.4 StateTree 状态机</h3>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.stateTree.common <span class="hljs-keyword">import</span> StateTree, StateNode
+<h4>2.1.3 树操作方法</h4>
+<pre><code class="hljs language-python"><span class="hljs-comment"># 添加子节点（自动设置 _parent，标记本节点为非叶子）</span>
+parent.addChildren(child1, child2, child3)
+
+<span class="hljs-comment"># 移除子节点（自动清除 _parent，若无剩余子节点则恢复 _isLeaf=True）</span>
+parent.removeChild(child1)
+
+<span class="hljs-comment"># 在指定位置插入</span>
+parent.insert(<span class="hljs-number">0</span>, newChild)
+
+<span class="hljs-comment"># 替换子节点（保留位置，旧节点脱钩，新节点附加）</span>
+parent.replaceChild(oldNode, newNode)
+
+<span class="hljs-comment"># 递归按名称查找（含自身）</span>
+found = root.findNamedNode(<span class="hljs-string">&#x27;attack&#x27;</span>)
+</code></pre>
+<p><strong>叶子状态自动管理：</strong></p>
+<ul>
+<li><code>addChildren</code> 被调用 → <code>self._isLeaf = False</code></li>
+<li><code>removeChild</code> 移除最后一个子节点 → <code>self._isLeaf = True</code></li>
+<li>这是一个纯标记，决定搜索算法是否将节点视为终点。非叶子节点不可被搜索选中。</li>
+</ul>
+<h4>2.1.4 上下文继承机制</h4>
+<pre><code class="hljs language-python">parent = StateNode(<span class="hljs-string">&#x27;weapon&#x27;</span>)
+parent.setContext(<span class="hljs-string">&#x27;damage&#x27;</span>, <span class="hljs-number">50</span>)
+parent.setContext(<span class="hljs-string">&#x27;range&#x27;</span>, <span class="hljs-number">3.0</span>)
+
+child = StateNode(<span class="hljs-string">&#x27;slash&#x27;</span>)
+parent.addChildren(child)
+
+<span class="hljs-comment"># getContext 向上查找：自身 → 父节点 → 祖父节点 → ... → None</span>
+child.getContext(<span class="hljs-string">&#x27;damage&#x27;</span>)   <span class="hljs-comment"># 50   （继承自父节点）</span>
+child.getContext(<span class="hljs-string">&#x27;range&#x27;</span>)    <span class="hljs-comment"># 3.0  （继承自父节点）</span>
+child.getContext(<span class="hljs-string">&#x27;speed&#x27;</span>)    <span class="hljs-comment"># None （整个链都没找到）</span>
+
+<span class="hljs-comment"># 子节点覆盖</span>
+child.setContext(<span class="hljs-string">&#x27;damage&#x27;</span>, <span class="hljs-number">100</span>)
+child.getContext(<span class="hljs-string">&#x27;damage&#x27;</span>)   <span class="hljs-comment"># 100  （覆盖父节点值）</span>
+
+<span class="hljs-comment"># 父节点仍为原值</span>
+parent.getContext(<span class="hljs-string">&#x27;damage&#x27;</span>)  <span class="hljs-comment"># 50</span>
+</code></pre>
+<p><code>getContext</code> 的返回值既可以是 Python 基本类型，也可以是函数/方法对象，子节点可以在 <code>enter</code> 中读取后直接调用：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">AttackNode</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
+        attackFn = <span class="hljs-variable language_">self</span>.getContext(<span class="hljs-string">&#x27;onAttack&#x27;</span>)  <span class="hljs-comment"># 父节点注入的回调</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-built_in">callable</span>(attackFn):
+            attackFn(tree.entityId)
+</code></pre>
+<h4>2.1.5 <code>copy(deep=True)</code> — 深复制</h4>
+<pre><code class="hljs language-python">original = MyCustomNode(<span class="hljs-string">&#x27;template&#x27;</span>)
+original.setContext(<span class="hljs-string">&#x27;damage&#x27;</span>, <span class="hljs-number">50</span>)
+original.addChildren(StateNode(<span class="hljs-string">&#x27;child1&#x27;</span>), StateNode(<span class="hljs-string">&#x27;child2&#x27;</span>))
+
+<span class="hljs-comment"># 深复制：递归复制整棵子树</span>
+clone = original.copy(deep=<span class="hljs-literal">True</span>)
+<span class="hljs-comment"># clone 是一个完全独立的树根：</span>
+<span class="hljs-comment"># - _parent = None</span>
+<span class="hljs-comment"># - 子节点全部递归复制</span>
+<span class="hljs-comment"># - _ctx 键值对保留</span>
+<span class="hljs-comment"># - 自定义属性（如子类的 _can_enter）也被复制</span>
+
+<span class="hljs-comment"># 浅复制：只复制当前节点，不含子节点</span>
+shallow = original.copy(deep=<span class="hljs-literal">False</span>)
+</code></pre>
+<p><strong>复制策略：</strong></p>
+<ol>
+<li>用 <code>self.__class__</code> 创建同类型新实例</li>
+<li>复制除 <code>_parent</code> / <code>children</code> 外的所有 <code>__dict__</code> 属性</li>
+<li>若 <code>deep=True</code>，递归复制子节点并用 <code>addChildren</code> 附加</li>
+</ol>
+<h3>2.2 树形结构</h3>
+<pre><code>root
+├── ground (非叶子，canEnter: isOnGround)
+│   ├── idle    ← 叶子
+│   ├── walk    ← 叶子
+│   └── attack  ← 叶子
+├── air (非叶子，canEnter: not isOnGround)
+│   ├── fall    ← 叶子
+│   └── glide   ← 叶子
+└── stunned (canEnter: isStunned) ← 叶子
+</code></pre>
+<ul>
+<li><strong>非叶子节点</strong>（ground、air）：<code>_isLeaf=False</code>，不出现在最终状态中，仅作为分类/守卫。<code>canEnter</code> 返回 False 时整个子树跳过</li>
+<li><strong>叶子节点</strong>（idle、walk、attack 等）：<code>_isLeaf=True</code>，真正的&quot;状态&quot;，每帧只有唯一一个叶子被激活</li>
+</ul>
+<h3>2.3 搜索算法详解</h3>
+<p><code>execute()</code> 每帧执行三个步骤：</p>
+<pre><code>1. update 阶段
+   → 遍历当前激活路径上所有节点（当前叶子及所有祖先），依次调用 update()
+
+2. searchNode() 阶段
+   → 调用 searchNode() 搜索下一个可进入的叶子节点
+   → 核心规则：
+     a. 当前是叶子 → 在父节点下搜索兄弟节点（按 children 顺序）
+     b. 找不到 → 向上回溯到父节点的兄弟，继续搜索
+     c. 如果某个祖先的 canEnter() 返回 False，跳过它继续向上
+     d. 每一跳都检查 canEnter() 和 canExit()
+
+3. switchNode() 阶段
+   → 如果搜索成功，沿路径依次 exit 旧节点 → enter 新节点
+</code></pre>
+<p><strong>搜索示例（假设当前在 idle/ground）：</strong></p>
+<pre><code>idle.update() → finishTasks() → 标记 _finished=True
+
+searchNode():
+  1. 当前是叶子(idle)，搜索父节点(ground)下的兄弟:
+     - walk.canEnter() → True → 找到!
+  
+  返回: path = [walk]
+
+switchNode():
+  1. idle.exit(walk, tree)  ← 退出旧节点
+  2. walk.enter(idle, tree) ← 进入新节点
+  3. stateTicks = 0         ← 重置计时器
+</code></pre>
+<p><strong>回溯示例（ground 下所有子节点都无法进入 → 向上搜索 air 子树）：</strong></p>
+<pre><code>walk 已完成，但 walk 的兄弟 attack.canEnter() → False
+
+searchNode():
+  1. ground 下所有兄弟都已尝试，向上回溯
+  2. 搜索 root 下 ground 之后的兄弟:
+     - air.canEnter(tree) → True (玩家在空中)
+     - 递归进入 air 子树，找到 fall.canEnter() → True
+  
+  返回: path = [air, fall]
+
+switchNode():
+  1. walk.exit(fall, tree)   ← 退出 walk
+  2. air.enter(walk, tree)    ← 进入 air（非叶子也可以有 enter/exit）
+  3. fall.enter(air, tree)    ← 进入 fall
+</code></pre>
+<p><strong>关键细节：</strong></p>
+<ul>
+<li><code>finishTasks()</code> 是手动调用的，不调用则状态永远不会自动切换</li>
+<li><code>canExit()</code> 返回 False 会<strong>阻止整个搜索</strong>——当前节点被锁死</li>
+<li>非叶子节点也可以有 <code>enter</code>/<code>exit</code>，每次穿过时都会触发</li>
+<li><code>stateTicks</code> 在每次 <code>switchNode</code> 时归零</li>
+</ul>
+<h3>2.3 StateTree API 参考</h3>
+<h4>构造函数</h4>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.stateTree.common <span class="hljs-keyword">import</span> StateTree
 
 tree = StateTree(entityId)
-
-<span class="hljs-comment"># 构建节点树</span>
-idle = StateNode(<span class="hljs-string">&#x27;idle&#x27;</span>)
-patrol = StateNode(<span class="hljs-string">&#x27;patrol&#x27;</span>)
-tree.insertNode(idle)
-idle.addChildren(patrol)
-
-<span class="hljs-comment"># 手动切换节点</span>
-tree.switchNode(idle)         <span class="hljs-comment"># 进入 idle 节点（触发 exit/enter）</span>
-tree.execute()                <span class="hljs-comment"># 每帧执行：update + 自动搜索下一个可进入的叶子节点</span>
-
-<span class="hljs-comment"># 状态查询</span>
-current = tree.currentState()        <span class="hljs-comment"># 当前 StateNode</span>
-name = tree.currentStateName()       <span class="hljs-comment"># 当前节点名称（str）</span>
-ticks = tree.stateTicks              <span class="hljs-comment"># 当前状态已持续的 tick 数</span>
-finished = tree.isFinished()         <span class="hljs-comment"># 当前节点是否已结束</span>
-
-<span class="hljs-comment"># 自定义节点</span>
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">Idle</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
-        <span class="hljs-keyword">pass</span>
-
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
-        <span class="hljs-keyword">if</span> tree.stateTicks &gt; <span class="hljs-number">100</span>:
-            tree.finishTasks()  <span class="hljs-comment"># 标记当前任务完成，允许自动搜索下一个节点</span>
 </code></pre>
-<p><strong>StateTree 方法：</strong></p>
 <table>
 <thead>
 <tr>
-<th>方法</th>
+<th>参数</th>
+<th>类型</th>
 <th>说明</th>
 </tr>
 </thead>
 <tbody><tr>
+<td><code>entityId</code></td>
+<td><code>str</code></td>
+<td>关联的实体 ID，传递给 hook 和组件</td>
+</tr>
+</tbody></table>
+<h4>树结构管理</h4>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>getRoot()</code></td>
+<td><code>() -&gt; StateNode</code></td>
+<td>获取根节点（自动创建，名为 <code>&#39;root&#39;</code>）</td>
+</tr>
+<tr>
+<td><code>setRoot(node)</code></td>
+<td><code>(StateNode) -&gt; None</code></td>
+<td>替换根节点，自动清除新节点的 <code>_parent</code></td>
+</tr>
+<tr>
 <td><code>insertNode(node, parent=None)</code></td>
-<td>插入节点到指定父节点下</td>
+<td><code>(StateNode, StateNode?) -&gt; StateNode</code></td>
+<td>插入节点到指定父节点下（默认根），返回插入的节点</td>
 </tr>
 <tr>
 <td><code>createNode(parent=None)</code></td>
-<td>创建无名节点并插入</td>
+<td><code>(StateNode?) -&gt; StateNode</code></td>
+<td>创建匿名节点（<code>name=&#39;unknown&#39;</code>）并插入</td>
 </tr>
 <tr>
 <td><code>replaceNode(src, target)</code></td>
-<td>替换节点（src=None 时替换根节点）</td>
+<td><code>(StateNode?, StateNode) -&gt; None</code></td>
+<td>替换节点。<code>src=None</code> 时将 <code>target</code> 添加为根的子节点</td>
 </tr>
 <tr>
 <td><code>replaceNamedNode(name, target)</code></td>
-<td>按名称查找并替换</td>
-</tr>
-<tr>
-<td><code>switchNode(node)</code></td>
-<td>手动切换到指定节点（触发 exit/enter）</td>
-</tr>
-<tr>
-<td><code>execute()</code></td>
-<td>每帧执行（update + 自动搜索切换）</td>
-</tr>
-<tr>
-<td><code>searchNode()</code></td>
-<td>搜索下一个可进入的叶子节点（返回 <code>(finalNode, pathNodes)</code>）</td>
-</tr>
-<tr>
-<td><code>finishTasks()</code></td>
-<td>标记当前任务完成</td>
-</tr>
-<tr>
-<td><code>reset(clearMapping=False)</code></td>
-<td>重置状态树</td>
+<td><code>(str, StateNode) -&gt; None</code></td>
+<td>按名称查找并替换节点</td>
 </tr>
 <tr>
 <td><code>findNamedNode(name)</code></td>
-<td>按名称搜索节点</td>
+<td><code>(str) -&gt; StateNode | None</code></td>
+<td>递归按名称搜索节点（从根开始）</td>
+</tr>
+</tbody></table>
+<h4>状态控制</h4>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>switchNode(node)</code></td>
+<td><code>(StateNode) -&gt; None</code></td>
+<td>强制切换到指定节点（触发 exit/enter，<code>stateTicks</code> 归零）</td>
 </tr>
 <tr>
-<td><code>findAllActivatedStateNodes()</code></td>
-<td>获取当前激活的节点链（含父节点）</td>
+<td><code>finishTasks()</code></td>
+<td><code>() -&gt; None</code></td>
+<td>标记当前任务完成（<code>_finished=True</code>），允许下一帧自动搜索</td>
 </tr>
 <tr>
+<td><code>execute()</code></td>
+<td><code>() -&gt; None</code></td>
+<td>主循环：先 update 激活路径上所有节点 → 搜索下一个叶子 → 切换</td>
+</tr>
+<tr>
+<td><code>reset(clearMapping=False)</code></td>
+<td><code>(bool) -&gt; None</code></td>
+<td>重置状态树：清空 <code>_current</code>，标记 <code>_finished</code>。<code>clearMapping=True</code> 额外清空 <code>mapping</code> 字典</td>
+</tr>
+</tbody></table>
+<h4>状态查询</h4>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>签名</th>
+<th>返回</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
 <td><code>currentState()</code></td>
-<td>获取当前叶子节点</td>
+<td><code>() -&gt; StateNode | None</code></td>
+<td>当前叶子节点</td>
+<td>无激活节点时返回 <code>None</code></td>
 </tr>
 <tr>
 <td><code>currentStateName()</code></td>
-<td>获取当前节点名称</td>
+<td><code>() -&gt; str | None</code></td>
+<td>当前节点名称</td>
+<td>无激活节点时返回 <code>None</code></td>
+</tr>
+<tr>
+<td><code>getCurrent()</code></td>
+<td><code>() -&gt; StateNode | None</code></td>
+<td>当前叶子节点</td>
+<td>同 <code>currentState()</code>，驼峰命名</td>
+</tr>
+<tr>
+<td><code>setCurrent(node)</code></td>
+<td><code>(StateNode) -&gt; None</code></td>
+<td>—</td>
+<td><strong>直接设置</strong> <code>_current</code>（不触发 exit/enter），慎用</td>
+</tr>
+<tr>
+<td><code>clearCurrent()</code></td>
+<td><code>() -&gt; None</code></td>
+<td>—</td>
+<td>清空 <code>_current</code></td>
+</tr>
+<tr>
+<td><code>isFinished()</code></td>
+<td><code>() -&gt; bool</code></td>
+<td>是否已完成</td>
+<td><code>_finished</code> 为 True 时搜索算法才会尝试切换</td>
+</tr>
+<tr>
+<td><code>setFinished(val)</code></td>
+<td><code>(bool) -&gt; None</code></td>
+<td>—</td>
+<td>手动设置 <code>_finished</code> 状态</td>
+</tr>
+<tr>
+<td><code>findAllActivatedStateNodes()</code></td>
+<td><code>() -&gt; list[StateNode]</code></td>
+<td>激活路径（从根到当前叶子）</td>
+<td>按从根到叶子的顺序排列</td>
+</tr>
+<tr>
+<td><code>searchNode()</code></td>
+<td><code>() -&gt; (StateNode, list[StateNode]) | None</code></td>
+<td><code>(最终叶子, 路径节点列表)</code></td>
+<td>执行搜索算法，<code>_finished=False</code> 时立即返回 <code>None</code></td>
 </tr>
 </tbody></table>
-<h3>2.5 完整示例：NPC 巡逻 AI</h3>
+<h4>属性</h4>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>entityId</code></td>
+<td><code>str</code></td>
+<td>关联的实体 ID</td>
+</tr>
+<tr>
+<td><code>root</code></td>
+<td><code>StateNode</code></td>
+<td>根节点</td>
+</tr>
+<tr>
+<td><code>stateTicks</code></td>
+<td><code>int</code></td>
+<td>当前状态已持续的 tick 数（<code>switchNode</code> 时归零，每帧 <code>execute()</code> 时递增）</td>
+</tr>
+<tr>
+<td><code>mapping</code></td>
+<td><code>dict</code></td>
+<td>用户自定义映射表（框架不使用，供外部存储任意数据）</td>
+</tr>
+</tbody></table>
+<h3>2.4 基础用法</h3>
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.stateTree.common <span class="hljs-keyword">import</span> StateTree, StateNode
 
-<span class="hljs-comment"># === 定义状态节点 ===</span>
-
+<span class="hljs-comment"># 定义状态</span>
 <span class="hljs-keyword">class</span> <span class="hljs-title class_">Idle</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
         StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;idle&#x27;</span>)
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
-        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[NPC] Enter Idle&#x27;</span>)
+        <span class="hljs-keyword">pass</span>  <span class="hljs-comment"># 播放 idle 动画</span>
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
-        <span class="hljs-comment"># 空闲一段时间后标记完成，自动搜索 Patrol</span>
-        <span class="hljs-keyword">if</span> tree.stateTicks &gt; <span class="hljs-number">60</span>:
-            tree.finishTasks()
+        <span class="hljs-keyword">if</span> tree.stateTicks &gt; <span class="hljs-number">60</span>:    <span class="hljs-comment"># 至少停留 60 tick</span>
+            tree.finishTasks()      <span class="hljs-comment"># 标记完成，允许搜索下一个状态</span>
 
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">Patrol</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Walk</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
-        StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;patrol&#x27;</span>)
-        <span class="hljs-variable language_">self</span>.waypoint_index = <span class="hljs-number">0</span>
-
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
-        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[NPC] Start Patrol&#x27;</span>)
-
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
-        <span class="hljs-comment"># 巡逻逻辑...</span>
-        <span class="hljs-keyword">if</span> enemy_nearby(tree.entityId):
-            <span class="hljs-variable language_">self</span>._want_chase = <span class="hljs-literal">True</span>
-            tree.finishTasks()
-
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">canExit</span>(<span class="hljs-params">self, tree</span>):
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>  <span class="hljs-comment"># 允许退出</span>
-
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">Chase</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
-        StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;chase&#x27;</span>)
+        StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;walk&#x27;</span>)
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">canEnter</span>(<span class="hljs-params">self, tree</span>):
-        <span class="hljs-keyword">return</span> enemy_nearby(tree.entityId)  <span class="hljs-comment"># 有敌人才进入</span>
-
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
-        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;[NPC] Start Chase&#x27;</span>)
+        <span class="hljs-keyword">return</span> hasMoveInput(tree.entityId)  <span class="hljs-comment"># 只有有输入才进入</span>
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> enemy_nearby(tree.entityId):
-            tree.finishTasks()  <span class="hljs-comment"># 敌人丢失，回到巡逻</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> hasMoveInput(tree.entityId):
+            tree.finishTasks()
 
-<span class="hljs-comment"># === 构建和运行 ===</span>
-
+<span class="hljs-comment"># 构建树</span>
 tree = StateTree(entityId)
-root = tree.getRoot()
+idle = Idle()
+walk = Walk()
+tree.insertNode(idle)        <span class="hljs-comment"># root → idle</span>
+idle.addChildren(walk)       <span class="hljs-comment"># idle → walk（walk 是 idle 的备选）</span>
 
-<span class="hljs-comment"># 构建节点树</span>
-idle = StateNode(<span class="hljs-string">&#x27;idle&#x27;</span>)
-patrol = Patrol()
-chase = Chase()
+tree.switchNode(idle)         <span class="hljs-comment"># 进入 idle</span>
 
-tree.insertNode(idle)         <span class="hljs-comment"># root → idle</span>
-idle.addChildren(patrol)      <span class="hljs-comment"># idle → patrol</span>
-idle.addChildren(chase)       <span class="hljs-comment"># idle → chase</span>
-
-<span class="hljs-comment"># 启动状态机</span>
-tree.switchNode(idle)
-
-<span class="hljs-comment"># 每帧调用</span>
-<span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">dt</span>):
+<span class="hljs-comment"># 每帧</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>():
     tree.execute()
 </code></pre>
-<h3>2.6 组件化 StateTree（嵌入 ECS）</h3>
-<p>服务端和客户端均提供了 <code>StateTree</code> + <code>Component</code> 的组合：</p>
-<pre><code class="hljs language-python"><span class="hljs-comment"># 服务端</span>
-<span class="hljs-keyword">from</span> architect.fsm.stateTree.server <span class="hljs-keyword">import</span> StateTreeCompServer, StateNodeServer, StateTreeServerSubsystem
-<span class="hljs-comment"># 客户端</span>
-<span class="hljs-keyword">from</span> architect.fsm.stateTree.client <span class="hljs-keyword">import</span> StateTreeCompClient, StateTreeClientSubsystem
+<hr>
+<h2 id="3-statetree">3. 模块化 StateTree</h2>
+<p>StateTree 的核心优势在于<strong>状态可以被组合、拷贝和隔离</strong>。以下是三种模块化策略。</p>
+<h3>3.1 策略一：非叶子节点作为守卫（推荐入门）</h3>
+<p>将大分类作为非叶子节点，子节点作为具体行为。通过 <code>canEnter</code> 自动过滤不可用的子树。</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">GroundNode</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;ground&#x27;</span>)
 
-<span class="hljs-comment"># 创建 StateTree 组件</span>
-comp = getOrCreateComponent(entityId, StateTreeCompServer)
-comp.enabled = <span class="hljs-literal">True</span>  <span class="hljs-comment"># 启用自动执行</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">canEnter</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">return</span> isOnGround(tree.entityId)  <span class="hljs-comment"># 地面？</span>
 
-<span class="hljs-comment"># 构建节点树</span>
-root = comp.getRoot()
-idle = StateNodeServer(<span class="hljs-string">&#x27;idle&#x27;</span>)
-patrol = StateNodeServer(<span class="hljs-string">&#x27;patrol&#x27;</span>)
-comp.insertNode(idle)
-idle.addChildren(patrol)
-comp.switchNode(idle)
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">AirNode</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;air&#x27;</span>)
 
-<span class="hljs-comment"># 组件模式下，StateTreeServerSubsystem.onUpdate 自动调用所有已启用 comp 的 execute()</span>
-</code></pre>
-<h3>2.7 StateNodeServer 附加功能</h3>
-<p><code>StateNodeServer</code> 扩展 <code>StateNode</code>，提供服务端便捷方法：</p>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.stateTree.server <span class="hljs-keyword">import</span> StateNodeServer
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">canEnter</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">not</span> isOnGround(tree.entityId)  <span class="hljs-comment"># 空中？</span>
 
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">AttackState</span>(<span class="hljs-title class_ inherited__">StateNodeServer</span>):
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
-        entityId = tree.entityId
-        <span class="hljs-variable language_">self</span>.markVariant(entityId, <span class="hljs-number">2</span>)          <span class="hljs-comment"># 设置 MarkVariant</span>
-        <span class="hljs-variable language_">self</span>.playSound(entityId, <span class="hljs-string">&#x27;mob.attack&#x27;</span>) <span class="hljs-comment"># 播放音效</span>
-        <span class="hljs-variable language_">self</span>.movement(entityId, <span class="hljs-literal">False</span>)         <span class="hljs-comment"># 禁止移动</span>
-        <span class="hljs-variable language_">self</span>.camera(entityId, <span class="hljs-literal">True</span>)            <span class="hljs-comment"># 锁定摄像机</span>
-
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">exit</span>(<span class="hljs-params">self, <span class="hljs-built_in">next</span>, tree</span>):
-        entityId = tree.entityId
-        <span class="hljs-variable language_">self</span>.movement(entityId, <span class="hljs-literal">True</span>)          <span class="hljs-comment"># 恢复移动</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">IdleNode</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;idle&#x27;</span>)
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
-        <span class="hljs-comment"># 可通过 self.subsys 访问所属 ServerSubsystem</span>
-        <span class="hljs-keyword">pass</span>
+        <span class="hljs-keyword">if</span> hasInput(tree.entityId):
+            tree.finishTasks()
 
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">notifyChildren</span>(<span class="hljs-params">self, name, *args</span>):
-        <span class="hljs-comment"># type: (<span class="hljs-built_in">str</span>, <span class="hljs-type">Any</span>) -&gt; <span class="hljs-literal">None</span></span>
-        <span class="hljs-string">&quot;&quot;&quot;通知所有子节点&quot;&quot;&quot;</span>
-        <span class="hljs-keyword">pass</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MoveNode</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;move&#x27;</span>)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">canEnter</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">return</span> hasInput(tree.entityId)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
+        doMove(tree.entityId)
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> hasInput(tree.entityId):
+            tree.finishTasks()
+
+<span class="hljs-comment"># 构建</span>
+tree = StateTree(entityId)
+ground = GroundNode()
+air = AirNode()
+
+tree.insertNode(ground)        <span class="hljs-comment"># root → ground</span>
+tree.insertNode(air)           <span class="hljs-comment"># root → air（ground 之后的兄弟）</span>
+
+ground.addChildren(IdleNode())  <span class="hljs-comment"># ground → idle</span>
+ground.addChildren(MoveNode())  <span class="hljs-comment"># ground → move</span>
+
+air.addChildren(StateNode(<span class="hljs-string">&#x27;fall&#x27;</span>))  <span class="hljs-comment"># air → fall（简单叶子无需自定义类）</span>
+
+tree.switchNode(ground.children[<span class="hljs-number">0</span>])  <span class="hljs-comment"># 从 ground/idle 开始</span>
+</code></pre>
+<p><strong>执行效果：</strong></p>
+<ul>
+<li>玩家在地面 → <code>ground.canEnter</code> True → 自动搜索 ground 子树 → idle/move 轮流切换</li>
+<li>玩家跳起 → <code>ground.canEnter</code> False → 搜索跳过 ground → 进入 air → fall</li>
+<li>落地 → <code>air.canEnter</code> False → 搜索跳过 air → 回到 ground → 进入 idle</li>
+</ul>
+<h3>3.2 策略二：上下文继承 + copy 复用</h3>
+<p><code>setContext</code>/<code>getContext</code> 提供了<strong>沿树向上继承</strong>的键值对机制。子节点可以读取父节点设置的参数，也可以覆盖。</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ConfigurableAttack</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-string">&quot;&quot;&quot;可配置的攻击节点（通过 copy 复制出不同伤害的版本）&quot;&quot;&quot;</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, damage=<span class="hljs-number">10</span></span>):
+        StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;attack&#x27;</span>)
+        <span class="hljs-variable language_">self</span>.setContext(<span class="hljs-string">&#x27;damage&#x27;</span>, damage)
+        <span class="hljs-variable language_">self</span>.setContext(<span class="hljs-string">&#x27;range&#x27;</span>, <span class="hljs-number">3.0</span>)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
+        dmg = <span class="hljs-variable language_">self</span>.getContext(<span class="hljs-string">&#x27;damage&#x27;</span>)
+        rng = <span class="hljs-variable language_">self</span>.getContext(<span class="hljs-string">&#x27;range&#x27;</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Attack with damage: %d, range: %.1f&#x27;</span> % (dmg, rng))
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
+        performAttack(<span class="hljs-variable language_">self</span>.getContext(<span class="hljs-string">&#x27;damage&#x27;</span>), <span class="hljs-variable language_">self</span>.getContext(<span class="hljs-string">&#x27;range&#x27;</span>))
+        tree.finishTasks()
+
+<span class="hljs-comment"># 从模板复制出不同配置的变体</span>
+lightAttack = ConfigurableAttack(damage=<span class="hljs-number">5</span>)
+heavyAttack = ConfigurableAttack(damage=<span class="hljs-number">30</span>)
+heavyAttack.setContext(<span class="hljs-string">&#x27;range&#x27;</span>, <span class="hljs-number">1.5</span>)  <span class="hljs-comment"># 覆盖 range</span>
+
+<span class="hljs-comment"># 复制整个子树</span>
+comboTree = StateNode(<span class="hljs-string">&#x27;combo&#x27;</span>)
+comboTree.addChildren(lightAttack.copy(deep=<span class="hljs-literal">True</span>))
+comboTree.addChildren(heavyAttack.copy(deep=<span class="hljs-literal">True</span>))
+
+<span class="hljs-comment"># 挂到主树上</span>
+combatNode = StateNode(<span class="hljs-string">&#x27;combat&#x27;</span>)
+combatNode.addChildren(comboTree)
+tree.insertNode(combatNode)
+</code></pre>
+<p><strong><code>copy(deep=True)</code> 的关键特性：</strong></p>
+<ul>
+<li>递归复制所有子节点</li>
+<li>保留子类自定义属性（如 <code>damage</code>、<code>range</code>）</li>
+<li>断开 <code>_parent</code> 引用 → 返回的是一个独立树根，可以挂到任意位置</li>
+<li><code>setContext</code> 的键值也会被复制</li>
+</ul>
+<h3>3.3 策略三：独立子树 + 动态挂载</h3>
+<p>对于复杂实体（如 Boss 的多阶段 AI），可以为每个阶段构建独立子树，在 <code>enter</code> 时动态挂载。</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Phase1Tree</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;phase1&#x27;</span>)
+        <span class="hljs-variable language_">self</span>.addChildren(IdleNode())
+        <span class="hljs-variable language_">self</span>.addChildren(SweepAttack())
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
+        <span class="hljs-variable language_">self</span>.hp_threshold = getMaxHp(tree.entityId) * <span class="hljs-number">0.5</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">if</span> getCurrentHp(tree.entityId) &lt; <span class="hljs-variable language_">self</span>.hp_threshold:
+            tree.finishTasks()
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Phase2Tree</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;phase2&#x27;</span>)
+        <span class="hljs-variable language_">self</span>.addChildren(EnrageBuff())
+        <span class="hljs-variable language_">self</span>.addChildren(AoeAttack())
+        <span class="hljs-variable language_">self</span>.addChildren(SummonMinions())
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">BossAI</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;boss&#x27;</span>)
+        <span class="hljs-variable language_">self</span>.phase1 = Phase1Tree()
+        <span class="hljs-variable language_">self</span>.phase2 = Phase2Tree()
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
+        <span class="hljs-comment"># 当前阶段挂载阶段 1 子树</span>
+        <span class="hljs-variable language_">self</span>.addChildren(<span class="hljs-variable language_">self</span>.phase1.copy(deep=<span class="hljs-literal">True</span>))
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">exit</span>(<span class="hljs-params">self, nextNode, tree</span>):
+        <span class="hljs-keyword">if</span> tree.currentStateName() == <span class="hljs-string">&#x27;phase1&#x27;</span>:
+            <span class="hljs-comment"># 阶段 1 结束 → 挂载阶段 2 子树</span>
+            <span class="hljs-variable language_">self</span>.children = []  <span class="hljs-comment"># 清空旧子树</span>
+            <span class="hljs-variable language_">self</span>.addChildren(<span class="hljs-variable language_">self</span>.phase2.copy(deep=<span class="hljs-literal">True</span>))
+            <span class="hljs-comment"># 强制切换到 phase2 的第一个子节点</span>
+            tree.switchNode(<span class="hljs-variable language_">self</span>.children[<span class="hljs-number">0</span>])
+</code></pre>
+<blockquote>
+<p><strong>警告：</strong> <code>self.children = []</code> 会清空子节点，但不会触发原叶子节点的 <code>exit</code> 钩子。如果需要在切换阶段时动画过渡，应在父节点的 <code>exit</code> 中显式调用清理逻辑。</p>
+</blockquote>
+<h3>3.4 策略四：自定义多并发状态树组件</h3>
+<p><code>StateTreeCompServer</code> 和 <code>StateTreeCompClient</code> 本质上是 <strong>StateTree + Component 的组合类</strong>，由内置的 <code>StateTreeServerSubsystem</code> / <code>StateTreeClientSubsystem</code> 统一驱动。理解它的内部机制后，你可以创建自己的多并发状态树组件。</p>
+<h4>3.4.1 <code>StateTreeCompServer</code> 到底干了什么？</h4>
+<p>源码只有 10 行，但每一行都很关键：</p>
+<pre><code class="hljs language-python"><span class="hljs-comment"># architect/fsm/stateTree/server.py（简化）</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">StateTreeCompServer</span>(BaseCompServer, StateTree):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onCreate</span>(<span class="hljs-params">self, entityId</span>):
+        StateTree.__init__(<span class="hljs-variable language_">self</span>, entityId)          <span class="hljs-comment"># ① 初始化 StateTree</span>
+        StateTreeServerSubsystem._comps.add(<span class="hljs-variable language_">self</span>)   <span class="hljs-comment"># ② 把自己加入全局集合</span>
+        <span class="hljs-variable language_">self</span>.enabled = <span class="hljs-literal">False</span>                        <span class="hljs-comment"># ③ 默认不执行</span>
+
+<span class="hljs-meta">@SubsystemServer</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">StateTreeServerSubsystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    _comps = <span class="hljs-built_in">set</span>()  <span class="hljs-comment"># 全局共享的集合</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        <span class="hljs-keyword">for</span> comp <span class="hljs-keyword">in</span> StateTreeServerSubsystem._comps:
+            <span class="hljs-keyword">if</span> comp.enabled:
+                comp.execute()  <span class="hljs-comment"># ④ 每帧驱动所有已启用的组件</span>
+</code></pre>
+<p><strong>关键设计：</strong></p>
+<ul>
+<li>② 步将<strong>所有</strong> <code>StateTreeCompServer</code> 实例注册到<strong>同一个</strong>子系统 —— 一个全局桶</li>
+<li>④ 步子系统的 <code>onUpdate</code> 遍历这个桶，逐个调用 <code>comp.execute()</code></li>
+<li><code>comp.enabled</code> 控制了该组件是否被驱动</li>
+</ul>
+<h4>3.4.2 问题：一个实体只能有一个同名组件</h4>
+<p>ECS 组件系统中，<code>getOrCreateComponent(entityId, ComponentClass)</code> 按<strong>组件类</strong>索引——同一个实体上，每种组件类型只能存在<strong>一个实例</strong>。</p>
+<p>这意味着 <code>StateTreeCompServer</code> 有一个根本限制：<strong>一个实体只能挂一个状态树</strong>。如果你想让一个实体同时运行&quot;移动 AI&quot;和&quot;战斗 AI&quot;两个独立状态机，单个 <code>StateTreeCompServer</code> 是做不到的——你需要创建两个不同名的组件类。</p>
+<pre><code>getOrCreateComponent(entityId, StateTreeCompServer)  # ✅ 创建一个
+getOrCreateComponent(entityId, StateTreeCompServer)  # ⚠️ 返回同一个实例，不是新的
+</code></pre>
+<p>另外，对于大型场景（100 个实体），全局桶把所有实例放在一个 <code>_comps</code> 集合中，<code>onUpdate</code> 串行执行所有 <code>execute()</code>。如果你想让不同分组的实体使用不同的子系统（减少单帧遍历量，或加入条件驱动），也需要自定义组件。</p>
+<h4>3.4.3 创建自定义多并发状态树组件</h4>
+<p>实现一个实体上同时运行<strong>移动状态树</strong>和<strong>战斗状态树</strong>，各自独立、互不干扰：</p>
+<p><strong>步骤 1：定义自定义组件</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> BaseCompServer
+<span class="hljs-keyword">from</span> architect.fsm.stateTree.common <span class="hljs-keyword">import</span> StateTree, StateNode
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MovementTreeComp</span>(BaseCompServer, StateTree):
+    <span class="hljs-string">&quot;&quot;&quot;移动状态树组件&quot;&quot;&quot;</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onCreate</span>(<span class="hljs-params">self, entityId</span>):
+        StateTree.__init__(<span class="hljs-variable language_">self</span>, entityId)
+        <span class="hljs-comment"># ❌ 不调用 StateTreeServerSubsystem._comps.add(self)</span>
+        <span class="hljs-comment"># ✅ 使用自己的子系统管理</span>
+        MovementSubsystem._comps.add(<span class="hljs-variable language_">self</span>)
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">CombatTreeComp</span>(BaseCompServer, StateTree):
+    <span class="hljs-string">&quot;&quot;&quot;战斗状态树组件&quot;&quot;&quot;</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onCreate</span>(<span class="hljs-params">self, entityId</span>):
+        StateTree.__init__(<span class="hljs-variable language_">self</span>, entityId)
+        CombatSubsystem._comps.add(<span class="hljs-variable language_">self</span>)
+</code></pre>
+<p><strong>步骤 2：定义各自的子系统</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.export <span class="hljs-keyword">import</span> SubsystemServer, ServerSubsystem
+
+<span class="hljs-meta">@SubsystemServer</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MovementSubsystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    _comps = <span class="hljs-built_in">set</span>()
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.canTick = <span class="hljs-literal">True</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        <span class="hljs-keyword">for</span> comp <span class="hljs-keyword">in</span> MovementSubsystem._comps:
+            comp.execute()  <span class="hljs-comment"># 只驱动移动状态树</span>
+
+<span class="hljs-meta">@SubsystemServer</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">CombatSubsystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    _comps = <span class="hljs-built_in">set</span>()
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onInit</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-variable language_">self</span>.canTick = <span class="hljs-literal">True</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        <span class="hljs-keyword">for</span> comp <span class="hljs-keyword">in</span> CombatSubsystem._comps:
+            comp.execute()  <span class="hljs-comment"># 只驱动战斗状态树</span>
+</code></pre>
+<p><strong>步骤 3：为实体构建双状态树</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> getOrCreateComponent
+
+entityId = <span class="hljs-string">&#x27;somePlayer&#x27;</span>
+
+<span class="hljs-comment"># 移动状态树：地面/空中 自动切换</span>
+moveComp = getOrCreateComponent(entityId, MovementTreeComp)
+ground = StateNode(<span class="hljs-string">&#x27;ground&#x27;</span>)
+air = StateNode(<span class="hljs-string">&#x27;air&#x27;</span>)
+moveComp.insertNode(ground)
+moveComp.insertNode(air)
+ground.addChildren(IdleNode())
+ground.addChildren(WalkNode())
+air.addChildren(FallNode())
+air.addChildren(GlideNode())
+moveComp.switchNode(ground.children[<span class="hljs-number">0</span>])
+
+<span class="hljs-comment"># 战斗状态树：完全独立，不受移动状态影响</span>
+combatComp = getOrCreateComponent(entityId, CombatTreeComp)
+combat = StateNode(<span class="hljs-string">&#x27;combat&#x27;</span>)
+combat.addChildren(SearchNode())
+combat.addChildren(ChaseNode())
+combat.addChildren(AttackNode())
+combatComp.insertNode(combat)
+combatComp.switchNode(combat.children[<span class="hljs-number">0</span>])
+</code></pre>
+<p><strong>效果：</strong> 两个状态树完全隔离 —— 移动树从 walk 切换到 fall（玩家跳起）时，战斗树仍在 chase 中追敌。各自的状态切换互不影响。</p>
+<h4>3.4.4 进阶：条件驱动（暂停/恢复）</h4>
+<p>如果不想让 <code>onUpdate</code> 无条件驱动所有组件，可以在子系统中加入条件判断：</p>
+<pre><code class="hljs language-python"><span class="hljs-meta">@SubsystemServer</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SmartCombatSubsystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    _comps = <span class="hljs-built_in">set</span>()
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        <span class="hljs-keyword">for</span> comp <span class="hljs-keyword">in</span> SmartCombatSubsystem._comps:
+            <span class="hljs-comment"># 只有实体在战斗半径内才驱动战斗状态树</span>
+            entityId = comp.entityId
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> isNearPlayer(entityId, radius=<span class="hljs-number">50</span>):
+                <span class="hljs-keyword">continue</span>
+            comp.execute()
+</code></pre>
+<p>这种粒度是使用全局桶的 <code>StateTreeServerSubsystem</code> 无法做到的 —— 因为全局桶对所有组件一视同仁。</p>
+<h4>3.4.5 客户端版本</h4>
+<p>完全相同的方式，只是替换为 <code>BaseCompClient</code> 和 <code>ClientSubsystem</code>：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.component <span class="hljs-keyword">import</span> BaseCompClient
+<span class="hljs-keyword">from</span> architect.fsm.stateTree.common <span class="hljs-keyword">import</span> StateTree, StateNode
+<span class="hljs-keyword">from</span> architect.core.export <span class="hljs-keyword">import</span> SubsystemClient, ClientSubsystem
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">UICursorComp</span>(BaseCompClient, StateTree):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onCreate</span>(<span class="hljs-params">self, entityId</span>):
+        StateTree.__init__(<span class="hljs-variable language_">self</span>, entityId)
+        UICursorSubsystem._comps.add(<span class="hljs-variable language_">self</span>)
+
+<span class="hljs-meta">@SubsystemClient</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">UICursorSubsystem</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+    _comps = <span class="hljs-built_in">set</span>()
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self, dt</span>):
+        <span class="hljs-keyword">for</span> comp <span class="hljs-keyword">in</span> UICursorSubsystem._comps:
+            comp.execute()
+
+<span class="hljs-comment"># 构建 UI 状态树（指针/拖动/点击）</span>
+cursorComp = getOrCreateComponent(localPlayerId(), UICursorComp)
+</code></pre>
+<hr>
+<h2 id="4-statetree-fsm">4. StateTree 与经典 FSM 的对照</h2>
+<h3>4.1 相同业务，两种实现</h3>
+<p><strong>经典 FSM 实现巡逻 AI：</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">IdleState</span>(<span class="hljs-title class_ inherited__">State</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.stateTime &gt; <span class="hljs-number">60</span>:
+            <span class="hljs-keyword">if</span> hasEnemy(<span class="hljs-variable language_">self</span>.entityId):
+                <span class="hljs-variable language_">self</span>.fsm.transitionTo(<span class="hljs-string">&#x27;chase&#x27;</span>)
+            <span class="hljs-keyword">else</span>:
+                <span class="hljs-variable language_">self</span>.fsm.transitionTo(<span class="hljs-string">&#x27;patrol&#x27;</span>)
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">PatrolState</span>(<span class="hljs-title class_ inherited__">State</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self</span>):
+        moveToNextWaypoint(<span class="hljs-variable language_">self</span>.entityId)
+        <span class="hljs-keyword">if</span> reachedWaypoint(<span class="hljs-variable language_">self</span>.entityId):
+            <span class="hljs-keyword">if</span> hasEnemy(<span class="hljs-variable language_">self</span>.entityId):
+                <span class="hljs-variable language_">self</span>.fsm.transitionTo(<span class="hljs-string">&#x27;chase&#x27;</span>)
+            <span class="hljs-keyword">else</span>:
+                <span class="hljs-variable language_">self</span>.fsm.transitionTo(<span class="hljs-string">&#x27;idle&#x27;</span>)
+
+<span class="hljs-comment"># ❌ 问题：当新增 Flee 状态时，需要修改 Idle 和 Patrol 的 onUpdate</span>
+</code></pre>
+<p><strong>StateTree 实现相同逻辑：</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">BehaviorGroup</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">canEnter</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>  <span class="hljs-comment"># 总是可以进入</span>
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Idle</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">if</span> tree.stateTicks &gt; <span class="hljs-number">60</span>:
+            tree.finishTasks()  <span class="hljs-comment"># ← 只标记完成，不关心下一个是什么</span>
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Patrol</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
+        moveToNextWaypoint(tree.entityId)
+        <span class="hljs-keyword">if</span> reachedWaypoint(tree.entityId):
+            tree.finishTasks()
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Chase</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">canEnter</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">return</span> hasEnemy(tree.entityId)  <span class="hljs-comment"># ← 有敌人时才进入</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> hasEnemy(tree.entityId):
+            tree.finishTasks()
+
+<span class="hljs-comment"># ✅ 新增 Flee 只需加一个节点，无需修改任何已有节点</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Flee</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">canEnter</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">return</span> isLowHp(tree.entityId) <span class="hljs-keyword">and</span> hasEnemy(tree.entityId)
+</code></pre>
+<p><strong>核心区别：</strong> 经典 FSM 中状态<strong>知道</strong>它要去哪里（<code>transitionTo(&#39;chase&#39;)</code>），StateTree 中状态只<strong>声明</strong>自己可以结束（<code>finishTasks()</code>），由树结构决定下一步。</p>
+<h3>4.2 何时使用经典 FSM</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>状态 &lt; 5 个，固定流程</td>
+<td>经典 FSM 也可以（简单直观）</td>
+</tr>
+<tr>
+<td>状态 &gt; 5 个，有分类需求</td>
+<td>StateTree</td>
+</tr>
+<tr>
+<td>状态需被复用/拷贝</td>
+<td>StateTree（<code>copy(deep=True)</code>）</td>
+</tr>
+<tr>
+<td>需要非破坏性升级（热更新）</td>
+<td>StateTree（可替换子树）</td>
+</tr>
+<tr>
+<td>需要客户端/服务端共用逻辑</td>
+<td>StateTree（ECS 组件化）</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="5">5. 常见陷阱</h2>
+<h3>5.1 忘记调用 <code>finishTasks()</code></h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">StuckState</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
+        doSomething()
+        <span class="hljs-comment"># ❌ 忘记调用 tree.finishTasks()，状态永远不会切换</span>
+</code></pre>
+<p><strong>正确做法：</strong> 在每个状态的 <code>update</code> 中显式标记完成条件。</p>
+<h3>5.2 <code>canExit</code> 返回 False 导致死锁</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">AttackState</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">canExit</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>.animationFinished  <span class="hljs-comment"># 只有动画播完才能退出</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
+        <span class="hljs-variable language_">self</span>.animationFinished = <span class="hljs-literal">False</span>
+        playAnimation(tree.entityId, <span class="hljs-string">&#x27;attack&#x27;</span>)  <span class="hljs-comment"># 假设 30 tick</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">if</span> tree.stateTicks &gt; <span class="hljs-number">30</span>:
+            <span class="hljs-variable language_">self</span>.animationFinished = <span class="hljs-literal">True</span>
+            tree.finishTasks()
+</code></pre>
+<p><code>canExit</code> 返回 False 时 <code>searchNode</code> 会直接返回 None，状态机卡死。确保 <code>canExit</code> 最终会变为 True。</p>
+<h3>5.3 非叶子节点的 <code>canEnter</code> 副作用</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">BadGuard</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">canEnter</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-variable language_">self</span>.enterCount += <span class="hljs-number">1</span>  <span class="hljs-comment"># ❌ 副作用！每次搜索都会调用 canEnter</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
+</code></pre>
+<p><code>canEnter</code> 在<strong>搜索阶段会被多次调用</strong>（每帧可能调用 N 次），不要在其中写有副作用的逻辑。只做纯布尔判断。</p>
+<h3>5.4 <code>enter</code> 中调用 <code>finishTasks</code></h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">InstantNode</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
+        tree.finishTasks()  <span class="hljs-comment"># ❌ 进入后立即标记完成</span>
+</code></pre>
+<p>这会导致 <code>execute()</code> 在同一帧的搜索阶段就切换走。如果你需要一个&quot;瞬时节点&quot;（只执行 enter 不执行 update），把逻辑放在 <code>enter</code> 中并确保 <code>canExit</code> 立即返回 True，但不要在同一帧内二次切换（会导致状态闪烁）。</p>
+<h3>5.5 子树清空不清理引用</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">exit</span>(<span class="hljs-params">self, nextNode, tree</span>):
+    <span class="hljs-variable language_">self</span>.children = []  <span class="hljs-comment"># 清空子节点</span>
+    <span class="hljs-comment"># ⚠️ 原来的子节点对象仍存在，只是脱离了树</span>
+    <span class="hljs-comment"># 如果它们持有 compClient/compServer 引用，可能导致内存泄漏</span>
+</code></pre>
+<p><strong>建议：</strong> 如果需要动态替换子树，用 <code>replaceChild</code> 而非直接操作 <code>children</code> 列表。</p>
+<hr>
+<h2 id="6-statenodeserver">6. StateNodeServer 服务端扩展</h2>
+<p>服务端节点继承 <code>StateNodeServer</code>，提供引擎操作封装：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.stateTree.server <span class="hljs-keyword">import</span> StateNodeServer
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ServerAttack</span>(<span class="hljs-title class_ inherited__">StateNodeServer</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
+        entityId = tree.entityId
+        <span class="hljs-variable language_">self</span>.markVariant(entityId, <span class="hljs-number">2</span>)          <span class="hljs-comment"># 切换实体变体</span>
+        <span class="hljs-variable language_">self</span>.playSound(entityId, <span class="hljs-string">&#x27;mob.attack&#x27;</span>) <span class="hljs-comment"># 播放音效</span>
+        <span class="hljs-variable language_">self</span>.movement(entityId, <span class="hljs-literal">False</span>)         <span class="hljs-comment"># 锁定移动</span>
+        <span class="hljs-variable language_">self</span>.camera(entityId, <span class="hljs-literal">True</span>)            <span class="hljs-comment"># 锁定摄像机</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">exit</span>(<span class="hljs-params">self, nextNode, tree</span>):
+        <span class="hljs-variable language_">self</span>.movement(tree.entityId, <span class="hljs-literal">True</span>)     <span class="hljs-comment"># 恢复移动</span>
+        <span class="hljs-variable language_">self</span>.camera(tree.entityId, <span class="hljs-literal">False</span>)
 </code></pre>
 <table>
 <thead>
 <tr>
-<th>StateNodeServer 静态方法</th>
-<th>说明</th>
+<th>静态方法</th>
+<th>效果</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>markVariant(entityId, value)</code></td>
+<td><code>markVariant(id, val)</code></td>
 <td>设置/获取实体的 MarkVariant</td>
 </tr>
 <tr>
-<td><code>playSound(entityId, soundName)</code></td>
-<td>在实体位置播放音效</td>
+<td><code>playSound(id, name)</code></td>
+<td>在实体位置播放音效（<code>playsound</code> 命令）</td>
 </tr>
 <tr>
-<td><code>movement(entityId, enabled)</code></td>
-<td>控制实体移动/跳跃权限</td>
+<td><code>movement(id, enabled)</code></td>
+<td>控制实体移动/跳跃（对玩家用 <code>inputpermission</code>，对非玩家调整 <code>SPEED</code>）</td>
 </tr>
 <tr>
-<td><code>camera(entityId, enabled)</code></td>
-<td>控制摄像机输入权限</td>
+<td><code>camera(id, enabled)</code></td>
+<td>控制摄像机输入权限（<code>inputpermission camera</code>）</td>
 </tr>
 </tbody></table>
-<p><strong><code>createChild(name, cls)</code></strong> — 创建指定类型的子节点并自动添加到 children 列表：</p>
+<p><code>createChild(name, cls)</code> 快速创建带子系统引用的子节点：</p>
 <pre><code class="hljs language-python">idle = StateNodeServer(<span class="hljs-string">&#x27;idle&#x27;</span>)
-patrol_child = idle.createChild(<span class="hljs-string">&#x27;patrol&#x27;</span>, PatrolClass)  <span class="hljs-comment"># 自动 addChildren</span>
+patrol = idle.createChild(<span class="hljs-string">&#x27;patrol&#x27;</span>, PatrolNode)  <span class="hljs-comment"># 自动设置 subsys + addChildren</span>
 </code></pre>
 <hr>
-<h2 id="3-fsm">3. 经典 FSM（已弃用）</h2>
-<blockquote>
-<p><strong>警告</strong>：此实现已弃用，仅保留用于向后兼容。新项目请使用 StateTree。</p>
-</blockquote>
-<h3>3.1 结构</h3>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.deprecated <span class="hljs-keyword">import</span> Fsm, State
+<h2 id="7-boss-ai">7. 完整示例：多阶段 Boss AI</h2>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.fsm.stateTree.common <span class="hljs-keyword">import</span> StateTree, StateNode
+<span class="hljs-keyword">from</span> architect.fsm.stateTree.server <span class="hljs-keyword">import</span> StateNodeServer
 
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyState</span>(<span class="hljs-title class_ inherited__">State</span>):
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEnter</span>(<span class="hljs-params">self</span>):
-        <span class="hljs-string">&quot;&quot;&quot;进入状态时调用&quot;&quot;&quot;</span>
-        <span class="hljs-keyword">pass</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">BossIntro</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-string">&quot;&quot;&quot;出场动画&quot;&quot;&quot;</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;intro&#x27;</span>)
 
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onExit</span>(<span class="hljs-params">self</span>):
-        <span class="hljs-string">&quot;&quot;&quot;退出状态时调用&quot;&quot;&quot;</span>
-        <span class="hljs-keyword">pass</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">canExit</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">return</span> tree.stateTicks &gt; <span class="hljs-number">100</span>  <span class="hljs-comment"># 播放 100 tick 后才能退出</span>
 
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">self</span>):
-        <span class="hljs-string">&quot;&quot;&quot;每帧更新（stateTime 自动递增）&quot;&quot;&quot;</span>
-        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.stateTime &gt; <span class="hljs-number">60</span>:
-            <span class="hljs-variable language_">self</span>.fsm.transitionTo(<span class="hljs-string">&#x27;patrol&#x27;</span>)
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
+        spawnParticles(tree.entityId)
 
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEvent</span>(<span class="hljs-params">self, <span class="hljs-built_in">type</span>, data</span>):
-        <span class="hljs-string">&quot;&quot;&quot;事件处理&quot;&quot;&quot;</span>
-        <span class="hljs-keyword">pass</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">BossIdle</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;idle&#x27;</span>)
 
-    <span class="hljs-keyword">def</span> <span class="hljs-title function_">getFsm</span>(<span class="hljs-params">self</span>):
-        <span class="hljs-string">&quot;&quot;&quot;获取所属 FSM 实例&quot;&quot;&quot;</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>.fsm
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
+        lockOnTarget(tree.entityId)
+        <span class="hljs-keyword">if</span> tree.stateTicks &gt; <span class="hljs-number">30</span>:
+            tree.finishTasks()
 
-<span class="hljs-comment"># 使用</span>
-fsm = Fsm(entityId, MyState)          <span class="hljs-comment"># 创建并设置默认状态</span>
-fsm.addState(<span class="hljs-string">&#x27;patrol&#x27;</span>, PatrolState)   <span class="hljs-comment"># 添加状态</span>
-fsm.addStateMapping({<span class="hljs-string">&#x27;chase&#x27;</span>: Chase}) <span class="hljs-comment"># 批量添加</span>
-fsm.transitionTo(<span class="hljs-string">&#x27;patrol&#x27;</span>)            <span class="hljs-comment"># 转换状态</span>
-fsm.callUpdate()                      <span class="hljs-comment"># 每帧调用</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">BossMelee</span>(<span class="hljs-title class_ inherited__">StateNodeServer</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        StateNodeServer.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;melee&#x27;</span>)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">canEnter</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">return</span> distanceToTarget(tree.entityId) &lt; <span class="hljs-number">3</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">self, previous, tree</span>):
+        entityId = tree.entityId
+        <span class="hljs-variable language_">self</span>.playSound(entityId, <span class="hljs-string">&#x27;mob.boss.attack&#x27;</span>)
+        <span class="hljs-variable language_">self</span>.movement(entityId, <span class="hljs-literal">False</span>)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
+        performMelee(tree.entityId)
+        <span class="hljs-keyword">if</span> tree.stateTicks &gt; <span class="hljs-number">15</span>:
+            tree.finishTasks()
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">exit</span>(<span class="hljs-params">self, nextNode, tree</span>):
+        <span class="hljs-variable language_">self</span>.movement(tree.entityId, <span class="hljs-literal">True</span>)
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">BossRanged</span>(<span class="hljs-title class_ inherited__">StateNodeServer</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        StateNodeServer.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;ranged&#x27;</span>)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">canEnter</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-number">3</span> &lt;= distanceToTarget(tree.entityId) &lt; <span class="hljs-number">15</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> canSeeTarget(tree.entityId):
+            tree.finishTasks()  <span class="hljs-comment"># 丢失视野 → 回到 idle</span>
+        <span class="hljs-keyword">if</span> tree.stateTicks &gt; <span class="hljs-number">40</span>:
+            shootProjectile(tree.entityId)
+            tree.finishTasks()
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">BossFlee</span>(<span class="hljs-title class_ inherited__">StateNode</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):
+        StateNode.__init__(<span class="hljs-variable language_">self</span>, <span class="hljs-string">&#x27;flee&#x27;</span>)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">canEnter</span>(<span class="hljs-params">self, tree</span>):
+        <span class="hljs-keyword">return</span> getHpPercent(tree.entityId) &lt; <span class="hljs-number">0.2</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">update</span>(<span class="hljs-params">self, tree</span>):
+        fleeFromTarget(tree.entityId)
+
+<span class="hljs-comment"># === 构建 ===</span>
+tree = StateTree(entityId)
+
+intro = BossIntro()
+combat = StateNode(<span class="hljs-string">&#x27;combat&#x27;</span>)         <span class="hljs-comment"># 非叶子：战斗分组</span>
+combat.addChildren(BossIdle())
+combat.addChildren(BossMelee())
+combat.addChildren(BossRanged())
+combat.addChildren(BossFlee())
+
+tree.insertNode(intro)               <span class="hljs-comment"># root → intro</span>
+intro.addChildren(combat)            <span class="hljs-comment"># intro → combat</span>
+
+tree.switchNode(intro)               <span class="hljs-comment"># 启动</span>
+
+<span class="hljs-comment"># 运行流程：</span>
+<span class="hljs-comment"># intro (100tick) → 自动搜索 combat 子节点</span>
+<span class="hljs-comment"># → idle(30tick) → 敌人在近战范围 → melee(15tick)</span>
+<span class="hljs-comment"># → 敌人跑远了 → idle(30tick) → ranged(40tick) → 射击</span>
+<span class="hljs-comment"># → 血量 &lt; 20% → flee（无限循环）</span>
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">onUpdate</span>(<span class="hljs-params">dt</span>):
+    tree.execute()
 </code></pre>
-<h3>3.2 <code>State</code> 基类方法</h3>
-<table>
-<thead>
-<tr>
-<th>方法</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>onEnter()</code></td>
-<td>进入状态时调用</td>
-</tr>
-<tr>
-<td><code>onExit()</code></td>
-<td>退出状态时调用</td>
-</tr>
-<tr>
-<td><code>onUpdate()</code></td>
-<td>每帧更新</td>
-</tr>
-<tr>
-<td><code>onEvent(type, data)</code></td>
-<td>事件处理</td>
-</tr>
-<tr>
-<td><code>getFsm()</code></td>
-<td>获取所属 FSM 实例</td>
-</tr>
-<tr>
-<td><code>markVariant(value)</code></td>
-<td>设置/获取 MarkVariant</td>
-</tr>
-<tr>
-<td><code>playSound(soundName)</code></td>
-<td>播放音效（服务端）</td>
-</tr>
-<tr>
-<td><code>movement(enabled)</code></td>
-<td>控制移动权限（服务端）</td>
-</tr>
-<tr>
-<td><code>camera(enabled)</code></td>
-<td>控制摄像机权限（服务端）</td>
-</tr>
-</tbody></table>
-<p><code>stateTime</code> 属性记录当前状态已持续的帧数（onUpdate 调用次数）。</p>
-<h3>3.3 <code>Fsm</code> 类方法</h3>
-<table>
-<thead>
-<tr>
-<th>方法</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>addState(name, stateCls)</code></td>
-<td>添加状态</td>
-</tr>
-<tr>
-<td><code>addStateMapping(states)</code></td>
-<td>批量添加状态 dict</td>
-</tr>
-<tr>
-<td><code>getState(name)</code></td>
-<td>获取状态实例</td>
-</tr>
-<tr>
-<td><code>transitionTo(name)</code></td>
-<td>切换到指定状态（触发 exit/enter）</td>
-</tr>
-<tr>
-<td><code>callUpdate()</code></td>
-<td>每帧调用（递增 stateTime + 执行 onUpdate）</td>
-</tr>
-</tbody></table>
 <hr>
 <h2 id="">下一步</h2>
 <ul>
-<li><a href="ecs.html">组件系统 (ecs.md)</a> — ECS 组件</li>
-<li><a href="subsystem.html">子系统 (subsystem.md)</a> — 子系统 API</li>
+<li><a href="ecs.html">组件系统 (ecs.md)</a> — ECS 组件与 StateTree 集成</li>
+<li><a href="subsystem.html">子系统 (subsystem.md)</a> — 子系统生命周期</li>
 <li><a href="best-practices.md">最佳实践 (best-practices.md)</a> — 状态机设计建议</li>
 </ul>
 
