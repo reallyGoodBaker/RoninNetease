@@ -609,7 +609,98 @@ class TestClient(ClientSubsystem):
 
 ---
 
-## 4. 小队系统插件 — `$vendor.squad`
+## 4. 运动系统插件 — `$vendor.motion`
+
+### 4.1 概述
+
+封装了原生 `ActorMotionComponent`，提供玩家运动控制及自动客户端→服务端同步。
+
+### 4.2 启用
+
+```python
+PLUGINS = ['$vendor.motion']
+```
+
+> `conf.py` 中默认已启用此插件。
+
+### 4.3 PlayerMotionComponent
+
+`PlayerMotionComponent` 是一个单例组件，自动在客户端就绪时创建并绑定到本地玩家。
+
+```python
+from architect.component import getOneSingletonComponent
+from architect.plugins.motion.playerMotionComp import PlayerMotionComponent
+
+motionComp = getOneSingletonComponent(PlayerMotionComponent)
+```
+
+### 4.4 属性与方法
+
+| 属性 | 类型 | 读写 | 说明 |
+|---|---|---|---|
+| `motion` | `tuple (x, y, z)` | 读/写 | 设置运动向量，**写入时自动同步到服务端** |
+| `inputVector` | `tuple` | 只读 | 获取输入向量 |
+| `mousePosition` | `tuple` | 只读 | 获取鼠标位置 |
+
+### 4.5 基本用法
+
+```python
+from architect.compact import *
+from architect.plugins.motion.playerMotionComp import PlayerMotionComponent
+
+@SubsystemClient
+class MyMovement(ClientSubsystem):
+    @Sched.Update
+    def updateMovement(self):
+        motionComp = getOneSingletonComponent(PlayerMotionComponent)
+        # 读取当前运动
+        currentMotion = motionComp.motion
+        # 读取输入向量
+        inputVec = motionComp.inputVector
+        print('Input:', inputVec)
+```
+
+### 4.6 设置运动（自动同步）
+
+```python
+motionComp = getOneSingletonComponent(PlayerMotionComponent)
+# 设置运动向量，自动同步到服务端
+motionComp.motion = (1.0, 0.5, 0.0)
+```
+
+每次写入 `motion` 属性时，框架自动通过 `remote.client.call` 调用服务端的 `PlayerMotionSyncServer.syncMotion`，服务端再将运动状态应用到对应玩家的 `ActorMotionComponent`。
+
+### 4.7 配合输入系统使用
+
+```python
+from architect.plugins.input.client import InputAction
+from architect.plugins.motion.playerMotionComp import PlayerMotionComponent
+
+@SubsystemClient
+class TestClient(ClientSubsystem):
+    @InputAction('laravelMovement')
+    def onMove(self, ev):
+        x, y = ev.value
+        motionComp = getOneSingletonComponent(PlayerMotionComponent)
+        motionComp.motion = (x, 0, y)
+```
+
+### 4.8 服务端同步
+
+运动同步由 `PlayerMotionSyncServer` 自动处理，无需手动调用。客户端写入 `motion` 时立即触发：
+
+```python
+# 位于 architect/plugins/motion/system/sync.py（自动处理，无需手动调用）
+@SubsystemServer
+class PlayerMotionSyncServer(ServerSubsystem):
+    @Remote
+    def syncMotion(self, playerId, motion):
+        compServer.CreateActorMotion(playerId).SetPlayerMotion(motion)
+```
+
+---
+
+## 5. 小队系统插件 — `$vendor.squad`
 
 > 此插件源文件目前为空（预留），尚未实现。
 
