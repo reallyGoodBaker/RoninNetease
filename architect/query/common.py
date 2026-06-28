@@ -1,6 +1,7 @@
 from ..component import getComponent, getComponentWithQuery
 from ..component.core import _getCompIndex, EMPTY_SLOT
 from ..core.annotation import AnnotationHelper
+from ..core.log import warn as _log_warn, info as _log_info
 from ..conf import COMPONENT_TAG
 from functools import wraps
 
@@ -58,7 +59,7 @@ def _getQueryArgs(entityId, compClsSrc, required, excluded, args, kwargs, showFa
     result, mismatch = getComponentWithQuery(entityId, compCls, required, excluded)
     if mismatch:
         if showFailReason:
-            print('[WARN] required 或 excluded 不匹配: {}'.format(mismatch.__name__))
+            _log_warn('required 或 excluded 不匹配: {}', mismatch.__name__)
         return None
     if EMPTY_SLOT in result:
         if showFailReason:
@@ -66,9 +67,7 @@ def _getQueryArgs(entityId, compClsSrc, required, excluded, args, kwargs, showFa
             for i, v in enumerate(result):
                 if v == EMPTY_SLOT:
                     missingComps.append(compCls[i].__name__)
-            print('[INFO] 缺失的查询组件: {}'.format(
-                ', '.join(missingComps)
-            ))
+            _log_info('缺失的查询组件: {}', ', '.join(missingComps))
         return None
     if entityIdIndex >= 0:
         result[entityIdIndex] = entityId
@@ -155,8 +154,8 @@ def Track(message=None):
     def _tracker(method):
         @wraps(method)
         def modified(self, *args, **kwargs):
-            msg = message or "[INFO] Called: '{}.{}'".format(self.__class__.__name__, method.__name__)
-            print(msg)
+            msg = message or "Called: '{}.{}'".format(self.__class__.__name__, method.__name__)
+            _log_info(msg)
             return method(self, *args, **kwargs)
         return modified
     return _tracker

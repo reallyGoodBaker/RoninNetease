@@ -1,4 +1,5 @@
 from ...core.export import ClientSubsystem, SubsystemClient
+from ...core.log import warn as _log_warn
 from ...component import BaseCompClient, Component, createComponent, getOneComponent
 from ...core.basic import compClient, clientApi
 from ...event import EventListener
@@ -369,7 +370,7 @@ class PersonaRendererComponent(BaseCompClient):
             geometries = jsonObject.get("geometry")
             if geometries:
                 actorOverride["geometry"] = geometries
-                print('[WARN] Geometries should be preloaded before use.')
+                _log_warn('Geometries should be preloaded before use.')
                 for name, geometry in geometries.items():
                     self.actorRenderer.AddGeometryToOneActor(actorId, name, geometry)
 
@@ -377,7 +378,7 @@ class PersonaRendererComponent(BaseCompClient):
             textures = jsonObject.get("textures")
             if textures:
                 actorOverride["textures"] = textures
-                print('[WARN] Textures should be preloaded before use.')
+                _log_warn('Textures should be preloaded before use.')
                 for name, texture in textures.items():
                     self.actorRenderer.AddTextureToOneActor(actorId, name, texture)
 
@@ -385,14 +386,14 @@ class PersonaRendererComponent(BaseCompClient):
             particles = jsonObject.get("particle_effects")
             if particles:
                 actorOverride["particle_effects"] = particles
-                print('[WARN] Particle Effects should be preloaded before use.')
+                _log_warn('Particle Effects should be preloaded before use.')
                 for name, particle in particles.items():
                     self.actorRenderer.AddParticleEffectToOneActor(actorId, name, particle)
 
             #音效
             sounds = jsonObject.get('sound_effects')
             if sounds:
-                print('[WARN] Sound Effects should be preloaded before use.')
+                _log_warn('Sound Effects should be preloaded before use.')
                 for name, sound in sounds.items():
                     self.actorRenderer.AddSoundEffectToOneActor(actorId, name, sound)
 
@@ -465,7 +466,7 @@ class PersonaRendererComponent(BaseCompClient):
             geometries = jsonObject.get("geometry")
             if geometries:
                 overrideSnapshot["geometry"] = geometries
-                print('[WARN] Geometries should be preloaded before use.')
+                _log_warn('Geometries should be preloaded before use.')
                 for name, geometry in geometries.items():
                     overrideObj['geometry'].append(name)
                     self.actorRenderer.AddPlayerGeometry(name, geometry)
@@ -474,7 +475,7 @@ class PersonaRendererComponent(BaseCompClient):
             textures = jsonObject.get("textures")
             if textures:
                 overrideSnapshot["textures"] = textures
-                print('[WARN] Textures should be preloaded before use.')
+                _log_warn('Textures should be preloaded before use.')
                 for name, texture in textures.items():
                     self.actorRenderer.AddPlayerTexture(name, texture)
 
@@ -482,14 +483,14 @@ class PersonaRendererComponent(BaseCompClient):
             particles = jsonObject.get("particle_effects")
             if particles:
                 overrideSnapshot["particle_effects"] = particles
-                print('[WARN] Particle Effects should be preloaded before use.')
+                _log_warn('Particle Effects should be preloaded before use.')
                 for name, particle in particles.items():
                     self.actorRenderer.AddPlayerParticleEffect(name, particle)
 
             #音效
             sounds = jsonObject.get('sound_effects')
             if sounds:
-                print('[WARN] Sound Effects should be preloaded before use.')
+                _log_warn('Sound Effects should be preloaded before use.')
                 for name, sound in sounds.items():
                     self.actorRenderer.AddPlayerSoundEffect(name, sound)
 

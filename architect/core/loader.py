@@ -3,6 +3,7 @@ from .subsystem import SubsystemManager, Subsystem, _ShadowSystemClient, _Shadow
 from .basic import isServer, clientApi, serverApi
 from .contextRecorder import ContextRecorder, Context
 from .configurator import modConf, __modname__, __framework__, __dirname__, VendorPlugins, UserPlugins
+from .log import info as _log_info, error as _log_error
 
 from ..utils.enhance.fn import compVer
 
@@ -113,7 +114,7 @@ class _PluginHost(object):
     def create(self):
         loadedPlugins = _plugins()
         if self.name in loadedPlugins:
-            print('[INFO] Plugin {} already loaded')
+            _log_info('Plugin {} already loaded', self.name)
             return
         compModule = self.compCls.__module__
         depComps.start(compModule)
@@ -161,7 +162,7 @@ class _PluginHost(object):
             raise Exception('Plugin {} not registered'.format(self.name))
         _LOADED_PLUGINS = _plugins()
         if self.name in _LOADED_PLUGINS:
-            print('[INFO] Plugin {} already loaded')
+            _log_info('Plugin {} already loaded', self.name)
             return
         _inst = self._inst
         _inst.onAttach(manager)
@@ -249,16 +250,16 @@ def _loadPlugins(manager, isHost):
     for _name, _host in _topologicalOrder(registerList):
         try:
             _host.load(manager)
-            print('[INFO] Loaded plugin: ' + _host.name + ' by ' + _host.author + '\n' + _host.desc)
+            _log_info('Loaded plugin: {} by {}\n{}', _host.name, _host.author, _host.desc)
         except Exception as e:
-            print('[ERROR] Failed to load plugin ' + _name)
+            _log_error('Failed to load plugin {}', _name)
 
 def _readyPlugins(manager):
     for _host in _plugins().values():
         try:
             _host.onReady(manager)
         except Exception as e:
-            print('[ERROR] Failed to ready plugin ' + _host.__class__.__name__)
+            _log_error('Failed to ready plugin {}', _host.__class__.__name__)
 
 
 

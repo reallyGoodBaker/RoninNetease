@@ -1,5 +1,6 @@
 from ..core.basic import isServer, serverApi, clientApi
 from ..core.scheduler import Future
+from ..core.log import error as _log_error
 from ..level.server import LevelServer
 from ..level.client import LevelClient
 from ..core.annotation import AnnotationHelper
@@ -175,7 +176,7 @@ def _callRemoteMethod(subsys, data):
     except Exception as e:
         err = e
         import traceback
-        print('[ERROR] Remote call failed: \n' + traceback.format_exc())
+        _log_error(traceback.format_exc())
 
     if requireReturn:
         def _sendReturn(result, err, id=id):

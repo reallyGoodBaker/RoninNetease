@@ -94,6 +94,9 @@ class _TimerContext(object):
 profiler = Profiler()
 
 
+from .log import info as _log_info
+
+
 def TimeCost(func):
     """
     函数级耗时装饰器（保留原有行为，底层使用 profiler）。
@@ -102,6 +105,6 @@ def TimeCost(func):
         start = time.time()
         result = func(*args, **kwargs)
         end = time.time()
-        print("Time cost: ", end - start, "s")
+        _log_info('Time cost: {}s', end - start)
         return result
     return wrapper

@@ -3,6 +3,7 @@ from ..conf import COMPONENT_NAMESPACE, COMPONENT_TAG, PERSIST_INFO
 from ..core.annotation import AnnotationHelper
 from ..core.contextRecorder import ContextRecorder
 from ..core.basic import isServer, clientApi, serverApi, levelId
+from ..core.log import info as _log_info, error as _log_error
 from ..event.core import EventSignal
 from ..persistent.client import ClientKVDatabase, ClientKVDatabaseGlobal
 from ..persistent.server import ServerKVDatabase
@@ -57,9 +58,9 @@ def _registerCompsIntoGame(isHost):
     for cls in clsList:
         result = api.RegisterComponent(COMPONENT_NAMESPACE, cls.__name__, cls.__module__ + '.' + cls.__name__)
         if result:
-            print('[INFO] Registered {} component "{}"'.format('server' if isHost else 'client', cls.__name__))
+            _log_info('Registered {} component "{}"', 'server' if isHost else 'client', cls.__name__)
         else:
-            print('[ERROR] Failed to register {} component "{}"'.format('server' if isHost else 'client', cls.__name__))
+            _log_error('Failed to register {} component "{}"', 'server' if isHost else 'client', cls.__name__)
 
 
 def getComponentAnnotation(cls):

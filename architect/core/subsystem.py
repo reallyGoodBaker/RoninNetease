@@ -17,6 +17,7 @@ from ..event.server import event as eventServer
 from ..conf import EVENT_LISTENER, CUSTOM_EVENT, SYSTEM_SCHED_ANNO, SCHED_EVENT, INTERNAL_METHOD
 
 from .profiler import profiler
+from .log import info as _log_info
 
 def Internal(method):
     from .annotation import AnnotationHelper
@@ -158,7 +159,7 @@ class SubsystemManager(object):
     def addSubsystem(self, subsystemCls):
         subSys = subsystemCls(self.system, self.engine, self.sysName)
         subSys._init()
-        print('[INFO] {} Subsystem "{}" has been initialized'.format('Server' if isServer() else 'Client', subSys.__class__.__name__))
+        _log_info('{} Subsystem "{}" has been initialized', 'Server' if isServer() else 'Client', subSys.__class__.__name__)
         if isServer():
             subsystem._firstSubsysServer = subSys
         else:

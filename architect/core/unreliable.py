@@ -1,9 +1,12 @@
 
+from .log import error as _log_error
+
+
 class Unreliable(object):
     @staticmethod
     def _defaultErrorHandler(err):
         # type: (Exception) -> None
-        print(err)
+        _log_error(unicode(err))
         import traceback
         traceback.print_exc()
 
@@ -18,7 +21,7 @@ class Unreliable(object):
             self._errorHandler(err)
             return (None, err)
         except Exception as err:
-            print(err)
+            _log_error(unicode(err))
             return (None, err)
 
     def tryCall(self, fn, *args, **kwargs):

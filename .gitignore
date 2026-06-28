@@ -3,3 +3,4 @@ studio.json
 package-lock.json
 node_modules
 npm-debug.log*
+REPORT.md

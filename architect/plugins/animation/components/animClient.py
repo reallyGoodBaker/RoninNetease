@@ -1,6 +1,7 @@
 import time
 
 from ....compact import remote, Component, BaseCompClient, getOneComponent, NamedEntityVariable
+from ....core.log import error as _log_error
 from ....utils.persona.client import PersonaRendererComponent
 from ....math.double import clamp, inf, epsilon
 from ..enum import AnimationEasingTypes, AnimationBlendingTypes, LoopType
@@ -125,7 +126,7 @@ class AnimationExComponent(BaseCompClient):
             if anim in self.animMetas:
                 self.animations[name] = anim
             else:
-                print('[ERROR] 动画 {} 元数据不存在, 动画是否存在或通过 animExtractor 提取?'.format(anim))
+                _log_error('动画 {} 元数据不存在, 动画是否存在或通过 animExtractor 提取?', anim)
 
     def _createActorRendererAnims(self):
         animations = {}
