@@ -44,8 +44,8 @@ for (const f of fs.readdirSync(src).filter(f => f.endsWith('.md') && !f.startsWi
 const groups = [
   ['\u5165\u95e8',     ['quickstart', 'architecture', 'best-practices']],
   ['\u6838\u5fc3\u7cfb\u7edf', ['subsystem', 'ecs', 'event', 'scheduler']],
-  ['\u8fdb\u9636',     ['ui', 'plugin', 'plugins', 'bus', 'profiler']],
-  ['\u53c2\u8003',     ['math', 'molang', 'persona', 'fsm', 'utils']]
+  ['\u8fdb\u9636',     ['ui', 'plugin', 'plugins', 'bus', 'profiler', 'concurrency']],
+  ['\u53c2\u8003',     ['math', 'molang', 'persona', 'fsm', 'utils', 'loader']]
 ];
 
 function navHtml(cur) {

@@ -164,31 +164,117 @@ data_set({'hp': 80, 'mp': 50})  # 设置新值
 
 ## 5. 触摸手势
 
+RoninNetease 的触摸手势系统基于**按钮控件事件**，底层使用引擎的 `asButton().SetButtonTouch*Callback` 方法。提供 6 种手势类型，支持装饰器和编程式两种注册方式。
+
+### 5.1 手势类型
+
+`TouchEvents` 是一个字符串元组，包含所有可用类型：
+
 ```python
 from architect.ui.gesture import TouchEvents
 
-class MyHUD(UiSubsystem):
-    def onCreate(self):
-        # 注册手势事件处理器
-        self.addEventListener('/drag_area', TouchEvents.SWIPE, self.onSwipe)
-        self.addEventListener('/btn', TouchEvents.TAP, self.onTap)
-        self.addEventListener('/btn', TouchEvents.LONG_PRESS, self.onLongPress)
-
-    def onSwipe(self, ev):
-        print('Swiped:', ev)
-
-    def onTap(self, ev):
-        print('Tapped:', ev)
-
-    def onLongPress(self, ev):
-        print('Long pressed:', ev)
+TouchEvents  # ('click', 'down', 'move', 'movein', 'moveout', 'cancel')
 ```
 
-`TouchEvents` 枚举：
-- `TouchEvents.TAP` — 点击
-- `TouchEvents.LONG_PRESS` — 长按
-- `TouchEvents.SWIPE` — 滑动
-- `TouchEvents.TOUCH_START` / `TOUCH_MOVE` / `TOUCH_END` — 触摸阶段
+| 类型 | 引擎回调 | 触发条件 |
+|---|---|---|
+| `'click'` | `SetButtonTouchUpCallback` | 按钮上松手（按下后在同一控件释放） |
+| `'down'` | `SetButtonTouchDownCallback` | 按钮按下 |
+| `'move'` | `SetButtonTouchMoveCallback` | 手指在按钮上移动 |
+| `'movein'` | `SetButtonTouchMoveInCallback` | 手指从外部移入按钮区域 |
+| `'moveout'` | `SetButtonTouchMoveOutCallback` | 手指从按钮区域移出 |
+| `'cancel'` | `SetButtonTouchCancelCallback` | 触摸被系统取消 |
+
+### 5.2 事件对象
+
+手势回调接收一个 `ChainedEvent` 对象，其属性：
+
+| 属性 | 说明 |
+|---|---|
+| `ev.x` | 触摸 X 坐标（屏幕像素） |
+| `ev.y` | 触摸 Y 坐标（屏幕像素） |
+| `ev.pos` | `(x, y)` 元组 |
+| `ev.target` | 转换后的控件对象（`asButton()` 结果） |
+| `ev.control` | 原始控件对象 |
+| `ev.screen` | 当前 UiSubsystem 实例 |
+
+### 5.3 方式一：装饰器注册（推荐）
+
+```python
+from architect.ui.gesture import Touch
+from architect.ui.client import UiSubsystem
+
+class MyHUD(UiSubsystem):
+    @Touch.Click('/btn_attack')
+    def onAttack(self, ev):
+        """点击攻击按钮"""
+        print('Attack clicked at', ev.x, ev.y)
+
+    @Touch.Down('/btn_jump')
+    def onJumpDown(self, ev):
+        """按下跳跃按钮"""
+        self.startJumpCharge()
+
+    @Touch.Move('/drag_area')
+    def onDrag(self, ev):
+        """拖拽区域移动"""
+        dx = ev.x - self.lastX
+        dy = ev.y - self.lastY
+        self.rotateView(dx, dy)
+        self.lastX = ev.x
+        self.lastY = ev.y
+
+    @Touch.MoveIn('/hotbar')
+    def onEnterHotbar(self, ev):
+        """手指移入快捷栏"""
+        print('Entered hotbar at', ev.pos)
+
+    @Touch.MoveOut('/hotbar')
+    def onLeaveHotbar(self, ev):
+        """手指移出快捷栏"""
+        print('Left hotbar')
+
+    @Touch.Cancel('/btn_jump')
+    def onJumpCancel(self, ev):
+        """跳跃被取消（如来电）"""
+        self.cancelJumpCharge()
+```
+
+`_initGesture()` 在 `Create` 时自动扫描所有 `@Touch.*` 装饰的方法并注册。
+
+### 5.4 方式二：编程式注册
+
+```python
+from architect.ui.client import UiSubsystem
+
+class MyHUD(UiSubsystem):
+    def onCreate(self):
+        # 使用字符串类型直接注册
+        self.addEventListener('/btn_attack', 'click', self.onAttack)
+        self.addEventListener('/drag_area', 'move', self.onDrag)
+
+        # 可选的第四个参数：AddTouchEventParams 选项
+        self.addEventListener('/btn_attack', 'click', self.onAttack, {'touchArea': (0,0,100,100)})
+
+    def onAttack(self, ev):
+        print('Clicked at', ev.pos)
+
+    def onDrag(self, ev):
+        print('Dragging at', ev.x, ev.y)
+```
+
+### 5.5 内部实现
+
+`addEventListener` 对触摸事件做了特殊处理：
+
+```python
+def addEventListener(self, controlPath, type, handler, opt=None):
+    control = self.find(controlPath)
+    if type in TouchEvents:
+        control.asButton().AddTouchEventParams(opt)  # 启用触摸事件
+    GestureBinder[type](self, control)  # 绑定引擎回调
+    # 包装 handler，用 EventTarget.dispatch() 分发
+```
 
 ---
 

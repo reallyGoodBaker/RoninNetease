@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>concurrency - RoninNetease v1.1.0</title>
+<style>:root{--b:0 0% 3.9%;--f:0 0% 98%;--c:0 0% 6%;--p:267 100% 70%;--s:0 0% 14%;--m:0 0% 63.9%;--r:.5rem}*,::before,::after{box-sizing:border-box;margin:0;padding:0;border:0 solid hsl(0 0% 14%)}html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}body{font-family:"Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR",Inter,-apple-system,system-ui,sans-serif;background:hsl(var(--b));color:hsl(var(--f));line-height:1.7;font-size:15px;zoom:1.25}nav{position:fixed;top:0;left:0;bottom:0;width:17rem;background:hsl(var(--b));border-right:1px solid hsl(0 0% 14%);overflow:hidden;z-index:50;display:flex;flex-direction:column}nav .logo{padding:.9rem 1.25rem;font-size:1.05rem;font-weight:700;border-bottom:1px solid hsl(0 0% 14%);color:hsl(var(--f));display:flex;align-items:center;gap:.3rem}nav .logo span{background:linear-gradient(135deg,hsl(var(--p)),hsl(267 100% 80%));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}.sr-btn{margin-left:auto;background:0 0;border:0;cursor:pointer;color:hsl(0 0% 63.9%);padding:.2rem;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:.12s;flex-shrink:0}.sr-btn:hover{background:hsl(0 0% 14%);color:hsl(0 0% 98%)}nav .pages{flex:1;overflow-y:auto;padding:.5rem 0}.group{padding:.75rem 1.25rem .2rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:hsl(var(--m));font-weight:600;opacity:.6}nav a{display:block;padding:.35rem 1.25rem;color:hsl(var(--m));text-decoration:none;font-size:.83rem;transition:.12s;border-left:2px solid transparent}nav a:hover,nav a.active{color:hsl(var(--f));background:hsl(var(--s) / .5);border-left-color:hsl(var(--p))}nav a.active{font-weight:600}nav a.sub{padding:.22rem 1.25rem .22rem 2.2rem;font-size:.76rem;opacity:.6}nav a.sub:hover{opacity:1}nav::-webkit-scrollbar,.pages::-webkit-scrollbar{width:4px}nav::-webkit-scrollbar-track,.pages::-webkit-scrollbar-track{background:transparent}nav::-webkit-scrollbar-thumb,.pages::-webkit-scrollbar-thumb{background:hsl(0 0% 25%);border-radius:4px}nav::-webkit-scrollbar-thumb:hover,.pages::-webkit-scrollbar-thumb:hover{background:hsl(0 0% 35%)}nav,.pages{scrollbar-width:thin;scrollbar-color:hsl(0 0% 25%) transparent}main{margin-left:17rem;display:flex;justify-content:center;padding:2rem 2.5rem}article{background:hsl(var(--c));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:2.5rem 3rem;max-width:860px;width:100%}h1{font-size:2.25rem;font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid hsl(0 0% 14%)}h2{font-size:1.3rem;font-weight:600;margin-top:2.5rem;margin-bottom:.75rem;padding-bottom:.35rem;border-bottom:1px solid hsl(0 0% 14%)}h3{font-size:1.1rem;font-weight:600;margin-top:2rem;margin-bottom:.5rem}h4{font-size:1rem;font-weight:600;margin-top:1.5rem;margin-bottom:.4rem;color:hsl(var(--m))}p{margin:.8rem 0;line-height:1.75}a:not(nav a){color:hsl(var(--p));text-decoration:underline}code{background:hsl(var(--s) / .5);padding:.12em .35em;border-radius:3px;font-size:.87em;font-family:"Noto Sans Mono","JetBrains Mono","Fira Code",Consolas,monospace}pre{background:hsl(var(--b));border:1px solid hsl(0 0% 14%);border-radius:var(--r);padding:1rem 1.25rem;overflow-x:auto;margin:1.25rem 0}pre code{background:0 0;padding:0;font-size:.83rem;line-height:1.6}table{border-collapse:collapse;width:100%;margin:1.5rem 0}td,th{border:1px solid hsl(0 0% 14%);padding:.55rem .85rem;text-align:left;font-size:.9rem}th{background:hsl(var(--s) / .5);font-weight:600}tr:nth-child(even){background:hsl(0 0% 7%)}blockquote{border-left:3px solid hsl(var(--p));padding:.5rem 1.1rem;margin:1.25rem 0;background:hsl(267 100% 70% / .04);border-radius:0 var(--r) var(--r) 0;font-size:.92rem;color:hsl(var(--m))}hr{border:0;border-top:1px solid hsl(0 0% 14%);margin:2rem 0}ol,ul{padding-left:1.5rem;margin:.75rem 0}li{margin:.35rem 0;line-height:1.75}strong{color:hsl(var(--f))}.sr{display:flex;align-items:center;padding:.5rem 1rem;text-decoration:none;color:hsl(0 0% 63.9%);font-size:.87rem;transition:.08s}.sr:hover,.sr:focus{background:hsl(0 0% 12%);color:hsl(0 0% 98%);outline:0}.sr-t{flex-shrink:0;width:1.8rem;font-size:.66rem;opacity:.5;text-transform:uppercase}@media(max-width:768px){nav{width:100%;position:relative;max-height:35vh}main{margin-left:0;padding:1rem}article{padding:1.5rem;border-radius:0}}pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#0a0a0a}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}</style>
+</head>
+<body>
+<nav>
+<div class="logo">
+Ronin<span>Netease</span>
+<button title="搜索 (Ctrl+K)" onclick="document.dispatchEvent(new KeyboardEvent('keydown',{ctrlKey:!0,key:'k'}))" class="sr-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+</div>
+<div class="pages">
+<div class="group">入门</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">核心系统</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">进阶</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5" class="sub">5. 触摸手势</a><a href="ui.html#6" class="sub">6. 完整示例</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="plugins.html">Plugins — 系统插件参考</a><a href="plugins.html#1-vendor-event" class="sub">1. 事件系统插件 — $vendor.event</a><a href="plugins.html#2-vendor-animation" class="sub">2. 动画扩展插件 — $vendor.animation</a><a href="plugins.html#3-vendor-input" class="sub">3. 输入系统插件 — $vendor.input</a><a href="plugins.html#4-vendor-motion" class="sub">4. 运动系统插件 — $vendor.motion</a><a href="plugins.html#5-vendor-squad" class="sub">5. 小队系统插件 — $vendor.squad</a><a href="plugins.html#" class="sub">下一步</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><a href="concurrency.html" class="active">并发编程 — Future、异步与远程调用</a><a href="concurrency.html#1" class="sub">1. 架构概览</a><a href="concurrency.html#2-future" class="sub">2. Future — 异步原语</a><a href="concurrency.html#3-async" class="sub">3. @Async — 生成器协程</a><a href="concurrency.html#4-scheduler" class="sub">4. Scheduler 中的任务模型</a><a href="concurrency.html#5-rpc" class="sub">5. 跨端远程调用（RPC）</a><a href="concurrency.html#6-command" class="sub">6. command 模块 — 区块感知的异步操作</a><div class="group">参考</div><a href="math.html">Math — 数学库</a><a href="math.html#1" class="sub">1. 模块结构</a><a href="math.html#2-vec3-py" class="sub">2. 向量运算 — vec3.py</a><a href="math.html#3-vec4-py" class="sub">3. 四维向量 — vec4.py</a><a href="math.html#4-mat4-py" class="sub">4. 矩阵函数 — mat4.py</a><a href="math.html#5-double-py" class="sub">5. 插值与常量 — double.py</a><a href="math.html#6-unit-py" class="sub">6. 时间常量 — unit.py</a><a href="molang.html">Molang — 表达式工具</a><a href="molang.html#1" class="sub">1. 概述</a><a href="molang.html#2-types-py" class="sub">2. 抽象类型 — types.py</a><a href="molang.html#3-common-py" class="sub">3. 命名变量 — common.py</a><a href="molang.html#4-query-client-py" class="sub">4. 客户端 Query 变量 — client.py</a><a href="molang.html#5-server-py" class="sub">5. 服务端 — server.py</a><a href="molang.html#6" class="sub">6. 完整示例</a><a href="persona.html">Persona — 渲染覆盖系统</a><a href="persona.html#1" class="sub">1. 概述</a><a href="persona.html#2-personarenderercomponent" class="sub">2. PersonaRendererComponent — 客户端渲染组件</a><a href="persona.html#3-personaeventssubsystem" class="sub">3. PersonaEventsSubsystem — 客户端事件子系统</a><a href="persona.html#4-personaserver" class="sub">4. PersonaServer — 服务端中继子系统</a><a href="persona.html#5" class="sub">5. 完整示例</a><a href="persona.html#" class="sub">下一步</a><a href="fsm.html">FSM — 有限状态机</a><a href="fsm.html#1" class="sub">1. 概述</a><a href="fsm.html#2-statetree" class="sub">2. StateTree — 树形状态机（推荐）</a><a href="fsm.html#3-fsm" class="sub">3. 经典 FSM（已弃用）</a><a href="fsm.html#" class="sub">下一步</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang-md-molang-md" class="sub">3. Molang 表达式 — 见 [molang.md](molang.md)</a><a href="utils.html#4-persona-persona-md-persona-m" class="sub">4. Persona 渲染覆盖 — 见 [persona.md](persona.m</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a><a href="loader.html">Loader — 框架加载器（底层机制）</a><a href="loader.html#1" class="sub">1. 架构概览</a><a href="loader.html#2" class="sub">2. 核心类</a><a href="loader.html#3-pluginhost" class="sub">3. _PluginHost — 插件托管</a><a href="loader.html#4" class="sub">4. 启动流程全貌</a><a href="loader.html#5-loader" class="sub">5. 模块关联 — Loader 如何串联整个框架</a><a href="loader.html#6-subsystemclient-subsystemserver" class="sub">6. SubsystemClient / SubsystemServer 装饰器</a>
+</div>
+</nav>
+<main>
+<article>
+<h1>并发编程 — Future、异步与远程调用</h1>
+<p>RoninNetease 运行在网易 Minecraft 引擎的单线程环境中，<strong>不支持真正的多线程并发</strong>。但框架提供了基于 Future 模式的异步编程模型，让你以同步风格编写涉及网络 I/O、区块加载和跨端通信的代码。</p>
+<blockquote>
+<p>引擎所有的 Python 代码都在主线程中执行（<code>threading.current_thread().ident</code> 用于区分服务端/客户端上下文），不存在竞态条件问题。本章的「并发」指逻辑上的异步协作，不涉及操作系统线程。</p>
+</blockquote>
+<hr>
+<h2 id="1">1. 架构概览</h2>
+<pre><code>                    ┌─────────────────────────────┐
+                    │      Scheduler (主循环)        │
+                    │  tickSched / renderSched      │
+                    │  executeSequence()            │
+                    └──────────┬──────────────────┘
+                               │ 每帧驱动
+               ┌───────────────┼───────────────┐
+               ▼               ▼               ▼
+         Task (fn)      SuspendableTask    Generator
+         立即执行           (callOnce)      @Async 协程
+                               │               │
+                               ▼               ▼
+                          yield 控制权      yield Future
+                               │               │
+                               ▼               ▼
+                          Future 链式调用（done / expected）
+                               │
+               ┌───────────────┼───────────────┐
+               ▼               ▼               ▼
+         command.*       remote.invoke    requireChunk
+       (区块操作)       (跨端 RPC)      (区块就绪等待)
+</code></pre>
+<hr>
+<h2 id="2-future">2. Future — 异步原语</h2>
+<h3>2.1 核心概念</h3>
+<p><code>Future</code> 代表一个<strong>尚未完成的计算结果</strong>。它有三种状态：</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>常量</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>PENDING</code></td>
+<td><code>Future.PENDING</code></td>
+<td>计算进行中</td>
+</tr>
+<tr>
+<td><code>FULFILLED</code></td>
+<td><code>Future.FULFILLED</code></td>
+<td>计算成功完成</td>
+</tr>
+<tr>
+<td><code>REJECTED</code></td>
+<td><code>Future.REJECTED</code></td>
+<td>计算失败</td>
+</tr>
+</tbody></table>
+<p>与 JavaScript Promise 不同，RoninNetease 的 <code>Future</code> <strong>回调是同步执行的</strong>——当 <code>_resolve()</code> 或 <code>_reject()</code> 被调用时，注册的回调立即在当前调用栈中执行，不存在微任务队列。</p>
+<h3>2.2 创建 Future</h3>
+<p><strong>方式一：传入 executor 函数</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.scheduler <span class="hljs-keyword">import</span> Future
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">loadPlayerData</span>(<span class="hljs-params">resolve, reject</span>):
+    data = readFromStorage()
+    <span class="hljs-keyword">if</span> data:
+        resolve(data)
+    <span class="hljs-keyword">else</span>:
+        reject(ValueError(<span class="hljs-string">&#x27;Player not found&#x27;</span>))
+
+future = Future(loadPlayerData)
+</code></pre>
+<p><code>executor</code> 接收两个参数：<code>resolve</code>（成功回调）和 <code>reject</code>（失败回调）。它在 <code>Future.__init__</code> 中被立即调用。</p>
+<p><strong>方式二：使用 <code>Future.resolvers()</code> 工厂</strong></p>
+<pre><code class="hljs language-python">ftr, resolve, reject = Future.resolvers()
+
+<span class="hljs-comment"># 在某个回调中：</span>
+resolve(<span class="hljs-string">&#x27;data ready&#x27;</span>)
+
+<span class="hljs-comment"># 在另一个地方等待：</span>
+ftr.done(<span class="hljs-keyword">lambda</span> result: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Got:&#x27;</span>, result))
+</code></pre>
+<p><code>resolvers()</code> 返回 <code>(future, resolve, reject)</code> 三元组，resolve/reject 可以在外部持有的地方调用。</p>
+<h3>2.3 注册回调</h3>
+<pre><code class="hljs language-python">future = requireChunk(someLocation)
+
+<span class="hljs-comment"># 成功回调（可链式调用）</span>
+future.done(<span class="hljs-keyword">lambda</span>: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Chunk loaded&#x27;</span>))
+
+<span class="hljs-comment"># 失败回调</span>
+future.expected(<span class="hljs-keyword">lambda</span> err: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Failed:&#x27;</span>, err))
+
+<span class="hljs-comment"># 链式写法</span>
+future.done(onSuccess).expected(onError)
+</code></pre>
+<ul>
+<li><code>done(callback)</code> — 注册成功回调。如果 Future 已 FULFILLED，立即执行</li>
+<li><code>expected(callback)</code> — 注册失败回调。如果 Future 已 REJECTED，立即执行</li>
+</ul>
+<h3>2.4 Future 链（顺序依赖）</h3>
+<p><code>requireChunk</code> 返回一个 Future，然后用 <code>.done()</code> 串联后续操作：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.command.server <span class="hljs-keyword">import</span> command, requireChunk
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">spawnOnLoad</span>(<span class="hljs-params">location, entityId</span>):
+    ftr, resolve, reject = Future.resolvers()
+
+    <span class="hljs-comment"># 等区块加载 → 传送 → 生成实体</span>
+    requireChunk(location, <span class="hljs-number">16</span>)\
+        .done(<span class="hljs-keyword">lambda</span>: command.teleport(entityId, location))\
+        .done(<span class="hljs-keyword">lambda</span> pos: command.spawnEntity(<span class="hljs-string">&#x27;my_mob&#x27;</span>, location, <span class="hljs-number">0</span>))\
+        .done(<span class="hljs-keyword">lambda</span> entityId: resolve(entityId))\
+        .expected(reject)
+
+    <span class="hljs-keyword">return</span> ftr
+</code></pre>
+<hr>
+<h2 id="3-async">3. <code>@Async</code> — 生成器协程</h2>
+<h3>3.1 为什么需要 <code>@Async</code>？</h3>
+<p>RoninNetease 运行在 <strong>Python 2.7</strong> 上，不支持 <code>async/await</code> 语法。<code>@Async</code> 利用**生成器的 <code>yield</code>**来实现暂停和恢复，模拟 <code>await</code> 语义。</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.scheduler <span class="hljs-keyword">import</span> Future, Async
+
+<span class="hljs-meta">@Async</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">loadAndPlace</span>():
+    <span class="hljs-comment"># yield 一个 Future → @Async 自动等待它完成</span>
+    chunkLoaded = <span class="hljs-keyword">yield</span> requireChunk(location, <span class="hljs-number">16</span>)
+    <span class="hljs-comment"># 区块就绪后才执行到这里</span>
+    result = <span class="hljs-keyword">yield</span> command.setBlock(location, <span class="hljs-string">&#x27;minecraft:stone&#x27;</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Block placed:&#x27;</span>, result)
+
+<span class="hljs-comment"># 调用方</span>
+future = loadAndPlace()
+future.done(<span class="hljs-keyword">lambda</span>: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;All done&#x27;</span>))
+</code></pre>
+<h3>3.2 工作原理</h3>
+<pre><code>1. loadAndPlace() 被调用 → 创建生成器 → advance() 启动
+       │
+2. gen.next() → yield requireChunk(...)  ← 暂停，返回 Future
+       │
+3. @Async 在 requireChunk Future 上注册 done/expected
+       │
+4. requireChunk 完成 → advance(value) → gen.send(value)  ← 恢复
+       │
+5. yield command.setBlock(...)  ← 再次暂停
+       │
+6. setBlock 完成 → advance(value) → gen.send(value)  ← 恢复
+       │
+7. 生成器 return → StopIteration → resolve(result)
+</code></pre>
+<p>关键的 <code>advance</code> 函数源码：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">advance</span>(<span class="hljs-params">value=<span class="hljs-literal">None</span>, exc=<span class="hljs-literal">None</span></span>):
+    <span class="hljs-keyword">try</span>:
+        <span class="hljs-keyword">if</span> exc <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:
+            yielded = gen.throw(exc)
+        <span class="hljs-keyword">else</span>:
+            yielded = gen.send(value) <span class="hljs-keyword">if</span> value <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span> <span class="hljs-keyword">else</span> gen.<span class="hljs-built_in">next</span>()
+    <span class="hljs-keyword">except</span> StopIteration <span class="hljs-keyword">as</span> e:
+        resolve(e.args[<span class="hljs-number">0</span>] <span class="hljs-keyword">if</span> e.args <span class="hljs-keyword">else</span> <span class="hljs-literal">None</span>)  <span class="hljs-comment"># 协程完成</span>
+        <span class="hljs-keyword">return</span>
+    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+        reject(e)                                  <span class="hljs-comment"># 异常传播</span>
+        <span class="hljs-keyword">return</span>
+
+    <span class="hljs-comment"># 等待 yield 出来的 Future</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(yielded, Future):
+        yielded.done(<span class="hljs-keyword">lambda</span> *res: advance(res[<span class="hljs-number">0</span>] <span class="hljs-keyword">if</span> res <span class="hljs-keyword">else</span> <span class="hljs-literal">None</span>))
+        yielded.expected(<span class="hljs-keyword">lambda</span> *err: advance(<span class="hljs-literal">None</span>, err[<span class="hljs-number">0</span>] <span class="hljs-keyword">if</span> err <span class="hljs-keyword">else</span> Exception(<span class="hljs-string">&quot;Future rejected&quot;</span>)))
+</code></pre>
+<h3>3.3 多个并发 Future</h3>
+<p><code>@Async</code> 是串行模型——一次只能等待一个 Future。如果需要同时等待多个独立的 Future，需要手动跟踪：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.core.scheduler <span class="hljs-keyword">import</span> Future
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">waitAll</span>(<span class="hljs-params">*futures</span>):
+    <span class="hljs-string">&quot;&quot;&quot;等待所有 Future 完成，返回结果列表&quot;&quot;&quot;</span>
+    ftr, resolve, reject = Future.resolvers()
+    results = [<span class="hljs-literal">None</span>] * <span class="hljs-built_in">len</span>(futures)
+    completed = [<span class="hljs-number">0</span>]
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">on_done</span>(<span class="hljs-params">i, resolve, reject, results, completed</span>):
+        <span class="hljs-keyword">def</span> <span class="hljs-title function_">handler</span>(<span class="hljs-params">value</span>):
+            results[i] = value
+            completed[<span class="hljs-number">0</span>] += <span class="hljs-number">1</span>
+            <span class="hljs-keyword">if</span> completed[<span class="hljs-number">0</span>] == <span class="hljs-built_in">len</span>(futures):
+                resolve(results)
+        <span class="hljs-keyword">return</span> handler
+
+    <span class="hljs-keyword">for</span> i, f <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(futures):
+        f.done(on_done(i, resolve, reject, results, completed))\
+         .expected(<span class="hljs-keyword">lambda</span> err, reject=reject: reject(err))
+
+    <span class="hljs-keyword">return</span> ftr
+
+<span class="hljs-comment"># 使用</span>
+a = requireChunk(locA)
+b = requireChunk(locB)
+waitAll(a, b).done(<span class="hljs-keyword">lambda</span> results: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Both chunks loaded&#x27;</span>))
+</code></pre>
+<hr>
+<h2 id="4-scheduler">4. Scheduler 中的任务模型</h2>
+<h3>4.1 Task — 即时任务</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Task</span>:
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, fn</span>):
+        <span class="hljs-variable language_">self</span>.fn = fn
+        <span class="hljs-variable language_">self</span>.finished = <span class="hljs-literal">False</span>
+</code></pre>
+<p>每帧由 <code>Scheduler.execute()</code> 遍历并调用 <code>task.fn()</code>，执行完即标记为 finished。</p>
+<h3>4.2 SuspendableTask — 可暂停任务</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SuspendableTask</span>:
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, generator</span>):
+        <span class="hljs-variable language_">self</span>.gen = generator()
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">callOnce</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">try</span>:
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">next</span>(<span class="hljs-variable language_">self</span>.gen)
+        <span class="hljs-keyword">except</span> StopIteration:
+            <span class="hljs-variable language_">self</span>.finished = <span class="hljs-literal">True</span>
+</code></pre>
+<p><code>SuspendableTask</code> 包装一个生成器函数，每帧调用 <code>next()</code> 推进一次。生成器通过 <code>yield</code> 让出控制权，下一帧继续执行。适合分帧执行的耗时操作（如批量方块填充）。</p>
+<pre><code class="hljs language-python"><span class="hljs-comment"># command.fillBlocks 内部使用 serverApi.StartCoroutine 执行分帧填充</span>
+<span class="hljs-comment"># 等效于 SuspendableTask 的 callOnce 模式</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">fillBlocks</span>(<span class="hljs-params">self, pos1, pos2, blockId</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_filler</span>(<span class="hljs-params">rect</span>):
+        <span class="hljs-comment"># ... 每次 yield 暂停，下一帧继续</span>
+        <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(minX, maxX + <span class="hljs-number">1</span>):
+            <span class="hljs-keyword">for</span> y <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(minY, maxY + <span class="hljs-number">1</span>):
+                <span class="hljs-keyword">for</span> z <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(minZ, maxZ + <span class="hljs-number">1</span>):
+                    setBlock((x, y, z), blockId)
+                    i += <span class="hljs-number">1</span>
+                    <span class="hljs-keyword">if</span> i &gt;= chunkSize:
+                        i = <span class="hljs-number">0</span>
+                        <span class="hljs-keyword">yield</span>  <span class="hljs-comment"># ← 让出控制权</span>
+    serverApi.StartCoroutine(_filler(rect), resolve)
+</code></pre>
+<h3>4.3 重入保护</h3>
+<p>Scheduler 的 <code>executeSequence</code> 通过 <code>_sequenceExecuting</code> 标志防止同一帧内重复进入：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">executeSequence</span>(<span class="hljs-params">self, *args</span>):
+    <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>._sequenceExecuting:
+        <span class="hljs-variable language_">self</span>._skippedUpdates += <span class="hljs-number">1</span>          <span class="hljs-comment"># ← 记录跳帧</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0.0</span>, <span class="hljs-variable language_">self</span>._skippedUpdates
+
+    <span class="hljs-variable language_">self</span>._sequenceExecuting = <span class="hljs-literal">True</span>
+    <span class="hljs-variable language_">self</span>.execute(TIMER_TASK, args)
+    <span class="hljs-keyword">for</span> scheduleFlag <span class="hljs-keyword">in</span> <span class="hljs-variable language_">self</span>.scheduleSequence:
+        <span class="hljs-variable language_">self</span>.execute(scheduleFlag, args)
+    <span class="hljs-comment"># ...</span>
+    <span class="hljs-variable language_">self</span>._sequenceExecuting = <span class="hljs-literal">False</span>
+</code></pre>
+<p>如果上一帧的任务耗时超过帧间隔，下一帧的 <code>executeSequence</code> 会检测到 <code>_sequenceExecuting=True</code> 并跳过本次执行，<code>_skippedUpdates</code> 计数器递增。<code>getSkippedUpdates()</code> 可获取跳帧次数以进行性能诊断。</p>
+<hr>
+<h2 id="5-rpc">5. 跨端远程调用（RPC）</h2>
+<h3>5.1 架构</h3>
+<p>RoninNetease 的远程调用基于网易引擎的 <code>sendServer</code> / <code>sendClient</code> 事件通道，框架在此之上封装了 Future 风格的异步 RPC：</p>
+<pre><code>Client                                 Server
+  │                                      │
+  │  remote.client.invoke(&#39;uri&#39;, args)   │
+  │  ─────────────────────────────────→  │
+  │       sendServer(REMOTE_CALL_KEY)     │  _callRemoteMethod()
+  │                                      │  → _serverRemoteMethods[uri](playerId, *args)
+  │                                      │
+  │  remote.client.call(&#39;uri&#39;, args)     │
+  │  ─────────────────────────────────→  │  _callRemoteMethod()
+  │       sendServer(REMOTE_CALL_KEY)     │  (fire-and-forget, 无返回值)
+</code></pre>
+<h3>5.2 <code>remote.client.call()</code> — 单向调用（不等待返回）</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.remote.common <span class="hljs-keyword">import</span> remote
+
+<span class="hljs-comment"># 客户端 → 服务端，不关心返回值</span>
+remote.client.call(<span class="hljs-string">&#x27;PlayerMotionSyncServer.syncMotion&#x27;</span>, playerId, motion)
+</code></pre>
+<h3>5.3 <code>remote.client.invoke()</code> — 双向调用（返回 Future）</h3>
+<pre><code class="hljs language-python"><span class="hljs-comment"># 客户端 → 服务端，等待返回值</span>
+future = remote.client.invoke(<span class="hljs-string">&#x27;MyServerSystem.getPlayerStats&#x27;</span>, playerId)
+
+future.done(<span class="hljs-keyword">lambda</span> stats: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Stats:&#x27;</span>, stats))\
+     .expected(<span class="hljs-keyword">lambda</span> err: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;RPC failed:&#x27;</span>, err))
+</code></pre>
+<p><code>invoke()</code> 内部：</p>
+<ol>
+<li>发送调用数据到对端</li>
+<li>创建一个 3 秒超时定时器</li>
+<li>返回一个 Future</li>
+</ol>
+<pre><code class="hljs language-python"><span class="hljs-comment"># remote/common.py — invoke 内部实现</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">invoke</span>(<span class="hljs-params">self, uri, *args, **kwargs</span>):
+    ftr, resolve, reject = Future.resolvers()
+    retId = <span class="hljs-variable language_">self</span>.accId()
+    <span class="hljs-variable language_">self</span>.subsys.sendServer(REMOTE_CALL_KEY, _createInvokeData(retId, uri, *args, **kwargs))
+
+    <span class="hljs-comment"># 3 秒超时</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_timeout</span>():
+        <span class="hljs-keyword">del</span> _clientRets[retId]
+        reject(<span class="hljs-string">&#x27;timeout&#x27;</span>)
+    timer = LevelClient.getInstance().game.AddTimer(<span class="hljs-number">3</span>, _timeout)
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_recieveReturn</span>(<span class="hljs-params">result, err</span>):
+        LevelClient.getInstance().game.CancelTimer(timer)
+        <span class="hljs-keyword">if</span> err:
+            <span class="hljs-keyword">return</span> reject(err)
+        <span class="hljs-keyword">return</span> resolve(result)
+    _clientRets[retId] = _recieveReturn
+
+    <span class="hljs-keyword">return</span> ftr
+</code></pre>
+<h3>5.4 服务端 RPC</h3>
+<pre><code class="hljs language-python"><span class="hljs-comment"># 服务端向单个客户端发送</span>
+remote.server.call(playerId, <span class="hljs-string">&#x27;ClientSystem.showDialog&#x27;</span>, <span class="hljs-string">&#x27;Hello!&#x27;</span>)
+future = remote.server.invoke(playerId, <span class="hljs-string">&#x27;ClientSystem.getConfirmation&#x27;</span>)
+
+<span class="hljs-comment"># 广播所有客户端</span>
+remote.server.callEvery(<span class="hljs-string">&#x27;ClientSystem.onGlobalEvent&#x27;</span>, eventData)
+</code></pre>
+<h3>5.5 服务端 @Remote 方法声明</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.remote.common <span class="hljs-keyword">import</span> Remote
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyServerSystem</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+<span class="hljs-meta">    @Remote</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">getPlayerStats</span>(<span class="hljs-params">self, playerId, statKey</span>):
+        <span class="hljs-string">&quot;&quot;&quot;playerId 由框架自动注入（第一个参数）&quot;&quot;&quot;</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>.stats[playerId].get(statKey)
+
+<span class="hljs-meta">    @Remote(<span class="hljs-params">key=<span class="hljs-built_in">str</span>, value=<span class="hljs-built_in">int</span></span>)  </span><span class="hljs-comment"># 可选参数验证</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">setPlayerStat</span>(<span class="hljs-params">self, playerId, key, value</span>):
+        <span class="hljs-variable language_">self</span>.stats[playerId][key] = value
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong> 服务端的 <code>@Remote</code> 方法第一个参数会被框架自动注入为发起调用的玩家 ID。客户端不需要这个参数，因此参数列表略有不同。</p>
+</blockquote>
+<h3>5.6 RPC 中的 Future</h3>
+<p>服务端 <code>@Remote</code> 方法可以直接返回一个 <code>Future</code>，框架会自动等待：</p>
+<pre><code class="hljs language-python"><span class="hljs-meta">@Remote</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">teleportPlayer</span>(<span class="hljs-params">self, playerId, targetLocation</span>):
+    <span class="hljs-comment"># command.teleport 返回 Future</span>
+    <span class="hljs-comment"># 框架检测到返回值是 Future 后，自动注册 done/expected</span>
+    <span class="hljs-keyword">return</span> command.teleport(playerId, targetLocation)
+</code></pre>
+<pre><code class="hljs language-python"><span class="hljs-comment"># remote/common.py — _callRemoteMethod 中的处理</span>
+<span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(result, Future):
+    result.done(<span class="hljs-keyword">lambda</span> v: _sendReturn(v, <span class="hljs-literal">None</span>))
+    result.expected(<span class="hljs-keyword">lambda</span> e: _sendReturn(<span class="hljs-literal">None</span>, e))
+</code></pre>
+<hr>
+<h2 id="6-command">6. command 模块 — 区块感知的异步操作</h2>
+<p><code>architect.command.server</code> 模块封装了需要等待区块加载的服务器操作，所有方法都返回 <code>Future</code>：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.command.server <span class="hljs-keyword">import</span> command, requireChunk
+
+<span class="hljs-comment"># 确保区块加载完成</span>
+requireChunk(location, radius=<span class="hljs-number">16</span>)\
+    .done(<span class="hljs-keyword">lambda</span>: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Chunk ready&#x27;</span>))
+
+<span class="hljs-comment"># 传送实体（自动等待区块）</span>
+command.teleport(entityId, location)\
+    .done(<span class="hljs-keyword">lambda</span> pos: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Teleported to&#x27;</span>, pos))\
+    .expected(<span class="hljs-keyword">lambda</span> err: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Teleport failed:&#x27;</span>, err))
+
+<span class="hljs-comment"># 放置方块</span>
+command.setBlock(location, <span class="hljs-string">&#x27;minecraft:stone&#x27;</span>)\
+    .done(<span class="hljs-keyword">lambda</span>: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Block placed&#x27;</span>))
+
+<span class="hljs-comment"># 批量填充</span>
+command.fillBlocks(minPos, maxPos, <span class="hljs-string">&#x27;minecraft:dirt&#x27;</span>, chunkSize=<span class="hljs-number">256</span>)\
+    .done(<span class="hljs-keyword">lambda</span>: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Fill complete&#x27;</span>))
+
+<span class="hljs-comment"># 放置结构</span>
+command.placeStructure(location, <span class="hljs-string">&#x27;my:house&#x27;</span>, loadingRadius=<span class="hljs-number">32</span>)\
+    .done(<span class="hljs-keyword">lambda</span>: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Structure placed&#x27;</span>))
+
+<span class="hljs-comment"># 查询顶层空位</span>
+command.queryTopEmptySpace(location)\
+    .done(<span class="hljs-keyword">lambda</span> y: <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Top Y:&#x27;</span>, y))
+</code></pre>
+<p><strong><code>requireChunk</code> 的核心原理：</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">requireChunk</span>(<span class="hljs-params">location, radius=<span class="hljs-number">16</span></span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_executor</span>(<span class="hljs-params">res, rej</span>):
+        pos = vec(location.pos)
+        r = vec((radius, radius, radius))
+
+        <span class="hljs-keyword">def</span> <span class="hljs-title function_">_detector</span>(<span class="hljs-params">result</span>):
+            res() <span class="hljs-keyword">if</span> result[<span class="hljs-string">&#x27;code&#x27;</span>] <span class="hljs-keyword">else</span> rej()
+
+        result = LevelServer.chunkSource.DoTaskOnChunkAsync(
+            location.dim, tup(pos - r), tup(pos + r), _detector
+        )
+
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> result:
+            <span class="hljs-keyword">return</span> rej(ValueError(<span class="hljs-string">&quot;invalid location&quot;</span>))
+    <span class="hljs-keyword">return</span> Future(_executor)
+</code></pre>
+<p>引擎的 <code>DoTaskOnChunkAsync</code> 是异步的——它会在区块加载完成后调用 <code>_detector</code> 回调。<code>requireChunk</code> 将其包装成 <code>Future</code>，使上层代码可以统一用 <code>.done()</code> 链式调用。</p>
+<hr>
+<h2 id="7">7. 最佳实践</h2>
+<h3>7.1 选择正确的异步模式</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐模式</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>单一异步操作</td>
+<td><code>Future</code> + <code>.done()</code></td>
+<td><code>requireChunk(loc).done(action)</code></td>
+</tr>
+<tr>
+<td>多个顺序异步操作</td>
+<td><code>@Async</code> + <code>yield</code></td>
+<td>加载区块 → 传送 → 放置方块</td>
+</tr>
+<tr>
+<td>多个并行异步操作</td>
+<td><code>waitAll()</code> 手动收集</td>
+<td>同时加载多个区块</td>
+</tr>
+<tr>
+<td>分帧循环（每帧一步）</td>
+<td><code>SuspendableTask</code> / <code>StartCoroutine</code></td>
+<td>批量填充 10000 个方块</td>
+</tr>
+<tr>
+<td>跨端调用（不关心返回）</td>
+<td><code>remote.*.call()</code></td>
+<td>同步运动状态</td>
+</tr>
+<tr>
+<td>跨端调用（需要返回）</td>
+<td><code>remote.*.invoke()</code></td>
+<td>查询玩家数据</td>
+</tr>
+</tbody></table>
+<h3>7.2 避免阻塞主线程</h3>
+<p><strong>错误做法：</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-comment"># ❌ 不要用循环轮询等待</span>
+<span class="hljs-keyword">while</span> <span class="hljs-keyword">not</span> dataReady:
+    <span class="hljs-keyword">pass</span>
+</code></pre>
+<p><strong>正确做法：</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-comment"># ✅ 用 Future 回调</span>
+loadData().done(<span class="hljs-keyword">lambda</span> data: process(data))
+</code></pre>
+<h3>7.3 处理 Future 错误</h3>
+<pre><code class="hljs language-python">requireChunk(location)\
+    .done(<span class="hljs-keyword">lambda</span>: command.setBlock(location, block))\
+    .expected(<span class="hljs-keyword">lambda</span> err: log(<span class="hljs-string">&#x27;Failed to load chunk: %s&#x27;</span> % err))
+
+<span class="hljs-comment"># @Async 中自动传播异常到 reject</span>
+<span class="hljs-meta">@Async</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">safePlace</span>():
+    <span class="hljs-keyword">try</span>:
+        <span class="hljs-keyword">yield</span> command.setBlock(location, block)
+    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Placement failed:&#x27;</span>, e)
+</code></pre>
+<h3>7.4 跳帧监控</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MySystem</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+<span class="hljs-meta">    @Sched.Tick</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">checkPerformance</span>(<span class="hljs-params">self</span>):
+        skipped = <span class="hljs-variable language_">self</span>.manager.tickSched.getSkippedUpdates()
+        <span class="hljs-keyword">if</span> skipped &gt; <span class="hljs-number">10</span>:
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Warning: %d frames skipped&#x27;</span> % skipped)
+</code></pre>
+<h3>7.5 RPC 超时处理</h3>
+<p><code>remote.*.invoke()</code> 有内置的 3 秒超时。如果调用链更长，需要在业务层自行处理：</p>
+<pre><code class="hljs language-python">future = remote.client.invoke(<span class="hljs-string">&#x27;Server.doComplexTask&#x27;</span>)
+future.done(onSuccess)\
+     .expected(<span class="hljs-keyword">lambda</span> err: retryOrFallback() <span class="hljs-keyword">if</span> err == <span class="hljs-string">&#x27;timeout&#x27;</span> <span class="hljs-keyword">else</span> propagate(err))
+</code></pre>
+<hr>
+<h2 id="">下一步</h2>
+<ul>
+<li><a href="scheduler.html">调度系统 (scheduler.md)</a> — Scheduler 的完整 API</li>
+<li><a href="event.html">事件系统 (event.md)</a> — 事件流与责任链</li>
+<li><a href="subsystem.html">子系统 (subsystem.md)</a> — 跨端通信的完整示例</li>
+</ul>
+
+</article>
+</main>
+<div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.6);align-items:flex-start;justify-content:center;padding-top:12vh"><div style="background:hsl(0 0% 6%);border:1px solid hsl(0 0% 14%);border-radius:.5rem;width:580px;max-width:90vw;max-height:70vh;display:flex;flex-direction:column;overflow:hidden"><div style="display:flex;align-items:center;padding:.75rem 1rem;border-bottom:1px solid hsl(0 0% 14%)"><svg style="width:1.2rem;height:1.2rem;margin-right:.6rem;opacity:.4;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="hsl(0 0% 63.9%)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input id="search-input" type="text" placeholder="搜索文档..." autofocus style="flex:1;background:0 0;border:0;outline:0;color:hsl(0 0% 98%);font-size:.95rem;font-family:inherit"><kbd style="font-size:.72rem;padding:.15em .5em;border-radius:3px;background:hsl(0 0% 12%);color:hsl(0 0% 63.9%);border:1px solid hsl(0 0% 20%);margin-left:.5rem;flex-shrink:0">Esc</kbd></div><div id="search-results" style="flex:1;overflow-y:auto;padding:.4rem 0"></div><div id="search-empty" style="padding:1.5rem;text-align:center;color:hsl(0 0% 40%);font-size:.85rem;display:none">没有找到结果</div></div></div>
+<script>(function(){var p=document.querySelector(".pages");var k="rns";var y=sessionStorage.getItem(k);if(y){p.scrollTop=parseInt(y,10)||0};p.addEventListener("scroll",function(){sessionStorage.setItem(k,p.scrollTop)});var as=document.querySelectorAll("nav a");for(var i=0;i<as.length;i++){as[i].addEventListener("click",function(){sessionStorage.setItem(k,p.scrollTop)})}})()</script>
+<script>(function(){var idx=[];var r=document.getElementById("search-results");var e=document.getElementById("search-empty");var o=document.getElementById("search-overlay");var inp=document.getElementById("search-input");function openSearch(){o.style.display="flex";inp.value="";inp.focus();render([])}function closeSearch(){o.style.display="none"}function render(list){  e.style.display=list.length?"none":"block";  r.innerHTML=list.slice(0,20).map(function(x){    var t=x.type==="page"?"页面":"章节";    return '<a href="'+x.id+'" class="sr">'+      '<span class="sr-t">'+t+'</span>'+'<span>'+x.title+'</span>'+'</a>'  }).join("")}o.addEventListener("click",function(ev){if(ev.target===o)closeSearch()});function doSearch(q){  var t=q.toLowerCase();  if(!t)return render([]);  var f=idx.filter(function(x){    return x.title.toLowerCase().indexOf(t)>-1||(x.parent||"").toLowerCase().indexOf(t)>-1  });render(f)}inp.addEventListener("input",function(){doSearch(inp.value)});document.addEventListener("keydown",function(ev){  if((ev.ctrlKey||ev.metaKey)&&ev.key==="k"){ev.preventDefault();openSearch()}  if(ev.key==="Escape"&&o.style.display==="flex"){closeSearch();ev.stopPropagation()}});o.addEventListener("keydown",function(ev){  if(ev.key==="ArrowDown"){var a=r.querySelector("a");if(a){a.focus();ev.preventDefault()}}});fetch("search-index.json").then(function(rr){return rr.json()}).then(function(d){idx=d});})()</script>
+</body>
+</html>

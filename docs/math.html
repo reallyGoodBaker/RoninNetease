@@ -13,136 +13,251 @@ Ronin<span>Netease</span>
 <button title="搜索 (Ctrl+K)" onclick="document.dispatchEvent(new KeyboardEvent('keydown',{ctrlKey:!0,key:'k'}))" class="sr-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
 </div>
 <div class="pages">
-<div class="group">入门</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">核心系统</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">进阶</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5" class="sub">5. 触摸手势</a><a href="ui.html#6" class="sub">6. 完整示例</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="plugins.html">Plugins — 系统插件参考</a><a href="plugins.html#1-vendor-event" class="sub">1. 事件系统插件 — $vendor.event</a><a href="plugins.html#2-vendor-animation" class="sub">2. 动画扩展插件 — $vendor.animation</a><a href="plugins.html#3-vendor-input" class="sub">3. 输入系统插件 — $vendor.input</a><a href="plugins.html#4-vendor-motion" class="sub">4. 运动系统插件 — $vendor.motion</a><a href="plugins.html#5-vendor-squad" class="sub">5. 小队系统插件 — $vendor.squad</a><a href="plugins.html#" class="sub">下一步</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><div class="group">参考</div><a href="math.html" class="active">Math — 数学库</a><a href="math.html#1" class="sub">1. 概述</a><a href="math.html#2-vec3-py" class="sub">2. 向量运算函数 — vec3.py</a><a href="math.html#3-mat4-py" class="sub">3. 矩阵函数 — mat4.py</a><a href="math.html#4-double-py" class="sub">4. 插值与常量 — double.py</a><a href="math.html#5-unit-py" class="sub">5. 时间常量 — unit.py</a><a href="math.html#6-math-utils-py" class="sub">6. 客户端工具 — math/utils.py</a><a href="molang.html">Molang — 表达式工具</a><a href="molang.html#1" class="sub">1. 概述</a><a href="molang.html#2-types-py" class="sub">2. 抽象类型 — types.py</a><a href="molang.html#3-common-py" class="sub">3. 命名变量 — common.py</a><a href="molang.html#4-query-client-py" class="sub">4. 客户端 Query 变量 — client.py</a><a href="molang.html#5-server-py" class="sub">5. 服务端 — server.py</a><a href="molang.html#6" class="sub">6. 完整示例</a><a href="persona.html">Persona — 渲染覆盖系统</a><a href="persona.html#1" class="sub">1. 概述</a><a href="persona.html#2-personarenderercomponent" class="sub">2. PersonaRendererComponent — 客户端渲染组件</a><a href="persona.html#3-personaeventssubsystem" class="sub">3. PersonaEventsSubsystem — 客户端事件子系统</a><a href="persona.html#4-personaserver" class="sub">4. PersonaServer — 服务端中继子系统</a><a href="persona.html#5" class="sub">5. 完整示例</a><a href="persona.html#" class="sub">下一步</a><a href="fsm.html">FSM — 有限状态机</a><a href="fsm.html#1" class="sub">1. 概述</a><a href="fsm.html#2-statetree" class="sub">2. StateTree — 树形状态机（推荐）</a><a href="fsm.html#3-fsm" class="sub">3. 经典 FSM（已弃用）</a><a href="fsm.html#" class="sub">下一步</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang-md-molang-md" class="sub">3. Molang 表达式 — 见 [molang.md](molang.md)</a><a href="utils.html#4-persona-persona-md-persona-m" class="sub">4. Persona 渲染覆盖 — 见 [persona.md](persona.m</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a>
+<div class="group">入门</div><a href="quickstart.html">Quickstart — 快速开始</a><a href="quickstart.html#1" class="sub">1. 环境要求</a><a href="quickstart.html#2" class="sub">2. 项目结构</a><a href="quickstart.html#3-modmain-py" class="sub">3. 入口文件 — modMain.py</a><a href="quickstart.html#4-conf-py" class="sub">4. 配置文件 — conf.py</a><a href="quickstart.html#5" class="sub">5. 创建第一个子系统</a><a href="quickstart.html#6" class="sub">6. 使用装饰器注册子系统</a><a href="architecture.html">Architecture — 架构设计</a><a href="architecture.html#1" class="sub">1. 整体分层</a><a href="architecture.html#2" class="sub">2. 模块职责矩阵</a><a href="architecture.html#3" class="sub">3. 核心设计决策</a><a href="architecture.html#4" class="sub">4. 启动流程</a><a href="architecture.html#5-tick" class="sub">5. Tick 循环</a><a href="architecture.html#6" class="sub">6. 数据流</a><a href="best-practices.html">Best Practices — 最佳实践</a><a href="best-practices.html#1" class="sub">1. 子系统设计</a><a href="best-practices.html#2" class="sub">2. 组件设计</a><a href="best-practices.html#3" class="sub">3. 查询模式</a><a href="best-practices.html#4" class="sub">4. 事件系统</a><a href="best-practices.html#5" class="sub">5. 调度系统</a><a href="best-practices.html#6" class="sub">6. 性能诊断</a><div class="group">核心系统</div><a href="subsystem.html">Subsystem — 子系统</a><a href="subsystem.html#1" class="sub">1. 类层次结构</a><a href="subsystem.html#2" class="sub">2. 创建子系统</a><a href="subsystem.html#3" class="sub">3. 生命周期</a><a href="subsystem.html#4" class="sub">4. 核心属性</a><a href="subsystem.html#5" class="sub">5. 事件通信</a><a href="subsystem.html#6" class="sub">6. 跨端通信</a><a href="ecs.html">ECS — 实体组件系统</a><a href="ecs.html#1" class="sub">1. 核心概念</a><a href="ecs.html#2" class="sub">2. 定义组件</a><a href="ecs.html#3" class="sub">3. 创建、获取与销毁组件</a><a href="ecs.html#4-query" class="sub">4. 查询实体 — @Query</a><a href="ecs.html#5-compindex" class="sub">5. CompIndex 缓存</a><a href="ecs.html#6-marker" class="sub">6. Marker — 实体标记组件</a><a href="event.html">Event — 事件系统</a><a href="event.html#1" class="sub">1. 架构概览</a><a href="event.html#2" class="sub">2. 核心类</a><a href="event.html#3" class="sub">3. 事件注册方式</a><a href="event.html#4-architect-event-client-archit" class="sub">4. 事件注册表 — architect.event.client / archit</a><a href="event.html#5" class="sub">5. 事件分发流程</a><a href="event.html#6-eventsignal" class="sub">6. EventSignal 使用（生命周期信号）</a><a href="scheduler.html">Scheduler — 调度系统</a><a href="scheduler.html#1" class="sub">1. 架构</a><a href="scheduler.html#2-scheduler" class="sub">2. Scheduler — 核心调度器</a><a href="scheduler.html#3-sched" class="sub">3. @Sched 装饰器</a><a href="scheduler.html#4-suspendabletask" class="sub">4. 可暂停任务 — SuspendableTask</a><a href="scheduler.html#5" class="sub">5. 定时任务</a><a href="scheduler.html#6-simplefixedscheduler" class="sub">6. SimpleFixedScheduler — 简易固定调度器</a><div class="group">进阶</div><a href="ui.html">UI — 用户界面系统</a><a href="ui.html#1" class="sub">1. 架构</a><a href="ui.html#2" class="sub">2. 核心概念</a><a href="ui.html#3-uisubsystem-ui" class="sub">3. UiSubsystem — UI 子系统基类</a><a href="ui.html#4" class="sub">4. 响应式数据绑定</a><a href="ui.html#5" class="sub">5. 触摸手势</a><a href="ui.html#6" class="sub">6. 完整示例</a><a href="plugin.html">Plugin — 插件系统</a><a href="plugin.html#1" class="sub">1. 架构</a><a href="plugin.html#2" class="sub">2. 创建插件</a><a href="plugin.html#3" class="sub">3. 插件依赖</a><a href="plugin.html#4" class="sub">4. 热升级</a><a href="plugin.html#5" class="sub">5. 系统插件</a><a href="plugin.html#6" class="sub">6. 用户插件</a><a href="plugins.html">Plugins — 系统插件参考</a><a href="plugins.html#1-vendor-event" class="sub">1. 事件系统插件 — $vendor.event</a><a href="plugins.html#2-vendor-animation" class="sub">2. 动画扩展插件 — $vendor.animation</a><a href="plugins.html#3-vendor-input" class="sub">3. 输入系统插件 — $vendor.input</a><a href="plugins.html#4-vendor-motion" class="sub">4. 运动系统插件 — $vendor.motion</a><a href="plugins.html#5-vendor-squad" class="sub">5. 小队系统插件 — $vendor.squad</a><a href="plugins.html#" class="sub">下一步</a><a href="bus.html">CommandBus — 命令总线</a><a href="bus.html#1" class="sub">1. 概述</a><a href="bus.html#2-api" class="sub">2. API</a><a href="bus.html#3" class="sub">3. 使用示例</a><a href="bus.html#4" class="sub">4. 典型模式</a><a href="bus.html#5" class="sub">5. 与事件系统的对比</a><a href="bus.html#" class="sub">下一步</a><a href="profiler.html">Profiler — 性能诊断器</a><a href="profiler.html#1" class="sub">1. 概述</a><a href="profiler.html#2-api" class="sub">2. API</a><a href="profiler.html#3" class="sub">3. 使用示例</a><a href="profiler.html#4" class="sub">4. 框架自动记录</a><a href="profiler.html#5-timecost" class="sub">5. @TimeCost 装饰器（遗留）</a><a href="profiler.html#6" class="sub">6. 最佳实践</a><a href="concurrency.html">并发编程 — Future、异步与远程调用</a><a href="concurrency.html#1" class="sub">1. 架构概览</a><a href="concurrency.html#2-future" class="sub">2. Future — 异步原语</a><a href="concurrency.html#3-async" class="sub">3. @Async — 生成器协程</a><a href="concurrency.html#4-scheduler" class="sub">4. Scheduler 中的任务模型</a><a href="concurrency.html#5-rpc" class="sub">5. 跨端远程调用（RPC）</a><a href="concurrency.html#6-command" class="sub">6. command 模块 — 区块感知的异步操作</a><div class="group">参考</div><a href="math.html" class="active">Math — 数学库</a><a href="math.html#1" class="sub">1. 模块结构</a><a href="math.html#2-vec3-py" class="sub">2. 向量运算 — vec3.py</a><a href="math.html#3-vec4-py" class="sub">3. 四维向量 — vec4.py</a><a href="math.html#4-mat4-py" class="sub">4. 矩阵函数 — mat4.py</a><a href="math.html#5-double-py" class="sub">5. 插值与常量 — double.py</a><a href="math.html#6-unit-py" class="sub">6. 时间常量 — unit.py</a><a href="molang.html">Molang — 表达式工具</a><a href="molang.html#1" class="sub">1. 概述</a><a href="molang.html#2-types-py" class="sub">2. 抽象类型 — types.py</a><a href="molang.html#3-common-py" class="sub">3. 命名变量 — common.py</a><a href="molang.html#4-query-client-py" class="sub">4. 客户端 Query 变量 — client.py</a><a href="molang.html#5-server-py" class="sub">5. 服务端 — server.py</a><a href="molang.html#6" class="sub">6. 完整示例</a><a href="persona.html">Persona — 渲染覆盖系统</a><a href="persona.html#1" class="sub">1. 概述</a><a href="persona.html#2-personarenderercomponent" class="sub">2. PersonaRendererComponent — 客户端渲染组件</a><a href="persona.html#3-personaeventssubsystem" class="sub">3. PersonaEventsSubsystem — 客户端事件子系统</a><a href="persona.html#4-personaserver" class="sub">4. PersonaServer — 服务端中继子系统</a><a href="persona.html#5" class="sub">5. 完整示例</a><a href="persona.html#" class="sub">下一步</a><a href="fsm.html">FSM — 有限状态机</a><a href="fsm.html#1" class="sub">1. 概述</a><a href="fsm.html#2-statetree" class="sub">2. StateTree — 树形状态机（推荐）</a><a href="fsm.html#3-fsm" class="sub">3. 经典 FSM（已弃用）</a><a href="fsm.html#" class="sub">下一步</a><a href="utils.html">Utils — 工具集</a><a href="utils.html#1" class="sub">1. 概述</a><a href="utils.html#2-device" class="sub">2. 设备信息 — device/</a><a href="utils.html#3-molang-molang-md-molang-md" class="sub">3. Molang 表达式 — 见 [molang.md](molang.md)</a><a href="utils.html#4-persona-persona-md-persona-m" class="sub">4. Persona 渲染覆盖 — 见 [persona.md](persona.m</a><a href="utils.html#5-enhance" class="sub">5. 增强函数 — enhance/</a><a href="utils.html#6-drawing-py" class="sub">6. 绘图 — drawing.py</a><a href="loader.html">Loader — 框架加载器（底层机制）</a><a href="loader.html#1" class="sub">1. 架构概览</a><a href="loader.html#2" class="sub">2. 核心类</a><a href="loader.html#3-pluginhost" class="sub">3. _PluginHost — 插件托管</a><a href="loader.html#4" class="sub">4. 启动流程全貌</a><a href="loader.html#5-loader" class="sub">5. 模块关联 — Loader 如何串联整个框架</a><a href="loader.html#6-subsystemclient-subsystemserver" class="sub">6. SubsystemClient / SubsystemServer 装饰器</a>
 </div>
 </nav>
 <main>
 <article>
 <h1>Math — 数学库</h1>
-<p>RoninNetease 数学库提供了三维向量、4×4 矩阵、几何工具和物理时间常量。所有 API 以<strong>模块级函数</strong>形式导出。</p>
+<p>RoninNetease 数学库提供了三维向量、四维向量、4×4 矩阵、插值工具、时间常量以及客户端/服务端的碰撞检测工具。所有 API 以<strong>模块级函数</strong>形式导出，底层使用网易引擎 SDK 的 <code>Vector3</code> 和 <code>Matrix</code> 类型。</p>
 <hr>
-<h2 id="1">1. 概述</h2>
+<h2 id="1">1. 模块结构</h2>
 <pre><code>architect.math
-├── vec3.py      ← 三维向量运算函数
-├── vec4.py      ← Vec4 四维向量
-├── mat4.py      ← 4×4 变换矩阵函数
-├── double.py    ← 插值与截断函数、常量（inf, epsilon）
-├── common.py    ← 汇总导出（vec3 + mat4 + double + unit）
+├── vec3.py      ← Vector3 三维向量运算（30+ 函数）
+├── vec4.py      ← Vector4 四维齐次坐标
+├── mat4.py      ← 4×4 变换矩阵（右手系，行向量左乘）
+├── double.py    ← 标量插值与截断、常量（inf, epsilon）
 ├── unit.py      ← time 时间常量类
-├── utils.py     ← 客户端工具（屏幕转换、碰撞检测、射线等）
-└── utilsServer.py ← 服务端工具（碰撞检测、实体查询等）
+├── common.py    ← 汇总导出（vec3 + mat4 + double + unit）
+├── utils.py     ← 客户端工具（屏幕转换、射线、碰撞检测）
+└── utilsServer.py ← 服务端工具（碰撞检测、实体查询）
+</code></pre>
+<p><code>common.py</code> 聚合导出了 <code>vec3.*</code>、<code>mat4</code>、<code>double.*</code> 和 <code>unit.*</code>，一行导入即可使用所有基础数学函数：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.common <span class="hljs-keyword">import</span> *
 </code></pre>
 <hr>
-<h2 id="2-vec3-py">2. 向量运算函数 — <code>vec3.py</code></h2>
-<p>所有函数操作 <code>Vector3</code> 对象（引擎 SDK 提供），框架只导出包装函数：</p>
+<h2 id="2-vec3-py">2. 向量运算 — <code>vec3.py</code></h2>
+<p>底层使用引擎 SDK 的 <code>Vector3</code> 类型。所有函数操作 <code>Vector3</code> 对象。</p>
 <h3>2.1 构造与转换</h3>
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> vec, tup
 
-v = vec((<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span>))  <span class="hljs-comment"># 从元组创建 Vector3</span>
-v = vec(<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span>)    <span class="hljs-comment"># 从三个浮点数创建</span>
-t = tup(v)                  <span class="hljs-comment"># Vector3 → tuple</span>
+v = vec()                    <span class="hljs-comment"># Vector3(0, 0, 0)</span>
+v = vec((<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span>))    <span class="hljs-comment"># 从 tuple 创建</span>
+v = vec(<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span>)      <span class="hljs-comment"># 从三个 float 创建</span>
+v = vec(someObject)          <span class="hljs-comment"># 从有 .x/.y/.z 属性的对象创建（如 Vector4）</span>
+t = tup(v)                   <span class="hljs-comment"># Vector3 → (x, y, z) tuple</span>
 </code></pre>
-<h3>2.2 运算</h3>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> add, sub, mul, div, dot, cross, modulo, moduloSqrt, normalize, lerp, nlerp
+<p><code>vec()</code> 支持 4 种输入类型：无参（零向量）、<code>float, float, float</code>、<code>tuple</code>、以及任何有 <code>x/y/z</code> 属性的对象。</p>
+<h3>2.2 四则运算</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> add, sub, mul, div
 
-add(v1, v2)        <span class="hljs-comment"># 加法</span>
-sub(v1, v2)        <span class="hljs-comment"># 减法</span>
-mul(v, <span class="hljs-number">2.0</span>)        <span class="hljs-comment"># 标量乘</span>
-div(v, <span class="hljs-number">2.0</span>)        <span class="hljs-comment"># 标量除</span>
-dot(v1, v2)        <span class="hljs-comment"># 点积（返回 float）</span>
-cross(v1, v2)      <span class="hljs-comment"># 叉积（返回 Vector3）</span>
-modulo(v)          <span class="hljs-comment"># 向量长度</span>
-moduloSqrt(v)      <span class="hljs-comment"># 向量长度平方</span>
-normalize(v)       <span class="hljs-comment"># 单位化</span>
-lerp(a, b, t)      <span class="hljs-comment"># 线性插值 (t ∈ [0, 1])</span>
-nlerp(a, b, t)     <span class="hljs-comment"># 归一化线性插值（两向量需为单位向量）</span>
+add(v1, v2)    <span class="hljs-comment"># v1 + v2（返回 Vector3）</span>
+sub(v1, v2)    <span class="hljs-comment"># v1 - v2</span>
+mul(v, <span class="hljs-number">2.0</span>)    <span class="hljs-comment"># v * 2.0（标量乘）</span>
+div(v, <span class="hljs-number">2.0</span>)    <span class="hljs-comment"># v / 2.0（标量除）</span>
 </code></pre>
-<h3>2.3 工具</h3>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> clamp, compare, vabs
+<p>Vector3 原生支持 <code>+</code> <code>-</code> <code>*</code> <code>/</code> 运算符，这些包装函数直接使用引擎底层实现。</p>
+<h3>2.3 向量代数</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> dot, cross, modulo, moduloSqrt, normalize
 
-clamp(v, min_len, max_len)  <span class="hljs-comment"># 将向量长度限制在 [min, max]</span>
-compare(a, b)                <span class="hljs-comment"># 比较长度：&gt;0 表示 a &gt; b，&lt;0 表示 a &lt; b，0 表示相等</span>
-vabs(v)                      <span class="hljs-comment"># 各分量取绝对值</span>
+dot(v1, v2)          <span class="hljs-comment"># 点积（返回 float）</span>
+cross(v1, v2)        <span class="hljs-comment"># 叉积 Vector3.Cross(a, b)</span>
+modulo(v)            <span class="hljs-comment"># 向量长度 Vector3.Length(a)</span>
+moduloSqrt(v)        <span class="hljs-comment"># 长度平方 Vector3.LengthSquared(a)</span>
+normalize(v)         <span class="hljs-comment"># 单位化 Vector3.Normalized(a)</span>
+</code></pre>
+<h3>2.4 插值与钳制</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> lerp, nlerp, clamp, compare, vabs
+
+lerp(a, b, t)        <span class="hljs-comment"># 线性插值 a*(1-t) + b*t（t ∈ [0, 1]）</span>
+nlerp(a, b, t)       <span class="hljs-comment"># 归一化线性插值（a、b 需为单位向量）</span>
+
+clamp(v, <span class="hljs-built_in">min</span>, <span class="hljs-built_in">max</span>)   <span class="hljs-comment"># 将向量长度限制在 [min_len, max_len]</span>
+                     <span class="hljs-comment"># len &lt; min → 拉伸到 min</span>
+                     <span class="hljs-comment"># len &gt; max → 截断到 max</span>
+
+compare(a, b)        <span class="hljs-comment"># 比较长度平方：&gt;0 表示 |a| &gt; |b|，&lt;0 表示 |a| &lt; |b|，=0 表示相等</span>
+vabs(v)              <span class="hljs-comment"># 各分量取绝对值 Vector3(abs(x), abs(y), abs(z))</span>
+</code></pre>
+<p><strong><code>clamp</code> 实现细节：</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">clamp</span>(<span class="hljs-params">v, <span class="hljs-built_in">min</span>, <span class="hljs-built_in">max</span></span>):
+    lenSqrt = Vector3.LengthSquared(v)
+    <span class="hljs-keyword">if</span> lenSqrt &gt; <span class="hljs-built_in">max</span> * <span class="hljs-built_in">max</span>:
+        <span class="hljs-keyword">return</span> v * (<span class="hljs-built_in">max</span> / math.sqrt(lenSqrt))   <span class="hljs-comment"># 截断到 max 长度</span>
+    <span class="hljs-keyword">elif</span> lenSqrt &lt; <span class="hljs-built_in">min</span> * <span class="hljs-built_in">min</span>:
+        <span class="hljs-keyword">return</span> v * (<span class="hljs-built_in">min</span> / math.sqrt(lenSqrt))   <span class="hljs-comment"># 拉伸到 min 长度</span>
+    <span class="hljs-keyword">return</span> v
 </code></pre>
 <hr>
-<h2 id="3-mat4-py">3. 矩阵函数 — <code>mat4.py</code></h2>
-<p>操作引擎 SDK 的 <code>Matrix</code> 对象（4x4 矩阵，行向量左乘：<code>v&#39; = v * M</code>）：</p>
-<h3>3.1 基础矩阵</h3>
+<h2 id="3-vec4-py">3. 四维向量 — <code>vec4.py</code></h2>
+<p><code>Vector4</code> 是框架自定义的齐次坐标类，用于矩阵变换后的 4D 结果（如 <code>transformPoint</code> 返回 Vector4）。</p>
+<h3>3.1 构造</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec4 <span class="hljs-keyword">import</span> Vector4, vec4, tup4
+
+v = vec4()                  <span class="hljs-comment"># Vector4(0, 0, 0, 1.0)</span>
+v = vec4(<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span>)    <span class="hljs-comment"># Vector4(1, 2, 3, 1.0)</span>
+v = vec4(<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span>, <span class="hljs-number">0.5</span>)  <span class="hljs-comment"># Vector4(1, 2, 3, 0.5)</span>
+v = vec4((<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span>))  <span class="hljs-comment"># 从 tuple</span>
+v = vec4(someVector3)       <span class="hljs-comment"># 从 Vector3 提升（w=1.0）</span>
+v = vec4(existingVector4)   <span class="hljs-comment"># 直通原样返回</span>
+
+t = tup4(v)                 <span class="hljs-comment"># (x, y, z, w)</span>
+</code></pre>
+<h3>3.2 运算</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec4 <span class="hljs-keyword">import</span> Vector4
+
+a = Vector4(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">1</span>)
+b = Vector4(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>)
+
+c = a + b        <span class="hljs-comment"># 分量加法</span>
+d = a - b        <span class="hljs-comment"># 分量减法</span>
+e = a * <span class="hljs-number">2.0</span>      <span class="hljs-comment"># 标量乘（各分量乘）</span>
+f = a * b        <span class="hljs-comment"># 分量乘（Hadamard 积）</span>
+g = a / <span class="hljs-number">2.0</span>      <span class="hljs-comment"># 标量除</span>
+</code></pre>
+<h3>3.3 与 Vector3 互转</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> vec
+
+<span class="hljs-comment"># Vector4 → Vector3（丢弃 w 分量）</span>
+v3 = vec(someVector4)
+
+<span class="hljs-comment"># Vector3 → Vector4（w 自动设为 1.0）</span>
+v4 = vec4(someVector3)
+</code></pre>
+<hr>
+<h2 id="4-mat4-py">4. 矩阵函数 — <code>mat4.py</code></h2>
+<p>操作引擎 SDK 的 <code>Matrix</code> 对象（4×4 矩阵，<strong>行向量左乘</strong>：<code>v&#39; = v * M</code>），右手坐标系（摄像机看向 -Z 方向）。</p>
+<h3>4.1 基础矩阵</h3>
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> identity, translate, scale, rotateX, rotateY, rotateZ, rotateAxis, rotateXYZ
 
-identity()                      <span class="hljs-comment"># 单位矩阵</span>
-translate(vec((x, y, z)))      <span class="hljs-comment"># 平移矩阵</span>
-scale(vec((sx, sy, sz)))       <span class="hljs-comment"># 缩放矩阵</span>
-rotateX(angle)                  <span class="hljs-comment"># 绕 X 轴旋转（弧度）</span>
-rotateY(angle)                  <span class="hljs-comment"># 绕 Y 轴旋转（弧度）</span>
-rotateZ(angle)                  <span class="hljs-comment"># 绕 Z 轴旋转（弧度）</span>
-rotateAxis(axis_vec, angle)    <span class="hljs-comment"># 绕任意轴旋转</span>
-rotateXYZ(rz, ry, rx)           <span class="hljs-comment"># 组合旋转（先 Z，再 Y，最后 X）</span>
+identity()                        <span class="hljs-comment"># 4×4 单位矩阵</span>
+
+translate(vec((x, y, z)))         <span class="hljs-comment"># 平移矩阵</span>
+scale(vec((sx, sy, sz)))          <span class="hljs-comment"># 缩放矩阵</span>
+
+rotateX(angle)                    <span class="hljs-comment"># 绕 X 轴旋转（弧度）</span>
+rotateY(angle)                    <span class="hljs-comment"># 绕 Y 轴旋转（弧度）</span>
+rotateZ(angle)                    <span class="hljs-comment"># 绕 Z 轴旋转（弧度）</span>
+rotateAxis(axis_vec, angle)       <span class="hljs-comment"># 绕任意轴旋转（Rodrigues 公式）</span>
+rotateXYZ(rz, ry, rx)             <span class="hljs-comment"># 组合旋转：rotateZ * rotateY * rotateX</span>
 </code></pre>
-<h3>3.2 观察与投影矩阵</h3>
+<p><strong><code>rotateXYZ</code> 旋转顺序：</strong> 先绕 Z、再绕 Y、最后绕 X（矩阵乘法从右到左应用）。参数名 <code>(roll, yaw, pitch)</code> 对应 <code>(z 旋转, y 旋转, x 旋转)</code>。</p>
+<p><strong><code>rotateX</code> / <code>rotateY</code> 的符号约定：</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-comment"># rotateX: 绕 X 轴逆时针（从 +X 看向 -X 方向）</span>
+<span class="hljs-comment"># 注意 Y 分量使用 -s（sin 取负），这是右手坐标系的标准</span>
+| <span class="hljs-number">1</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span> |
+| <span class="hljs-number">0</span>   c  -s   <span class="hljs-number">0</span> |
+| <span class="hljs-number">0</span>   s   c   <span class="hljs-number">0</span> |
+| <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">1</span> |
+
+<span class="hljs-comment"># rotateY: 绕 Y 轴逆时针（从 +Y 看向 -Y 方向）  </span>
+<span class="hljs-comment"># 注意 Z 分量使用 -s</span>
+| c   <span class="hljs-number">0</span>   s   <span class="hljs-number">0</span> |
+| <span class="hljs-number">0</span>   <span class="hljs-number">1</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span> |
+| -s  <span class="hljs-number">0</span>   c   <span class="hljs-number">0</span> |
+| <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">0</span>   <span class="hljs-number">1</span> |
+</code></pre>
+<h3>4.2 观察与投影矩阵</h3>
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> lookAt, perspective
 
-lookAt(eye, target, up)                       <span class="hljs-comment"># 观察矩阵（右手系，-Z 为前）</span>
-perspective(fov_degrees, aspect, near, far)    <span class="hljs-comment"># 透视投影矩阵</span>
+lookAt(eye, target, up)
+<span class="hljs-comment"># 右手系观察矩阵，摄像机看向 -Z 方向</span>
+<span class="hljs-comment"># eye: 摄像机位置 (Vector3)</span>
+<span class="hljs-comment"># target: 目标点 (Vector3)</span>
+<span class="hljs-comment"># up: 上方向 (Vector3)，通常为 vec((0, 1, 0))</span>
+
+perspective(fov_degrees, aspect, near, far)
+<span class="hljs-comment"># 右手系透视投影矩阵</span>
+<span class="hljs-comment"># fov_degrees: 垂直视场角（角度制）</span>
+<span class="hljs-comment"># aspect: 宽高比 (width / height)</span>
+<span class="hljs-comment"># near/far: 近/远裁剪面</span>
+<span class="hljs-comment"># NDC z 范围映射到 [-1, 1]</span>
 </code></pre>
-<h3>3.3 矩阵运算</h3>
+<h3>4.3 矩阵运算</h3>
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> multiply, transpose, inverse
 
-multiply(a, b)   <span class="hljs-comment"># 矩阵乘法</span>
-transpose(m)     <span class="hljs-comment"># 转置</span>
-inverse(m)       <span class="hljs-comment"># 逆矩阵</span>
+multiply(a, b)     <span class="hljs-comment"># a * b（使用 Matrix.matrix4_multiply）</span>
+transpose(m)       <span class="hljs-comment"># 转置（m.Transpose()）</span>
+inverse(m)         <span class="hljs-comment"># 逆矩阵（m.Inverse()）</span>
 </code></pre>
-<h3>3.4 变换</h3>
+<h3>4.4 变换</h3>
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> transform, transformPoint, transformVector, localToWorld, worldToLocal
 
-<span class="hljs-comment"># 标准模型变换：先缩放(S)，再旋转(R)，最后平移(T)，再乘父矩阵(m)</span>
+<span class="hljs-comment"># 标准模型变换：M_final = M_parent * T * R * S</span>
 transform(m, translate_vec, rotate_vec, scale_vec)
+<span class="hljs-comment"># m: 父矩阵（通常为 identity()）</span>
+<span class="hljs-comment"># translate_vec: 平移 Vector3</span>
+<span class="hljs-comment"># rotate_vec: 旋转 Vector3（分量 = z/y/x 弧度）</span>
+<span class="hljs-comment"># scale_vec: 缩放 Vector3</span>
 
-<span class="hljs-comment"># 用矩阵变换点（含平移，w=1）</span>
-transformPoint(mat, point)     <span class="hljs-comment"># 返回 Vector4</span>
+<span class="hljs-comment"># 用矩阵变换点（w=1，含平移）</span>
+transformPoint(mat, point)        <span class="hljs-comment"># 返回 Vector4</span>
 
-<span class="hljs-comment"># 用矩阵变换向量（忽略平移，w=0）</span>
-transformVector(mat, vector)   <span class="hljs-comment"># 返回 Vector3</span>
+<span class="hljs-comment"># 用矩阵变换向量（w=0，忽略平移）</span>
+transformVector(mat, vector)      <span class="hljs-comment"># 返回 Vector3</span>
 
 <span class="hljs-comment"># 坐标空间转换</span>
 localToWorld(modelMatrix, localPoint)   <span class="hljs-comment"># 模型空间 → 世界空间</span>
 worldToLocal(modelMatrix, worldPoint)   <span class="hljs-comment"># 世界空间 → 模型空间</span>
 </code></pre>
-<h3>3.5 屏幕坐标转换</h3>
+<p><strong><code>transformPoint</code> 与 <code>transformVector</code> 源码对比：</strong></p>
+<pre><code class="hljs language-python"><span class="hljs-comment"># transformPoint 手动做 m * [x, y, z, 1]^T</span>
+rx = m[<span class="hljs-number">0</span>,<span class="hljs-number">0</span>]*x + m[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>]*y + m[<span class="hljs-number">0</span>,<span class="hljs-number">2</span>]*z + m[<span class="hljs-number">0</span>,<span class="hljs-number">3</span>]*<span class="hljs-number">1</span>  <span class="hljs-comment"># ← w=1，平移生效</span>
+
+<span class="hljs-comment"># transformVector 手动做 m * [x, y, z, 0]^T</span>
+rx = m[<span class="hljs-number">0</span>,<span class="hljs-number">0</span>]*x + m[<span class="hljs-number">0</span>,<span class="hljs-number">1</span>]*y + m[<span class="hljs-number">0</span>,<span class="hljs-number">2</span>]*z             <span class="hljs-comment"># ← w=0，平移被忽略</span>
+</code></pre>
+<h3>4.5 屏幕坐标转换</h3>
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> worldToScreen
 
 screenPoint = worldToScreen(modelMatrix, viewMatrix, projMatrix, viewport, worldPoint)
+<span class="hljs-comment"># modelMatrix: 模型 → 世界矩阵</span>
+<span class="hljs-comment"># viewMatrix: 世界 → 视图（lookAt 结果）</span>
+<span class="hljs-comment"># projMatrix: 视图 → 投影（perspective 结果）</span>
+<span class="hljs-comment"># viewport: (width, height) 窗口尺寸</span>
 <span class="hljs-comment"># 返回 Vector3，x/y 为屏幕坐标，z 为深度</span>
 </code></pre>
+<p>内部使用 <code>mvpMatrix = projection * view * model</code>，经过透视除法后映射到屏幕坐标系。</p>
 <hr>
-<h2 id="4-double-py">4. 插值与常量 — <code>double.py</code></h2>
+<h2 id="5-double-py">5. 插值与常量 — <code>double.py</code></h2>
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.double <span class="hljs-keyword">import</span> lerp, clamp, smoothstep, alerp, inf, epsilon
 
-lerp(a, b, t)                          <span class="hljs-comment"># 浮点线性插值</span>
-alerp(start, end, t)                   <span class="hljs-comment"># 角度线性插值（自动处理 360° 环绕）</span>
-clamp(x, min_val, max_val)             <span class="hljs-comment"># 截断到 [min, max]</span>
-smoothstep(edge0, edge1, x)            <span class="hljs-comment"># 平滑阶梯函数</span>
-inf                                     <span class="hljs-comment"># 1e+10</span>
-epsilon                                 <span class="hljs-comment"># 1e-8</span>
+lerp(a, b, t)           <span class="hljs-comment"># 线性插值 a*(1-t) + b*t</span>
+clamp(x, <span class="hljs-built_in">min</span>, <span class="hljs-built_in">max</span>)      <span class="hljs-comment"># 截断到 [min, max]</span>
+smoothstep(e0, e1, x)   <span class="hljs-comment"># 平滑阶梯 t^2(3-2t)，t = clamp((x-e0)/(e1-e0), 0, 1)</span>
+alerp(start, end, t)    <span class="hljs-comment"># 角度线性插值（自动处理 0°/360° 环绕）</span>
+
+inf   = <span class="hljs-number">1e+10</span>           <span class="hljs-comment"># 大数常量</span>
+epsilon = <span class="hljs-number">1e-8</span>          <span class="hljs-comment"># 浮点精度常量</span>
 </code></pre>
-<h3>4.1 <code>alerp</code> — 角度线性插值</h3>
-<p>对角度值进行线性插值，自动选择最短路径处理 <code>0°</code> / <code>360°</code> 的环绕问题：</p>
+<h3>5.1 <code>alerp</code> — 角度插值</h3>
+<p>对角度值进行线性插值，自动选择最短路径处理 0°/360° 的环绕问题：</p>
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.double <span class="hljs-keyword">import</span> alerp
 
-<span class="hljs-comment"># 插值 350° → 10° 会走 20° 的短路径，而非 340° 的长路径</span>
-alerp(<span class="hljs-number">350.0</span>, <span class="hljs-number">10.0</span>, <span class="hljs-number">0.5</span>)   <span class="hljs-comment"># 0.0 (即 360°/0°)</span>
+alerp(<span class="hljs-number">350.0</span>, <span class="hljs-number">10.0</span>, <span class="hljs-number">0.5</span>)   <span class="hljs-comment"># 0.0  (即 360°/0°，走 20° 短路径，而非 340° 长路径)</span>
 alerp(<span class="hljs-number">10.0</span>, <span class="hljs-number">350.0</span>, <span class="hljs-number">0.5</span>)   <span class="hljs-comment"># 0.0</span>
 alerp(<span class="hljs-number">10.0</span>, <span class="hljs-number">100.0</span>, <span class="hljs-number">0.5</span>)   <span class="hljs-comment"># 55.0</span>
+
+<span class="hljs-comment"># 内部实现</span>
+diff = (end - start) % <span class="hljs-number">360.0</span>
+<span class="hljs-keyword">if</span> diff &gt; <span class="hljs-number">180.0</span>:   diff -= <span class="hljs-number">360.0</span>
+<span class="hljs-keyword">elif</span> diff &lt; -<span class="hljs-number">180.0</span>: diff += <span class="hljs-number">360.0</span>
+<span class="hljs-keyword">return</span> start + diff * t
 </code></pre>
-<blockquote>
-<p><code>alerp</code> 适用于旋转角度、朝向、动画骨骼旋转等需要角度插值的场景。</p>
-</blockquote>
+<h3>5.2 <code>smoothstep</code> — 平滑曲线</h3>
+<pre><code class="hljs language-python">smoothstep(<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.5</span>)  <span class="hljs-comment"># 0.5（中间值不变）</span>
+smoothstep(<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.25</span>) <span class="hljs-comment"># 约 0.156（靠近边缘时减速）</span>
+
+<span class="hljs-comment"># 典型用途：动画缓入缓出</span>
+t = smoothstep(<span class="hljs-number">0.0</span>, duration, elapsed)
+alpha = lerp(fromVal, toVal, t)
+</code></pre>
 <hr>
-<h2 id="5-unit-py">5. 时间常量 — <code>unit.py</code></h2>
+<h2 id="6-unit-py">6. 时间常量 — <code>unit.py</code></h2>
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.unit <span class="hljs-keyword">import</span> time
 
-time.entityTick   <span class="hljs-comment"># 0.05 秒</span>
-time.tick         <span class="hljs-comment"># ~0.033 秒（30fps）</span>
+time.entityTick   <span class="hljs-comment"># 0.05 秒（实体 Tick 间隔）</span>
+time.tick         <span class="hljs-comment"># ~0.033 秒（30fps Tick 间隔）</span>
 time.ms           <span class="hljs-comment"># 0.001 秒</span>
 time.s            <span class="hljs-comment"># 1 秒</span>
 time.m            <span class="hljs-comment"># 60 秒</span>
@@ -151,94 +266,182 @@ time.d            <span class="hljs-comment"># 86400 秒</span>
 time.w            <span class="hljs-comment"># 604800 秒</span>
 time.y            <span class="hljs-comment"># 31536000 秒</span>
 </code></pre>
-<blockquote>
-<p>用 <code>time.s * 3</code> 表示 3 秒，<code>time.ms * 500</code> 表示 500 毫秒。</p>
-</blockquote>
+<p>用法：<code>time.s * 3</code> 表示 3 秒，<code>time.ms * 500</code> 表示 500 毫秒。</p>
 <hr>
-<h2 id="6-math-utils-py">6. 客户端工具 — <code>math/utils.py</code></h2>
-<h3>6.1 屏幕坐标工具</h3>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> (
-    screenSize, localViewMatrix, localProjectionMatrix,
-    worldPosToScreenPos, screenToWorld
-)
+<h2 id="7-math-utils-py">7. 客户端工具 — <code>math/utils.py</code></h2>
+<h3>7.1 屏幕坐标工具</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> screenSize, localViewMatrix, localProjectionMatrix, worldPosToScreenPos, screenToWorld
 
-w, h = screenSize()
-view = localViewMatrix()
-proj = localProjectionMatrix()
+w, h = screenSize()          <span class="hljs-comment"># 获取窗口尺寸</span>
+
+view = localViewMatrix()     <span class="hljs-comment"># 从摄像机位置和朝向构建 lookAt 矩阵</span>
+proj = localProjectionMatrix()  <span class="hljs-comment"># 从 fov 和宽高比构建 perspective 矩阵</span>
+
 screenPoint = worldPosToScreenPos(worldPoint)
-worldPoint = screenToWorld(modelMatrix, screenPoint)
+<span class="hljs-comment"># 世界坐标 → 屏幕坐标（内部调用 worldToScreen）</span>
+
+worldPoint = screenToWorld(modelMatrix, screenPoint, filterType, debug)
+<span class="hljs-comment"># 屏幕坐标 → 世界坐标（射线拾取）</span>
+<span class="hljs-comment"># modelMatrix: 模型矩阵（通常 identity()）</span>
+<span class="hljs-comment"># screenPoint: 屏幕点 Vector3（x, y 为屏幕坐标，可忽略 z）</span>
+<span class="hljs-comment"># filterType: RayFilterType.OnlyBlocks / .OnlyEntities 等</span>
+<span class="hljs-comment"># debug=False: 设为 True 会绘制调试射线</span>
+<span class="hljs-comment"># 返回 Vector3 世界坐标，或 None（未命中）</span>
 </code></pre>
-<h3>6.2 实体查询与朝向</h3>
+<p><strong><code>screenToWorld</code> 实现原理：</strong> 将屏幕坐标通过逆 MVP 矩阵转换到世界空间，构建射线后用引擎 <code>getEntitiesOrBlockFromRay</code> 进行碰撞检测。</p>
+<h3>7.2 实体朝向与查询</h3>
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> forward, facing, around, entityAabbDef
 
-dirVec = forward(entityId)          <span class="hljs-comment"># 实体前方单位向量</span>
-facingVec = facing(entityId)        <span class="hljs-comment"># 实体朝向向量（含 Y 分量）</span>
-nearby = around(entityId, radius)   <span class="hljs-comment"># 半径内实体 ID 列表</span>
-aabbMin, aabbMax = entityAabbDef(entityId)  <span class="hljs-comment"># 实体 AABB 包围盒</span>
-</code></pre>
-<h3>6.3 碰撞检测</h3>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> (
-    boxOverlap3dClient, boxOverlap3dForward, boxOverlap3dFacing
-)
+<span class="hljs-comment"># forward: 实体前方单位向量（忽略 Y 分量，水平方向）</span>
+dirVec = forward(entityId)      <span class="hljs-comment"># 返回 Vector3</span>
+dirVec = forward(entityId, <span class="hljs-number">5.0</span>)  <span class="hljs-comment"># 返回长度为 5 的单位方向向量</span>
 
-entities = boxOverlap3dClient(pos, rot, size, debug=<span class="hljs-literal">False</span>)
-entities = boxOverlap3dForward(entityId, size, debug=<span class="hljs-literal">False</span>)
-entities = boxOverlap3dFacing(entityId, size, debug=<span class="hljs-literal">False</span>)
+<span class="hljs-comment"># facing: 实体完整朝向向量（含 Y 分量）</span>
+facingVec = facing(entityId)
+
+<span class="hljs-comment"># around: 查询半径内的实体 ID 列表（方形区域）</span>
+nearby = around(entityId, <span class="hljs-number">10.0</span>)  <span class="hljs-comment"># 边长 20 的正方形区域</span>
+
+<span class="hljs-comment"># entityAabbDef: 获取实体头部 AABB 包围盒（基于 Molang 骨骼查询）</span>
+(min_x, min_y, min_z), (max_x, max_y, max_z) = entityAabbDef(entityId)
+<span class="hljs-comment"># 内部通过 EvalMolangExpression(&quot;q.bone_aabb(&#x27;head&#x27;)&quot;) 获取</span>
 </code></pre>
-<h3>6.4 辅助函数</h3>
+<h3>7.3 碰撞检测</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> boxOverlap3dClient, boxOverlap3dForward, boxOverlap3dFacing, boxOverlap3dBouding
+
+<span class="hljs-comment"># 任意位置和朝向的盒体碰撞检测</span>
+entities = boxOverlap3dClient(pos, rot, size, debug=<span class="hljs-literal">False</span>)
+<span class="hljs-comment"># pos: (x, y, z) 世界坐标</span>
+<span class="hljs-comment"># rot: (yaw, pitch, roll) 弧度</span>
+<span class="hljs-comment"># size: (width, height, depth) 盒体全尺寸</span>
+
+<span class="hljs-comment"># 实体正前方的盒体碰撞（自动获取位置 + 朝向）</span>
+entities = boxOverlap3dForward(entityId, size, debug=<span class="hljs-literal">False</span>)
+<span class="hljs-comment"># size: (width, height, depth)，盒体中心在实体前方 zDist 处</span>
+
+<span class="hljs-comment"># 实体朝向的盒体碰撞（使用 GetRot 获取旋转 + 位置）</span>
+entities = boxOverlap3dFacing(entityId, size, debug=<span class="hljs-literal">False</span>)
+
+<span class="hljs-comment"># 自定义起终点包围盒检测</span>
+entities = boxOverlap3dBouding(start, end, forward, debug=<span class="hljs-literal">False</span>)
+<span class="hljs-comment"># start/end: (x, y, z) 世界坐标（包围盒的两个对角点）</span>
+<span class="hljs-comment"># forward: (x, y, z) 朝向单位向量</span>
+</code></pre>
+<h3>7.4 包围盒点测试</h3>
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> pointInBox, pointInAabb
 
 inside = pointInBox(point, size)
+<span class="hljs-comment"># point: (x, y, z) tuple</span>
+<span class="hljs-comment"># size: (width, height, depth) 全尺寸</span>
+<span class="hljs-comment"># 盒体以原点为中心，范围 [-size/2, size/2]</span>
+
 inside = pointInAabb(point, min_vec, max_vec)
+<span class="hljs-comment"># 轴对齐包围盒，范围 [min, max]</span>
+</code></pre>
+<h3>7.5 默认过滤器</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> defaultFilters
+
+<span class="hljs-comment"># 射线投射默认过滤器：只命中 player 和 mob</span>
+defaultFilters = {
+    <span class="hljs-string">&quot;any_of&quot;</span>: [
+        {<span class="hljs-string">&quot;subject&quot;</span>: <span class="hljs-string">&quot;other&quot;</span>, <span class="hljs-string">&quot;test&quot;</span>: <span class="hljs-string">&quot;is_family&quot;</span>, <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;player&quot;</span>},
+        {<span class="hljs-string">&quot;subject&quot;</span>: <span class="hljs-string">&quot;other&quot;</span>, <span class="hljs-string">&quot;test&quot;</span>: <span class="hljs-string">&quot;is_family&quot;</span>, <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;mob&quot;</span>}
+    ]
+}
 </code></pre>
 <hr>
-<h2 id="7-math-utilsserver-py">7. 服务端工具 — <code>math/utilsServer.py</code></h2>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utilsServer <span class="hljs-keyword">import</span> (
-    boxOverlap3dServer, boxOverlap3dForward, forward, facing, around, pointInBox
-)
+<h2 id="8-math-utilsserver-py">8. 服务端工具 — <code>math/utilsServer.py</code></h2>
+<h3>8.1 碰撞检测</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utilsServer <span class="hljs-keyword">import</span> boxOverlap3dServer, boxOverlap3dForward
 
-<span class="hljs-comment"># 碰撞检测（服务端使用 Location + dimId）</span>
+<span class="hljs-comment"># 服务端盒体碰撞（使用 Location 而非 tuple）</span>
 entities = boxOverlap3dServer(location, rot, size)
+<span class="hljs-comment"># location: Location(pos=(x,y,z), dim=dimId)</span>
+<span class="hljs-comment"># rot: (yaw, pitch, roll) 弧度</span>
+<span class="hljs-comment"># size: (width, height, depth)</span>
 
-<span class="hljs-comment"># 实体前方</span>
+<span class="hljs-comment"># 实体正前方碰撞（自动获取位置 + 朝向 + 维度）</span>
 entities = boxOverlap3dForward(entityId, size)
+</code></pre>
+<h3>8.2 实体查询</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utilsServer <span class="hljs-keyword">import</span> forward, facing, around
 
-<span class="hljs-comment"># 朝向与附近实体</span>
-dirVec = forward(entityId)
-nearby = around(location, radius)
+dirVec = forward(entityId)      <span class="hljs-comment"># 实体前方单位向量（水平方向）</span>
+dirVec = forward(entityId, <span class="hljs-number">5.0</span>)  <span class="hljs-comment"># 长度 5</span>
+
+facingVec = facing(entityId)     <span class="hljs-comment"># 完整朝向（含 Y 分量）</span>
+
+nearby = around(location, radius)  <span class="hljs-comment"># 以 Location 为中心查询方形区域实体</span>
+</code></pre>
+<h3>8.3 包围盒测试</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utilsServer <span class="hljs-keyword">import</span> pointInBox
+
+inside = pointInBox(point, size)
+<span class="hljs-comment"># 与客户端版本的 pointInBox 签名相同</span>
 </code></pre>
 <hr>
-<h2 id="8">8. 完整示例</h2>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> vec, add, normalize, modulo, tup
-<span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> lookAt, perspective, worldToScreen
-<span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> forward, boxOverlap3dForward
+<h2 id="9">9. 完整示例</h2>
+<h3>9.1 近战攻击检测</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> vec, tup, normalize
+<span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> boxOverlap3dForward, forward
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">CombatSystem</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+    ATTACK_SIZE = (<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>)  <span class="hljs-comment"># (宽, 高, 深)</span>
+
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">tryAttack</span>(<span class="hljs-params">self</span>):
+        hits = boxOverlap3dForward(<span class="hljs-variable language_">self</span>.entityId, <span class="hljs-variable language_">self</span>.ATTACK_SIZE)
+        <span class="hljs-keyword">for</span> targetId <span class="hljs-keyword">in</span> hits:
+            <span class="hljs-variable language_">self</span>.doDamage(targetId)
+</code></pre>
+<h3>9.2 摄像机追踪（利用矩阵坐标转换）</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> vec, normalize, add, sub, modulo
+<span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> lookAt, perspective, WorldToScreen
 <span class="hljs-keyword">from</span> architect.math.double <span class="hljs-keyword">import</span> clamp, smoothstep
 <span class="hljs-keyword">from</span> architect.math.unit <span class="hljs-keyword">import</span> time
 
-<span class="hljs-comment"># 距离检测</span>
-player = vec((<span class="hljs-number">0</span>, <span class="hljs-number">64</span>, <span class="hljs-number">0</span>))
-target = vec((<span class="hljs-number">10</span>, <span class="hljs-number">64</span>, <span class="hljs-number">10</span>))
-dir_to_target = normalize(add(target, vec((<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>))))  <span class="hljs-comment"># target - player 用 sub</span>
-dist = modulo(target - player)
-<span class="hljs-keyword">if</span> dist &lt; <span class="hljs-number">5.0</span>:
-    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;In range&#x27;</span>)
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">CameraTrack</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">trackTarget</span>(<span class="hljs-params">self, targetPos, elapsed</span>):
+        camPos = vec(<span class="hljs-variable language_">self</span>.camera.GetPosition())
+        forward = normalize(sub(targetPos, camPos))
+        dist = modulo(sub(targetPos, camPos))
 
-<span class="hljs-comment"># 屏幕投影</span>
-view = lookAt(player, target, vec((<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>)))
-proj = perspective(<span class="hljs-number">60.0</span>, <span class="hljs-number">16.0</span> / <span class="hljs-number">9.0</span>, <span class="hljs-number">0.1</span>, <span class="hljs-number">100.0</span>)
-screenPt = worldToScreen(identity(), view, proj, (<span class="hljs-number">1920</span>, <span class="hljs-number">1080</span>), target)
+        <span class="hljs-comment"># 平滑变焦</span>
+        t = clamp(elapsed / (<span class="hljs-number">2</span> * time.s), <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>)
+        desiredFov = <span class="hljs-number">30.0</span> + (dist * <span class="hljs-number">2</span>)
+        currentFov = <span class="hljs-number">60.0</span> + (desiredFov - <span class="hljs-number">60.0</span>) * smoothstep(<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, t)
+        <span class="hljs-keyword">return</span> currentFov
+</code></pre>
+<h3>9.3 世界坐标 → 屏幕坐标（HUD 绘制）</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> identity, worldToScreen
+<span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> localViewMatrix, localProjectionMatrix, screenSize
+<span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> vec
 
-<span class="hljs-comment"># 碰撞检测</span>
-hits = boxOverlap3dForward(entityId, (<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>))
+w, h = screenSize()
+screenPt = worldToScreen(
+    identity(),
+    localViewMatrix(),
+    localProjectionMatrix(),
+    (w, h),
+    vec(entityPos)
+)
 
-<span class="hljs-comment"># 平滑过渡（3 秒内完成）</span>
-t = clamp(current_time / (<span class="hljs-number">3</span> * time.s), <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>)
-alpha = smoothstep(<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, t)
+<span class="hljs-comment"># screenPt.x / screenPt.y 即为屏幕像素坐标</span>
+<span class="hljs-comment"># screenPt.z 为深度值（可用于深度排序）</span>
+</code></pre>
+<h3>9.4 分帧平滑旋转（alerp 防止 360° 跳变）</h3>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.double <span class="hljs-keyword">import</span> alerp
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SmoothRotation</span>(<span class="hljs-title class_ inherited__">ClientSubsystem</span>):
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">updateRotation</span>(<span class="hljs-params">self, targetAngle</span>):
+        <span class="hljs-variable language_">self</span>.currentAngle = alerp(<span class="hljs-variable language_">self</span>.currentAngle, targetAngle, <span class="hljs-number">0.1</span>)
+        <span class="hljs-comment"># 0.1 的 t 值 = 指数衰减，每帧靠近 10%</span>
+        <span class="hljs-comment"># alerp 自动选择最短路径，避免 350° → 10° 时旋转 340°</span>
 </code></pre>
 <hr>
 <h2 id="">下一步</h2>
 <ul>
-<li><a href="utils.html">工具集 (utils.md)</a> — 其他工具模块</li>
+<li><a href="molang.html">Molang 操作参考 (molang.md)</a> — Molang 变量读写</li>
+<li><a href="persona.html">实体预设 (persona.md)</a> — 玩家模型与外观</li>
 <li><a href="best-practices.md">最佳实践 (best-practices.md)</a> — 开发建议</li>
 </ul>
 
