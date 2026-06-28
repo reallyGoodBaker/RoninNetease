@@ -227,12 +227,28 @@ class EntityHurtEvent:
     pass
 ```
 
-这些类可以通过 `EventListener` 的默认行为使用：
+`@EventListener` 不传参时，会从方法的**第一个非 self 参数的默认值**中提取事件类名：
+
 ```python
-@EventListener  # 不传 eventType，从默认参数的事件类推断
-def onEntityHurt(self, event):
-    pass
+from architect.event import events
+
+class BlockProtection(ServerSubsystem):
+    # 不传 eventType，从 ev 的默认值 events.EntityHurtEvent() 推断事件类型为 "EntityHurtEvent"
+    @EventListener()
+    def onEntityHurt(self, ev=events.EntityHurtEvent()):
+        targetId = ev.id
+        if self.isProtected(targetId):
+            ev.setEvent('damage', 0)
+            ev.prevent()
+
+    # 同样，自动推断为 "ServerPlayerDieEvent"
+    @EventListener()
+    def onPlayerDie(self, ev=events.ServerPlayerDieEvent()):
+        playerId = ev.id
+        self.dropInventory(playerId)
 ```
+
+> **注意：** 默认值必须是一个事件类实例。装饰器会调用 `default.__class__.__name__` 来获取事件类型字符串。如果方法的第一个非 self 参数没有默认值，或默认值为 `None`，会抛出 `ValueError`。
 
 ---
 

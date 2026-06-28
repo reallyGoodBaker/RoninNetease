@@ -198,11 +198,27 @@ chain.addListener(my_handler)
     <span class="hljs-string">&quot;&quot;&quot;实体受伤事件&quot;&quot;&quot;</span>
     <span class="hljs-keyword">pass</span>
 </code></pre>
-<p>这些类可以通过 <code>EventListener</code> 的默认行为使用：</p>
-<pre><code class="hljs language-python"><span class="hljs-meta">@EventListener  </span><span class="hljs-comment"># 不传 eventType，从默认参数的事件类推断</span>
-<span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self, event</span>):
-    <span class="hljs-keyword">pass</span>
+<p><code>@EventListener</code> 不传参时，会从方法的<strong>第一个非 self 参数的默认值</strong>中提取事件类名：</p>
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.event <span class="hljs-keyword">import</span> events
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">BlockProtection</span>(<span class="hljs-title class_ inherited__">ServerSubsystem</span>):
+    <span class="hljs-comment"># 不传 eventType，从 ev 的默认值 events.EntityHurtEvent() 推断事件类型为 &quot;EntityHurtEvent&quot;</span>
+<span class="hljs-meta">    @EventListener()</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onEntityHurt</span>(<span class="hljs-params">self, ev=events.EntityHurtEvent(<span class="hljs-params"></span>)</span>):
+        targetId = ev.<span class="hljs-built_in">id</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-variable language_">self</span>.isProtected(targetId):
+            ev.setEvent(<span class="hljs-string">&#x27;damage&#x27;</span>, <span class="hljs-number">0</span>)
+            ev.prevent()
+
+    <span class="hljs-comment"># 同样，自动推断为 &quot;ServerPlayerDieEvent&quot;</span>
+<span class="hljs-meta">    @EventListener()</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">onPlayerDie</span>(<span class="hljs-params">self, ev=events.ServerPlayerDieEvent(<span class="hljs-params"></span>)</span>):
+        playerId = ev.<span class="hljs-built_in">id</span>
+        <span class="hljs-variable language_">self</span>.dropInventory(playerId)
 </code></pre>
+<blockquote>
+<p><strong>注意：</strong> 默认值必须是一个事件类实例。装饰器会调用 <code>default.__class__.__name__</code> 来获取事件类型字符串。如果方法的第一个非 self 参数没有默认值，或默认值为 <code>None</code>，会抛出 <code>ValueError</code>。</p>
+</blockquote>
 <hr>
 <h2 id="5">5. 事件分发流程</h2>
 <pre><code>引擎事件触发
