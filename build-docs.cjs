@@ -88,6 +88,7 @@ for (const [name, md] of Object.entries(docs)) {
   }
 }
 fs.writeFileSync(path.join(out, 'search-index.json'), JSON.stringify(searchIndex), 'utf-8');
+fs.writeFileSync(path.join('docs', 'search-index.json'), JSON.stringify(searchIndex), 'utf-8');
 
 const SEARCH_HTML = [
 '<div id="search-overlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.6);align-items:flex-start;justify-content:center;padding-top:12vh">',
@@ -199,6 +200,7 @@ for (const [name, md] of Object.entries(docs)) {
     + SEARCH_JS
     + '\n</body>\n</html>';
   fs.writeFileSync(path.join(out, name + '.html'), html, 'utf-8');
+  fs.writeFileSync(path.join('docs', name + '.html'), html, 'utf-8');
   console.log('\u2714 ' + name);
 }
 
