@@ -638,7 +638,7 @@ motionComp = getOneSingletonComponent(PlayerMotionComponent)
 
 | 属性 | 类型 | 读写 | 说明 |
 |---|---|---|---|
-| `motion` | `tuple (x, y, z)` | 读/写 | 设置运动向量，**写入时自动同步到服务端** |
+| `motion` | `Vector3` | 读/写 | 设置运动向量，**写入时自动同步到服务端** |
 | `inputVector` | `tuple` | 只读 | 获取输入向量 |
 | `mousePosition` | `tuple` | 只读 | 获取鼠标位置 |
 
@@ -664,7 +664,7 @@ class MyMovement(ClientSubsystem):
 
 ```python
 motionComp = getOneSingletonComponent(PlayerMotionComponent)
-# 设置运动向量，自动同步到服务端
+# 设置运动向量，自动同步到服务端（接受 tuple 或 Vector3）
 motionComp.motion = (1.0, 0.5, 0.0)
 ```
 
