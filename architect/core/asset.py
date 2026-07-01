@@ -12,8 +12,7 @@ def _loadFromAssets(uri):
     try:
         m = api.ImportModule(__prefix + uri).__dict__
         defaultAsset = m.get('Asset', {})
-        assembled = defaultAsset.update(m)
-        return assembled
+        return defaultAsset
     except Exception:
         return None
 
