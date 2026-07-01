@@ -1,13 +1,18 @@
 # coding=utf-8
-import time
+__all__ = [
+    'Internal',
+    'SubsystemManager',
+    'ServerSubsystem',
+    'ClientSubsystem',
+    'subsystem',
+]
 
-import mod.client.extraClientApi as clientApi
-import mod.server.extraServerApi as serverApi
+import time
 
 from .annotation import AnnotationHelper
 from .bus import CommandBus
 from .scheduler import Scheduler, Sched, SimpleFixedScheduler
-from .basic import isServer, Location
+from .basic import isServer, Location, clientApi, serverApi
 from .configurator import modConf, __modname__
 
 from ..component.core import _registerCompsIntoGame, getOrCreateSingletonComponent

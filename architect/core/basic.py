@@ -23,6 +23,9 @@ class Location:
         self.pos = pos
         self.dim = dim
 
+__modname__ = Location.__module__[:Location.__module__.find('.')]
+__dirname__ = Location.__module__[:Location.__module__.rfind('.')]
+
 __threads = {}
 __meta = {}
 

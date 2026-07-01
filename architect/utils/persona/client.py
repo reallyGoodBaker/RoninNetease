@@ -107,6 +107,19 @@ PlayerDefaultClientDef = {
 }
 
 
+class HandItemVisibility:
+    All = 0
+    OnlyFirstPerson = 1
+    OnlyThirdPerson = 2
+    Invisible = 3
+
+__HandItemVisibilityMapping = {
+    HandItemVisibility.All:             (True, 0),
+    HandItemVisibility.OnlyFirstPerson: (False, 2),
+    HandItemVisibility.OnlyFirstPerson: (False, 1),
+    HandItemVisibility.Invisible:       (False, 0)
+}
+
 @Component()
 class PersonaRendererComponent(BaseCompClient):
     def onCreate(self, entityId):
@@ -541,7 +554,9 @@ class PersonaRendererComponent(BaseCompClient):
         if broadcast:
             self.broadcastRenderConf(overrideSnapshot)
 
-    def showHand(self, visible=True, mode=0):
+    def showHand(self, option=HandItemVisibility.All):
+        # type: (HandItemVisibility) -> None
+        visible, mode = __HandItemVisibilityMapping[option]
         self.actorRenderer.SetPlayerItemInHandVisible(visible, mode)
 
     def changeRenderConf(self, jsonObject, broadcast=True, full=False):

@@ -2,7 +2,7 @@
 from .subsystem import SubsystemManager, Subsystem, _ShadowSystemClient, _ShadowSystemServer, subsystem
 from .basic import isServer, clientApi, serverApi
 from .contextRecorder import ContextRecorder, Context
-from .configurator import modConf, __modname__, __framework__, __dirname__, VendorPlugins, UserPlugins
+from .configurator import modConf, __modname__, __dirname__, VendorPlugins, UserPlugins
 from .log import info as _log_info, error as _log_error
 
 from ..utils.enhance.fn import compVer

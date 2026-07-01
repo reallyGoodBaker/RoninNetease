@@ -15,13 +15,7 @@
 运行时热重载白名单（HOT_RELOADABLE）可通过用户 conf.py 扩展。
 将两套系统合并为单一入口在现行引擎约束下不可行。
 """
-class _ModuleLocator(object):
-    pass
-
-
-__modname__ = _ModuleLocator.__module__[:_ModuleLocator.__module__.find('.')]
-__framework__ = __modname__ + '.engine.architect'
-__dirname__ = __framework__ + '.core'
+from .basic import __dirname__, __modname__
 
 
 MOD_CONST_NAMES = [
