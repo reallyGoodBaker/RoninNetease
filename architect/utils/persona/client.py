@@ -113,6 +113,18 @@ class HandItemVisibility:
     OnlyThirdPerson = 2
     Invisible = 3
 
+
+class RenderResources:
+    Geometries = 'geometry'
+    Materials = 'materials'
+    Textures = 'textures'
+    Animations = 'animations'
+    ParticleEffects = 'particle_effects'
+    SoundEffects = 'sound_effects'
+    RenderControllers = 'render_controllers'
+    Scripts = 'scripts'
+
+
 _HandItemVisibilityMapping = {
     HandItemVisibility.All:             (True, 0),
     HandItemVisibility.OnlyThirdPerson: (False, 2),
@@ -618,9 +630,9 @@ class PersonaRendererComponent(BaseCompClient):
         """
         使用一个动画遮蔽玩家根动画，可以为空
         """
-        self.actorRenderer.AddPlayerScriptAnimate('root', '0')
+        self.actorRenderer.AddPlayerScriptAnimate('root', '0', True)
         if anim:
-            self.actorRenderer.AddPlayerScriptAnimate(anim, '1')
+            self.actorRenderer.AddPlayerScriptAnimate(anim, '1', True)
             self.shadowRoot = anim
         self.actorRenderer.RebuildPlayerRender()
 
@@ -629,7 +641,7 @@ class PersonaRendererComponent(BaseCompClient):
         self.actorRenderer.AddPlayerAnimationController('root', 'controller.animation.player.root')
         self.actorRenderer.AddPlayerScriptAnimate('root', '1', True)
         if shadowRoot:
-            self.actorRenderer.AddPlayerScriptAnimate(shadowRoot, '0')
+            self.actorRenderer.AddPlayerScriptAnimate(shadowRoot, '0', True)
             self.shadowRoot = None
         self.actorRenderer.RebuildPlayerRender()
 

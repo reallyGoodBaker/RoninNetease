@@ -19,7 +19,7 @@ RoninNetease 统一日志模块。
 import logging
 import sys
 
-_logger = logging.getLogger('RoninNetease')
+_logger = logging.getLogger()
 _logger.setLevel(logging.INFO)
 
 if not _logger.handlers:

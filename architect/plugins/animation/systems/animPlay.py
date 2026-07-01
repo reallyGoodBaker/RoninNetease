@@ -165,14 +165,14 @@ class AnimationExSubsystem(ClientSubsystem):
 
 
     @Remote
-    def playFromServer(self, actorId, animKey, layer, replay, playRate, startTime, sync):
+    def playFromServer(self, actorId, animKey, layer, replay, playRate, startTime, sync, noBlending):
         animEx = getOneComponent(actorId, AnimationExComponent)
         # 防止服务端触发的重复播放
         # 通过 startTime 判断
         if animEx.isPlaying(animKey) and animEx.getPlayingAnimation(animKey).startTime == startTime:
             return
         animEx._playAnim(
-            animKey, layer, replay, playRate, startTime, sync
+            animKey, layer, replay, playRate, startTime, sync, noBlending
         )
 
 

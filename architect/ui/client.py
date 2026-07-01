@@ -48,6 +48,9 @@ def UiDef(uiDef):
 
 
 def AutoCreate(cls):
+    """
+    在装饰器中应让AutoCreate处于最晚装饰（最上方）
+    """
     cls._handleAutoCreate()
     return cls
 

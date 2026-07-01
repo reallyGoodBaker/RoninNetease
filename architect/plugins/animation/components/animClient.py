@@ -122,6 +122,9 @@ class AnimationExComponent(BaseCompClient):
 
     def registerAnimations(self, mapping):
         # type: (dict[str, str]) -> None
+        """
+        注册动画映射后需要调用 updateActorAnimDef
+        """
         for name, anim in mapping.items():
             if anim in self.animMetas:
                 self.animations[name] = anim
@@ -210,8 +213,8 @@ class AnimationExComponent(BaseCompClient):
     def getPlayingAnimation(self, animKey):
         return self.playing.get(animKey)
 
-    def _playAnim(self, animKey, layer='default', replay=False, playRate=1, startTime=0, serverSync=False):
-        # type: (str, str, bool, float, float, bool) -> None
+    def _playAnim(self, animKey, layer='default', replay=False, playRate=1, startTime=0, serverSync=False, noBlending=False):
+        # type: (str, str, bool, float, float, bool, bool) -> None
         """
         不同 layer 的动画可以同时播放，但同一 layer 的动画不能同时播放
         """
@@ -249,11 +252,21 @@ class AnimationExComponent(BaseCompClient):
             for _animKey in list(playing):
                 if _animKey == animKey:
                     continue
-                self.setBlending(AnimationBlendingTypes.OUT, _animKey)
-                # 立即从 playing 中移除，blend out 视觉效果由 self.blending 独立驱动
+                if noBlending:
+                    _v = self.variables.get(_animKey)
+                    _v and _v.setValue(0)
+                else:
+                    self.setBlending(AnimationBlendingTypes.OUT, _animKey)
+                    # 立即从 playing 中移除，blend out 视觉效果由 self.blending 独立驱动
                 if _animKey in self.playing:
                     self.playing.pop(_animKey)
                 playing.discard(_animKey)
+
+        if noBlending:
+            variable.setValue(1)
+            playing.add(animKey)
+            self.layers[layer] = playing
+            return
 
         if not isBlendingOut:
             # 重置播放状态
@@ -269,15 +282,15 @@ class AnimationExComponent(BaseCompClient):
         playing.add(animKey)
         self.layers[layer] = playing
 
-    def play(self, animKey, layer='default', replay=False, playRate=1, startOffset=0, clientOnly=False):
-        # type: (str, str, bool, float, float, bool) -> None
+    def play(self, animKey, layer='default', replay=False, playRate=1, startOffset=0, clientOnly=False, noBlending=False):
+        # type: (str, str, bool, float, float, bool, bool) -> None
         startTime = time.time() - startOffset
-        self._playAnim(animKey, layer, replay, playRate, startTime)
+        self._playAnim(animKey, layer, replay, playRate, startTime, False, noBlending)
         if clientOnly:
             return
         remote.client.call(
             'AnimExServer._syncPlay',
-            animKey, layer, replay, playRate, startTime
+            animKey, layer, replay, playRate, startTime, noBlending,
         )
 
     def stop(self, animKey, layer='default', noBlending=False, clientOnly=False):
