@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..level.server import LevelServer
 from .common import DBSource
 

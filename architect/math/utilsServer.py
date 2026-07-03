@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .mat4 import identity, inverse, transformPoint, transform
 from .vec3 import vec, add, div, normalize, tup
 from .vec4 import tup4

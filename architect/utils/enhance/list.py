@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 def remove(list, item):
     # type: (list, object) -> bool
     try:

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..core.annotation import AnnotationHelper
 from ..event.core import ChainedEvent
 from ..conf import UI_GESTURE

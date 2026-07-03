@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Vector4(object):
     def __init__(self, x, y, z, w=1.0):
         self.x = x

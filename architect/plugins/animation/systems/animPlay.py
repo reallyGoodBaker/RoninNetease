@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time, math
 
 from ....compact import remote, getOneComponent, Remote, Sched, Query, ClientSubsystem, SubsystemClient, EventListener, getOrCreateComponent

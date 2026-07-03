@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ...core.export import ClientSubsystem, SubsystemClient
 from ...core.log import warn as _log_warn
 from ...component import BaseCompClient, Component, createComponent, getOneComponent

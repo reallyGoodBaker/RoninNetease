@@ -106,7 +106,7 @@ function extractAnimations() {
 
     fs.writeFileSync(
         animMetaPath,
-        `AnimMeta = ${JSON.stringify(animMetaInfos, null, 4)}`
+        `# -*- coding: utf-8 -*-\nAnimMeta = ${JSON.stringify(animMetaInfos, null, 4)}`
             .replaceAll('true', 'True')
             .replaceAll('false', 'False')
     )

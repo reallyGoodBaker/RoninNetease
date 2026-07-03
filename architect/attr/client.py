@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..core.export import ClientSubsystem, SubsystemClient
 from ..event import EventListener
 from .common import ClientAttrEvents, ReactiveBase, ReactiveDepEvents

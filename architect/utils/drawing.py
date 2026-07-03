@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..math.vec3 import Vector3, vec, cross, normalize, vabs
 from ..level.client import LevelClient, compClient
 from ..core.basic import levelId

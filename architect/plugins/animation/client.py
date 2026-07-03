@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 使用 v.blendex.{动画名} 来控制混合权重
 使用 v.anim_timeex.{动画名} 来控制动画时间

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ....compact import LevelClient, clientApi, compClient, ClientSubsystem, SubsystemClient, getOneSingletonComponent, EventListener, localPlayerId
 from ....compact import vec, moduloSqrt
 from ..utils.mappingContext import InputMapping

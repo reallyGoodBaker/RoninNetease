@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .modifier import InputModifier
 from .trigger import InputTrigger
 from ..enum import InputType

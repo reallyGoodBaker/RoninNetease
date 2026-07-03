@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ...core.basic import isServer, compClient, compServer
 from ...core.unreliable import Unreliable
 from .types import MolangReadable, MolangMutable, EntityMolangMutable, EntityMolangReadable

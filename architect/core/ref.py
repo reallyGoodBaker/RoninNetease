@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Ref:
     def __init__(self, value):
         self.__value = value

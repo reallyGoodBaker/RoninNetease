@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ...core.basic import clientApi, compClient
 
 class deviceClient:

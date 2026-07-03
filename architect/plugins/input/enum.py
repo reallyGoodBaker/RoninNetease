@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class KeyboardKey:
     Backspace = 8        # Backspace键    
     Tab = 9                # Tab键

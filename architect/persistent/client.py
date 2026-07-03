@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..conf import DB_GLOBAL_NAME, DB_NAME
 from ..level.client import LevelClient
 from .common import DBSource

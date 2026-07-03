@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ....core.log import warn as _log_warn
 from ..enum import ValueType, AccumulationBehavior
 from .modifier import InputModifier

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .enhance import list as listx
 from .enhance import fn
 from .molang.types import *

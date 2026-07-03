@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ...core.unreliable import Unreliable
 from ...component import getOneComponent, NeC
 from .enum import AnimExEvents

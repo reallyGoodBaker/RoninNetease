@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..level.server import compServer
 from .cache import QueryCache
 from .common import query, Query

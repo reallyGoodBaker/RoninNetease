@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .mat4 import multiply, worldToScreen, identity, lookAt, perspective, inverse, Matrix, transformPoint, transform
 from .vec3 import vec, Vector3, add, div, tup, normalize, modulo
 from .vec4 import tup4

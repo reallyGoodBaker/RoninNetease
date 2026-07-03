@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .basic import clientApi, serverApi, isServer, __modname__
 
 __all__ = [

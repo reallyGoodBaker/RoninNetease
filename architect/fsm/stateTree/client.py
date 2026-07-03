@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ...component import BaseCompClient
 from .common import StateTree
 from ...core.export import SubsystemClient, ClientSubsystem

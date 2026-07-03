@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class MolangReadable:
     def getValue(self, actorId, defaultValue):
         pass

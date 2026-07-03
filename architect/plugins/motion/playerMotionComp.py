@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ....architect.compact import (
     Component, BaseCompClient, compClient, localPlayerId,
     tup, vec,

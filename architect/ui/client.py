@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..core.annotation import AnnotationHelper
 from ..conf import UI_DEF, UI_SINK, UI_NAMESPACE, UI_SCREEN, UI_HUD, UI_GESTURE
 from ..event import EventSignal, EventTarget

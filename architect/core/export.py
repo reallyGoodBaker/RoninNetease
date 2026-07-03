@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .annotation import AnnotationHelper
 from .basic import *
 from .profiler import *

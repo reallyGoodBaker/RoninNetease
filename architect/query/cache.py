@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class QueryCache:
     def __init__(self, getter):
         self._getter = getter

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class ClientAttrEvents:
     AttrChange = '_attr_change_'
     ServerSync = '_attr_sync_'

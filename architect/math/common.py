@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .double import *
 from . import mat4
 from .unit import *

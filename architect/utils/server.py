@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..level.server import LevelServer, compServer
 from mod.common.minecraftEnum import EntityType
 from ..core.export import ServerSubsystem, SubsystemServer

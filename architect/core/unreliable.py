@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 from .log import error as _log_error
 

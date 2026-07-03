@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..conf import ANNOTATION
 
 def _getAnnotation(target):

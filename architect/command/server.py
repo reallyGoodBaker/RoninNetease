@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..core.basic import Location, compServer, serverApi
 from ..core.scheduler import Future
 from ..level.server import LevelServer

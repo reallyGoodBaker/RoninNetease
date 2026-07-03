@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .common import MolangMutable
 from ...core.basic import compServer
 from ...core.unreliable import Unreliable

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ...component import BaseCompServer, Component
 from ...event import ChainedEvent
 

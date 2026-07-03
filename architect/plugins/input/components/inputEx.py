@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ....compact import Component, BaseCompClient
 from ..utils.mappingContext import InputMapping
 from ..utils.inputValue import InputValue

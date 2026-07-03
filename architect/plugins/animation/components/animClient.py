@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time
 
 from ....compact import remote, Component, BaseCompClient, getOneComponent, NamedEntityVariable

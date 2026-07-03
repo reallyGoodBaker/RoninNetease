@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .core.export import *
 from .ui.client import *
 from .event import EventListener, ChainedEvent, CustomEvent, events

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..enum import AxisSwizzleOrder
 from ....math.common import *
 

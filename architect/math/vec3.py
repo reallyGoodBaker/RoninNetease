@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from mod.common.utils.mcmath import Vector3
 import math
 

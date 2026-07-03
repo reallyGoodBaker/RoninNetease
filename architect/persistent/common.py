@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class DBSource:
     @staticmethod
     def _checksum(value):

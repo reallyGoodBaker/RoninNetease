@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..component import getComponent, getComponentWithQuery
 from ..component.core import _getCompIndex, EMPTY_SLOT
 from ..core.annotation import AnnotationHelper

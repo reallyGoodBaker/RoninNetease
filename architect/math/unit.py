@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class time:
     entityTick = 0.05
     tick = 0.0333333333333333

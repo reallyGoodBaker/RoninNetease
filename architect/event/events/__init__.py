@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .block import *
 from .control import *
 from .entity import *

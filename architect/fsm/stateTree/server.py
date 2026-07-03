@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ...component import BaseCompServer
 from .common import StateTree, StateNode
 from ...core.export import SubsystemServer, ServerSubsystem

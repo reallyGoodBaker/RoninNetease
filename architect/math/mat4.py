@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import division, print_function
 from mod.common.utils.mcmath import Matrix, Vector3
 from .vec3 import normalize, dot, cross

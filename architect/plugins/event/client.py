@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ...component import BaseCompClient, Component
 from ...event import ChainedEvent
 

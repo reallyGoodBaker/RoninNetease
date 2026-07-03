@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..core.basic import isServer, compClient, compServer
 
 def _nativeCompGet(entityId, name):
