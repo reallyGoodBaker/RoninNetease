@@ -30,6 +30,7 @@ MOD_ENGINE_NAME = MOD_NAME
 MOD_SYSTEM_NAME = 'ModSubsystem'
 MOD_SERVER_MODULES = []
 MOD_CLIENT_MODULES = []
+DEBUG = False
 
 # 插件列表
 """

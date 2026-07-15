@@ -2,6 +2,8 @@
 from mod.common.utils.mcmath import Vector3
 import math
 
+from .double import epsilon
+
 def vec(*init):
     if len(init) == 0:
         return Vector3((0, 0, 0))

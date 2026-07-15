@@ -29,3 +29,9 @@ def fill(list, item, start=0, end=None): # type: ignore
 def without(list, item):
     # type: (list, object) -> list
     return [x for x in list if x != item]
+
+def find(list, finder):
+    for item in list:
+        if finder(item):
+            return item
+    return None

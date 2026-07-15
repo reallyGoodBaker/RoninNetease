@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from .mat4 import multiply, worldToScreen, identity, lookAt, perspective, inverse, Matrix, transformPoint, transform
-from .vec3 import vec, Vector3, add, div, tup, normalize, modulo
+from .vec3 import vec, Vector3, add, div, tup, normalize, modulo, cross
 from .vec4 import tup4
 from ..level.client import LevelClient, clientApi
 from ..core.basic import compClient, compServer
@@ -245,9 +245,9 @@ def facing(entityId):
     return vec(dir)
 
 
-def entityAabbDef(entityId):
+def entityAabbDef(entityId, boneName='head'):
     molang = compClient.CreateQueryVariable(entityId)
-    molang.EvalMolangExpression("t.aabb = q.bone_aabb('head'); t.min = t.aabb.min; t.max = t.aabb.max;")
+    molang.EvalMolangExpression("t.aabb = q.bone_aabb('" + boneName + "'); t.min = t.aabb.min; t.max = t.aabb.max;")
     mx = molang.EvalMolangExpression("t.min.x")['value'] / 16
     my = molang.EvalMolangExpression("t.min.y")['value'] / 16
     mz = molang.EvalMolangExpression("t.min.z")['value'] / 16
@@ -266,3 +266,9 @@ def around(entityId, radius):
     if entityId in aroundEntities:
         aroundEntities.remove(entityId)
     return aroundEntities
+
+
+def pointToLineDist(p, pOnLine, dir):
+    # type: (Vector3, Vector3, Vector3) -> float
+    normDir = normalize(dir)
+    return modulo(cross(p - pOnLine, normDir)) / modulo(normDir)
