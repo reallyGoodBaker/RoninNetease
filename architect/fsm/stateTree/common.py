@@ -9,6 +9,121 @@ from ...core.unreliable import Unreliable
 def nodePathStr(paths):
     return ' -> '.join([node.name for node in paths])
 
+
+class StateNode:
+    def __init__(self, name='unknown'):
+        self.name = name
+        self._parent = None
+        self.children = []
+        self._isLeaf = True
+        self._ctx = {}
+
+    def canEnter(self, tree):
+        # type: (StateTree) -> bool
+        return True
+
+    def canExit(self, tree):
+        # type: (StateTree) -> bool
+        return True
+
+    def enter(self, previous, tree):
+        # type: (StateNode, StateTree) -> None
+        pass
+
+    def exit(self, next, tree):
+        # type: (StateNode, StateTree) -> None
+        pass
+
+    def update(self, tree):
+        # type: (StateTree) -> None
+        pass
+
+    def addChildren(self, *nodes):
+        # 将孩子添加到本节点，同时维护父引用
+        self._isLeaf = False
+        for node in nodes:
+            node._parent = self
+            self.children.append(node)
+
+    def removeChild(self, node):
+        if node in self.children:
+            self.children.remove(node)
+            node._parent = None
+            # 如果没有剩余子节点，则本节点成为叶子
+            if not self.children:
+                self._isLeaf = True
+
+    def insert(self, index, node):
+        node._parent = self
+        self.children.insert(index, node)
+
+    def replaceChild(self, oldNode, newNode):
+        index = self.children.index(oldNode)
+        self.children[index] = newNode
+        newNode._parent = self
+        oldNode._parent = None
+
+    def findNamedNode(self, name):
+        if self.name == name:
+            return self
+        for child in self.children:
+            result = child.findNamedNode(name)
+            if result is not None:
+                return result
+        return None
+    
+    def copy(self, deep=True):
+        """返回当前节点的副本。
+
+        如果 deep=True（默认），会递归复制所有子节点并将它们
+        附加到新的副本上。父引用不会被复制；返回的节点是一个
+        完全独立的树根。
+
+        复制过程会保留节点的类和大多数实例属性，除了
+        ``_parent`` 和 ``children`` 之外的字段都会直接拷贝。
+        这一策略让子类中定义的自定义属性（如测试中的
+        ``_can_enter``、``_can_exit``）也能被复制。
+        """
+        # 先创建一个同类型的新节点，传递名称以保证子类 __init__ 正常运行
+        cls = self.__class__
+        try:
+            new = cls(self.name)
+        except TypeError:
+            # 如果子类构造函数参数与预期不符，直接调用无参再赋值
+            new = cls()
+            new.name = self.name
+
+        # 复制除了 _parent/children 之外的所有属性
+        for k, v in self.__dict__.items():
+            if k in ('_parent', 'children'):
+                continue
+            setattr(new, k, v)
+
+        # 断开新节点的父引用并重置孩子列表
+        new._parent = None
+        new.children = []
+        new._isLeaf = self._isLeaf
+
+        if deep:
+            for child in self.children:
+                # 递归复制子节点并加入到新节点
+                child_copy = child.copy(deep=True)
+                new.addChildren(child_copy)
+
+        return new
+
+    def setContext(self, k, v):
+        self._ctx[k] = v
+
+    def getContext(self, k):
+        value = self._ctx.get(k)
+        if value is not None:
+            return value
+        if self._parent is not None:
+            return self._parent.getContext(k)
+        return None
+
+
 class StateTree(Unreliable):
     def __init__(self, entityId):
         Unreliable.__init__(self)
@@ -34,8 +149,8 @@ class StateTree(Unreliable):
         parent.addChildren(node)
         return node
     
-    def createNode(self, parent=None):
-        node = StateNode()
+    def createNode(self, cls=StateNode, name='unknown', parent=None):
+        node = cls(name)
         return self.insertNode(node, parent)
 
     def replaceNode(self, src, target):
@@ -174,6 +289,7 @@ class StateTree(Unreliable):
             node, path = stack.pop(0)
             
             # 如果是叶子节点且可以进入，返回它和路径
+            # print node.name, node.canEnter(self)
             if node._isLeaf and node.canEnter(self):
                 return node, path
             
@@ -266,6 +382,13 @@ class StateTree(Unreliable):
                 if result is None:
                     return None
                 leaf, path = result
+                # 去重：upward_path 中已包含的祖先节点与 path（从 root 起）会有重叠
+                # upward_path 是从下往上收集的，path 是从上往下的，找到交叉点并去除重复
+                if upward_path:
+                    for i, node in enumerate(path):
+                        if node is upward_path[-1]:
+                            path = path[i + 1:]
+                            break
                 fullPath = upward_path + path
                 return leaf, fullPath
 
@@ -315,7 +438,7 @@ class StateTree(Unreliable):
             成功切换到的叶子节点，如果搜索失败则返回None
         """
         if self._current:
-            # print self._current.name
+            # print self._current
             self.stateTicks += 1
             for node in self.findAllActivatedStateNodes():
                 node.update(self)
@@ -334,117 +457,3 @@ class StateTree(Unreliable):
     
     def currentStateName(self):
         return self._current.name if self._current else None
-
-
-class StateNode:
-    def __init__(self, name='unknown'):
-        self.name = name
-        self._parent = None
-        self.children = []
-        self._isLeaf = True
-        self._ctx = {}
-
-    def canEnter(self, tree):
-        # type: (StateTree) -> bool
-        return True
-
-    def canExit(self, tree):
-        # type: (StateTree) -> bool
-        return True
-
-    def enter(self, previous, tree):
-        # type: (StateNode, StateTree) -> None
-        pass
-
-    def exit(self, next, tree):
-        # type: (StateNode, StateTree) -> None
-        pass
-
-    def update(self, tree):
-        # type: (StateTree) -> None
-        pass
-
-    def addChildren(self, *nodes):
-        # 将孩子添加到本节点，同时维护父引用
-        self._isLeaf = False
-        for node in nodes:
-            node._parent = self
-            self.children.append(node)
-
-    def removeChild(self, node):
-        if node in self.children:
-            self.children.remove(node)
-            node._parent = None
-            # 如果没有剩余子节点，则本节点成为叶子
-            if not self.children:
-                self._isLeaf = True
-
-    def insert(self, index, node):
-        node._parent = self
-        self.children.insert(index, node)
-
-    def replaceChild(self, oldNode, newNode):
-        index = self.children.index(oldNode)
-        self.children[index] = newNode
-        newNode._parent = self
-        oldNode._parent = None
-
-    def findNamedNode(self, name):
-        if self.name == name:
-            return self
-        for child in self.children:
-            result = child.findNamedNode(name)
-            if result is not None:
-                return result
-        return None
-    
-    def copy(self, deep=True):
-        """返回当前节点的副本。
-
-        如果 deep=True（默认），会递归复制所有子节点并将它们
-        附加到新的副本上。父引用不会被复制；返回的节点是一个
-        完全独立的树根。
-
-        复制过程会保留节点的类和大多数实例属性，除了
-        ``_parent`` 和 ``children`` 之外的字段都会直接拷贝。
-        这一策略让子类中定义的自定义属性（如测试中的
-        ``_can_enter``、``_can_exit``）也能被复制。
-        """
-        # 先创建一个同类型的新节点，传递名称以保证子类 __init__ 正常运行
-        cls = self.__class__
-        try:
-            new = cls(self.name)
-        except TypeError:
-            # 如果子类构造函数参数与预期不符，直接调用无参再赋值
-            new = cls()
-            new.name = self.name
-
-        # 复制除了 _parent/children 之外的所有属性
-        for k, v in self.__dict__.items():
-            if k in ('_parent', 'children'):
-                continue
-            setattr(new, k, v)
-
-        # 断开新节点的父引用并重置孩子列表
-        new._parent = None
-        new.children = []
-        new._isLeaf = self._isLeaf
-
-        if deep:
-            for child in self.children:
-                # 递归复制子节点并加入到新节点
-                child_copy = child.copy(deep=True)
-                new.addChildren(child_copy)
-
-        return new
-
-    def setContext(self, k, v):
-        self._ctx[k] = v
-
-    def getContext(self, k):
-        value = self._ctx.get(k)
-        if value is not None:
-            return value
-        if self._parent is not None:
-            return self._parent.getContext(k)
-        return None

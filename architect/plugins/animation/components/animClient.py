@@ -5,7 +5,7 @@ from ....compact import remote, Component, BaseCompClient, getOneComponent, Name
 from ....core.log import error as _log_error
 from ....utils.persona.client import PersonaRendererComponent
 from ....math.double import clamp, inf, epsilon
-from ..enum import AnimationEasingTypes, AnimationBlendingTypes, LoopType
+from ..enum import AnimationEasingTypes, LoopType
 
 
 class AnimationEasingConf(object):
@@ -164,44 +164,36 @@ class AnimationExComponent(BaseCompClient):
             }
         })
 
-    def registerEasing(self, animKey, inConf=AnimationEasingConf(), outConf=AnimationEasingConf(0, 0.3)):
-        # type: (str, AnimationEasingConf, AnimationEasingConf) -> None
+    def registerEasing(self, animKey, inConf=AnimationEasingConf()):
+        # type: (str, AnimationEasingConf) -> None
         """
         注册动画混合的缓动效果, 不注册时没有混合效果
         """
-        self.blendingConf[animKey] = {
-            'in': inConf,
-            'out': outConf
-        }
+        self.blendingConf[animKey] = inConf
 
-    def setBlending(self, blendingType, animKey, partial={}):
-        # type: (AnimationBlendingTypes, str, dict) -> None
-        rawBlendingConf = self.blendingConf.get(animKey)
-        # 无混合时，直接设置值
-        if not rawBlendingConf:
-            if blendingType == AnimationBlendingTypes.IN:
-                self.variables[animKey].setValue(1)
-            elif blendingType == AnimationBlendingTypes.OUT:
-                self.variables[animKey].setValue(0)
+    def setBlending(self, animKey, partial={}, startValue=0.0):
+        # type: (str, dict, float) -> None
+        inConf = self.blendingConf.get(animKey)
+        if not inConf:
+            self.variables[animKey].setValue(1)
             return
-        bConf = rawBlendingConf.get(blendingType)
-        target = partial.get('target', bConf.target)
-        duration = partial.get('duration', bConf.duration)
-        func = partial.get('func', bConf.func)
+        target = partial.get('target', inConf.target)
+        duration = partial.get('duration', inConf.duration)
+        func = partial.get('func', inConf.func)
         existedBlending = self.blending.get(animKey)
         if existedBlending:
             existedBlending['target'] = target
             existedBlending['duration'] = duration
             existedBlending['func'] = func
             existedBlending['startTime'] = time.time()
-            existedBlending['type'] = blendingType
+            existedBlending['startValue'] = startValue
         else:
             self.blending[animKey] = {
                 'target': target,
                 'duration': duration,
                 'func': func,
                 'startTime': time.time(),
-                'type': blendingType
+                'startValue': startValue,
             }
 
     def anyAnimationPlaying(self):
@@ -226,11 +218,17 @@ class AnimationExComponent(BaseCompClient):
         if not animName:
             return
 
+        # 如果同名动画是该层唯一动画，只重置 playTime，不动 blend
+        existingInfo = self.playing.get(animKey)
+        if existingInfo and replay:
+            layerSet = self.layers.get(existingInfo.layer, set())
+            if len(layerSet) == 1 and animKey in layerSet:
+                existingInfo.setPlayTime(0, 0)
+                return
         # 如果同名动画已存在，从原层中移除（不删除整个 layer）
-        animInfo = self.playing.get(animKey)
-        if animInfo and animInfo.layer:
+        if existingInfo and existingInfo.layer:
             self.playing.pop(animKey)
-            oldLayer = animInfo.layer
+            oldLayer = existingInfo.layer
             if oldLayer in self.layers:
                 self.layers[oldLayer].discard(animKey)
 
@@ -246,39 +244,37 @@ class AnimationExComponent(BaseCompClient):
         variable = self.variables[animKey]
         isBlendingOut = animKey in self.blending
 
-        # 先清理同层的旧动画，无论 isBlendingOut 是什么值
-        # 保证同 layer 只有一个活跃动画
+        # 如果 animKey 之前被挤出过（在 layer set 但不在 playing），
+        # 继承当前的变量值作为 blend 起点，避免跳变
+        resumedWeight = 0.0
+        if animKey not in self.playing and animKey in playing:
+            resumedWeight = variable.getValue()
+            playing.discard(animKey)
+
+        # 同层互斥
+        # noBlending：旧动画立刻归零 + 移出 layer set（硬切）
+        # 有 blending：旧动画保留在 layer set，权重由 updateAnimState 分配
         hasOldAnims = len(playing) > 0
         if hasOldAnims:
             for _animKey in list(playing):
                 if _animKey == animKey:
                     continue
+                self.blending.pop(_animKey, None)
                 if noBlending:
                     _v = self.variables.get(_animKey)
                     _v and _v.setValue(0)
-                else:
-                    self.setBlending(AnimationBlendingTypes.OUT, _animKey)
-                    # 立即从 playing 中移除，blend out 视觉效果由 self.blending 独立驱动
+                    playing.discard(_animKey)
+                # else: 不移出 layer set，权重由 updateAnimState 分配
                 if _animKey in self.playing:
                     self.playing.pop(_animKey)
-                playing.discard(_animKey)
 
         if noBlending:
             variable.setValue(1)
-            playing.add(animKey)
-            self.layers[layer] = playing
-            return
-
-        if not isBlendingOut:
-            # 重置播放状态
-            variable.setValue(0)
-            if hasOldAnims:
-                self.setBlending(AnimationBlendingTypes.IN, animKey)
-            else:
-                variable.setValue(1)
+        elif not isBlendingOut:
+            variable.setValue(resumedWeight)
+            self.setBlending(animKey, startValue=resumedWeight)
         else:
-            # 混合动画
-            self.setBlending(AnimationBlendingTypes.IN, animKey)
+            self.setBlending(animKey, startValue=resumedWeight)
 
         playing.add(animKey)
         self.layers[layer] = playing
@@ -294,23 +290,20 @@ class AnimationExComponent(BaseCompClient):
             animKey, layer, replay, playRate, startTime, noBlending,
         )
 
-    def stop(self, animKey, layer='default', noBlending=False, clientOnly=False):
-        # type: (str, str, bool, bool) -> None
+    def stop(self, animKey, layer='default', clientOnly=False):
+        # type: (str, str, bool) -> None
         animInfo = self.playing.get(animKey)
         if not animInfo or animInfo.layer != layer:
             return
         animInfo._manualStop = True
-
-        if noBlending:
+        if animKey in self.variables:
             self.variables[animKey].setValue(0)
-        else:
-            self.setBlending(AnimationBlendingTypes.OUT, animKey)
-        playing = self.layers.get(layer, set()) # type: set[str]
-        playing.remove(animKey)
+        playing = self.layers.get(layer, set())
+        playing.discard(animKey)
         self.layers[layer] = playing
         if clientOnly:
             return
         remote.client.call(
             'AnimExServer._syncStop',
-            animKey, layer, noBlending
+            animKey, layer
         )

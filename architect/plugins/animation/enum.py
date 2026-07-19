@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-class AnimationBlendingTypes:
-    IN = 'in'
-    OUT = 'out'
-
-
 class AnimationEasingTypes:
     LINEAR = 'linear'
     QUAD = 'quad'

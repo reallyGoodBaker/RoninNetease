@@ -371,8 +371,33 @@ def Async(func):
     return wrapper
 
 
+class _FrameBasedTimer(object):
+    manager = None
+
+    def __init__(self, duration, callback):
+        self.remains = duration
+        self.callback = callback
+        self.lastFrame = time()
+        if not _FrameBasedTimer.manager:
+            from .subsystem import SubsystemManager
+            _FrameBasedTimer.manager = SubsystemManager.getInstance()
+        self.taskId = _FrameBasedTimer.manager.tickSched.addTask(
+            SchedUpdateFlags.BeforeUpdate,
+            lambda: self._doTick()
+        )
+    
+    def _doTick(self):
+        cutTime = time()
+        dt = cutTime - self.lastFrame
+        self.lastFrame = cutTime
+        self.remains -= dt
+        if self.remains < 0:
+            _FrameBasedTimer.manager.tickSched.removeTask(SchedUpdateFlags.BeforeUpdate, self.taskId)
+            self.callback()
+
+
 def wait(sec):
     # type: (float) -> Future
     ftr, res, _ = Future.resolvers()
-    TimerAdapter(sec, lambda: res(), False).start()
+    _FrameBasedTimer(sec, lambda: res())
     return ftr

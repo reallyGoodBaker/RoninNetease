@@ -28,10 +28,10 @@ class AnimExServer(ServerSubsystem):
         )
 
     @Remote
-    def _syncStop(self, actorId, key, layer, noBlending):
+    def _syncStop(self, actorId, key, layer):
         remote.server.callEvery(
             FnNameStopFromServer,
-            actorId, key, layer, noBlending
+            actorId, key, layer
         )
 
     @staticmethod
@@ -47,8 +47,8 @@ class AnimExServer(ServerSubsystem):
         )
 
     @staticmethod
-    def stop(actorId, key, layer, noBlending):
+    def stop(actorId, key, layer):
         remote.server.callEvery(
             FnNameStopFromServer,
-            actorId, key, layer, noBlending
+            actorId, key, layer
         )

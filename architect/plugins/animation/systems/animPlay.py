@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import time, math
 
-from ....compact import remote, getOneComponent, Remote, Sched, Query, ClientSubsystem, SubsystemClient, EventListener, getOrCreateComponent
+from ....compact import NamedEntityVariable, localPlayerId, remote, getOneComponent, Remote, Sched, Query, ClientSubsystem, SubsystemClient, EventListener, getOrCreateComponent
 from ....math.double import lerp
 
-from ..enum import AnimationEasingTypes, AnimationBlendingTypes, AnimExEvents
+from ..enum import AnimationEasingTypes, AnimExEvents
 from ..components.animClient import AnimationExComponent
 from ..components.dilation import AnimationDilation
 from ..utils import AnimationEventDispatcher
@@ -41,18 +41,14 @@ class AnimationExSubsystem(ClientSubsystem):
         duration = blending['duration']
         func = blending['func']
         startTime = blending['startTime']
-        type = blending['type']
+        startValue = blending.get('startValue', 0.0)
         now = time.time()
         dt = (now - startTime) * dilation
-        low = 0 if type == AnimationBlendingTypes.IN else target
-        high = target if type == AnimationBlendingTypes.IN else 1
         if dt >= duration:
             animEx.blending.pop(animKey)
             return target
         t = dt / duration
-        if type == AnimationBlendingTypes.OUT:
-            t = 1 - t
-        return self.EasingFuncs[func](low, high, t)
+        return self.EasingFuncs[func](startValue, target, t)
     
 
     def onInit(self):
@@ -97,12 +93,45 @@ class AnimationExSubsystem(ClientSubsystem):
         # type: (AnimationExComponent, AnimationDilation) -> None
 
         # update blending
-        blendingOutFinished = []
-        for animKey, blending in animEx.blending.items():
+        for animKey, blending in list(animEx.blending.items()):
             curValue = self._getBlendValue(animEx, animKey, blending, dilation.value)
             animEx.variables[animKey].setValue(curValue)
-            if curValue == blending['target'] and blending['type'] == AnimationBlendingTypes.OUT:
-                blendingOutFinished.append(animKey)
+
+        # 同层权重分配：栈顶动画 fadeIN，旧动画平分 (1 - topWeight)
+        # layers[layer] 包含栈顶 + 所有被替掉的旧动画（不在 playing 中）
+        for layer, animKeySet in animEx.layers.items():
+            if not animKeySet:
+                continue
+            # 栈顶 = 在 playing 中的那个
+            topKey = None
+            for k in animKeySet:
+                if k in animEx.playing:
+                    topKey = k
+                    break
+            if topKey is None:
+                continue
+            topWeight = 1.0
+            topBlending = animEx.blending.get(topKey)
+            if topBlending:
+                topWeight = self._getBlendValue(animEx, topKey, topBlending, dilation.value)
+            oldKeys = [k for k in animKeySet if k != topKey and k not in animEx.playing]
+            if not oldKeys:
+                continue
+            remaining = max(0, 1.0 - topWeight)
+            totalOldWeight = 0.0
+            for k in oldKeys:
+                totalOldWeight += animEx.variables.get(k, NamedEntityVariable('', '', 0)).getValue()
+            if totalOldWeight <= 0:
+                totalOldWeight = float(len(oldKeys))
+            for k in oldKeys:
+                if k in animEx.variables:
+                    ratio = animEx.variables[k].getValue() / totalOldWeight
+                    animEx.variables[k].setValue(remaining * ratio)
+            if remaining <= 0:
+                for k in oldKeys:
+                    animKeySet.discard(k)
+                    if k in animEx.variables:
+                        animEx.variables[k].setValue(0)
 
         # update animation - use list() to avoid "dict changed size during iteration"
         for animKey, animInfo in list(animEx.playing.items()):
@@ -133,7 +162,7 @@ class AnimationExSubsystem(ClientSubsystem):
                         eventData
                     )
 
-            if animInfo.isFinished() or animKey in blendingOutFinished:
+            if animInfo.isFinished():
                 eventType = AnimExEvents.Interrupted if animInfo._manualStop else AnimExEvents.Finish
                 eventDate = {
                     'type': eventType,
@@ -167,6 +196,8 @@ class AnimationExSubsystem(ClientSubsystem):
 
     @Remote
     def playFromServer(self, actorId, animKey, layer, replay, playRate, startTime, sync, noBlending):
+        if actorId == localPlayerId():
+            return
         animEx = getOneComponent(actorId, AnimationExComponent)
         # 防止服务端触发的重复播放
         # 通过 startTime 判断
@@ -178,8 +209,10 @@ class AnimationExSubsystem(ClientSubsystem):
 
 
     @Remote
-    def stopFromServer(self, actorId, key, layer, noBlending):
+    def stopFromServer(self, actorId, key, layer):
+        if actorId == localPlayerId():
+            return
         animEx = getOneComponent(actorId, AnimationExComponent)
         animEx.stop(
-            key, layer, noBlending
+            key, layer
         )

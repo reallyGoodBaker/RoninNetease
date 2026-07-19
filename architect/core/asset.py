@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from .basic import clientApi, serverApi, isServer, __modname__
 
+import copy
+
 __all__ = [
     'Asset',
 ]
@@ -18,13 +20,14 @@ def _loadFromAssets(uri):
         return None
 
 class Asset(object):
-    cached = {} # type: dict[str, Asset]
+    cached = {} # type: dict[str, dict]
 
     def __init__(self, uri):
         # type: (str) -> None
         self.uri = uri
 
     def load(self, useCache=False):
+        # type: (bool) -> dict | None
         uri = self.uri
         if useCache and uri in Asset.cached:
             return Asset.cached[uri]
@@ -32,6 +35,9 @@ class Asset(object):
         if useCache and _asset is not None:
             Asset.cached[uri] = _asset
         return _asset
+    
+    def duplicated(self):
+        return copy.deepcopy(self.load())
 
     @staticmethod
     def reach(uri):

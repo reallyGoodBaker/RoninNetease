@@ -5,6 +5,7 @@ from .vec4 import tup4
 from ..level.client import LevelClient, clientApi
 from ..core.basic import compClient, compServer
 from ..utils.drawing import drawBox, drawLine, drawSphere
+from ..utils.molang.client import evalMolang
 
 from mod.common.minecraftEnum import RayFilterType
 
@@ -246,14 +247,14 @@ def facing(entityId):
 
 
 def entityAabbDef(entityId, boneName='head'):
-    molang = compClient.CreateQueryVariable(entityId)
-    molang.EvalMolangExpression("t.aabb = q.bone_aabb('" + boneName + "'); t.min = t.aabb.min; t.max = t.aabb.max;")
-    mx = molang.EvalMolangExpression("t.min.x")['value'] / 16
-    my = molang.EvalMolangExpression("t.min.y")['value'] / 16
-    mz = molang.EvalMolangExpression("t.min.z")['value'] / 16
-    px = molang.EvalMolangExpression("t.max.x")['value'] / 16
-    py = molang.EvalMolangExpression("t.max.y")['value'] / 16
-    pz = molang.EvalMolangExpression("t.max.z")['value'] / 16
+    onerror = lambda err: 0
+    evalMolang(entityId, "t.aabb = q.bone_aabb('" + boneName + "'); t.min = t.aabb.min; t.max = t.aabb.max;")
+    mx = evalMolang(entityId, "t.min.x", onerror) / 16
+    my = evalMolang(entityId, "t.min.y", onerror) / 16
+    mz = evalMolang(entityId, "t.min.z", onerror) / 16
+    px = evalMolang(entityId, "t.max.x", onerror) / 16
+    py = evalMolang(entityId, "t.max.y", onerror) / 16
+    pz = evalMolang(entityId, "t.max.z", onerror) / 16
     return (mx, my, mz), (px, py, pz)
 
 

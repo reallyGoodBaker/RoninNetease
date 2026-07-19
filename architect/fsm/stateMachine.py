@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-
-"""
-TODO: 临时设计的经典 FSM 框架，不推荐在ECS中嵌入
-"""
-
 from ..core.unreliable import Unreliable
 from ..core.basic import compClient, compServer, isServer
 from mod.common.minecraftEnum import AttrType, EntityType
@@ -26,43 +21,6 @@ class State:
 
     def onUpdate(self):
         pass
-
-    def getFsm(self):
-        return self.fsm
-
-    def markVariant(self, value=None):
-        compFact = compServer if isServer() else compClient
-        defs = compFact.CreateEntityDefinitions(self.entityId) # type: ignore
-        if value is None:
-            return defs.GetMarkVariant()
-        else:
-            defs.SetMarkVariant(value)
-
-    def playSound(self, soundName):
-            x, y, z = compServer.CreatePos(self.entityId).GetPos()
-            LevelServer.command.SetCommand('playsound {} @a {} {} {}'.format(soundName, x, y, z))
-
-    def movement(self, enabled=True):
-        if not isServer():
-            return
-        compServer.CreateCommand(self.entityId).SetCommand(
-            'inputpermission set @s movement {}'.format('enabled' if enabled else 'disabled'),
-            self.entityId
-        )
-        compServer.CreateEntityEvent(self.entityId).TriggerCustomEvent(self.entityId, 'add_movable' if enabled else 'remove_movable')
-        if compServer.CreateEngineType(self.entityId).GetEngineType() != EntityType.Player:
-            if enabled:
-                compServer.CreateAttr(self.entityId).ResetToDefaultValue(AttrType.SPEED)
-            else:
-                compServer.CreateAttr(self.entityId).SetAttrValue(AttrType.SPEED, 0.01)
-
-    def camera(self, enabled=True):
-        if not isServer():
-            return
-        compServer.CreateCommand(self.entityId).SetCommand(
-            'inputpermission set @s camera {}'.format('enabled' if enabled else 'disabled'),
-            self.entityId
-        )
 
 
 class Fsm(Unreliable):

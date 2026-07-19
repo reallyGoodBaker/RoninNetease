@@ -593,6 +593,9 @@ class PersonaRendererComponent(BaseCompClient):
         if broadcast:
             self.broadcastResetConf()
 
+    def hasModified(self):
+        return self.modified is not None
+
     def resetPlayerRenderConf(self, broadcast=True, rebuild=True):
         if not self.modified:
             return
