@@ -148,7 +148,6 @@ class MyAnimSystem(ClientSubsystem):
             animEx.registerEasing(
                 animKey,
                 AnimationEasingConf(1, 0.15, AnimationEasingTypes.SINE),
-                AnimationEasingConf(0, 0.24, AnimationEasingTypes.CUBIC),
             )
 
     def start_walking(self):
@@ -223,7 +222,7 @@ class DiamondAttackDispatcher(BaseActionDispatcher):
 | `registerMetadatas(metadata)` | 注册动画元数据 dict（必须在 `registerAnimations` 之前调用） |
 | `registerAnimations(mapping)` | 注册动画映射 dict |
 | `updateActorAnimDef()` | 应用动画定义到实体 |
-| `registerEasing(key, easeIn, easeOut)` | 为动画键注册缓动配置 |
+| `registerEasing(key, easeIn)` | 为动画键注册缓动配置 |
 | `play(key, slot)` | 在指定槽位播放动画（key 为映射短键） |
 | `stop(key, slot)` | 停止槽位中的动画 |
 | `stopAll()` | 停止所有动画 |
