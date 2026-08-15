@@ -135,7 +135,6 @@ AnimMeta = {
             animEx.registerEasing(
                 animKey,
                 AnimationEasingConf(<span class="hljs-number">1</span>, <span class="hljs-number">0.15</span>, AnimationEasingTypes.SINE),
-                AnimationEasingConf(<span class="hljs-number">0</span>, <span class="hljs-number">0.24</span>, AnimationEasingTypes.CUBIC),
             )
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">start_walking</span>(<span class="hljs-params">self</span>):
@@ -255,7 +254,7 @@ AnimMeta = {
 <td>应用动画定义到实体</td>
 </tr>
 <tr>
-<td><code>registerEasing(key, easeIn, easeOut)</code></td>
+<td><code>registerEasing(key, easeIn)</code></td>
 <td>为动画键注册缓动配置</td>
 </tr>
 <tr>
