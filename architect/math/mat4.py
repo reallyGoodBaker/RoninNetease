@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import division, print_function
-from mod.common.utils.mcmath import Matrix, Vector3
+from mod.common.utils.mcmath import Matrix, Vector3, Quaternion
 from .vec3 import normalize, dot, cross
 from .vec4 import vec4, Vector4, tup4
 from .double import epsilon
@@ -226,3 +226,12 @@ def worldToScreen(modelMatrix, viewMatrix, projectionMatrix, viewport, worldPoin
         z  # 直接使用 z_ndc 作为深度
     )
     return screenPoint
+
+def decompose(m):
+    # type: (Matrix) -> tuple[Vector3, Vector3, Vector3]
+    """
+    :return: translate, rotation, scale
+    """
+    pos, quat, scale = m.Decompose()
+    yaw, pitch, roll = Quaternion(quat).EulerAngles()
+    return Vector3(pos), Vector3(yaw, pitch, roll), Vector3(scale)

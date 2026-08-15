@@ -38,6 +38,7 @@ class LevelClient:
         self.virtualWorld = compClient.CreateVirtualWorld(levelId)
         self.item = compClient.CreateItem(levelId)
         self.neteaseWindow = compClient.CreateNeteaseWindow(levelId)
+        self.particleSystem = compClient.CreateParticleSystem(None)
 
     @staticmethod
     def getInstance():
