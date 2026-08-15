@@ -28,14 +28,14 @@ def lookAt(eye, target, up):
         [0, 0, 0, 1]
     ]) # type: ignore
 
-def perspective(fov_degrees, aspect, near, far):
+def perspective(fovDeg, aspect, near, far):
     # type: (float, float, float, float) -> Matrix
     # 右手系透视投影矩阵，NDC的z范围映射到[-1, 1]
     # 行向量左乘版本：v' = v * M, 其中 v = [x, y, z, 1]
     # 投影后：x' = a*x, y' = b*y, z' = c*z + d, w' = -z
-    # 注意：fov_degrees 为角度制（垂直视场角）
-    fov_rad = math.radians(fov_degrees)
-    tanHalfFov = math.tan(fov_rad / 2)
+    # 注意：fovDeg 为角度制（垂直视场角）
+    fovRad = math.radians(fovDeg)
+    tanHalfFov = math.tan(fovRad / 2)
     a = 1 / (aspect * tanHalfFov)
     b = 1 / tanHalfFov
     c = -(far + near) / (far - near)
