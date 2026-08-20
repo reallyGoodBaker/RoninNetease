@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 import time, math
 
-from ....compact import NamedEntityVariable, localPlayerId, remote, getOneComponent, Remote, Sched, Query, ClientSubsystem, SubsystemClient, EventListener, getOrCreateComponent
+from ....compact import (
+    NamedEntityVariable, localPlayerId, remote, getOneComponent,
+    Remote, Sched, Query, ClientSubsystem, SubsystemClient,
+    EventListener, getOrCreateComponent, SchedUpdateFlags
+)
 from ....math.double import lerp
 
 from ..enum import AnimationEasingTypes, AnimExEvents

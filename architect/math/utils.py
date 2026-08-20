@@ -105,6 +105,7 @@ def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks,
     if debug: drawSphere(raycasted)
     return raycasted
 
+
 defaultFilters = {
     "any_of": [
         {
