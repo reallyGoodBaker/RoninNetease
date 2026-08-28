@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import random as rand
+
 def lerp(a, b, t):
     return a * (1 - t) + b * t
 
@@ -22,3 +24,6 @@ def alerp(start, end, t):
 
 inf = 1e+10
 epsilon = 1e-8
+
+def random(min, max):
+    return min + rand.random() * (max - min)

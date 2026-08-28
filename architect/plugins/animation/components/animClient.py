@@ -2,6 +2,7 @@
 import time
 
 from ....compact import remote, Component, BaseCompClient, getOneComponent, NamedEntityVariable
+from ..blendVars import blendVar, animTimeVar
 from ....core.log import error as _log_error
 from ....utils.persona.client import PersonaRendererComponent
 from ....math.double import clamp, inf, epsilon
@@ -23,8 +24,7 @@ class AnimPlayingInfo(object):
         self.startTime = startTime
         self.playRate = playRate
         self.playTime = 0
-        nameSuffix = animName.replace('animation.', '')
-        self.animTimeComp = NamedEntityVariable(entityId, 'anim_timeex.' + nameSuffix, 0)
+        self.animTimeComp = NamedEntityVariable(entityId, animTimeVar(animName), 0)
         self._manualStop = False
         self._dt = epsilon
         self.duration = inf if meta['length'] == -1 else meta['length']
@@ -132,6 +132,34 @@ class AnimationExComponent(BaseCompClient):
             else:
                 _log_error('动画 {} 元数据不存在, 动画是否存在或通过 animExtractor 提取?', anim)
 
+    def clearRegisteredAnimations(self):
+        # type: () -> None
+        """
+        卸载当前已注册的所有动画。
+
+        注意：网易 ActorRender 的 AddPlayerAnimation/AddPlayerScriptAnimate
+        没有对应的 Remove 接口，脚本层无法把已经 Add 进去的动画定义真正删掉。
+        这里能做的清理是：
+          1. 把所有 blend 变量归零，让旧动画的 scripts.animate 条件立即失效；
+          2. 清空组件内部已注册的动画映射、播放状态、混合状态，
+             避免切换武器时残留上一把武器的动画。
+        """
+        for animKey in list(self.playing.keys()):
+            animInfo = self.playing[animKey]
+            self.stop(animKey, animInfo.layer)
+
+        for variable in self.variables.values():
+            variable.setValue(0)
+
+        self.animations.clear()
+        self.variables.clear()
+        self.blending.clear()
+        self.blendingConf.clear()
+        self.playing.clear()
+        self.layers.clear()
+        self.notifies.clear()
+
+
     def _createActorRendererAnims(self):
         animations = {}
         for animName in self.animations.values():
@@ -141,11 +169,10 @@ class AnimationExComponent(BaseCompClient):
     def _createActorAnimate(self):
         animateScripts = []
         for animKey, animName in self.animations.items():
-            nameSuffix = animName.replace('animation.', '')
-            variable = NamedEntityVariable(self.entityId, 'blendex.' + nameSuffix)
+            variable = NamedEntityVariable(self.entityId, blendVar(animName))
             self.variables[animKey] = variable
             animateScripts.append({
-                animName: variable.getName() + ' > 0'
+                animName: '({} ?? 0) > 0'.format(variable.getName())
             })
         return animateScripts
 

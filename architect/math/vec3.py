@@ -72,7 +72,7 @@ def clamp(v, min, max):
 
 def lerp(a, b, t):
     # type: (Vector3, Vector3, float) -> Vector3
-    return a * (1 - t) + b * t # type: ignore
+    return a + (b - a) * t # type: ignore
 
 def nlerp(a, b, t):
     # type: (Vector3, Vector3, float) -> Vector3

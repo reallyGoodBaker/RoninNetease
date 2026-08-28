@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from .mat4 import multiply, worldToScreen, identity, lookAt, perspective, inverse, Matrix, transformPoint, transform
-from .vec3 import vec, Vector3, add, div, tup, normalize, modulo, cross
+from .vec3 import vec, Vector3, add, div, tup, normalize, modulo, cross, dot
 from .vec4 import tup4
 from ..level.client import LevelClient, clientApi
 from ..core.basic import compClient, compServer
@@ -17,7 +17,7 @@ def screenSize():
     return level.game.GetScreenSize()
 
 
-def localViewMatrix():
+def viewMatrix():
     level = LevelClient.getInstance()
     camPos = level.camera.GetPosition()
     camForward = level.camera.GetForward()
@@ -31,6 +31,58 @@ def localViewMatrix():
         vec(target),
         vec((0, 1, 0))
     )
+
+def viewToWorld(viewDir, forward, up):
+    # type: (Vector3, Vector3, Vector3) -> Vector3
+    """
+    快速将视图空间方向向量转换回世界空间。
+
+    等价于 transformVector(inverse(viewMatrix()), vec(viewDir))，
+    但避免构造视图矩阵和求逆，只使用 vec3 的 cross / dot / normalize。
+    """
+    f = normalize(vec(forward))
+    z = vec((-f.x, -f.y, -f.z))
+    x = normalize(cross(vec(up), z))
+    y = cross(z, x)
+    return vec((
+        x.x * viewDir.x + y.x * viewDir.y + z.x * viewDir.z,
+        x.y * viewDir.x + y.y * viewDir.y + z.y * viewDir.z,
+        x.z * viewDir.x + y.z * viewDir.y + z.z * viewDir.z,
+    ))
+
+
+def viewToWorldPoint(viewPoint, eye, forward, up):
+    # type: (Vector3, Vector3, Vector3, Vector3) -> Vector3
+    """
+    将视图空间坐标点转换回世界空间。
+    """
+    return vec(eye) + viewToWorld(viewPoint, forward, up)
+
+
+def worldToViewPoint(point, eye, forward, up):
+    # type: (Vector3, Vector3, Vector3, Vector3) -> Vector3
+    """
+    将世界坐标点转换到视图空间（包含平移）。
+    """
+    delta = vec(point) - vec(eye)
+    return worldToViewDirection(delta, forward, up)
+
+
+def worldToViewDirection(delta, forward, up):
+    # type: (Vector3, Vector3, Vector3) -> Vector3
+    """
+    将世界空间方向向量转换到视图空间，使用 vec3 的 C 加速 dot/cross/normalize。
+    """
+    f = normalize(vec(forward))
+    z = vec((-f.x, -f.y, -f.z))
+    x = normalize(cross(vec(up), z))
+    y = cross(z, x)
+    return vec((
+        dot(delta, x),
+        dot(delta, y),
+        dot(delta, z),
+    ))
+
 
 def localProjectionMatrix():
     level = LevelClient.getInstance()
@@ -47,7 +99,7 @@ def worldPosToScreenPos(worldPoint):
     # type: (tuple[float, float, float]) -> Vector3
     return worldToScreen(
         identity(),
-        localViewMatrix(),
+        viewMatrix(),
         localProjectionMatrix(),
         screenSize(), # type: ignore
         vec(worldPoint)
@@ -74,7 +126,7 @@ def screenToWorld(modelMatrix, screenPoint, filterType=RayFilterType.OnlyBlocks,
     rayStartNdc = Vector3(nx, ny, -1)
     rayEndNdc = Vector3(nx, ny, 1)
     # 再将裁剪空间坐标转换到世界坐标
-    invMvpMatrix = inverse(multiply(localProjectionMatrix(), multiply(localViewMatrix(), modelMatrix)))
+    invMvpMatrix = inverse(multiply(localProjectionMatrix(), multiply(viewMatrix(), modelMatrix)))
     rayStartHomog = transformPoint(invMvpMatrix, rayStartNdc)
     rayEndHomog = transformPoint(invMvpMatrix, rayEndNdc)
 

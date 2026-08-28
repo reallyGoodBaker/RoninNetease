@@ -337,11 +337,11 @@ time.y            # 31536000 秒
 ### 7.1 屏幕坐标工具
 
 ```python
-from architect.math.utils import screenSize, localViewMatrix, localProjectionMatrix, worldPosToScreenPos, screenToWorld
+from architect.math.utils import screenSize, viewMatrix, localProjectionMatrix, worldPosToScreenPos, screenToWorld
 
 w, h = screenSize()          # 获取窗口尺寸
 
-view = localViewMatrix()     # 从摄像机位置和朝向构建 lookAt 矩阵
+view = viewMatrix()     # 从摄像机位置和朝向构建 lookAt 矩阵
 proj = localProjectionMatrix()  # 从 fov 和宽高比构建 perspective 矩阵
 
 screenPoint = worldPosToScreenPos(worldPoint)
@@ -515,13 +515,13 @@ class CameraTrack(ClientSubsystem):
 
 ```python
 from architect.math.mat4 import identity, worldToScreen
-from architect.math.utils import localViewMatrix, localProjectionMatrix, screenSize
+from architect.math.utils import viewMatrix, localProjectionMatrix, screenSize
 from architect.math.vec3 import vec
 
 w, h = screenSize()
 screenPt = worldToScreen(
     identity(),
-    localViewMatrix(),
+    viewMatrix(),
     localProjectionMatrix(),
     (w, h),
     vec(entityPos)

@@ -270,11 +270,11 @@ time.y            <span class="hljs-comment"># 31536000 秒</span>
 <hr>
 <h2 id="7-math-utils-py">7. 客户端工具 — <code>math/utils.py</code></h2>
 <h3>7.1 屏幕坐标工具</h3>
-<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> screenSize, localViewMatrix, localProjectionMatrix, worldPosToScreenPos, screenToWorld
+<pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> screenSize, viewMatrix, localProjectionMatrix, worldPosToScreenPos, screenToWorld
 
 w, h = screenSize()          <span class="hljs-comment"># 获取窗口尺寸</span>
 
-view = localViewMatrix()     <span class="hljs-comment"># 从摄像机位置和朝向构建 lookAt 矩阵</span>
+view = viewMatrix()     <span class="hljs-comment"># 从摄像机位置和朝向构建 lookAt 矩阵</span>
 proj = localProjectionMatrix()  <span class="hljs-comment"># 从 fov 和宽高比构建 perspective 矩阵</span>
 
 screenPoint = worldPosToScreenPos(worldPoint)
@@ -413,13 +413,13 @@ inside = pointInBox(point, size)
 </code></pre>
 <h3>9.3 世界坐标 → 屏幕坐标（HUD 绘制）</h3>
 <pre><code class="hljs language-python"><span class="hljs-keyword">from</span> architect.math.mat4 <span class="hljs-keyword">import</span> identity, worldToScreen
-<span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> localViewMatrix, localProjectionMatrix, screenSize
+<span class="hljs-keyword">from</span> architect.math.utils <span class="hljs-keyword">import</span> viewMatrix, localProjectionMatrix, screenSize
 <span class="hljs-keyword">from</span> architect.math.vec3 <span class="hljs-keyword">import</span> vec
 
 w, h = screenSize()
 screenPt = worldToScreen(
     identity(),
-    localViewMatrix(),
+    viewMatrix(),
     localProjectionMatrix(),
     (w, h),
     vec(entityPos)

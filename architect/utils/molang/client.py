@@ -5,6 +5,7 @@ from .common import MolangMutable
 from ...core.export import ClientSubsystem, SubsystemClient
 from ...event.core import EventSignal
 from ...event import EventListener
+from ...math.vec3 import vec
 
 _queryVariableUsed = {}
 
@@ -34,6 +35,27 @@ class QueryVariable(MolangMutable, Unreliable):
         self.OnValueChanged.emit(actorId, value)
         _recordQueryVariableUsage(self.name, actorId)
         return result
+    
+
+class QVector3(object):
+    def __init__(self, name):
+        self.name = name
+        self.x = QueryVariable(name + '_x')
+        self.y = QueryVariable(name + '_y')
+        self.z = QueryVariable(name + '_z')
+
+    def setValue(self, actorId, value):
+        v = vec(value)
+        self.x.setValue(actorId, v.x)
+        self.y.setValue(actorId, v.y)
+        self.z.setValue(actorId, v.z)
+
+    def getValue(self, actorId):
+        return vec((
+            self.x.getValue(actorId),
+            self.y.getValue(actorId),
+            self.z.getValue(actorId),
+        ))
 
 
 class ReactiveQueryVariable(QueryVariable):

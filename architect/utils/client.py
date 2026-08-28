@@ -4,6 +4,7 @@ __all__ = [
     'getBonePosition',
     'getBoneRotation',
     'BonePositionTracker',
+    'getBoneWorldPosAccurate',
 ]
 
 
@@ -12,18 +13,23 @@ from ..event import EventListener
 from ..level.client import LevelClient, compClient
 from mod.common.minecraftEnum import EntityType
 from ..math.vec3 import vec
+from ..utils.drawing import drawSphere
 
 def isPlayer(entityId):
     return compClient.CreateEngineType(entityId).GetEngineType() == EntityType.Player
 
-def getBonePosition(entityId, boneName, isLocal=False, particle='minecraft:explosion_manual'):
+def getBonePosition(entityId, boneName, isLocal=False, particle='netease:tutorial_particle'):
     particleSystem = compClient.CreateParticleSystem(None)
     id = particleSystem.CreateBindEntityNew(particle, entityId, boneName)
     pos = vec(particleSystem.GetPos(id, isLocal))
     particleSystem.Remove(id)
     return pos
 
-def getBoneRotation(entityId, boneName, isLocal=False, particle='minecraft:explosion_manual'):
+def getBoneWorldPosAccurate(entityId, boneName):
+    model = compClient.CreateModel(entityId)
+    return vec(model.GetBonePositionFromMinecraftObject(boneName))
+
+def getBoneRotation(entityId, boneName, isLocal=False, particle='netease:tutorial_particle'):
     particleSystem = compClient.CreateParticleSystem(None)
     id = particleSystem.CreateBindEntityNew(particle, entityId, boneName)
     rot = vec(particleSystem.GetRot(id, isLocal))
