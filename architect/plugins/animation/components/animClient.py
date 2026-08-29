@@ -23,7 +23,8 @@ class AnimPlayingInfo(object):
         self.layer = layer
         self.startTime = startTime
         self.playRate = playRate
-        self.playTime = 0
+        # Fix: startOffset was ignored before; now play(startOffset=x) starts from x seconds.
+        self.playTime = max(0.0, time.time() - startTime)
         self.animTimeComp = NamedEntityVariable(entityId, animTimeVar(animName), 0)
         self._manualStop = False
         self._dt = epsilon
