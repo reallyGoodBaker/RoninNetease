@@ -23,45 +23,45 @@ class CommandBus:
     def __init__(self):
         self._handlers = {}  # type: dict[str, list]
 
-    def register(self, command_name, handler):
+    def register(self, commandName, handler):
         # type: (str, callable) -> callable
         """
         注册命令处理器，返回一个注销函数。
 
-        :param command_name: 命令名称（字符串）
+        :param commandName: 命令名称（字符串）
         :param handler:      处理器可调用对象
         :return:            无参注销函数
         """
-        self._handlers.setdefault(command_name, []).append(handler)
+        self._handlers.setdefault(commandName, []).append(handler)
         def unregister():
-            handlers = self._handlers.get(command_name)
+            handlers = self._handlers.get(commandName)
             if handlers and handler in handlers:
                 handlers.remove(handler)
         return unregister
 
-    def execute(self, command_name, *args, **kwargs):
+    def execute(self, commandName, *args, **kwargs):
         # type: (str, *object, **object) -> list
         """
         同步执行命名命令，调用所有已注册的处理器，
         并按注册顺序收集返回值列表。
 
-        :param command_name: 命令名称
+        :param commandName: 命令名称
         :return:             处理器返回值列表
         """
         results = []
-        for handler in self._handlers.get(command_name, []):
+        for handler in self._handlers.get(commandName, []):
             results.append(handler(*args, **kwargs))
         return results
 
-    def hasCommand(self, command_name):
+    def hasCommand(self, commandName):
         # type: (str) -> bool
         """检查是否有处理器注册了给定命令"""
-        return bool(self._handlers.get(command_name))
+        return bool(self._handlers.get(commandName))
 
-    def clearCommand(self, command_name):
+    def clearCommand(self, commandName):
         # type: (str) -> None
         """移除给定命令的所有处理器"""
-        self._handlers.pop(command_name, None)
+        self._handlers.pop(commandName, None)
 
     def clearAll(self):
         # type: () -> None

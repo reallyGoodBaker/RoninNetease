@@ -285,4 +285,3 @@ class UiSubsystem(ScreenNode, ClientSubsystem, EventTarget):
             if ev.control == _control:
                 _method(ev)
         self.addListener(type, _handlerWrapper)
-
