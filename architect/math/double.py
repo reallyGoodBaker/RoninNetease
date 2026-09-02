@@ -27,3 +27,6 @@ epsilon = 1e-8
 
 def random(min, max):
     return min + rand.random() * (max - min)
+
+def normald(v):
+    return v > 0 and 1 or v == 0 and 0 or -1

@@ -119,6 +119,11 @@ class AnimationExComponent(BaseCompClient):
         self.animMetas = {}
 
     def registerMetadatas(self, metadata):
+        """
+        这个方法不会同步到其他客户端！
+        如果你的客户端玩家没有注册动画元数据，
+        那么clientOnly=False也没有任何作用
+        """
         for key, data in metadata.items():
             self.animMetas[key] = data
 
@@ -126,6 +131,9 @@ class AnimationExComponent(BaseCompClient):
         # type: (dict[str, str]) -> None
         """
         注册动画映射后需要调用 updateActorAnimDef
+        这个方法不会同步到其他客户端！
+        你需要在其他客户端玩家的AnimationExComponent上注册动画，
+        才能收到他们客户端发来的动画同步
         """
         for name, anim in mapping.items():
             if anim in self.animMetas:
@@ -137,6 +145,7 @@ class AnimationExComponent(BaseCompClient):
         # type: () -> None
         """
         卸载当前已注册的所有动画。
+        这个方法不会同步到其他客户端！
 
         注意：网易 ActorRender 的 AddPlayerAnimation/AddPlayerScriptAnimate
         没有对应的 Remove 接口，脚本层无法把已经 Add 进去的动画定义真正删掉。
